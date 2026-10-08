@@ -29,6 +29,8 @@ code**, so nothing about users or security is tied to a provider.
 
 ### Database
 - Schema changes live in `db/migrations/` and are applied with `npm run db:migrate` (or the migrate image).
+  On Vercel, production deploys apply them automatically before the build (`npm run vercel-build` →
+  `scripts/migrate-on-deploy.mjs`, needs `DATABASE_URL_MIGRATIONS`); a failed migration stops the deploy.
 - The app logs in as one database user and switches to the restricted role **`app_user`** for every
   user request (`lib/db/rls.ts`), so the RLS policies apply. The first migration creates `app_user` and
   grants it to the user running the migration. **If the app logs in as a different user than the one
@@ -124,6 +126,7 @@ Environment variables on Vercel (Project → Settings → Environment Variables)
 | Variable | Value |
 |----------|-------|
 | `DATABASE_URL` | Supabase → Connect → **Transaction pooler** URI (port 6543) |
+| `DATABASE_URL_MIGRATIONS` | **Production only:** Supabase → Connect → **Session pooler** URI (port 5432), used to apply migrations on each production deploy |
 | `BETTER_AUTH_SECRET` | output of `openssl rand -base64 32` (different from your local one) |
 | `BETTER_AUTH_URL` | `https://ownaplane.eu` (the Vercel *.vercel.app addresses are trusted automatically) |
 | `STORAGE_DRIVER` | `s3` |
@@ -136,7 +139,11 @@ Environment variables on Vercel (Project → Settings → Environment Variables)
 | `APPLE_CLIENT_ID`, `APPLE_TEAM_ID`, `APPLE_KEY_ID`, `APPLE_PRIVATE_KEY` | optional, see "Apple sign-in" above |
 | `FACEBOOK_CLIENT_ID`, `FACEBOOK_CLIENT_SECRET` | optional, see "Facebook sign-in" above |
 
-Migrations are run from your Mac (`npm run db:migrate` with the Session pooler URL in `.env.local`).
+Migrations run automatically on every production deploy (`vercel.json` → `npm run vercel-build`):
+`scripts/migrate-on-deploy.mjs` applies them with `DATABASE_URL_MIGRATIONS` before `next build`, so
+new code never goes live without its schema; if a migration fails, the deploy fails and the previous
+version stays live. Preview deploys skip it. Without `DATABASE_URL_MIGRATIONS` it only warns, and
+`npm run db:migrate` from your Mac (Session pooler URL in `.env.local`) still works.
 | `SENTRY_DSN`, `NEXT_PUBLIC_ANALYTICS_*` | optional, see "Monitoring" above |
 
 ### Production checklist (KAN-72)
@@ -152,8 +159,9 @@ real owners:
    add **Point-in-Time Recovery** for the production project. Once a month, test a restore into
    the development project. Files: Storage has no backups of its own; copy the buckets with
    `rclone sync` (see §5) on a schedule, or accept that photos can be re-uploaded.
-3. **Migrations first**: every push to main deploys, so run `npm run db:migrate` against
-   production **before** `git push origin main`.
+3. **Migrations first**: every push to main deploys and applies pending migrations before the
+   build (needs `DATABASE_URL_MIGRATIONS` on Vercel Production; otherwise run `npm run db:migrate`
+   against production **before** `git push origin main`).
 4. **Secrets**: production `BETTER_AUTH_SECRET` and `CRON_SECRET` differ from development; only
    admins of the Vercel and Supabase projects can see them.
 5. **Email**: real SMTP (e.g. Resend on ownaplane.eu, with SPF/DKIM), then

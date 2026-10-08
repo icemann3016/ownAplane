@@ -43,7 +43,7 @@ npm run build        # production build
 
 npm run db:generate        # create a migration from changes in lib/db/schema
 npm run db:custom -- name  # create an empty SQL migration (RLS policies, grants, functions, triggers)
-npm run db:migrate         # apply migrations to DATABASE_URL
+npm run db:migrate         # apply migrations to DATABASE_URL (production: automatic on deploy)
 npm run db:studio          # browse the database in the browser
 npm run airports:import    # (re)load European airfields from OurAirports; -- --file x.csv for a local file
 npm run admin:grant -- me@example.com   # make a user an admin (add --revoke to remove)
@@ -162,7 +162,7 @@ Target structure for the rest of the app is in the plan, §6. When new top-level
 
 ## How Claude should work here
 
-> **Solo mode (current):** While Zlati works alone, commit directly to `main` in small commits (steps 2 and 6 about branches don't apply yet). **When the friend joins, delete this note** and switch to branches + PRs.
+> **Solo mode (current):** While Zlati works alone, commit directly to `main` in small commits (steps 2 and 6 about branches don't apply yet). **Claude pushes to `main` itself** (Zlati, 2026-10-08): work on the session branch, run typecheck/lint/format/tests (+ the relevant e2e), push the branch, then push the same commits to `main` (fast-forward; every push deploys). Production migrations run on deploy, so no manual `db:migrate`. **When the friend joins, delete this note** and switch to branches + PRs.
 
 1. **Start from an up-to-date `main`.** Run `git pull` before starting.
 2. **One branch per task:** `<name>/<issue-number>-<short-description>`, e.g. `zlati/9-signup`.
@@ -185,6 +185,8 @@ _TODO: split areas so we don't edit the same files at the same time._
 ## Decisions log
 
 Add one line per decision, newest first.
+
+- 2026-10-08: **Claude deploys; migrations on deploy** (Zlati): Claude pushes tested commits to `main` itself. Vercel production deploys run `npm run vercel-build` (`vercel.json` `buildCommand`): `scripts/migrate-on-deploy.mjs` applies pending migrations with `DATABASE_URL_MIGRATIONS` (Supabase Session pooler, port 5432, Production only) before `next build`; a failed migration fails the deploy and the previous version stays live. Preview deploys, CI and Docker skip it; without the variable it only warns. So migrations must stay backward compatible with the version still live during the build.
 
 - 2026-10-02: **Flight log checks** (Zlati): leg times in the order they happen, engine start ≤ block off < take-off < landing < block on ≤ engine stop, max 12 h (`legTimeIssues()` in `lib/domain/leg-times.ts`, field errors in the form; DB check `flight_legs_times`). Hobbs/tach end > start; within a leg fuel after < before and oil after ≤ before ("after" = on arrival, before refuelling); fuel/oil added between or after legs are uplifts. Between legs a rise beyond the uplifts recorded at that airfield (2 L fuel / 0.3 L oil tolerance) or an uplift at an airfield not on the route is a **warning** to pilot and owner (`lib/domain/fuel-checks.ts`), not a block. Fuel is entered in L or US gal per form (stored in litres). Migration 0051 adds the new checks NOT VALID, so older legs (saved with block off before engine start) stay readable.
 
