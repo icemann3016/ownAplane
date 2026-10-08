@@ -41,7 +41,9 @@ M0 Foundations → M1 Accounts → M2 Airports → M3 Pilot verification → M4 
 
 ```mermaid
 flowchart LR
-  B[Browser / phone] -->|HTTPS| V[Next.js on Vercel<br/>pages + server actions]
+  B[Browser] -->|HTTPS| V[Next.js on Vercel<br/>pages + server actions<br/>REST API /api/v1]
+  APP[Mobile app] -->|HTTPS, token| V
+  P[Partner booking systems] -->|iCal / REST, API key| V
   V -->|Drizzle, as app_user| DB[(PostgreSQL<br/>RLS on every table)]
   V --> ST[File storage driver<br/>S3 / Azure Blob]
   V --> RS[Resend<br/>emails]
@@ -52,6 +54,12 @@ flowchart LR
 - **Server-first:** pages are Server Components that read data with the user's session. Changes go through **Server Actions** that validate with Zod.
 - **Business rules live in the database**, when they must never be broken: no double bookings, eligibility checks and review publishing are enforced in Postgres (constraints, functions, RLS). The UI calls the same functions, so the rules exist in one place only.
 - **Owner connection** (`getDb()`, bypasses RLS) is used only by Better Auth and trusted admin/cron code. Everything user-facing goes through `asUser()` / `asAnon()`.
+- **One backend, several clients (API-1, 2026-10-08):** business operations live in `lib/` as plain
+  functions `(userId, input) → result | error` (the backend core). Server Actions (website forms) and
+  the REST API (`app/api/v1`, mobile app and partners) are thin adapters around the same functions,
+  so validation, permissions and database rules are identical. The website keeps rendering pages on
+  the server (fast, no extra hop); the API accepts only Bearer tokens (Better Auth `bearer` plugin),
+  never cookies. The API could later be deployed separately (API-8) because it only depends on `lib/`.
 
 ## 4. Key technical decisions
 
@@ -104,6 +112,30 @@ Aircraft home bases are airports with latitude/longitude. The search (`lib/aircr
 - Receipt photos use the private `documents` storage from M3; the log's photos (meters, fuel gauges) too.
 - Every change after submission is written to `booking_events`, so owner and pilot can see who changed what.
 - The log is labelled as not replacing the aircraft's journey/tech log or the pilot's logbook.
+
+### 4.9 API conventions (API-1…5)
+- Versioned paths (`/api/v1/...`); breaking changes only in a new version.
+- JSON in and out. Errors: `{ "error": { "code": "not_found", "message": "…" } }` with the HTTP
+  status (400 validation with field errors, 401 no/invalid token, 403, 404, 409 conflict, 429, 500).
+- Lists: `?limit=` (max 100) and an opaque `cursor`; response `{ "data": [...], "nextCursor": … }`.
+- Times ISO 8601 in UTC; quantities in SI units as stored (litres, kg, minutes); money as numbers
+  with an ISO currency code.
+- Request bodies validated with the same Zod schemas as the website; OpenAPI generated from them
+  (`z.toJSONSchema`) at `/api/v1/openapi.json`.
+
+### 4.10 Calendar sync (SYN-1…7)
+- External busy times are rows in `calendar_entries` (new kind `external`, with the source and its
+  event id), so the **same exclusion constraint** keeps them from overlapping ownAplane bookings.
+- iCal import: the owner's ICS links are fetched by a sync job (target every 15 min) and again,
+  with a short timeout, right before a booking request is created or accepted (SYN-2). Events are
+  upserted by UID; removed events are deactivated. Recurring events are expanded for the next 12
+  months.
+- An imported event that overlaps an active ownAplane booking can't be stored as active: it is kept
+  as a **conflict** and the owner is notified (SYN-5).
+- iCal export: a secret, resettable link per aircraft (`/api/v1/calendars/<token>.ics`) with busy
+  times only (SYN-3).
+- Push API for partners (SYN-4): `PUT/DELETE /api/v1/aircraft/{id}/external-busy/{externalId}` with
+  a per-aircraft API key (stored hashed); 409 on overlap.
 
 ## 5. Data model (Phase 1)
 
@@ -197,6 +229,14 @@ Sizes: **S** ≈ a few hours · **M** ≈ 1–2 sessions · **L** ≈ 3+ session
 | M10 | Launch readiness | §7, §9 of requirements | Production live, legal pages, monitoring, private beta | 2 wk |
 
 **Total:** roughly 4–5 months part-time. Each milestone's issues are on GitHub.
+
+**After launch readiness (decided 2026-10-08):**
+
+| # | Milestone | Requirements | Demo at the end | Rough time |
+|---|-----------|--------------|-----------------|------------|
+| M11 | API foundation | API-1, 2, 4, 5 | An app signs in with a token and reads its profile, airports, aircraft search and bookings through `/api/v1`; OpenAPI published | 1–2 wk |
+| M12 | Calendar sync | SYN-1…5 | An aircraft linked to a Google Calendar can't be booked over its events; the other system subscribes to ownAplane's iCal link; a partner pushes a booking, gets 409 on overlap | 2 wk |
+| M13 | Full API | API-3, 6, 7, SYN-6 | Everything on the website is possible through the API (booking flow, flight log, messages); push notifications | 3–4 wk |
 
 ## 9. How we build each task (with Claude)
 

@@ -1,6 +1,6 @@
 # Business Requirements — ownAplane
 
-> **Status:** Draft v0.3 · 2026-10-02 · Owner: Zlati · v0.2: flight log (BKG-7, BKG-12…16) · v0.3: subscriptions (SUB, §5.11, §8)
+> **Status:** Draft v0.4 · 2026-10-08 · Owner: Zlati · v0.2: flight log (BKG-7, BKG-12…16) · v0.3: subscriptions (SUB, §5.11, §8) · v0.4: API for apps and partners (API, §5.12), calendar sync (SYN, §5.13)
 > **Purpose:** The single source of truth for *what* we are building and *why*. Claude reads this before building any feature.
 > **How to change it:** Edit it in a PR like any other code. Add new ideas under [§11 Parking lot](#11-parking-lot-ideas-for-later).
 
@@ -36,6 +36,7 @@ _Numbers are placeholders to refine together._
 | **Phase 2 — Maintenance** | Technician profiles, service catalogue, quote requests, maintenance jobs, maintenance blocks on the aircraft calendar | Owners from Phase 1 are the customers for technicians |
 | **Phase 3 — Airports** | Airport profiles, PPR requests, parking/hangar requests, ground services, customs requests | Pilots from Phase 1 are the customers for airports |
 | **Phase 4 — Payments** | In-app payments, deposits, payouts, platform commission | Deliberately postponed. See §8 |
+| **API & calendar sync** (next) | Versioned REST API for a mobile app and partner systems; calendar sync with other booking systems so an aircraft is never double-booked | A mobile app is planned, and aircraft are often also booked elsewhere (clubs, Google Calendar). See §5.12 and §5.13 |
 | **Subscriptions** (not scheduled) | Free / Owner / Fleet plans for owners, billing through a payment provider | Planned for the future, not built yet. Can start any time after launch, before Phase 4. See §5.11 and §8 |
 
 **MVP payments decision:** In Phase 1 the app shows prices and confirms bookings, but **no money moves through the platform**. Pilots pay owners directly (bank transfer, cash, club account). See §8.
@@ -206,6 +207,39 @@ Owners pay for growth and convenience; **pilots are always free**. Plans and pri
 | SUB-11 | C | Fleet features: co-managers who answer requests and manage the calendar; organisation page (club name, logo, its aircraft). |
 | SUB-12 | C | Technician and airport plans in Phases 2–3. |
 
+### 5.12 API for apps and partners (API) — next
+
+The website, a future mobile app and partner systems all use **one backend**: the same validation,
+permission checks and database rules. The website keeps rendering its pages on the server; apps and
+partners use the REST API.
+
+| ID | Pri | Requirement |
+|----|-----|-------------|
+| API-1 | M | A versioned **REST API** (`/api/v1`, JSON) for the mobile app and partner systems. It uses the same backend core as the website, so rules and permissions are identical everywhere. |
+| API-2 | M | The app signs in with the same accounts (email and password; Google, Apple, Facebook) and gets a **token**, not a browser cookie. Signing out, "sign out everywhere" and a password change revoke tokens. The API accepts only tokens, never cookies (no cross-site request forgery). |
+| API-3 | M | Everything a pilot or owner does on the website becomes available in the API, in this order: account and roles; airports; search, aircraft and availability with "can I rent this"; bookings (request, answer, cancel); flight log; messages; notifications; reviews; pilot credentials; aircraft management. |
+| API-4 | M | Consistent conventions: errors as JSON with a stable `code` and the HTTP status; paged lists; times in ISO 8601 UTC; quantities in SI units (litres, kilograms, minutes), as stored. |
+| API-5 | M | A machine-readable description (**OpenAPI**) at `/api/v1/openapi.json`, generated from the same validation schemas as the code so it can't drift. |
+| API-6 | S | Limits per token (requests per minute) and API usage visible to admins. |
+| API-7 | S | Push notifications to the app (the "push" channel of MSG-3). |
+| API-8 | C | The API can run as its own service (separate deployment) without code changes, when traffic or the team needs it. |
+
+### 5.13 Calendar sync with other booking systems (SYN) — next
+
+Aircraft are often also booked elsewhere: a club or flight-school system, the owner's Google
+Calendar, another platform. ownAplane must never accept a booking for time already taken there,
+and the other system should see ownAplane bookings.
+
+| ID | Pri | Requirement |
+|----|-----|-------------|
+| SYN-1 | M | The owner connects an aircraft to one or more external calendars by **iCal (ICS) link** (Google Calendar, Outlook, most club booking systems). Their busy times block the aircraft in ownAplane like the owner's own blocks; pilots see only "busy", never names or notes. |
+| SYN-2 | M | Connected calendars are refreshed regularly (target: every 15 minutes) **and again right before** a booking request is created or accepted for that aircraft. If a calendar can't be read, the owner is warned and the booking shows when the calendar was last checked. |
+| SYN-3 | M | Every aircraft has a private **iCal export link** with its ownAplane bookings and blocks (busy times only, no personal data) for the other system to subscribe to. The owner can reset the link. |
+| SYN-4 | M | Partner systems can **push** busy times in real time through the API (create, change, delete by their own id). The API refuses a time that overlaps an ownAplane booking (HTTP 409), so their system can refuse it too. Access with a key the owner creates per aircraft and can revoke. |
+| SYN-5 | M | A **conflict** (an external booking arrives for time already booked in ownAplane) is never resolved silently: both stay visible, the owner is notified at once and decides which one to cancel. |
+| SYN-6 | S | Outgoing notifications (**webhooks**) to partner systems when an ownAplane booking is created, changed or cancelled. |
+| SYN-7 | C | Two-way integrations with specific systems that have their own API, as needed. |
+
 ## 6. Key business rules (summary)
 
 1. One account, many roles.
@@ -274,7 +308,7 @@ _Not legal advice. Verify each point with an aviation lawyer and the national CA
 
 ## 10. Key entities (for the data model)
 
-`User` · `Role` · `PilotCredential` (licence, rating, medical) · `ExperienceRecord` · `Aircraft` · `AircraftDocument` · `RentalRequirements` · `Availability/CalendarBlock` · `Booking` · `FlightLog` (check-out/in) · `FlightLeg` · `Uplift` (fuel/oil added) · `Remark` · `Defect` · `Review` · `Message/Conversation` · `Report` · _Subscriptions:_ `Subscription` · _Phase 2:_ `TechnicianProfile` · `Organisation` · `ServiceOffering` · `QuoteRequest` · `MaintenanceJob` · `MaintenanceSchedule` · _Phase 3:_ `Airport` · `AirportService` · `AirportRequest` (PPR/parking/hangar/services)
+`User` · `Role` · `PilotCredential` (licence, rating, medical) · `ExperienceRecord` · `Aircraft` · `AircraftDocument` · `RentalRequirements` · `Availability/CalendarBlock` · `Booking` · `FlightLog` (check-out/in) · `FlightLeg` · `Uplift` (fuel/oil added) · `Remark` · `Defect` · `Review` · `Message/Conversation` · `Report` · _API & sync:_ `ApiToken` · `ApiKey` · `ExternalCalendar` · `ExternalBusyTime` · `SyncConflict` · _Subscriptions:_ `Subscription` · _Phase 2:_ `TechnicianProfile` · `Organisation` · `ServiceOffering` · `QuoteRequest` · `MaintenanceJob` · `MaintenanceSchedule` · _Phase 3:_ `Airport` · `AirportService` · `AirportRequest` (PPR/parking/hangar/services)
 
 ## 11. Parking lot (ideas for later)
 
