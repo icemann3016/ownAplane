@@ -5,6 +5,7 @@ import { APIError } from "better-auth/api";
 import { eq } from "drizzle-orm";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
+import { bearer } from "better-auth/plugins/bearer";
 
 import { getDb, schema } from "@/lib/db";
 import { deleteUserFiles } from "@/lib/account/delete-files";
@@ -24,8 +25,14 @@ async function userLocale(userId: string): Promise<string | undefined> {
 }
 
 /**
- * Other addresses allowed to use login (besides BETTER_AUTH_URL): BETTER_AUTH_TRUSTED_ORIGINS
- * plus, on Vercel, the project's own *.vercel.app addresses.
+ * Origin our mobile apps send with sign-in and sign-out requests (API-2). Browsers can't send a
+ * custom-scheme origin, so trusting it doesn't weaken the website's CSRF protection.
+ */
+export const APP_ORIGIN = "ownaplane://";
+
+/**
+ * Other addresses allowed to use login (besides BETTER_AUTH_URL): BETTER_AUTH_TRUSTED_ORIGINS,
+ * our apps' origin and, on Vercel, the project's own *.vercel.app addresses.
  */
 function trustedOrigins(): string[] {
   const vercel = [
@@ -41,7 +48,7 @@ function trustedOrigins(): string[] {
     .filter(Boolean);
   // Apple returns to us with a form POST from its own site.
   const apple = isProviderEnabled("apple") ? [PROVIDER_HOSTS.apple] : [];
-  return [...new Set([...extra, ...vercel, ...apple])];
+  return [...new Set([...extra, ...vercel, ...apple, APP_ORIGIN])];
 }
 
 function createAuth() {
@@ -119,7 +126,12 @@ function createAuth() {
       // Stored in Postgres so limits hold across several server instances.
       storage: "database",
     },
-    plugins: [nextCookies()], // keep last: lets Server Actions set the session cookie
+    plugins: [
+      // Apps sign in with a token (API-2): sign-in answers carry it in `set-auth-token`, and
+      // `Authorization: Bearer <token>` counts as the session. Only signed tokens are accepted.
+      bearer({ requireSignature: true }),
+      nextCookies(), // keep last: lets Server Actions set the session cookie
+    ],
   });
 }
 

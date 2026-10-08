@@ -1,15 +1,14 @@
 import "server-only";
 
 import { cache } from "react";
-import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { connection } from "next/server";
 
+import { getProfileAndRoles } from "@/lib/account/profile";
 import { getAuth } from "@/lib/auth/auth";
 import { isDatabaseConfigured } from "@/lib/db";
-import { asUser } from "@/lib/db/rls";
-import { type AppRole, type Profile, profiles, userRoles } from "@/lib/db/schema";
+import type { AppRole, Profile } from "@/lib/db/schema";
 
 export type CurrentProfile = {
   userId: string;
@@ -33,15 +32,8 @@ export const getCurrentProfile = cache(async (): Promise<CurrentProfile | null> 
   const user = await getUser();
   if (!user) return null;
 
-  return asUser(user.id, async (tx) => {
-    const [profile] = await tx.select().from(profiles).where(eq(profiles.id, user.id));
-    if (!profile) return null;
-    const roles = await tx
-      .select({ role: userRoles.role })
-      .from(userRoles)
-      .where(eq(userRoles.userId, user.id));
-    return { userId: user.id, email: user.email, profile, roles: roles.map((r) => r.role) };
-  });
+  const found = await getProfileAndRoles(user.id);
+  return found ? { userId: user.id, email: user.email, ...found } : null;
 });
 
 function loginUrl(nextPath?: string) {
