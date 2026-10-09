@@ -348,5 +348,14 @@ describeDb("calendar sync engine", () => {
     expect(row).toMatchObject({ lastSyncError: "json_invalid", lastSyncCount: 1 });
     // A failed read leaves the last known busy times in place.
     expect((await entries()).map((r) => r.externalId)).toEqual(["f1"]);
+    // The scheduled job reads links not read recently (the never-read one from the first tests,
+    // whose made-up address can't be reached), but not this one, read a moment ago.
+    expect(await sync.syncDueCalendars(10 * 60_000, 50)).toBeGreaterThanOrEqual(1);
+    const [same] = await db
+      .getDb()
+      .select()
+      .from(s.calendarConnections)
+      .where(eq(s.calendarConnections.id, connectionId));
+    expect(same!.lastSyncError).toBe("json_invalid");
   });
 });

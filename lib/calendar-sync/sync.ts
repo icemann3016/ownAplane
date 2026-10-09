@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, eq, inArray, isNull, lt, or, sql } from "drizzle-orm";
+import { and, eq, inArray, isNull, lt, or, sql } from "drizzle-orm";
 
 import { getDb } from "@/lib/db";
 import { calendarConnections, type CalendarConnection } from "@/lib/db/schema";
@@ -85,7 +85,7 @@ export async function syncDueCalendars(maxAgeMs = 10 * 60_000, limit = 50): Prom
     })
     .from(calendarConnections)
     .where(and(pullKinds, staleSince(maxAgeMs)))
-    .orderBy(asc(sql`${calendarConnections.lastSyncAt} nulls first`))
+    .orderBy(sql`${calendarConnections.lastSyncAt} asc nulls first`)
     .limit(limit);
   // A few at a time: feeds can be slow, and the database pool is small.
   for (let i = 0; i < due.length; i += 5) {
