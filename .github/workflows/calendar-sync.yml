@@ -20,10 +20,15 @@ jobs:
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
           SITE_URL: ${{ vars.SITE_URL || 'https://ownaplane.eu' }}
+        # The result is shown as a note on the run (warning: no secret; error: refused or failed).
         run: |
           if [ -z "$CRON_SECRET" ]; then
-            echo "CRON_SECRET is not set: nothing to do."
+            echo "::warning title=Calendar sync::CRON_SECRET is not set: nothing was synced."
             exit 0
           fi
-          curl --fail-with-body --silent --show-error --max-time 90 \
-            -H "Authorization: Bearer $CRON_SECRET" "$SITE_URL/api/cron/sync"
+          if ! result=$(curl --fail-with-body --silent --show-error --max-time 90 \
+            -H "Authorization: Bearer $CRON_SECRET" "$SITE_URL/api/cron/sync" 2>&1); then
+            echo "::error title=Calendar sync::$result (is CRON_SECRET the same as on Vercel?)"
+            exit 1
+          fi
+          echo "::notice title=Calendar sync::$result"
