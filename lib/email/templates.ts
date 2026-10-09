@@ -323,6 +323,7 @@ export function bookingNotificationEmail({
     | "reviews_published"
     | "review_replied"
     | "reminder"
+    | "calendar_conflict"
     | "other";
   registration: string;
   from: Date;

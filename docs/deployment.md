@@ -76,6 +76,11 @@ code**, so nothing about users or security is tied to a provider.
   `Authorization: Bearer <secret>`.
 - **Azure:** a scheduled Container Apps job (or Logic App) that runs
   `curl -fsS -H "Authorization: Bearer $CRON_SECRET" https://<site>/api/cron/daily`.
+- `GET /api/cron/sync` reads linked calendars of other booking systems (SYN-2) every 15 minutes,
+  same header. Vercel Hobby can't run it that often, so `.github/workflows/calendar-sync.yml` calls
+  it: add the **GitHub repository secret `CRON_SECRET`** (Settings → Secrets and variables →
+  Actions) with the same value as on Vercel; without it the workflow does nothing. On Google Cloud
+  / Azure, schedule it like the daily job, every 15 minutes.
 
 ### Google sign-in (optional)
 1. Google Cloud Console → create a project → **APIs & Services → OAuth consent screen** (External, app name, support email).

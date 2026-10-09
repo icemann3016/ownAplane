@@ -49,7 +49,9 @@
       "reference": "Référence : {digest}",
       "retry": "Réessayer"
     },
-    "skipToContent": "Aller au contenu"
+    "skipToContent": "Aller au contenu",
+    "copy": "Copier",
+    "copied": "Copié"
   },
   "home": {
     "badge": "Avant-première · Europe",
@@ -226,7 +228,9 @@
     "timeAfter": "Doit être après {other}.",
     "timeNotBefore": "Ne peut pas être avant {other}.",
     "fuelNotBurned": "Le carburant après doit être inférieur au carburant avant. Enregistrez un avitaillement avec « Ajouter carburant ou huile ».",
-    "oilRose": "L’huile après ne peut pas dépasser l’huile avant. Enregistrez l’huile ajoutée avec « Ajouter carburant ou huile »."
+    "oilRose": "L’huile après ne peut pas dépasser l’huile avant. Enregistrez l’huile ajoutée avec « Ajouter carburant ou huile ».",
+    "connectionNameRequired": "Donnez un nom à la connexion.",
+    "feedUrlInvalid": "Saisissez le lien complet en https://."
   },
   "dashboard": {
     "title": "Bienvenue, {name}",
@@ -597,6 +601,10 @@
       "review_replied": {
         "subject": "{other} a répondu à votre évaluation de {registration}",
         "body": "{other} a répondu publiquement à votre évaluation de {registration}. Vous pouvez lire la réponse dans la réservation."
+      },
+      "calendar_conflict": {
+        "subject": "Double réservation : {registration} à partir du {when}",
+        "body": "Un système de réservation connecté indique {registration} occupé en même temps que la réservation à partir du {when}. Annulez l’une des deux : dans ownAplane ou dans l’autre système."
       }
     },
     "newMessage": {
@@ -1161,7 +1169,8 @@
       "calendar": "Calendrier",
       "remarks": "Remarques",
       "usage": "Utilisation",
-      "defects": "Défauts"
+      "defects": "Défauts",
+      "sync": "Synchro du calendrier"
     },
     "sectionText": {
       "details": "Immatriculation, type et performances.",
@@ -1556,7 +1565,8 @@
       "checkAvailability": "Vérifier la disponibilité",
       "requestBooking": "Demander une réservation",
       "blockTime": "Bloquer ce créneau",
-      "pending": "demandé, pas encore confirmé"
+      "pending": "demandé, pas encore confirmé",
+      "fromSource": "De {name}"
     },
     "availability": {
       "title": "Disponibilité",
@@ -1744,7 +1754,8 @@
         "pilot_not_eligible": "Le pilote ne remplit plus vos conditions pour ce vol (par exemple, une qualification a expiré), elle ne peut donc pas être acceptée.",
         "bad_proposal": "Proposez un créneau dans le futur.",
         "failed": "Cela n'a pas fonctionné. Veuillez réessayer.",
-        "aircraft_grounded": "L'avion est immobilisé. Reproposez-le avant d'accepter."
+        "aircraft_grounded": "L'avion est immobilisé. Reproposez-le avant d'accepter.",
+        "booked_elsewhere": "Ce créneau est réservé dans un système connecté (voir Synchro du calendrier). Refusez la demande, ou annulez d’abord la réservation dans l’autre système."
       }
     },
     "cancel": {
@@ -2074,7 +2085,8 @@
       "instant_booked": "{other} a réservé {registration} à partir du {when} (réservation instantanée).",
       "review_submitted": "{other} a évalué la réservation de {registration}. Rédigez la vôtre pour la voir.",
       "reviews_published": "Les évaluations de {registration} sont maintenant publiées.",
-      "review_replied": "{other} a répondu à votre évaluation de {registration}."
+      "review_replied": "{other} a répondu à votre évaluation de {registration}.",
+      "calendar_conflict": "Une réservation dans un système connecté chevauche la réservation de {registration} à partir du {when}. Annulez l’une des deux."
     }
   },
   "checkoutFlight": {
@@ -2361,5 +2373,105 @@
     },
     "changeRoles": "Changer pilote / propriétaire",
     "later": "Passer pour l'instant, aller au tableau de bord"
+  },
+  "calendarSync": {
+    "title": "Synchro du calendrier",
+    "intro": "Connectez cet avion à d’autres systèmes de réservation (club, école, Google Agenda, autre plateforme) pour qu’il ne soit jamais réservé deux fois. Leurs réservations bloquent le créneau ici ; les nôtres peuvent s’afficher là-bas.",
+    "helpLink": "Fonctionnement de la synchro du calendrier",
+    "connections": "Systèmes connectés",
+    "none": "Aucun système connecté pour l’instant.",
+    "add": {
+      "title": "Connecter un système",
+      "name": "Nom",
+      "namePlaceholder": "p. ex. Système de réservation de l’aéroclub",
+      "how": "Comment ses réservations nous parviennent-elles ?",
+      "icalUrl": "Lien iCal",
+      "jsonUrl": "Lien JSON",
+      "urlHint": "Le lien privé fourni par l’autre système. Les liens webcal:// fonctionnent aussi.",
+      "linkIs": "Lien :",
+      "submit": "Connecter",
+      "connecting": "Connexion…"
+    },
+    "kinds": {
+      "push": {
+        "label": "Il nous les envoie (API)",
+        "hint": "Synchro en temps réel pour un système capable d’appeler une adresse web. Vous obtenez une clé API pour ses développeurs."
+      },
+      "ical": {
+        "label": "Lien iCal",
+        "hint": "Google Agenda, Outlook et la plupart des systèmes de réservation : copiez l’adresse iCal privée du calendrier."
+      },
+      "json": {
+        "label": "Lien JSON",
+        "hint": "Pour un système sur mesure : un lien qui liste ses réservations dans un format simple (voir l’aide)."
+      },
+      "none": {
+        "label": "Il lit seulement le nôtre",
+        "hint": "Utilisez notre lien iCal dans l’autre système ; rien ne revient."
+      }
+    },
+    "added": {
+      "push": "Connecté. Copiez la clé API maintenant : elle n’est affichée qu’une fois.",
+      "synced": "Connecté et lu : {count, plural, =0 {aucun créneau occupé} one {# créneau occupé} other {# créneaux occupés}}.",
+      "failed": "Connecté, mais le lien n’a pas pu être lu : {reason}.",
+      "none": "Connecté. Utilisez le lien iCal ci-dessous dans l’autre système."
+    },
+    "synced": "Lu : {count, plural, =0 {aucun créneau occupé} one {# créneau occupé} other {# créneaux occupés}}.",
+    "syncNow": "Synchroniser",
+    "syncing": "Lecture…",
+    "working": "Veuillez patienter…",
+    "cancel": "Annuler",
+    "keyReplaced": "Nouvelle clé API créée. L’ancienne ne fonctionne plus.",
+    "status": {
+      "never": "Pas encore lu.",
+      "ok": "Dernière lecture {when} UTC : {count, plural, =0 {aucun créneau occupé} one {# créneau occupé} other {# créneaux occupés}}. Lu toutes les 15 minutes et avant chaque réservation.",
+      "error": "La lecture de {when} UTC a échoué : {reason}. Les créneaux lus auparavant restent en place.",
+      "push": "{count, plural, =0 {Aucun créneau envoyé pour l’instant} one {# créneau occupé de ce système} other {# créneaux occupés de ce système}}.",
+      "none": "Ce système lit seulement notre lien iCal."
+    },
+    "conflicts": {
+      "title": "Doubles réservations avec {name}",
+      "text": "Ces créneaux sont réservés ici et dans l’autre système. Annulez l’une des réservations, ici ou là-bas ; l’alerte disparaît d’elle-même.",
+      "openBooking": "ouvrir la réservation"
+    },
+    "exportLink": {
+      "label": "Notre lien iCal pour ce système",
+      "hint": "Abonnez-vous-y dans l’autre système pour voir quand l’avion est occupé ici (horaires seulement, aucun nom). Gardez-le privé.",
+      "reset": "Renouveler le lien",
+      "resetTitle": "Renouveler le lien iCal ?",
+      "resetText": "Le lien actuel cesse de fonctionner immédiatement. Indiquez le nouveau dans l’autre système."
+    },
+    "apiKey": {
+      "current": "Clé API se terminant par …{hint}.",
+      "docs": "Instructions pour ses développeurs",
+      "replace": "Remplacer la clé API",
+      "shown": "Clé API (affichée une seule fois)",
+      "shownHint": "Transmettez-la aux développeurs de l’autre système. Elle est envoyée ainsi : {header}."
+    },
+    "remove": {
+      "button": "Déconnecter",
+      "title": "Déconnecter {name} ?",
+      "text": "Ses créneaux occupés sont supprimés ici : ce temps peut de nouveau être réservé. Notre lien iCal pour ce système cesse de fonctionner."
+    },
+    "errors": {
+      "too_many": "Un avion peut avoir au maximum 10 systèmes connectés.",
+      "not_allowed": "Vous ne pouvez pas modifier cet avion.",
+      "not_found": "Connexion introuvable."
+    },
+    "feedErrors": {
+      "url_invalid": "le lien n’est pas une adresse https valide",
+      "address_blocked": "le lien pointe vers une adresse de réseau privé",
+      "unreachable": "le serveur n’a pas pu être joint",
+      "http_error": "le serveur a répondu par une erreur",
+      "too_large": "le calendrier dépasse 2 Mo",
+      "ical_invalid": "ce n’est pas un calendrier iCal",
+      "json_invalid": "ce n’est pas au format JSON attendu",
+      "failed": "une erreur s’est produite"
+    },
+    "export": {
+      "name": "{registration} ({site})",
+      "booked": "Réservé ({site})",
+      "blocked": "Indisponible"
+    }
   }
 }

@@ -6,6 +6,7 @@ import type { getVisibleAircraft } from "@/lib/aircraft/public";
 import type { AirportSummary } from "@/lib/airports";
 import { avatarUrl } from "@/lib/avatar-url";
 import type { BookingDetail as BookingRow, BookingListItem } from "@/lib/bookings/queries";
+import type { BusyTime } from "@/lib/calendar-sync/ics";
 import { appUrl } from "@/lib/site-url";
 import type * as R from "./responses";
 
@@ -211,5 +212,13 @@ export function bookingDto(d: BookingRow, viewerId: string): R.BookingDetail {
     owner: person(d.owner),
     history: d.events.map((e) => ({ type: e.type, actorId: e.actorId, at: iso(e.createdAt) })),
     createdAt: iso(b.createdAt),
+  };
+}
+
+export function busyTimeDto(b: BusyTime): R.BusyTimeDto {
+  return {
+    from: b.from.toISOString(),
+    to: b.to.toISOString(),
+    kind: b.booking ? "booking" : "blocked",
   };
 }

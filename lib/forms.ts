@@ -7,6 +7,8 @@ export type FormState = {
   errors?: Record<string, string[] | undefined>;
   /** Submitted values to refill the form after an error (never passwords). */
   values?: Record<string, string>;
+  /** A secret shown to the user once, e.g. a new API key (never stored or logged). */
+  secret?: string;
 };
 
 export const initialFormState: FormState = {};

@@ -4,6 +4,7 @@ import { sql } from "drizzle-orm";
 
 import { getVisibleAircraft } from "@/lib/aircraft/public";
 import { getAirport } from "@/lib/airports";
+import { syncAircraftCalendars } from "@/lib/calendar-sync/sync";
 import { asUser } from "@/lib/db/rls";
 import { isWeekend, localDaysTouched, toRange, zonedToUtc } from "@/lib/domain/time";
 import { estimatePrice } from "@/lib/domain/pricing";
@@ -51,6 +52,8 @@ export async function requestBooking(
     weekend: isWeekend(from, "UTC"),
   });
 
+  // SYN-2: busy times from linked calendars are fresh, so time taken elsewhere isn't requested.
+  await syncAircraftCalendars(a.id);
   try {
     const rows = (await asUser(userId, (tx) =>
       tx.execute(sql`select public.request_booking(

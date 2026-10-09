@@ -24,6 +24,7 @@ export const errorBody = z.object({
     code: z.string().describe("Stable machine-readable code, e.g. not_found"),
     message: z.string().describe("For developers (English)"),
     fields: z.record(z.string(), z.array(z.string())).optional().describe("Per-field errors"),
+    details: z.record(z.string(), z.unknown()).optional().describe("Extra facts, e.g. on 409"),
   }),
 });
 
@@ -185,9 +186,39 @@ export const bookingDetail = z.object({
   createdAt: time.nullable(),
 });
 
+export const syncConnection = z.object({
+  connection: z.object({ id, name: z.string() }),
+  aircraft: z.object({ id, registration: z.string() }),
+});
+
+export const busyTime = z.object({
+  from: time,
+  to: time,
+  kind: z.enum(["booking", "blocked"]).describe("An ownAplane booking or request, or blocked time"),
+});
+
+const pushStatus = z
+  .enum(["active", "covered", "ignored"])
+  .describe(
+    "active = blocks the aircraft; covered = the time was already blocked; ignored = in the past or too far ahead",
+  );
+
+export const pushResult = z.object({ externalId: z.string(), status: pushStatus });
+
+export const pushAllResult = z.object({
+  count: z.number().int().describe("Busy times stored"),
+  removed: z.number().int().describe("Busy times removed because they were no longer sent"),
+  active: z.number().int(),
+  covered: z.number().int(),
+  conflicts: z
+    .array(z.string())
+    .describe("Your ids that overlap an ownAplane booking: kept for the owner to resolve"),
+});
+
 export type Me = z.infer<typeof me>;
 export type Airport = z.infer<typeof airport>;
 export type AircraftSummary = z.infer<typeof aircraftSummary>;
 export type AircraftDetail = z.infer<typeof aircraftDetail>;
 export type BookingSummary = z.infer<typeof bookingSummary>;
 export type BookingDetail = z.infer<typeof bookingDetail>;
+export type BusyTimeDto = z.infer<typeof busyTime>;

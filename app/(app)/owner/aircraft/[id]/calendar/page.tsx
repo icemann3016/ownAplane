@@ -66,7 +66,8 @@ export default async function CalendarPage({
             spans={inMonth.map((e) => ({
               ...e,
               pending: e.bookingStatus === "requested",
-              detail: e.pilotName ?? e.note,
+              detail:
+                e.pilotName ?? (e.source ? t("calendar.fromSource", { name: e.source }) : e.note),
               href: e.bookingId ? `/bookings/${e.bookingId}` : null,
             }))}
             mode="owner"
@@ -103,9 +104,14 @@ export default async function CalendarPage({
                         <Badge variant="outline">{t(`calendar.kinds.${entry.kind}`)}</Badge>
                         <span className="text-sm font-medium">{span}</span>
                       </div>
+                      {entry.source && (
+                        <p className="text-sm text-muted-foreground">
+                          {t("calendar.fromSource", { name: entry.source })}
+                        </p>
+                      )}
                       {entry.note && <p className="text-sm break-words">{entry.note}</p>}
                     </div>
-                    {entry.kind !== "booking" && (
+                    {entry.kind !== "booking" && !entry.source && (
                       <form action={deleteCalendarBlock}>
                         <input type="hidden" name="aircraftId" value={id} />
                         <input type="hidden" name="id" value={entry.id} />

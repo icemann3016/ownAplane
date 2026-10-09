@@ -365,6 +365,20 @@
       "when": 1790931282799,
       "tag": "0051_leg_order_checks",
       "breakpoints": true
+    },
+    {
+      "idx": 52,
+      "version": "7",
+      "when": 1791525651170,
+      "tag": "0052_calendar_connections",
+      "breakpoints": true
+    },
+    {
+      "idx": 53,
+      "version": "7",
+      "when": 1791525676830,
+      "tag": "0053_calendar_sync_security",
+      "breakpoints": true
     }
   ]
 }

@@ -2,12 +2,34 @@ import "server-only";
 
 import { sql } from "drizzle-orm";
 
+import { syncAircraftCalendars } from "@/lib/calendar-sync/sync";
 import { asUser } from "@/lib/db/rls";
 import { toRange } from "@/lib/domain/time";
 
 export type RespondOutcome = { ok: true; status: string } | { ok: false; error: string };
 
 /** The owner accepts or declines a request, optionally suggesting another time (BKG-3). */
+/**
+ * SYN-2, SYN-5: before accepting, read the aircraft's linked calendars again; refuse when another
+ * system has the aircraft busy at the requested time (kept as a conflict while the request holds
+ * the time). RLS: only the owner sees the calendar.
+ */
+async function bookedElsewhere(ownerId: string, bookingId: string): Promise<boolean> {
+  const [booking] = (await asUser(ownerId, (tx) =>
+    tx.execute(sql`select aircraft_id from public.calendar_entries
+      where booking_id = ${bookingId}::uuid and active limit 1`),
+  )) as unknown as { aircraft_id: string }[];
+  if (!booking) return false;
+  await syncAircraftCalendars(booking.aircraft_id);
+  const [row] = (await asUser(ownerId, (tx) =>
+    tx.execute(sql`select exists (
+      select 1 from public.calendar_entries e
+      join public.calendar_entries b on b.booking_id = ${bookingId}::uuid and b.active
+      where e.aircraft_id = b.aircraft_id and e.conflict and e.period && b.period) as clash`),
+  )) as unknown as { clash: boolean }[];
+  return row?.clash ?? false;
+}
+
 export async function respondToBooking(
   ownerId: string,
   bookingId: string,
@@ -15,6 +37,9 @@ export async function respondToBooking(
   note: string | null,
   proposal: { from: Date; to: Date } | null,
 ): Promise<RespondOutcome> {
+  if (decision === "accept" && (await bookedElsewhere(ownerId, bookingId))) {
+    return { ok: false, error: "booked_elsewhere" };
+  }
   try {
     const rows = (await asUser(ownerId, (tx) =>
       tx.execute(sql`select public.respond_to_booking(${bookingId}::uuid, ${decision}, ${note},

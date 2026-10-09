@@ -16,6 +16,7 @@ export function SectionNav({ id, done }: { id: string; done: string[] }) {
   const items = [
     { href: base, key: "overview" },
     { href: `${base}/calendar`, key: "calendar" },
+    { href: `${base}/sync`, key: "sync" },
     ...SECTIONS.map((s) => ({ href: `${base}/${s}`, key: s })),
     { href: `${base}/defects`, key: "defects" },
     { href: `${base}/remarks`, key: "remarks" },

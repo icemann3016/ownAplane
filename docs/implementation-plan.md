@@ -124,18 +124,28 @@ Aircraft home bases are airports with latitude/longitude. The search (`lib/aircr
   (`z.toJSONSchema`) at `/api/v1/openapi.json`.
 
 ### 4.10 Calendar sync (SYN-1…7)
-- External busy times are rows in `calendar_entries` (new kind `external`, with the source and its
-  event id), so the **same exclusion constraint** keeps them from overlapping ownAplane bookings.
+- Each other system is a **connection** of the aircraft (`calendar_connections`): its bookings
+  reach us by push API (API key), iCal link or JSON link, or not at all (it only reads ours).
+- External busy times are rows in `calendar_entries` (kind `unavailable`, with `connection_id` and
+  the other system's id), so the **same exclusion constraint** keeps them from overlapping
+  ownAplane bookings. Pilots see them as "unavailable".
 - iCal import: the owner's ICS links are fetched by a sync job (target every 15 min) and again,
   with a short timeout, right before a booking request is created or accepted (SYN-2). Events are
   upserted by UID; removed events are deactivated. Recurring events are expanded for the next 12
   months.
 - An imported event that overlaps an active ownAplane booking can't be stored as active: it is kept
-  as a **conflict** and the owner is notified (SYN-5).
-- iCal export: a secret, resettable link per aircraft (`/api/v1/calendars/<token>.ics`) with busy
-  times only (SYN-3).
-- Push API for partners (SYN-4): `PUT/DELETE /api/v1/aircraft/{id}/external-busy/{externalId}` with
-  a per-aircraft API key (stored hashed); 409 on overlap.
+  inactive as a **conflict** and the owner is notified (SYN-5); one that overlaps only an owner
+  block is kept as "covered". A trigger activates them when what was in the way is released.
+  Accepting a request is refused while another system holds that time.
+- Feed links: public `https` only (private addresses refused, also after redirects), 8 s, 2 MB;
+  iCal parsed with `ical.js` (approved 2026-10-09), recurring events expanded for 400 days.
+- iCal export: a secret, resettable link per connection (`/api/v1/calendars/<token>.ics`) with
+  busy times only, without that connection's own (SYN-3).
+- Push API for partners (SYN-4): `/api/v1/sync/busy[/{externalId}]` (GET our busy times, PUT one
+  or a full snapshot, DELETE) with the connection's API key (`oap_…`, stored as SHA-256); 409 on
+  overlap with a booking (still recorded as a conflict).
+- Reading links: every 15 min (`/api/cron/sync` from a GitHub Actions schedule), hourly in the
+  daily job, and right before a booking is requested or accepted.
 
 ## 5. Data model (Phase 1)
 

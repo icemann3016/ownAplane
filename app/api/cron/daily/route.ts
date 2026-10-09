@@ -1,7 +1,7 @@
-import { timingSafeEqual } from "node:crypto";
-
 import { sendAircraftExpiryReminders, unlistExpiredAircraft } from "@/lib/aircraft/expiry";
 import { expireBookingRequests } from "@/lib/bookings/queries";
+import { syncDueCalendars } from "@/lib/calendar-sync/sync";
+import { cronAuthorized } from "@/lib/cron";
 import { deleteOrphanDocuments } from "@/lib/documents";
 import { deliverMessageEmails } from "@/lib/messages/emails";
 import { createBookingReminders, deliverNotificationEmails } from "@/lib/notifications";
@@ -20,19 +20,12 @@ import { publishDueReviews } from "@/lib/reviews/jobs";
  *   that weren't sent right away
  * - emails about unread messages not emailed yet (MSG-1)
  * - publishes reviews whose 14-day window has closed (RAT-3)
+ * - reads linked calendars not read for an hour (SYN-2; /api/cron/sync does it every 15 min)
  */
 export const maxDuration = 60;
 
-function authorized(request: Request): boolean {
-  const secret = process.env.CRON_SECRET;
-  if (!secret) return false;
-  const given = Buffer.from(request.headers.get("authorization") ?? "");
-  const expected = Buffer.from(`Bearer ${secret}`);
-  return given.length === expected.length && timingSafeEqual(given, expected);
-}
-
 export async function GET(request: Request) {
-  if (!authorized(request)) {
+  if (!cronAuthorized(request)) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
   const expiredRequests = await expireBookingRequests();
@@ -44,6 +37,7 @@ export async function GET(request: Request) {
   const bookingReminders = await createBookingReminders();
   const notificationEmails = await deliverNotificationEmails(500);
   const messageEmails = await deliverMessageEmails(500);
+  const linkedCalendars = await syncDueCalendars(60 * 60_000, 200);
   const result = {
     expiredRequests,
     reminders,
@@ -54,6 +48,7 @@ export async function GET(request: Request) {
     bookingReminders,
     notificationEmails,
     messageEmails,
+    linkedCalendars,
   };
   console.info("[cron] daily", result);
   return Response.json({ ok: true, ...result });

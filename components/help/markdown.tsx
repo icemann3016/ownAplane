@@ -123,7 +123,10 @@ export function Markdown({ blocks }: { blocks: Block[] }) {
             );
           case "code":
             return (
-              <pre key={i} className="overflow-x-auto rounded-md bg-muted p-3 text-sm">
+              <pre
+                key={i}
+                className="rounded-md bg-muted p-3 text-sm break-all whitespace-pre-wrap"
+              >
                 <code>{block.text}</code>
               </pre>
             );

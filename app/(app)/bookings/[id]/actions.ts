@@ -48,6 +48,7 @@ export async function answerBooking(_prev: FormState, formData: FormData): Promi
       "pilot_not_eligible",
       "bad_proposal",
       "aircraft_grounded",
+      "booked_elsewhere",
     ];
     return {
       message: t(

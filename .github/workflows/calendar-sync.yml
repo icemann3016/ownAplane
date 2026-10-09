@@ -1,0 +1,29 @@
+# Reads linked calendars (iCal/JSON links of other booking systems, SYN-2) every 15 minutes:
+# Vercel's Hobby plan runs scheduled jobs only once a day. Needs the repository secret
+# CRON_SECRET (Settings → Secrets and variables → Actions), the same value as on Vercel;
+# without it the job does nothing.
+name: Calendar sync
+
+on:
+  schedule:
+    - cron: "7,22,37,52 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Read linked calendars
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          SITE_URL: ${{ vars.SITE_URL || 'https://ownaplane.eu' }}
+        run: |
+          if [ -z "$CRON_SECRET" ]; then
+            echo "CRON_SECRET is not set: nothing to do."
+            exit 0
+          fi
+          curl --fail-with-body --silent --show-error --max-time 90 \
+            -H "Authorization: Bearer $CRON_SECRET" "$SITE_URL/api/cron/sync"

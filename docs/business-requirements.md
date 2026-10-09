@@ -232,7 +232,7 @@ and the other system should see ownAplane bookings.
 
 | ID | Pri | Requirement |
 |----|-----|-------------|
-| SYN-1 | M | The owner connects an aircraft to one or more external calendars by **iCal (ICS) link** (Google Calendar, Outlook, most club booking systems). Their busy times block the aircraft in ownAplane like the owner's own blocks; pilots see only "busy", never names or notes. |
+| SYN-1 | M | The owner connects an aircraft to one or more other systems, whatever kind they are: by **iCal (ICS) link** (Google Calendar, Outlook, most club booking systems), by a simple **JSON link** (for custom systems), or by letting the system **push** its bookings (SYN-4). Their busy times block the aircraft in ownAplane like the owner's own blocks; pilots see only "busy", never names or notes. |
 | SYN-2 | M | Connected calendars are refreshed regularly (target: every 15 minutes) **and again right before** a booking request is created or accepted for that aircraft. If a calendar can't be read, the owner is warned and the booking shows when the calendar was last checked. |
 | SYN-3 | M | Every aircraft has a private **iCal export link** with its ownAplane bookings and blocks (busy times only, no personal data) for the other system to subscribe to. The owner can reset the link. |
 | SYN-4 | M | Partner systems can **push** busy times in real time through the API (create, change, delete by their own id). The API refuses a time that overlaps an ownAplane booking (HTTP 409), so their system can refuse it too. Access with a key the owner creates per aircraft and can revoke. |

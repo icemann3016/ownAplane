@@ -12,7 +12,7 @@ import { type Block, parseMarkdown, plainText } from "./markdown";
 export const HELP_CATEGORIES = [
   { key: "start", slugs: ["getting-started", "account"] },
   { key: "pilots", slugs: ["pilot-credentials", "finding-and-booking", "flying-and-flight-log"] },
-  { key: "owners", slugs: ["listing-an-aircraft", "owner-bookings-and-history"] },
+  { key: "owners", slugs: ["listing-an-aircraft", "owner-bookings-and-history", "calendar-sync"] },
   {
     key: "everyone",
     slugs: [

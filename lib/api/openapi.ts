@@ -5,7 +5,13 @@ import { z } from "zod";
 import { siteConfig } from "@/lib/site";
 import { appUrl } from "@/lib/site-url";
 import * as R from "./responses";
-import { aircraftSearchQuery, airportQuery } from "./schemas";
+import {
+  aircraftSearchQuery,
+  airportQuery,
+  busyWindowQuery,
+  pushAllBody,
+  pushBusyBody,
+} from "./schemas";
 
 // The API's OpenAPI 3.1 description (API-5), built from the same Zod schemas the endpoints use
 // for input and the DTOs return, so it can't drift. Served at /api/v1/openapi.json.
@@ -61,6 +67,13 @@ const errors = (...codes: number[]) =>
       { description: "Error", content: { "application/json": { schema: ref("Error") } } },
     ]),
   );
+const input = (schema: z.ZodType) =>
+  z.toJSONSchema(schema, { io: "input", unrepresentable: "any" }) as JsonSchema;
+const jsonBody = (schema: z.ZodType) => ({
+  required: true,
+  content: { "application/json": { schema: input(schema) } },
+});
+const connectionKey = [{ connectionKey: [] }];
 const signedIn = [{ bearer: [] }];
 const optionalSignIn = [{}, { bearer: [] }];
 
@@ -84,7 +97,15 @@ export function openApiDocument() {
     },
     servers: [{ url: appUrl() }],
     components: {
-      securitySchemes: { bearer: { type: "http", scheme: "bearer" } },
+      securitySchemes: {
+        bearer: { type: "http", scheme: "bearer", description: "A user's token from sign-in" },
+        connectionKey: {
+          type: "http",
+          scheme: "bearer",
+          description:
+            "Calendar sync for partner systems: the API key (oap_…) the aircraft's owner created for your system under Aircraft → Calendar sync",
+        },
+      },
       schemas: {
         Error: output(R.errorBody),
         Me: output(R.me),
@@ -93,6 +114,10 @@ export function openApiDocument() {
         Aircraft: output(R.aircraftDetail),
         BookingSummary: output(R.bookingSummary),
         Booking: output(R.bookingDetail),
+        SyncConnection: output(R.syncConnection),
+        BusyTime: output(R.busyTime),
+        PushResult: output(R.pushResult),
+        PushAllResult: output(R.pushAllResult),
       },
     },
     paths: {
@@ -186,6 +211,63 @@ export function openApiDocument() {
           security: signedIn,
           parameters: [pathId("id", "Booking id (uuid)")],
           responses: { ...ok(ref("Booking")), ...errors(401, 404) },
+        },
+      },
+      "/api/v1/sync": {
+        get: {
+          tags: ["calendar sync"],
+          summary: "Which connection and aircraft your API key belongs to",
+          security: connectionKey,
+          responses: { ...ok(ref("SyncConnection")), ...errors(401) },
+        },
+      },
+      "/api/v1/sync/busy": {
+        get: {
+          tags: ["calendar sync"],
+          summary: "When the aircraft is busy in ownAplane (without your own busy times)",
+          description: "Check this before you confirm a booking in your system.",
+          security: connectionKey,
+          parameters: queryParameters(busyWindowQuery),
+          responses: { ...ok(ref("BusyTime"), true), ...errors(400, 401) },
+        },
+        put: {
+          tags: ["calendar sync"],
+          summary: "Replace all your busy times (a full snapshot); missing ones are removed",
+          security: connectionKey,
+          requestBody: jsonBody(pushAllBody),
+          responses: { ...ok(ref("PushAllResult")), ...errors(400, 401) },
+        },
+      },
+      "/api/v1/sync/busy/{externalId}": {
+        put: {
+          tags: ["calendar sync"],
+          summary: "Create or move one of your bookings",
+          description:
+            "409 `conflict` when it overlaps an ownAplane booking: it is still recorded and the owner is asked to resolve it (`error.details.recorded`).",
+          security: connectionKey,
+          parameters: [pathId("externalId", "Your system's id of the booking")],
+          requestBody: jsonBody(pushBusyBody),
+          responses: { ...ok(ref("PushResult")), ...errors(400, 401, 409) },
+        },
+        delete: {
+          tags: ["calendar sync"],
+          summary: "Your booking was cancelled: the time is free again",
+          security: connectionKey,
+          parameters: [pathId("externalId", "Your system's id of the booking")],
+          responses: { 200: { description: "Deleted" }, ...errors(401, 404) },
+        },
+      },
+      "/api/v1/calendars/{token}.ics": {
+        get: {
+          tags: ["calendar sync"],
+          summary: "Our busy times for one connected system as an iCal feed (subscribe to it)",
+          description:
+            "The link is shown to the owner under Calendar sync; the token is the secret.",
+          parameters: [pathId("token", "The secret part of the link")],
+          responses: {
+            200: { description: "iCal calendar", content: { "text/calendar": {} } },
+            ...errors(404),
+          },
         },
       },
     },

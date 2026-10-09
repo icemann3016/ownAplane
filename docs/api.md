@@ -51,8 +51,58 @@ Authorization: Bearer <token>
 | GET | `/api/v1/bookings` | required | Your bookings as pilot and owner |
 | GET | `/api/v1/bookings/{id}` | required | One booking with its history |
 
-Next (M12–M13): booking actions, flight log, messages, notifications, calendar sync (iCal links
-and a push API for partner systems).
+Calendar sync endpoints for partner systems are listed below.
+
+Next (M13): booking actions, flight log, messages, notifications through the API.
+
+## Calendar sync for other booking systems (SYN-1…5)
+
+An aircraft's owner connects other systems under **Aircraft → Calendar sync** (help article
+`/help/calendar-sync`). Each connection works in one of these ways, and every connection also gets
+a private iCal link with our busy times (without its own, so nothing echoes back):
+
+| The other system… | How |
+|---|---|
+| **pushes its bookings to us** (real time, any system that can call a URL) | API key `oap_…` from the owner, endpoints below |
+| publishes an **iCal link** | we read it every 15 minutes and right before a booking is requested or accepted |
+| publishes a **JSON link** | same, format below |
+| only reads ours | subscribes to `/api/v1/calendars/<token>.ics` |
+
+### Push API (API key)
+
+All with `Authorization: Bearer oap_…`; the key decides the aircraft.
+
+| Method | Path | What |
+|--------|------|------|
+| GET | `/api/v1/sync` | Which connection and aircraft the key belongs to |
+| GET | `/api/v1/sync/busy?from=&to=` | When the aircraft is busy in ownAplane (bookings, requests, blocks, other systems; not yours). **Check before you confirm a booking.** |
+| PUT | `/api/v1/sync/busy/{yourId}` | `{ "start": "…Z", "end": "…Z" }`: create or move one booking. **409 `conflict`** if it overlaps an ownAplane booking: it is still recorded, the owner is told to resolve it |
+| DELETE | `/api/v1/sync/busy/{yourId}` | The booking was cancelled; the time is free again |
+| PUT | `/api/v1/sync/busy` | `{ "busy": [ { "id", "start", "end" } ] }`: replace everything (a full snapshot); missing ids are removed. Returns the ids that conflict |
+
+Statuses: `active` (blocks the aircraft), `covered` (the owner had already blocked that time),
+`ignored` (in the past or more than 400 days ahead), `conflict` (409, see above).
+
+**Avoiding double bookings both ways:** before your system confirms a booking, ask
+`GET /api/v1/sync/busy` (or read our iCal link); after it confirms, `PUT` it at once. ownAplane
+does the same in reverse: it refreshes linked calendars right before a request or acceptance, and
+refuses an acceptance while another system has the time.
+
+### JSON link format
+
+```json
+{ "busy": [ { "id": "42", "start": "2026-10-20T08:00:00Z", "end": "2026-10-20T11:00:00Z" } ] }
+```
+
+A plain array works too, and `from`/`to` instead of `start`/`end`. Times are ISO 8601 with an
+offset. Links must be public `https` addresses (no private networks), answer within 8 seconds
+and be at most 2 MB; recurring iCal events are expanded for the next 400 days.
+
+### Scheduled reading
+
+`/api/cron/sync` (with `Authorization: Bearer $CRON_SECRET`) reads links not read for 10 minutes.
+It runs every 15 minutes from GitHub Actions (`.github/workflows/calendar-sync.yml`, needs the
+repository secret `CRON_SECRET`, same value as on Vercel) and hourly as part of the daily job.
 
 ## For developers of this repo
 

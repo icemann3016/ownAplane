@@ -4,10 +4,15 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 // Security guard (API-2, like lib/server-actions.test.ts): every /api/v1 endpoint checks the
-// token (requireApiUser, or optionalApiUser where anonymous visitors may read public data) and
-// answers through apiRoute (JSON errors, nothing internal leaks). Public on purpose: airports
-// and the OpenAPI description.
-const PUBLIC = ["app/api/v1/airports/route.ts", "app/api/v1/airports/[ident]/route.ts"];
+// token (requireApiUser, or optionalApiUser where anonymous visitors may read public data; partner
+// systems use their connection's API key, requireConnection) and answers through apiRoute (JSON
+// errors, nothing internal leaks). Public on purpose: airports, the OpenAPI description, and the
+// iCal export (the secret token in its link is the access check, SYN-3).
+const PUBLIC = [
+  "app/api/v1/airports/route.ts",
+  "app/api/v1/airports/[ident]/route.ts",
+  "app/api/v1/calendars/[file]/route.ts",
+];
 const DESCRIPTION = "app/api/v1/openapi.json/route.ts";
 
 const files = execSync("find app/api/v1 -name route.ts", { encoding: "utf8" })
@@ -28,6 +33,8 @@ describe("API routes", () => {
       expect(source.slice(source.indexOf(line)).startsWith(`${line}apiRoute(`)).toBe(true);
     }
     expect(source).not.toMatch(/^export (async )?function (GET|POST|PUT|PATCH|DELETE)/m);
-    if (!PUBLIC.includes(file)) expect(source).toMatch(/\b(requireApiUser|optionalApiUser)\(/);
+    if (!PUBLIC.includes(file)) {
+      expect(source).toMatch(/\b(requireApiUser|optionalApiUser|requireConnection)\(/);
+    }
   });
 });

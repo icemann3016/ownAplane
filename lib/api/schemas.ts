@@ -58,3 +58,54 @@ export function toSearchFilters(q: z.infer<typeof aircraftSearchQuery>): SearchF
     eligible: q.eligible ?? false,
   };
 }
+
+// --- Calendar sync for partner systems (SYN-4) ---
+
+const DAY = 24 * 60 * 60 * 1000;
+
+export const busyWindowQuery = z
+  .object({
+    from: instant.optional().describe("Default: now"),
+    to: instant.optional().describe("Default: 90 days after `from`; at most 400 days"),
+  })
+  .transform((q) => {
+    const from = q.from ? new Date(q.from) : new Date();
+    const to = q.to ? new Date(q.to) : new Date(from.getTime() + 90 * DAY);
+    return { from, to };
+  })
+  .refine((w) => w.to > w.from && w.to.getTime() - w.from.getTime() <= 400 * DAY, {
+    path: ["to"],
+    message: "to must be after from, at most 400 days later",
+  });
+
+const busyTimes = z
+  .object({
+    start: instant.describe("ISO 8601 with offset, e.g. 2026-10-20T08:00:00Z"),
+    end: instant,
+  })
+  .refine((b) => new Date(b.end) > new Date(b.start), {
+    path: ["end"],
+    message: "end must be after start",
+  });
+
+export const pushBusyBody = busyTimes;
+
+export const pushAllBody = z.object({
+  busy: z
+    .array(
+      z
+        .object({
+          id: z.union([z.string().min(1).max(200), z.number()]).transform(String),
+          start: instant,
+          end: instant,
+        })
+        .refine((b) => new Date(b.end) > new Date(b.start), {
+          path: ["end"],
+          message: "end must be after start",
+        }),
+    )
+    .max(2000)
+    .describe("Everything your system has for this aircraft; anything missing is removed"),
+});
+
+export const externalId = z.string().min(1).max(200).describe("Your system's id of the booking");

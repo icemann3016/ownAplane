@@ -34,6 +34,8 @@ export class ApiError extends Error {
     readonly code: ApiErrorCode,
     message: string,
     readonly fields?: Record<string, string[]>,
+    /** Extra machine-readable facts, e.g. what was recorded despite a conflict. */
+    readonly details?: Record<string, unknown>,
   ) {
     super(message);
   }
@@ -49,7 +51,14 @@ export function errorResponse(e: ApiError) {
   const headers: Record<string, string> =
     e.code === "unauthorized" ? { "www-authenticate": 'Bearer realm="api"' } : {};
   return json(
-    { error: { code: e.code, message: e.message, ...(e.fields ? { fields: e.fields } : {}) } },
+    {
+      error: {
+        code: e.code,
+        message: e.message,
+        ...(e.fields ? { fields: e.fields } : {}),
+        ...(e.details ? { details: e.details } : {}),
+      },
+    },
     { status: STATUS[e.code], headers },
   );
 }

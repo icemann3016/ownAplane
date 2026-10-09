@@ -49,7 +49,9 @@
       "reference": "Referenz: {digest}",
       "retry": "Erneut versuchen"
     },
-    "skipToContent": "Zum Inhalt springen"
+    "skipToContent": "Zum Inhalt springen",
+    "copy": "Kopieren",
+    "copied": "Kopiert"
   },
   "home": {
     "badge": "Frühe Vorschau · Europa",
@@ -226,7 +228,9 @@
     "timeAfter": "Muss nach {other} liegen.",
     "timeNotBefore": "Darf nicht vor {other} liegen.",
     "fuelNotBurned": "Kraftstoff danach muss niedriger sein als davor. Tanken erfassen Sie mit „Kraftstoff oder Öl hinzufügen“.",
-    "oilRose": "Öl danach darf nicht höher sein als davor. Nachgefülltes Öl erfassen Sie mit „Kraftstoff oder Öl hinzufügen“."
+    "oilRose": "Öl danach darf nicht höher sein als davor. Nachgefülltes Öl erfassen Sie mit „Kraftstoff oder Öl hinzufügen“.",
+    "connectionNameRequired": "Geben Sie der Verbindung einen Namen.",
+    "feedUrlInvalid": "Geben Sie den vollständigen https://-Link ein."
   },
   "dashboard": {
     "title": "Willkommen, {name}",
@@ -597,6 +601,10 @@
       "review_replied": {
         "subject": "{other} hat auf Ihre Bewertung von {registration} geantwortet",
         "body": "{other} hat öffentlich auf Ihre Bewertung von {registration} geantwortet. Sie können die Antwort in der Buchung lesen."
+      },
+      "calendar_conflict": {
+        "subject": "Doppelbuchung: {registration} ab {when}",
+        "body": "Ein verbundenes Buchungssystem hat {registration} zur selben Zeit belegt wie die Buchung ab {when}. Stornieren Sie eine davon: in ownAplane oder im anderen System."
       }
     },
     "newMessage": {
@@ -1161,7 +1169,8 @@
       "calendar": "Kalender",
       "remarks": "Bemerkungen",
       "usage": "Nutzung",
-      "defects": "Mängel"
+      "defects": "Mängel",
+      "sync": "Kalender-Sync"
     },
     "sectionText": {
       "details": "Kennzeichen, Muster und Leistung.",
@@ -1556,7 +1565,8 @@
       "checkAvailability": "Verfügbarkeit prüfen",
       "requestBooking": "Buchung anfragen",
       "blockTime": "Diese Zeit sperren",
-      "pending": "angefragt, noch nicht bestätigt"
+      "pending": "angefragt, noch nicht bestätigt",
+      "fromSource": "Von {name}"
     },
     "availability": {
       "title": "Verfügbarkeit",
@@ -1744,7 +1754,8 @@
         "pilot_not_eligible": "Der Pilot erfüllt Ihre Anforderungen für diesen Flug nicht mehr (z. B. ist ein Nachweis abgelaufen), daher kann sie nicht angenommen werden.",
         "bad_proposal": "Schlagen Sie eine Zeit in der Zukunft vor.",
         "failed": "Das hat nicht funktioniert. Bitte versuchen Sie es erneut.",
-        "aircraft_grounded": "Das Flugzeug ist am Boden festgesetzt. Bieten Sie es wieder an, bevor Sie annehmen."
+        "aircraft_grounded": "Das Flugzeug ist am Boden festgesetzt. Bieten Sie es wieder an, bevor Sie annehmen.",
+        "booked_elsewhere": "Diese Zeit ist in einem verbundenen System gebucht (siehe Kalender-Sync). Lehnen Sie die Anfrage ab oder stornieren Sie zuerst die Buchung im anderen System."
       }
     },
     "cancel": {
@@ -2074,7 +2085,8 @@
       "instant_booked": "{other} hat {registration} ab {when} gebucht (Sofortbuchung).",
       "review_submitted": "{other} hat die Buchung von {registration} bewertet. Schreiben Sie Ihre Bewertung, um sie zu sehen.",
       "reviews_published": "Die Bewertungen zu {registration} sind jetzt veröffentlicht.",
-      "review_replied": "{other} hat auf Ihre Bewertung von {registration} geantwortet."
+      "review_replied": "{other} hat auf Ihre Bewertung von {registration} geantwortet.",
+      "calendar_conflict": "Eine Buchung in einem verbundenen System überschneidet sich mit der Buchung von {registration} ab {when}. Stornieren Sie eine davon."
     }
   },
   "checkoutFlight": {
@@ -2361,5 +2373,105 @@
     },
     "changeRoles": "Pilot / Halter ändern",
     "later": "Jetzt überspringen, zur Übersicht"
+  },
+  "calendarSync": {
+    "title": "Kalender-Sync",
+    "intro": "Verbinden Sie dieses Flugzeug mit anderen Buchungssystemen (Verein, Flugschule, Google Kalender, andere Plattform), damit es nie doppelt gebucht wird. Deren Buchungen blockieren hier die Zeit; unsere können dort angezeigt werden.",
+    "helpLink": "So funktioniert der Kalender-Sync",
+    "connections": "Verbundene Systeme",
+    "none": "Noch keine verbundenen Systeme.",
+    "add": {
+      "title": "System verbinden",
+      "name": "Name",
+      "namePlaceholder": "z. B. Buchungssystem des Aeroclubs",
+      "how": "Wie kommen dessen Buchungen zu uns?",
+      "icalUrl": "iCal-Link",
+      "jsonUrl": "JSON-Link",
+      "urlHint": "Der private Link aus dem anderen System. webcal://-Links funktionieren auch.",
+      "linkIs": "Link:",
+      "submit": "Verbinden",
+      "connecting": "Wird verbunden…"
+    },
+    "kinds": {
+      "push": {
+        "label": "Es schickt sie uns (API)",
+        "hint": "Echtzeit-Sync für ein System, das eine Webadresse aufrufen kann. Sie erhalten einen API-Schlüssel für dessen Entwickler."
+      },
+      "ical": {
+        "label": "iCal-Link",
+        "hint": "Google Kalender, Outlook und die meisten Buchungssysteme: Kopieren Sie die private iCal-Adresse des Kalenders."
+      },
+      "json": {
+        "label": "JSON-Link",
+        "hint": "Für ein eigenes System: ein Link, der dessen Buchungen in einem einfachen Format auflistet (siehe Hilfe)."
+      },
+      "none": {
+        "label": "Es liest nur unseren",
+        "hint": "Verwenden Sie unseren iCal-Link im anderen System; nichts kommt zurück."
+      }
+    },
+    "added": {
+      "push": "Verbunden. Kopieren Sie den API-Schlüssel jetzt: Er wird nur einmal angezeigt.",
+      "synced": "Verbunden und gelesen: {count, plural, =0 {keine belegten Zeiten} one {# belegte Zeit} other {# belegte Zeiten}}.",
+      "failed": "Verbunden, aber der Link konnte nicht gelesen werden: {reason}.",
+      "none": "Verbunden. Verwenden Sie den iCal-Link unten im anderen System."
+    },
+    "synced": "Gelesen: {count, plural, =0 {keine belegten Zeiten} one {# belegte Zeit} other {# belegte Zeiten}}.",
+    "syncNow": "Jetzt synchronisieren",
+    "syncing": "Wird gelesen…",
+    "working": "Bitte warten…",
+    "cancel": "Abbrechen",
+    "keyReplaced": "Neuer API-Schlüssel erstellt. Der alte funktioniert nicht mehr.",
+    "status": {
+      "never": "Noch nicht gelesen.",
+      "ok": "Zuletzt gelesen {when} UTC: {count, plural, =0 {keine belegten Zeiten} one {# belegte Zeit} other {# belegte Zeiten}}. Wird alle 15 Minuten und vor jeder Buchung gelesen.",
+      "error": "Lesen um {when} UTC fehlgeschlagen: {reason}. Die zuvor gelesenen belegten Zeiten bleiben bestehen.",
+      "push": "{count, plural, =0 {Noch keine belegten Zeiten gesendet} one {# belegte Zeit von diesem System} other {# belegte Zeiten von diesem System}}.",
+      "none": "Dieses System liest nur unseren iCal-Link."
+    },
+    "conflicts": {
+      "title": "Doppelbuchungen mit {name}",
+      "text": "Diese Zeiten sind hier und im anderen System gebucht. Stornieren Sie eine der Buchungen, hier oder dort; die Warnung verschwindet von selbst.",
+      "openBooking": "Buchung öffnen"
+    },
+    "exportLink": {
+      "label": "Unser iCal-Link für dieses System",
+      "hint": "Abonnieren Sie ihn im anderen System, um zu sehen, wann das Flugzeug hier belegt ist (nur Zeiten, keine Namen). Halten Sie ihn privat.",
+      "reset": "Link erneuern",
+      "resetTitle": "iCal-Link erneuern?",
+      "resetText": "Der aktuelle Link funktioniert sofort nicht mehr. Tragen Sie den neuen im anderen System ein."
+    },
+    "apiKey": {
+      "current": "API-Schlüssel endet auf …{hint}.",
+      "docs": "Anleitung für dessen Entwickler",
+      "replace": "API-Schlüssel ersetzen",
+      "shown": "API-Schlüssel (wird nur einmal angezeigt)",
+      "shownHint": "Geben Sie ihn den Entwicklern des anderen Systems. Er wird gesendet als: {header}."
+    },
+    "remove": {
+      "button": "Trennen",
+      "title": "{name} trennen?",
+      "text": "Dessen belegte Zeiten werden hier entfernt, diese Zeit kann also wieder gebucht werden. Unser iCal-Link dafür funktioniert nicht mehr."
+    },
+    "errors": {
+      "too_many": "Ein Flugzeug kann höchstens 10 verbundene Systeme haben.",
+      "not_allowed": "Sie können dieses Flugzeug nicht ändern.",
+      "not_found": "Diese Verbindung wurde nicht gefunden."
+    },
+    "feedErrors": {
+      "url_invalid": "der Link ist keine gültige https-Adresse",
+      "address_blocked": "der Link zeigt auf eine Adresse in einem privaten Netzwerk",
+      "unreachable": "der Server war nicht erreichbar",
+      "http_error": "der Server hat mit einem Fehler geantwortet",
+      "too_large": "der Kalender ist größer als 2 MB",
+      "ical_invalid": "es ist kein iCal-Kalender",
+      "json_invalid": "es hat nicht das erwartete JSON-Format",
+      "failed": "etwas ist schiefgelaufen"
+    },
+    "export": {
+      "name": "{registration} ({site})",
+      "booked": "Gebucht ({site})",
+      "blocked": "Nicht verfügbar"
+    }
   }
 }

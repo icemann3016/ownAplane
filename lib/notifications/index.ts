@@ -28,6 +28,7 @@ export const NOTIFICATION_TYPES = [
   "reviews_published",
   "review_replied",
   "reminder",
+  "calendar_conflict",
 ] as const;
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
 export const knownType = (type: string): NotificationType | "other" =>

@@ -11,7 +11,15 @@ import {
 
 // Accessibility basics on the main flows (KAN-71): sign-up, search, booking, review.
 test("public pages meet the basics", async ({ page }) => {
-  for (const path of ["/", "/signup", "/login", "/search", "/help", "/help/getting-started"]) {
+  for (const path of [
+    "/",
+    "/signup",
+    "/login",
+    "/search",
+    "/help",
+    "/help/getting-started",
+    "/help/calendar-sync",
+  ]) {
     await page.goto(path);
     await expectAccessible(page);
   }

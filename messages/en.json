@@ -49,7 +49,9 @@
       "reference": "Reference: {digest}",
       "retry": "Try again"
     },
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "copy": "Copy",
+    "copied": "Copied"
   },
   "home": {
     "badge": "Early preview · Europe",
@@ -226,7 +228,9 @@
     "timeAfter": "Must be after {other}.",
     "timeNotBefore": "Can't be before {other}.",
     "fuelNotBurned": "Fuel after must be lower than fuel before. Record refuelling with “Add fuel or oil”.",
-    "oilRose": "Oil after can't be higher than oil before. Record oil you added with “Add fuel or oil”."
+    "oilRose": "Oil after can't be higher than oil before. Record oil you added with “Add fuel or oil”.",
+    "connectionNameRequired": "Give the connection a name.",
+    "feedUrlInvalid": "Enter the full https:// link."
   },
   "dashboard": {
     "title": "Welcome, {name}",
@@ -597,6 +601,10 @@
       "review_replied": {
         "subject": "{other} replied to your review of {registration}",
         "body": "{other} replied publicly to your review of {registration}. You can read the reply on the booking."
+      },
+      "calendar_conflict": {
+        "subject": "Double booking: {registration} from {when}",
+        "body": "A connected booking system has {registration} busy at the same time as the booking from {when}. Cancel one of them: in ownAplane, or in the other system."
       }
     },
     "newMessage": {
@@ -1161,7 +1169,8 @@
       "calendar": "Calendar",
       "remarks": "Remarks",
       "usage": "Usage",
-      "defects": "Defects"
+      "defects": "Defects",
+      "sync": "Calendar sync"
     },
     "sectionText": {
       "details": "Registration, type and performance.",
@@ -1556,7 +1565,8 @@
       "checkAvailability": "Check availability",
       "requestBooking": "Request booking",
       "blockTime": "Block this time",
-      "pending": "requested, not confirmed yet"
+      "pending": "requested, not confirmed yet",
+      "fromSource": "From {name}"
     },
     "availability": {
       "title": "Availability",
@@ -1744,7 +1754,8 @@
         "pilot_not_eligible": "The pilot no longer meets your requirements for this flight (for example, a credential expired), so it can't be accepted.",
         "bad_proposal": "Suggest a time in the future.",
         "failed": "That didn't work. Please try again.",
-        "aircraft_grounded": "The aircraft is grounded. List it again before accepting."
+        "aircraft_grounded": "The aircraft is grounded. List it again before accepting.",
+        "booked_elsewhere": "This time is booked in a connected system (see Calendar sync). Decline the request, or cancel the booking in the other system first."
       }
     },
     "cancel": {
@@ -2074,7 +2085,8 @@
       "instant_booked": "{other} booked {registration} from {when} (instant booking).",
       "review_submitted": "{other} reviewed the booking of {registration}. Write yours to see it.",
       "reviews_published": "The reviews for {registration} are now published.",
-      "review_replied": "{other} replied to your review of {registration}."
+      "review_replied": "{other} replied to your review of {registration}.",
+      "calendar_conflict": "A booking in a connected system overlaps the booking of {registration} from {when}. Cancel one of them."
     }
   },
   "checkoutFlight": {
@@ -2361,5 +2373,105 @@
     },
     "changeRoles": "Change pilot / owner",
     "later": "Skip for now, go to the dashboard"
+  },
+  "calendarSync": {
+    "title": "Calendar sync",
+    "intro": "Connect this aircraft to other booking systems (a club or school system, Google Calendar, another platform) so it is never booked twice. Their bookings block the time here; ours can be shown there.",
+    "helpLink": "How calendar sync works",
+    "connections": "Connected systems",
+    "none": "No connected systems yet.",
+    "add": {
+      "title": "Connect a system",
+      "name": "Name",
+      "namePlaceholder": "e.g. Aeroclub booking system",
+      "how": "How do its bookings reach us?",
+      "icalUrl": "iCal link",
+      "jsonUrl": "JSON link",
+      "urlHint": "The private link from the other system. webcal:// links work too.",
+      "linkIs": "Link:",
+      "submit": "Connect",
+      "connecting": "Connecting…"
+    },
+    "kinds": {
+      "push": {
+        "label": "It sends them to us (API)",
+        "hint": "Real-time sync for a system that can call a web address. You get an API key for its developers."
+      },
+      "ical": {
+        "label": "iCal link",
+        "hint": "Google Calendar, Outlook and most booking systems: copy the calendar's private iCal address."
+      },
+      "json": {
+        "label": "JSON link",
+        "hint": "For a custom system: a link that lists its bookings in a simple format (see the help)."
+      },
+      "none": {
+        "label": "It only reads ours",
+        "hint": "Use our iCal link in the other system; nothing comes back."
+      }
+    },
+    "added": {
+      "push": "Connected. Copy the API key now: it is shown only once.",
+      "synced": "Connected and read: {count, plural, =0 {no busy times} one {# busy time} other {# busy times}}.",
+      "failed": "Connected, but the link couldn't be read: {reason}.",
+      "none": "Connected. Use the iCal link below in the other system."
+    },
+    "synced": "Read: {count, plural, =0 {no busy times} one {# busy time} other {# busy times}}.",
+    "syncNow": "Sync now",
+    "syncing": "Reading…",
+    "working": "Working…",
+    "cancel": "Cancel",
+    "keyReplaced": "New API key created. The old one no longer works.",
+    "status": {
+      "never": "Not read yet.",
+      "ok": "Last read {when} UTC: {count, plural, =0 {no busy times} one {# busy time} other {# busy times}}. Read every 15 minutes and before each booking.",
+      "error": "Reading it failed at {when} UTC: {reason}. The busy times read before stay in place.",
+      "push": "{count, plural, =0 {No busy times sent yet} one {# busy time from this system} other {# busy times from this system}}.",
+      "none": "This system only reads our iCal link."
+    },
+    "conflicts": {
+      "title": "Double bookings with {name}",
+      "text": "These times are booked here and in the other system. Cancel one of them, here or there; the warning goes away by itself.",
+      "openBooking": "open the booking"
+    },
+    "exportLink": {
+      "label": "Our iCal link for this system",
+      "hint": "Subscribe to it in the other system to see when the aircraft is busy here (times only, no names). Keep it private.",
+      "reset": "Reset link",
+      "resetTitle": "Reset the iCal link?",
+      "resetText": "The current link stops working at once. Put the new one in the other system."
+    },
+    "apiKey": {
+      "current": "API key ending in …{hint}.",
+      "docs": "Instructions for its developers",
+      "replace": "Replace API key",
+      "shown": "API key (shown only once)",
+      "shownHint": "Give it to the other system's developers. It is sent as: {header}."
+    },
+    "remove": {
+      "button": "Disconnect",
+      "title": "Disconnect {name}?",
+      "text": "Its busy times are removed here, so that time can be booked again. Our iCal link for it stops working."
+    },
+    "errors": {
+      "too_many": "An aircraft can have at most 10 connected systems.",
+      "not_allowed": "You can't change this aircraft.",
+      "not_found": "We couldn't find this connection."
+    },
+    "feedErrors": {
+      "url_invalid": "the link isn't a valid https address",
+      "address_blocked": "the link points to a private network address",
+      "unreachable": "the server couldn't be reached",
+      "http_error": "the server answered with an error",
+      "too_large": "the calendar is larger than 2 MB",
+      "ical_invalid": "it isn't an iCal calendar",
+      "json_invalid": "it isn't in the expected JSON format",
+      "failed": "something went wrong"
+    },
+    "export": {
+      "name": "{registration} ({site})",
+      "booked": "Booked ({site})",
+      "blocked": "Unavailable"
+    }
   }
 }

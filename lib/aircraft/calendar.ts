@@ -4,7 +4,13 @@ import { and, asc, eq, sql } from "drizzle-orm";
 
 import type { Tx } from "@/lib/db";
 import { asAnon, asUser } from "@/lib/db/rls";
-import { bookings, calendarEntries, type CalendarEntryKind, profiles } from "@/lib/db/schema";
+import {
+  bookings,
+  calendarConnections,
+  calendarEntries,
+  type CalendarEntryKind,
+  profiles,
+} from "@/lib/db/schema";
 
 export type CalendarItem = {
   id: string;
@@ -16,6 +22,8 @@ export type CalendarItem = {
   bookingId: string | null;
   bookingStatus: string | null;
   pilotName: string | null;
+  /** For busy times from another system (SYN-1): the connection's name. */
+  source: string | null;
 };
 
 const rangeOf = (from: Date, to: Date) =>
@@ -39,10 +47,12 @@ export async function getCalendarEntries(
         bookingId: calendarEntries.bookingId,
         bookingStatus: bookings.status,
         pilotName: profiles.displayName,
+        source: calendarConnections.name,
       })
       .from(calendarEntries)
       .leftJoin(bookings, eq(bookings.id, calendarEntries.bookingId))
       .leftJoin(profiles, eq(profiles.id, bookings.pilotId))
+      .leftJoin(calendarConnections, eq(calendarConnections.id, calendarEntries.connectionId))
       .where(
         and(
           eq(calendarEntries.aircraftId, aircraftId),
