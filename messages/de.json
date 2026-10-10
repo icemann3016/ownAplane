@@ -20,7 +20,8 @@
       "admin": "Admin",
       "bookings": "Buchungen",
       "help": "Hilfe",
-      "messages": "Nachrichten"
+      "messages": "Nachrichten",
+      "saved": "Gemerkt"
     },
     "footer": {
       "tagline": "Gemacht für die Allgemeine Luftfahrt in Europa.",
@@ -613,6 +614,12 @@
       "greeting": "Hallo {name},",
       "body": "{sender} hat Ihnen eine Nachricht zu {registration} gesendet. Öffnen Sie ownAplane, um sie zu lesen und zu antworten.",
       "cta": "Nachricht lesen"
+    },
+    "savedSearch": {
+      "subject": "Neue Flugzeuge für „{search}“",
+      "greeting": "Hallo {name},",
+      "body": "Neue Flugzeuge passen zu Ihrer gespeicherten Suche „{search}“ auf ownAplane.",
+      "cta": "Flugzeuge ansehen"
     }
   },
   "airportPicker": {
@@ -2163,7 +2170,8 @@
       "review_submitted": "{other} hat die Buchung von {registration} bewertet. Schreiben Sie Ihre Bewertung, um sie zu sehen.",
       "reviews_published": "Die Bewertungen zu {registration} sind jetzt veröffentlicht.",
       "review_replied": "{other} hat auf Ihre Bewertung von {registration} geantwortet.",
-      "calendar_conflict": "Eine Buchung in einem verbundenen System überschneidet sich mit der Buchung von {registration} ab {when}. Stornieren Sie eine davon."
+      "calendar_conflict": "Eine Buchung in einem verbundenen System überschneidet sich mit der Buchung von {registration} ab {when}. Stornieren Sie eine davon.",
+      "saved_search": "Neue Flugzeuge passen zu Ihrer gespeicherten Suche „{search}“."
     }
   },
   "checkoutFlight": {
@@ -2628,6 +2636,39 @@
           "hint": "Buchungen ablehnen, die es für ein anderes Flugzeug sendet."
         }
       }
+    }
+  },
+  "saved": {
+    "title": "Gemerkt",
+    "description": "Ihre Lieblingsflugzeuge und gespeicherten Suchen.",
+    "favourites": "Lieblingsflugzeuge",
+    "noFavourites": "Noch keine Favoriten. Nutzen Sie „Zu Favoriten hinzufügen“ auf der Seite eines Flugzeugs.",
+    "perHour": "{price}/h",
+    "favourite": {
+      "add": "Zu Favoriten hinzufügen",
+      "remove": "Aus Favoriten entfernen",
+      "removeOf": "{aircraft} aus den Favoriten entfernen"
+    },
+    "searches": {
+      "title": "Gespeicherte Suchen",
+      "text": "Mit Benachrichtigungen sagen wir Ihnen einmal am Tag (in der App und per E-Mail), wenn neue Flugzeuge passen.",
+      "none": "Noch keine gespeicherten Suchen. Suchen Sie nach Flugzeugen und wählen Sie „Diese Suche speichern“.",
+      "save": "Diese Suche speichern",
+      "name": "Name",
+      "alertsLabel": "Benachrichtigen, wenn neue Flugzeuge passen",
+      "confirm": "Suche speichern",
+      "saving": "Wird gespeichert…",
+      "cancel": "Abbrechen",
+      "savedMessage": "Suche gespeichert.",
+      "openSaved": "Gespeicherte Suchen ansehen",
+      "tooMany": "Sie können bis zu 20 Suchen speichern. Entfernen Sie zuerst eine.",
+      "open": "Ergebnisse zeigen",
+      "alertsOn": "Benachrichtigungen an",
+      "alertsOff": "Benachrichtigungen aus",
+      "lastAlert": "Benachrichtigungen an · letzter neuer Treffer {when}",
+      "turnOn": "Benachrichtigungen einschalten",
+      "turnOff": "Benachrichtigungen ausschalten",
+      "remove": "Gespeicherte Suche {name} entfernen"
     }
   }
 }

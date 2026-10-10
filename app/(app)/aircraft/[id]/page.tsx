@@ -22,6 +22,7 @@ import type { Locale } from "@/lib/i18n/config";
 import { categoryAverages, listPublishedReviews } from "@/lib/reviews/queries";
 import { Availability } from "./availability";
 import { EligibilityCard } from "./eligibility-card";
+import { FavouriteButton } from "./favourite-button";
 import { Gallery } from "./gallery";
 import { wantedPeriod } from "./period";
 import { Specs } from "./specs";
@@ -113,6 +114,7 @@ export default async function AircraftPage({
             )}
           </p>
         </div>
+        {user && !isOwner && <FavouriteButton userId={user.id} aircraftId={id} />}
         {isOwner && (
           <Button variant="outline" size="sm" asChild>
             <Link href={`/owner/aircraft/${id}`}>

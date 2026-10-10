@@ -9,6 +9,7 @@ import {
   aircraftPhotos,
   documents,
   experienceByType,
+  favouriteAircraft,
   medicals,
   messages,
   pilotExperience,
@@ -17,6 +18,7 @@ import {
   profiles,
   rentalRequirements,
   reviews,
+  savedSearches,
   sessions,
   userRoles,
   userSettings,
@@ -143,6 +145,19 @@ export async function GET() {
       })
       .from(messages)
       .where(eq(messages.senderId, user.id)),
+    favouriteAircraft: await db
+      .select({ aircraftId: favouriteAircraft.aircraftId, savedAt: favouriteAircraft.createdAt })
+      .from(favouriteAircraft)
+      .where(eq(favouriteAircraft.userId, user.id)),
+    savedSearches: await db
+      .select({
+        name: savedSearches.name,
+        query: savedSearches.query,
+        alerts: savedSearches.alerts,
+        createdAt: savedSearches.createdAt,
+      })
+      .from(savedSearches)
+      .where(eq(savedSearches.userId, user.id)),
   };
   const date = new Date().toISOString().slice(0, 10);
   return new Response(JSON.stringify(data, null, 2), {

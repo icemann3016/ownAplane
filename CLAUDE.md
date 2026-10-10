@@ -65,7 +65,8 @@ app/
                       #   u/[id] (public profile), aircraft/[id] (public listing + availability),
                       #   search, owner/aircraft (my aircraft, new, [id]/calendar, details…requirements,
                       #   defects, remarks, usage, sync), bookings/[id] (+ log, reviews, contact), notifications,
-                      #   messages (+ [id], new), reports (actions), welcome (setup guide), admin (dashboard, verifications,
+                      #   messages (+ [id], new), reports (actions), saved (favourites, searches),
+                      #   welcome (setup guide), admin (dashboard, verifications,
                       #   reports, users, aircraft, audit)
   api/auth/           # Better Auth endpoints (email links, OAuth callbacks; apps sign in here for a token)
   api/v1/             # REST API for apps and partners (docs/api.md): me, airports, aircraft, bookings,
@@ -101,6 +102,7 @@ lib/
   admin/              # verification queues, moderation (suspend, unlist, hide, reports), members, roles, queries, metrics
                       #   (trusted admin code, after requireAdmin())
   reviews/            # review queries, submit/reply, daily publishing
+  saved/              # favourites, saved searches, daily saved-search alerts (SRC-6)
   messages/           # conversations, unread counts, message emails
   reports/            # createReport()
   monitoring/         # reportError() → any Sentry-compatible service (SENTRY_DSN), no SDK
@@ -196,6 +198,8 @@ _TODO: split areas so we don't edit the same files at the same time._
 ## Decisions log
 
 Add one line per decision, newest first.
+
+- 2026-10-10: **Favourites and saved searches** (SRC-6): `favourite_aircraft` (own only, only aircraft the user may see), `saved_searches` (own only, max 20, filters stored as the search URL query via `filtersToQuery()`), `saved_search_hits` (no app access). The daily job (`runSavedSearchAlerts()`, `lib/saved`) reruns each search with alerts as its user; aircraft not seen before give one `saved_search` notification (in-app + email, `notifications.saved_search_id`); what a search showed when saved never alerts; searches whose dates are over are skipped. Page `/saved` (menu "Saved"); heart on the aircraft page; "Save this search" on the results.
 
 - 2026-10-10: **EASA pilot rules** (Zlati; VER-7, BKG-18): `aircraft.mtom_kg` (optional, in Details); `lapl_limited()` = only a verified, valid LAPL(A) (no PPL/CPL/ATPL/MPL) on the last rental day. `eligibility_failures()` blocks `lapl_mtom` above 2,000 kg and notes `lapl_passengers` when seats > 4; the `bookings_check_lapl` trigger refuses > 3 passengers. 90-day rule: **confirmed at check-out** (Zlati's choice), not checked from data: `start_flight_log(booking, recency_confirmed)` refuses bookings with passengers until the pilot ticks it, stored as `flight_logs.recency_confirmed_at` and shown to the owner; the old one-argument form passes false.
 

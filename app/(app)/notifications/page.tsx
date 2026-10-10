@@ -40,12 +40,18 @@ export default async function NotificationsPage() {
                   registration: n.booking?.registration ?? "",
                   when: n.booking ? format(n.booking.from) : "",
                   other: n.actor ?? t("someone"),
+                  search: n.search?.name ?? "",
                 };
                 const text = t(`types.${knownType(n.type)}`, values);
+                const href = n.search
+                  ? `/search${n.search.query ? `?${n.search.query}` : ""}`
+                  : n.bookingId
+                    ? `/bookings/${n.bookingId}`
+                    : "/bookings";
                 return (
                   <li key={n.id}>
                     <Link
-                      href={n.bookingId ? `/bookings/${n.bookingId}` : "/bookings"}
+                      href={href}
                       className="-mx-2 grid gap-0.5 rounded-md px-2 py-3 hover:bg-accent"
                     >
                       <span className={cn("text-sm", !n.readAt && "font-semibold")}>

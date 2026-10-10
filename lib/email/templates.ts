@@ -375,3 +375,26 @@ export function newMessageEmail({
     locale,
   });
 }
+
+/** New aircraft match a saved search (SRC-6). */
+export function savedSearchAlertEmail({
+  name,
+  locale,
+  search,
+  url,
+}: {
+  name: string;
+  locale?: string | null;
+  search: string;
+  url: string;
+}) {
+  const t = translator(locale);
+  return render({
+    subject: t("savedSearch.subject", { search }),
+    greeting: t("savedSearch.greeting", { name }),
+    paragraphs: [t("savedSearch.body", { search })],
+    cta: t("savedSearch.cta"),
+    url,
+    locale,
+  });
+}

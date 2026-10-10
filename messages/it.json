@@ -20,7 +20,8 @@
       "admin": "Admin",
       "bookings": "Prenotazioni",
       "help": "Aiuto",
-      "messages": "Messaggi"
+      "messages": "Messaggi",
+      "saved": "Salvati"
     },
     "footer": {
       "tagline": "Pensato per l'aviazione generale in Europa.",
@@ -613,6 +614,12 @@
       "greeting": "Ciao {name},",
       "body": "{sender} ti ha inviato un messaggio su {registration}. Apri ownAplane per leggerlo e rispondere.",
       "cta": "Leggi il messaggio"
+    },
+    "savedSearch": {
+      "subject": "Nuovi aerei per “{search}”",
+      "greeting": "Ciao {name},",
+      "body": "Nuovi aerei corrispondono alla tua ricerca salvata “{search}” su ownAplane.",
+      "cta": "Mostra gli aerei"
     }
   },
   "airportPicker": {
@@ -2163,7 +2170,8 @@
       "review_submitted": "{other} ha recensito la prenotazione di {registration}. Scrivi la tua per vederla.",
       "reviews_published": "Le recensioni di {registration} sono ora pubblicate.",
       "review_replied": "{other} ha risposto alla tua recensione di {registration}.",
-      "calendar_conflict": "Una prenotazione in un sistema collegato si sovrappone alla prenotazione di {registration} dal {when}. Annullane una."
+      "calendar_conflict": "Una prenotazione in un sistema collegato si sovrappone alla prenotazione di {registration} dal {when}. Annullane una.",
+      "saved_search": "Nuovi aerei corrispondono alla tua ricerca salvata “{search}”."
     }
   },
   "checkoutFlight": {
@@ -2628,6 +2636,39 @@
           "hint": "Rifiuta le prenotazioni che invia per un altro aereo."
         }
       }
+    }
+  },
+  "saved": {
+    "title": "Salvati",
+    "description": "I tuoi aerei preferiti e le ricerche salvate.",
+    "favourites": "Aerei preferiti",
+    "noFavourites": "Ancora nessun preferito. Usa “Aggiungi ai preferiti” nella pagina di un aereo.",
+    "perHour": "{price}/h",
+    "favourite": {
+      "add": "Aggiungi ai preferiti",
+      "remove": "Rimuovi dai preferiti",
+      "removeOf": "Rimuovi {aircraft} dai preferiti"
+    },
+    "searches": {
+      "title": "Ricerche salvate",
+      "text": "Con gli avvisi attivi ti avvisiamo una volta al giorno (nell'app e via email) quando nuovi aerei corrispondono.",
+      "none": "Ancora nessuna ricerca salvata. Cerca aerei e scegli “Salva questa ricerca”.",
+      "save": "Salva questa ricerca",
+      "name": "Nome",
+      "alertsLabel": "Avvisami quando nuovi aerei corrispondono",
+      "confirm": "Salva la ricerca",
+      "saving": "Salvataggio…",
+      "cancel": "Annulla",
+      "savedMessage": "Ricerca salvata.",
+      "openSaved": "Vedi le ricerche salvate",
+      "tooMany": "Puoi salvare fino a 20 ricerche. Rimuovine prima una.",
+      "open": "Mostra i risultati",
+      "alertsOn": "Avvisi attivi",
+      "alertsOff": "Avvisi disattivati",
+      "lastAlert": "Avvisi attivi · ultima nuova corrispondenza {when}",
+      "turnOn": "Attiva gli avvisi",
+      "turnOff": "Disattiva gli avvisi",
+      "remove": "Rimuovi la ricerca salvata {name}"
     }
   }
 }

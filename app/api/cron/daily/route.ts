@@ -7,6 +7,7 @@ import { deliverMessageEmails } from "@/lib/messages/emails";
 import { createBookingReminders, deliverNotificationEmails } from "@/lib/notifications";
 import { sendExpiryReminders } from "@/lib/pilot/reminders";
 import { publishDueReviews } from "@/lib/reviews/jobs";
+import { runSavedSearchAlerts } from "@/lib/saved/alerts";
 
 /**
  * Daily maintenance, called by a scheduler with `Authorization: Bearer $CRON_SECRET`:
@@ -21,6 +22,7 @@ import { publishDueReviews } from "@/lib/reviews/jobs";
  * - emails about unread messages not emailed yet (MSG-1)
  * - publishes reviews whose 14-day window has closed (RAT-3)
  * - reads linked calendars not read for an hour (SYN-2; /api/cron/sync does it every 15 min)
+ * - tells users about aircraft that newly match their saved searches (SRC-6)
  */
 export const maxDuration = 60;
 
@@ -35,6 +37,7 @@ export async function GET(request: Request) {
   const orphanDocuments = await deleteOrphanDocuments(new Date(Date.now() - 24 * 60 * 60 * 1000));
   const publishedReviews = await publishDueReviews();
   const bookingReminders = await createBookingReminders();
+  const savedSearchAlerts = await runSavedSearchAlerts();
   const notificationEmails = await deliverNotificationEmails(500);
   const messageEmails = await deliverMessageEmails(500);
   const linkedCalendars = await syncDueCalendars(60 * 60_000, 200);
@@ -46,6 +49,7 @@ export async function GET(request: Request) {
     orphanDocuments,
     publishedReviews,
     bookingReminders,
+    savedSearchAlerts,
     notificationEmails,
     messageEmails,
     linkedCalendars,

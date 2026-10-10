@@ -20,7 +20,8 @@
       "admin": "Admin",
       "bookings": "Réservations",
       "help": "Aide",
-      "messages": "Messages"
+      "messages": "Messages",
+      "saved": "Enregistrés"
     },
     "footer": {
       "tagline": "Conçu pour l'aviation générale en Europe.",
@@ -613,6 +614,12 @@
       "greeting": "Bonjour {name},",
       "body": "{sender} vous a envoyé un message concernant {registration}. Ouvrez ownAplane pour le lire et répondre.",
       "cta": "Lire le message"
+    },
+    "savedSearch": {
+      "subject": "Nouveaux avions pour « {search} »",
+      "greeting": "Bonjour {name},",
+      "body": "De nouveaux avions correspondent à votre recherche enregistrée « {search} » sur ownAplane.",
+      "cta": "Voir les avions"
     }
   },
   "airportPicker": {
@@ -2163,7 +2170,8 @@
       "review_submitted": "{other} a évalué la réservation de {registration}. Rédigez la vôtre pour la voir.",
       "reviews_published": "Les évaluations de {registration} sont maintenant publiées.",
       "review_replied": "{other} a répondu à votre évaluation de {registration}.",
-      "calendar_conflict": "Une réservation dans un système connecté chevauche la réservation de {registration} à partir du {when}. Annulez l’une des deux."
+      "calendar_conflict": "Une réservation dans un système connecté chevauche la réservation de {registration} à partir du {when}. Annulez l’une des deux.",
+      "saved_search": "De nouveaux avions correspondent à votre recherche enregistrée « {search} »."
     }
   },
   "checkoutFlight": {
@@ -2628,6 +2636,39 @@
           "hint": "Refuser les réservations qu’il envoie pour un autre avion."
         }
       }
+    }
+  },
+  "saved": {
+    "title": "Enregistrés",
+    "description": "Vos avions favoris et vos recherches enregistrées.",
+    "favourites": "Avions favoris",
+    "noFavourites": "Pas encore de favoris. Utilisez « Ajouter aux favoris » sur la page d'un avion.",
+    "perHour": "{price}/h",
+    "favourite": {
+      "add": "Ajouter aux favoris",
+      "remove": "Retirer des favoris",
+      "removeOf": "Retirer {aircraft} des favoris"
+    },
+    "searches": {
+      "title": "Recherches enregistrées",
+      "text": "Avec les alertes, nous vous prévenons une fois par jour (dans l'application et par e-mail) quand de nouveaux avions correspondent.",
+      "none": "Pas encore de recherche enregistrée. Cherchez des avions et choisissez « Enregistrer cette recherche ».",
+      "save": "Enregistrer cette recherche",
+      "name": "Nom",
+      "alertsLabel": "Me prévenir quand de nouveaux avions correspondent",
+      "confirm": "Enregistrer la recherche",
+      "saving": "Enregistrement…",
+      "cancel": "Annuler",
+      "savedMessage": "Recherche enregistrée.",
+      "openSaved": "Voir vos recherches enregistrées",
+      "tooMany": "Vous pouvez enregistrer jusqu'à 20 recherches. Supprimez-en une d'abord.",
+      "open": "Voir les résultats",
+      "alertsOn": "Alertes activées",
+      "alertsOff": "Alertes désactivées",
+      "lastAlert": "Alertes activées · dernier nouveau résultat {when}",
+      "turnOn": "Activer les alertes",
+      "turnOff": "Désactiver les alertes",
+      "remove": "Supprimer la recherche enregistrée {name}"
     }
   }
 }

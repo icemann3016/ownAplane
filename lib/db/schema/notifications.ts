@@ -6,6 +6,7 @@ import { boolean, index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-c
 
 import { users } from "./auth";
 import { bookings } from "./bookings";
+import { savedSearches } from "./saved";
 
 export const notifications = pgTable(
   "notifications",
@@ -18,6 +19,10 @@ export const notifications = pgTable(
     type: text("type").notNull(),
     bookingId: uuid("booking_id").references(() => bookings.id, { onDelete: "cascade" }),
     actorId: uuid("actor_id").references(() => users.id, { onDelete: "set null" }),
+    /** For "saved_search" alerts (SRC-6): the search with new aircraft. */
+    savedSearchId: uuid("saved_search_id").references(() => savedSearches.id, {
+      onDelete: "cascade",
+    }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     readAt: timestamp("read_at", { withTimezone: true }),
     /** Shown in the app (bell, /notifications); false = email only (MSG-3). */

@@ -4,10 +4,12 @@ import { and, count, desc, eq, inArray, isNull, sql } from "drizzle-orm";
 
 import { getDb } from "@/lib/db";
 import { asUser } from "@/lib/db/rls";
-import { aircraft, bookings, notifications, profiles } from "@/lib/db/schema";
+import { aircraft, bookings, notifications, profiles, savedSearches } from "@/lib/db/schema";
 import { sendEmail } from "@/lib/email";
 import { getRecipient } from "@/lib/email/recipient";
-import { bookingNotificationEmail } from "@/lib/email/templates";
+import { bookingNotificationEmail, savedSearchAlertEmail } from "@/lib/email/templates";
+
+type BookingEmailType = Parameters<typeof bookingNotificationEmail>[0]["type"];
 import { appUrl } from "@/lib/site-url";
 
 /** Types with their own text; anything else is shown with a generic one. */
@@ -29,6 +31,7 @@ export const NOTIFICATION_TYPES = [
   "review_replied",
   "reminder",
   "calendar_conflict",
+  "saved_search",
 ] as const;
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
 export const knownType = (type: string): NotificationType | "other" =>
@@ -59,9 +62,14 @@ async function bookingContext(ids: string[]) {
 export async function listNotifications(userId: string, limit = 50) {
   const rows = await asUser(userId, (tx) =>
     tx
-      .select({ n: notifications, actor: profiles.displayName })
+      .select({
+        n: notifications,
+        actor: profiles.displayName,
+        search: { name: savedSearches.name, query: savedSearches.query },
+      })
       .from(notifications)
       .leftJoin(profiles, eq(profiles.id, notifications.actorId))
+      .leftJoin(savedSearches, eq(savedSearches.id, notifications.savedSearchId))
       .where(and(eq(notifications.userId, userId), eq(notifications.inApp, true)))
       .orderBy(desc(notifications.createdAt))
       .limit(limit),
@@ -73,6 +81,7 @@ export async function listNotifications(userId: string, limit = 50) {
     ...r.n,
     actor: r.actor,
     booking: r.n.bookingId ? (context.get(r.n.bookingId) ?? null) : null,
+    search: r.n.savedSearchId ? r.search : null,
   }));
 }
 
@@ -114,12 +123,13 @@ export async function deliverNotificationEmails(limit = 50): Promise<number> {
       where emailed_at is null and created_at > now() - interval '3 days'
       order by created_at limit ${limit}
       for update skip locked)
-    returning id, user_id, type, booking_id, actor_id`)) as unknown as {
+    returning id, user_id, type, booking_id, actor_id, saved_search_id`)) as unknown as {
     id: string;
     user_id: string;
     type: string;
     booking_id: string | null;
     actor_id: string | null;
+    saved_search_id: string | null;
   }[];
   if (!claimed.length) return 0;
   const context = await bookingContext([
@@ -140,7 +150,19 @@ export async function deliverNotificationEmails(limit = 50): Promise<number> {
     let ok = false;
     try {
       const to = await getRecipient(n.user_id);
-      if (!to || !booking) {
+      const search = n.saved_search_id ? await savedSearchOf(n.saved_search_id) : null;
+      if (to && search) {
+        ok = await sendEmail({
+          to: to.email,
+          ...savedSearchAlertEmail({
+            name: to.name,
+            locale: to.locale,
+            search: search.name,
+            url: `${appUrl()}/search${search.query ? `?${search.query}` : ""}`,
+          }),
+        });
+        if (ok) sent += 1;
+      } else if (!to || !booking) {
         ok = true; // nothing to send (deleted user or booking): don't retry
       } else {
         ok = await sendEmail({
@@ -148,7 +170,8 @@ export async function deliverNotificationEmails(limit = 50): Promise<number> {
           ...bookingNotificationEmail({
             name: to.name,
             locale: to.locale,
-            type: knownType(n.type),
+            // Saved-search alerts have their own email above.
+            type: n.type === "saved_search" ? "other" : (knownType(n.type) as BookingEmailType),
             registration: booking.registration,
             from: booking.from,
             timeZone: booking.timeZone,
@@ -169,6 +192,15 @@ export async function deliverNotificationEmails(limit = 50): Promise<number> {
     }
   }
   return sent;
+}
+
+/** A saved search's name and filters, for its alert email (trusted read). */
+async function savedSearchOf(id: string) {
+  const [row] = await getDb()
+    .select({ name: savedSearches.name, query: savedSearches.query })
+    .from(savedSearches)
+    .where(eq(savedSearches.id, id));
+  return row ?? null;
 }
 
 /** Daily job: 24-hour reminders for accepted bookings (BKG-9). Returns how many bookings. */

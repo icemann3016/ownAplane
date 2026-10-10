@@ -20,7 +20,8 @@
       "admin": "Admin",
       "bookings": "Bookings",
       "help": "Help",
-      "messages": "Messages"
+      "messages": "Messages",
+      "saved": "Saved"
     },
     "footer": {
       "tagline": "Made for general aviation in Europe.",
@@ -613,6 +614,12 @@
       "greeting": "Hi {name},",
       "body": "{sender} sent you a message about {registration}. Open ownAplane to read it and reply.",
       "cta": "Read the message"
+    },
+    "savedSearch": {
+      "subject": "New aircraft for “{search}”",
+      "greeting": "Hi {name},",
+      "body": "New aircraft match your saved search “{search}” on ownAplane.",
+      "cta": "Show the aircraft"
     }
   },
   "airportPicker": {
@@ -2163,7 +2170,8 @@
       "review_submitted": "{other} reviewed the booking of {registration}. Write yours to see it.",
       "reviews_published": "The reviews for {registration} are now published.",
       "review_replied": "{other} replied to your review of {registration}.",
-      "calendar_conflict": "A booking in a connected system overlaps the booking of {registration} from {when}. Cancel one of them."
+      "calendar_conflict": "A booking in a connected system overlaps the booking of {registration} from {when}. Cancel one of them.",
+      "saved_search": "New aircraft match your saved search “{search}”."
     }
   },
   "checkoutFlight": {
@@ -2628,6 +2636,39 @@
           "hint": "Refuse bookings it sends for another aircraft."
         }
       }
+    }
+  },
+  "saved": {
+    "title": "Saved",
+    "description": "Your favourite aircraft and saved searches.",
+    "favourites": "Favourite aircraft",
+    "noFavourites": "No favourites yet. Use “Add to favourites” on an aircraft's page.",
+    "perHour": "{price}/h",
+    "favourite": {
+      "add": "Add to favourites",
+      "remove": "Remove from favourites",
+      "removeOf": "Remove {aircraft} from favourites"
+    },
+    "searches": {
+      "title": "Saved searches",
+      "text": "With alerts on, we tell you once a day (in the app and by email) when new aircraft match.",
+      "none": "No saved searches yet. Search for aircraft and choose “Save this search”.",
+      "save": "Save this search",
+      "name": "Name",
+      "alertsLabel": "Tell me when new aircraft match",
+      "confirm": "Save search",
+      "saving": "Saving…",
+      "cancel": "Cancel",
+      "savedMessage": "Search saved.",
+      "openSaved": "See your saved searches",
+      "tooMany": "You can save up to 20 searches. Remove one first.",
+      "open": "Show results",
+      "alertsOn": "Alerts on",
+      "alertsOff": "Alerts off",
+      "lastAlert": "Alerts on · last new match {when}",
+      "turnOn": "Turn alerts on",
+      "turnOff": "Turn alerts off",
+      "remove": "Remove the saved search {name}"
     }
   }
 }

@@ -20,7 +20,8 @@
       "admin": "Admin",
       "bookings": "Reservas",
       "help": "Ayuda",
-      "messages": "Mensajes"
+      "messages": "Mensajes",
+      "saved": "Guardados"
     },
     "footer": {
       "tagline": "Hecho para la aviación general en Europa.",
@@ -613,6 +614,12 @@
       "greeting": "Hola, {name}:",
       "body": "{sender} te ha enviado un mensaje sobre {registration}. Abre ownAplane para leerlo y responder.",
       "cta": "Leer el mensaje"
+    },
+    "savedSearch": {
+      "subject": "Nuevos aviones para «{search}»",
+      "greeting": "Hola, {name}:",
+      "body": "Nuevos aviones coinciden con tu búsqueda guardada «{search}» en ownAplane.",
+      "cta": "Ver los aviones"
     }
   },
   "airportPicker": {
@@ -2163,7 +2170,8 @@
       "review_submitted": "{other} ha valorado la reserva de {registration}. Escribe la tuya para verla.",
       "reviews_published": "Las reseñas de {registration} ya están publicadas.",
       "review_replied": "{other} ha respondido a tu reseña de {registration}.",
-      "calendar_conflict": "Una reserva en un sistema conectado coincide con la reserva de {registration} desde el {when}. Cancela una de las dos."
+      "calendar_conflict": "Una reserva en un sistema conectado coincide con la reserva de {registration} desde el {when}. Cancela una de las dos.",
+      "saved_search": "Nuevos aviones coinciden con tu búsqueda guardada «{search}»."
     }
   },
   "checkoutFlight": {
@@ -2628,6 +2636,39 @@
           "hint": "Rechazar las reservas que envíe para otra aeronave."
         }
       }
+    }
+  },
+  "saved": {
+    "title": "Guardados",
+    "description": "Tus aviones favoritos y tus búsquedas guardadas.",
+    "favourites": "Aviones favoritos",
+    "noFavourites": "Aún no tienes favoritos. Usa «Añadir a favoritos» en la página de un avión.",
+    "perHour": "{price}/h",
+    "favourite": {
+      "add": "Añadir a favoritos",
+      "remove": "Quitar de favoritos",
+      "removeOf": "Quitar {aircraft} de favoritos"
+    },
+    "searches": {
+      "title": "Búsquedas guardadas",
+      "text": "Con las alertas activadas te avisamos una vez al día (en la app y por email) cuando nuevos aviones coinciden.",
+      "none": "Aún no tienes búsquedas guardadas. Busca aviones y elige «Guardar esta búsqueda».",
+      "save": "Guardar esta búsqueda",
+      "name": "Nombre",
+      "alertsLabel": "Avisarme cuando nuevos aviones coincidan",
+      "confirm": "Guardar búsqueda",
+      "saving": "Guardando…",
+      "cancel": "Cancelar",
+      "savedMessage": "Búsqueda guardada.",
+      "openSaved": "Ver tus búsquedas guardadas",
+      "tooMany": "Puedes guardar hasta 20 búsquedas. Elimina una primero.",
+      "open": "Ver resultados",
+      "alertsOn": "Alertas activadas",
+      "alertsOff": "Alertas desactivadas",
+      "lastAlert": "Alertas activadas · última coincidencia nueva {when}",
+      "turnOn": "Activar alertas",
+      "turnOff": "Desactivar alertas",
+      "remove": "Eliminar la búsqueda guardada {name}"
     }
   }
 }

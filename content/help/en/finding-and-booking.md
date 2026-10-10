@@ -14,6 +14,15 @@
 
 A search at night only shows aircraft approved for night VFR.
 
+## Favourites and saved searches
+
+- **Add to favourites** on an aircraft's page keeps it under **Saved** (your menu). An aircraft
+  that's no longer listed says so there.
+- **Save this search** on the search results keeps the airfield, radius, dates and filters under
+  a name. With **alerts** on, once a day you get a notification (and an email) when aircraft
+  that weren't there before match it. Searches whose dates are over don't alert. You can save up
+  to 20 searches, switch alerts off or remove them under **Saved**.
+
 ## The aircraft page
 
 Photos, specifications, equipment, price and terms, the home base, the owner, the

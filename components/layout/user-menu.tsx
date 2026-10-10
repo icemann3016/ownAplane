@@ -3,6 +3,7 @@
 import Link from "next/link";
 import {
   CalendarDaysIcon,
+  HeartIcon,
   LayoutDashboardIcon,
   LogOutIcon,
   LifeBuoyIcon,
@@ -53,6 +54,11 @@ export function UserMenu({ account }: { account: AccountSummary }) {
         <DropdownMenuItem asChild>
           <Link href="/bookings">
             <CalendarDaysIcon /> {t("bookings")}
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/saved">
+            <HeartIcon /> {t("saved")}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>

@@ -107,7 +107,7 @@ Owners need to know who's flying their aircraft. Verification is the trust found
 | SRC-3 | M | Results show photo, model, registration, home base, price per hour, rating and distance. Map and list views. |
 | SRC-4 | M | The aircraft page shows full specs, photos, the owner's profile & rating, rental requirements, cancellation policy and an **availability calendar**. |
 | SRC-5 | M | As an owner I manage the **calendar**: my own flights, maintenance blocks, and unavailable periods. Bookings appear automatically. |
-| SRC-6 | S | I can save favourite aircraft and saved searches with alerts. |
+| SRC-6 | S | I can save favourite aircraft and saved searches with alerts. **Built:** favourites under Saved, up to 20 saved searches, daily alerts (in-app + email) for aircraft that newly match. |
 
 ### 5.5 Booking (BKG) — Phase 1
 

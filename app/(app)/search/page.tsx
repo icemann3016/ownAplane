@@ -9,9 +9,12 @@ import { formatPrice, formatSpan } from "@/lib/aircraft/format";
 import { searchAircraft } from "@/lib/aircraft/search";
 import { getUser } from "@/lib/auth/session";
 import type { Locale } from "@/lib/i18n/config";
-import { parseSearch } from "@/lib/validation/search";
+import { filtersToQuery, parseSearch } from "@/lib/validation/search";
 import { ResultCard } from "./result-card";
+import { SaveSearchForm } from "./save-search-form";
 import { SearchForm } from "./search-form";
+
+const capitalize = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("search");
@@ -74,6 +77,7 @@ export default async function SearchPage({
     });
   }
   const span = period ? formatSpan(period.from, period.to, locale) : null;
+  const where = origin ? t("near", { code: origin.code, km: filters.radius }) : t("everywhere");
 
   return (
     <div className="mx-auto grid w-full max-w-5xl gap-6 px-4 py-8">
@@ -110,12 +114,7 @@ export default async function SearchPage({
               {t("found", { count: results.length })}
             </h2>
             <p className="text-sm text-muted-foreground">
-              {[
-                origin ? t("near", { code: origin.code, km: filters.radius }) : t("everywhere"),
-                span ? t("freeBetween", { when: span }) : null,
-              ]
-                .filter(Boolean)
-                .join(" · ")}
+              {[where, span ? t("freeBetween", { when: span }) : null].filter(Boolean).join(" · ")}
             </p>
           </div>
           <nav aria-label={t("view.label")} className="flex rounded-md border p-0.5">
@@ -138,6 +137,12 @@ export default async function SearchPage({
             })}
           </nav>
         </div>
+        {user && (
+          <SaveSearchForm
+            query={filtersToQuery(filters)}
+            suggestedName={capitalize([where, span].filter(Boolean).join(", "))}
+          />
+        )}
         {results.length === 0 ? (
           <Card>
             <CardContent className="flex items-start gap-3 text-sm text-muted-foreground">
