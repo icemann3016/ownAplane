@@ -150,6 +150,16 @@ export function DetailsForm({
           errors={e.usefulLoad}
         />
         <TextField
+          name="mtom"
+          label={t("fields.mtom", { unit: mass })}
+          type="number"
+          inputMode="numeric"
+          min={1}
+          hint={t("fields.mtomHint")}
+          defaultValue={v.mtom}
+          errors={e.mtom}
+        />
+        <TextField
           name="enduranceH"
           label={t("fields.enduranceH")}
           inputMode="decimal"

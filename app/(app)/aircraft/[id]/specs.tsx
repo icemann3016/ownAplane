@@ -33,6 +33,12 @@ export async function Specs({ aircraft: a, units }: { aircraft: Aircraft; units:
         ? null
         : `${kgToMass(a.usefulLoadKg, units)} ${imperial ? t("units.lb") : t("units.kg")}`,
     ],
+    [
+      t("public.mtom"),
+      a.mtomKg === null
+        ? null
+        : `${kgToMass(a.mtomKg, units)} ${imperial ? t("units.lb") : t("units.kg")}`,
+    ],
     [t("public.endurance"), a.enduranceH ? t("public.hours", { hours: a.enduranceH }) : null],
     [t("fields.avionics"), a.avionics],
     [t("fields.transponder"), t(`transponders.${a.transponder}`)],

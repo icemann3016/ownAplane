@@ -102,6 +102,9 @@ export default async function FlightLogPage({ params }: { params: Promise<{ id: 
         <p className="text-muted-foreground">
           <span className="font-mono">{plane.registration}</span> · {t(`statuses.${log.status}`)}
         </p>
+        {log.recencyConfirmedAt && (
+          <p className="text-sm text-muted-foreground">{t("recencyConfirmed")}</p>
+        )}
       </div>
       <Alert>
         <InfoIcon />

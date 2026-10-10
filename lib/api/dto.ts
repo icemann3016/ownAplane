@@ -111,6 +111,7 @@ export function aircraftDto(
       fuelBurnLitresPerHour: a.fuelBurnLph,
       cruiseKt: a.cruiseKt,
       usefulLoadKg: a.usefulLoadKg,
+      mtomKg: a.mtomKg,
       enduranceHours: a.enduranceH,
     },
     equipment: {

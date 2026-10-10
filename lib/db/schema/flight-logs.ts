@@ -58,6 +58,8 @@ export const flightLogs = pgTable(
       onDelete: "set null",
     }),
     checkedOutAt: timestamp("checked_out_at", { withTimezone: true }).notNull().defaultNow(),
+    /** With passengers: the pilot confirmed the 90-day rule (FCL.060) at check-out. */
+    recencyConfirmedAt: timestamp("recency_confirmed_at", { withTimezone: true }),
     // Result (set when the owner confirms)
     flownMinutes: integer("flown_minutes"),
     amountDue: numeric("amount_due", { precision: 10, scale: 2, mode: "number" }),

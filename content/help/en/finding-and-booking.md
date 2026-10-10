@@ -41,7 +41,10 @@ rather than refusals, for example a checkout flight with an instructor (see belo
 - **From / Until** in UTC.
 - **Departure** and **arrival** airfields, and optional **stops**.
 - **Purpose** (local flight, cross-country, training, other), **passengers** (up to seats − 1),
-  **planned flight time** and a **message to the owner**.
+  **planned flight time** and a **message to the owner**. To carry passengers you need 3
+  take-offs and landings in this class or type within the 90 days before the flight (FCL.060);
+  you confirm it at check-out. With a **LAPL(A)** you may carry at most 3 passengers and fly
+  aircraft up to 2,000 kg MTOM; a PPL or higher lifts these limits.
 - A live **estimate**: planned hours × price per hour (weekend price and minimum hours per day
   apply), plus fuel on a dry rate. The final amount comes from the flight log.
 - The owner's **cancellation policy**.

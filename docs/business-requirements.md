@@ -81,6 +81,7 @@ Owners need to know who's flying their aircraft. Verification is the trust found
 | VER-4 | M | I can enter **flight experience**: total hours, PIC hours, hours in the last 90 days, hours per type. Self-declared in MVP, marked as such. |
 | VER-5 | M | An admin reviews uploaded documents and marks each as **verified / rejected**. The pilot sees the status and reason. |
 | VER-6 | M | The system warns me 30 days before any document expires and **blocks new bookings** when a licence, rating or medical needed for that aircraft has expired. |
+| VER-7 | M | **EASA licence limits** in the eligibility check: a pilot whose only valid aeroplane licence is a **LAPL(A)** can't rent an aeroplane or TMG above **2,000 kg MTOM** (owners enter the MTOM) or take more than **3 passengers** (FCL.105.A); a PPL or higher lifts the limits. |
 | VER-7 | C | Import hours from a digital logbook (later). |
 
 ### 5.3 Aircraft listings (LST) — Phase 1
@@ -129,6 +130,7 @@ Owners need to know who's flying their aircraft. Verification is the trust found
 | BKG-15 | M | **Remarks & PIREPs:** after each flight the pilot can add remarks about the aircraft that aren't defects (e.g. "left mag drop 150 rpm", "COM2 scratchy") and optional notes on weather or the airfield. Defects follow BKG-8. The owner sees all remarks in the aircraft's history and can mark one as a **known item** that later renters see before they fly. |
 | BKG-16 | S | **Aircraft usage history:** from confirmed flight logs the owner sees hours flown, landings, fuel and oil used per aircraft, per month and per pilot, and can export them (CSV). These hours drive the maintenance reminders in TEC-8. The pilot can export their own legs for their logbook. |
 | BKG-17 | M | **Flight log cross-checks** (warnings to pilot and owner, never blocks): fuel that doesn't suit the aircraft (Jet A-1 vs piston fuel loudly; a lower grade "only if approved"), Hobbs/tach against engine and air times, fuel burn against the aircraft's L/h, legs outside the booked time or into the next booking, and check-out meters against the last known reading (previous rental's end or an owner-recorded reading). A meter gap is shown only to the owner, with what the calendar shows in between, and the owner can explain it. |
+| BKG-18 | M | **Passengers and the 90-day rule (FCL.060):** a request with passengers shows the rule; at check-out the pilot must confirm 3 take-offs and landings in the class/type within the last 90 days, recorded in the flight log and shown to the owner. It stays the PIC's responsibility. |
 
 > The flight log is a record between the pilot and the owner. It doesn't replace the aircraft's official journey log or technical log (Part-ML), or the pilot's logbook; the app says so on the log.
 

@@ -1228,7 +1228,9 @@
       "oilUnit": "Aceite medido en",
       "oilUnitHint": "La unidad de la varilla.",
       "cancellationPolicy": "Política de cancelación",
-      "paymentNote": "Los pilotos te pagan directamente. ownAplane aún no gestiona pagos."
+      "paymentNote": "Los pilotos te pagan directamente. ownAplane aún no gestiona pagos.",
+      "mtom": "Masa máxima al despegue (MTOM, {unit})",
+      "mtomHint": "Del manual de vuelo. Los pilotos solo con LAPL pueden volar aviones de hasta 2.000 kg."
     },
     "units": {
       "litresPerHour": "L/h",
@@ -1495,7 +1497,8 @@
       "usefulLoad": "Carga útil",
       "endurance": "Autonomía",
       "hours": "{hours} h",
-      "request": "Solicitar reserva"
+      "request": "Solicitar reserva",
+      "mtom": "MTOM"
     },
     "eligibility": {
       "own_aircraft": "Este es tu propio avión.",
@@ -1523,7 +1526,9 @@
       "updateCredentials": "Actualiza tus credenciales de piloto",
       "aircraft_no_night": "Parte de este periodo es de noche (desde 30 minutos después de la puesta de sol hasta 30 minutos antes de la salida) y este avión no está aprobado para VFR nocturno.",
       "night_rating": "Parte de este periodo es de noche (desde 30 minutos después de la puesta de sol hasta 30 minutos antes de la salida): necesitas una habilitación de vuelo nocturno válida y verificada.",
-      "night_flight": "Parte de este periodo es de noche (desde 30 minutos después de la puesta de sol hasta 30 minutos antes de la salida). Se aplican las reglas del VFR nocturno."
+      "night_flight": "Parte de este periodo es de noche (desde 30 minutos después de la puesta de sol hasta 30 minutos antes de la salida). Se aplican las reglas del VFR nocturno.",
+      "lapl_mtom": "Una LAPL(A) cubre aviones de hasta {need} kg de MTOM; este tiene {have} kg. Necesitas una PPL o superior.",
+      "lapl_passengers": "Con una LAPL(A) puedes llevar como máximo 3 pasajeros."
     },
     "calendar": {
       "previous": "Mes anterior",
@@ -1662,7 +1667,8 @@
       "send": "Enviar solicitud",
       "sending": "Enviando…",
       "cancellation": "Política de cancelación:",
-      "updateCredentials": "Ir a tus credenciales de piloto"
+      "updateCredentials": "Ir a tus credenciales de piloto",
+      "passengersHint": "Sin contarte. Para llevar pasajeros necesitas 3 despegues y aterrizajes en esta clase o tipo en los 90 días anteriores al vuelo (FCL.060); lo confirmas al recoger el avión."
     },
     "errors": {
       "not_eligible": "Aún no puedes reservar este vuelo:",
@@ -1671,7 +1677,8 @@
       "period_length": "Una reserva dura entre 30 minutos y 14 días.",
       "not_free": "Ese tiempo ya no está libre. Elige otro.",
       "aircraft_unavailable": "Este avión no se puede reservar ahora mismo.",
-      "failed": "No ha funcionado. Inténtalo de nuevo."
+      "failed": "No ha funcionado. Inténtalo de nuevo.",
+      "lapl_passengers": "Con una LAPL(A) puedes llevar como máximo 3 pasajeros."
     },
     "list": {
       "title": "Reservas",
@@ -1956,7 +1963,8 @@
       "missing_meters": "Faltan algunas lecturas de contador.",
       "leg_checks": "Revisa el tramo: las horas deben ir en orden (arranque, salida del estacionamiento, despegue, aterrizaje, llegada al estacionamiento, parada) y dentro de 12 horas, los contadores deben avanzar, el combustible debe bajar y el aceite no puede subir durante un tramo.",
       "failed": "Algo ha salido mal. Inténtalo de nuevo.",
-      "aircraft_grounded": "El propietario ha inmovilizado el avión, así que no se puede recoger."
+      "aircraft_grounded": "El propietario ha inmovilizado el avión, así que no se puede recoger.",
+      "passenger_recency": "Para llevar pasajeros, confirma primero la regla de los 90 días (3 despegues y aterrizajes)."
     },
     "uplifts": "Combustible y aceite añadidos",
     "noUplifts": "Aún no se ha añadido nada. Registra cada repostaje o relleno de aceite con su recibo.",
@@ -2085,7 +2093,9 @@
       "failed": "No se pudo guardar la explicación.",
       "ownerHint": "Solo tú ves lo que pasó entretanto. Para partir de la lectura correcta la próxima vez, registra los contadores después de volar fuera de ownAplane (Mis aviones → Uso → Lecturas de contadores).",
       "pilotHint": "Corrige la lectura de salida si es una errata. El propietario también lo ve."
-    }
+    },
+    "recencyConfirm": "He hecho al menos 3 despegues y aterrizajes en una aeronave de esta clase o tipo en los últimos 90 días (FCL.060), así que puedo llevar a {count, plural, one {mi pasajero} other {mis # pasajeros}}.",
+    "recencyConfirmed": "El piloto confirmó al recoger el avión la regla de los 90 días para pasajeros (FCL.060)."
   },
   "defects": {
     "report": "Notificar un defecto",

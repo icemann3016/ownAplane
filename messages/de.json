@@ -1228,7 +1228,9 @@
       "oilUnit": "Öl gemessen in",
       "oilUnitHint": "Die Einheit auf dem Ölmessstab.",
       "cancellationPolicy": "Stornierungsbedingungen",
-      "paymentNote": "Piloten bezahlen Sie direkt. ownAplane wickelt noch keine Zahlungen ab."
+      "paymentNote": "Piloten bezahlen Sie direkt. ownAplane wickelt noch keine Zahlungen ab.",
+      "mtom": "Höchstabflugmasse (MTOM, {unit})",
+      "mtomHint": "Aus dem Flughandbuch. Piloten nur mit LAPL dürfen Flugzeuge bis 2.000 kg fliegen."
     },
     "units": {
       "litresPerHour": "L/h",
@@ -1495,7 +1497,8 @@
       "usefulLoad": "Zuladung",
       "endurance": "Flugdauer",
       "hours": "{hours} h",
-      "request": "Buchung anfragen"
+      "request": "Buchung anfragen",
+      "mtom": "MTOM"
     },
     "eligibility": {
       "own_aircraft": "Das ist Ihr eigenes Flugzeug.",
@@ -1523,7 +1526,9 @@
       "updateCredentials": "Pilotennachweise aktualisieren",
       "aircraft_no_night": "Ein Teil dieser Zeit liegt in der Nacht (von 30 Minuten nach Sonnenuntergang bis 30 Minuten vor Sonnenaufgang), und dieses Flugzeug ist nicht für Nacht-VFR zugelassen.",
       "night_rating": "Ein Teil dieser Zeit liegt in der Nacht (von 30 Minuten nach Sonnenuntergang bis 30 Minuten vor Sonnenaufgang): Sie brauchen eine gültige, verifizierte Nachtflugberechtigung.",
-      "night_flight": "Ein Teil dieser Zeit liegt in der Nacht (von 30 Minuten nach Sonnenuntergang bis 30 Minuten vor Sonnenaufgang). Es gelten die Nacht-VFR-Regeln."
+      "night_flight": "Ein Teil dieser Zeit liegt in der Nacht (von 30 Minuten nach Sonnenuntergang bis 30 Minuten vor Sonnenaufgang). Es gelten die Nacht-VFR-Regeln.",
+      "lapl_mtom": "Eine LAPL(A) gilt für Flugzeuge bis {need} kg MTOM; dieses hat {have} kg. Sie brauchen eine PPL oder höher.",
+      "lapl_passengers": "Mit einer LAPL(A) dürfen Sie höchstens 3 Passagiere mitnehmen."
     },
     "calendar": {
       "previous": "Vorheriger Monat",
@@ -1662,7 +1667,8 @@
       "send": "Anfrage senden",
       "sending": "Wird gesendet…",
       "cancellation": "Stornierungsbedingungen:",
-      "updateCredentials": "Zu Ihren Pilotennachweisen"
+      "updateCredentials": "Zu Ihren Pilotennachweisen",
+      "passengersHint": "Ohne Sie. Um Passagiere mitzunehmen, brauchen Sie 3 Starts und Landungen auf dieser Klasse oder diesem Muster in den 90 Tagen vor dem Flug (FCL.060); das bestätigen Sie beim Check-out."
     },
     "errors": {
       "not_eligible": "Sie können diesen Flug noch nicht buchen:",
@@ -1671,7 +1677,8 @@
       "period_length": "Eine Buchung dauert zwischen 30 Minuten und 14 Tagen.",
       "not_free": "Diese Zeit ist nicht mehr frei. Bitte wählen Sie eine andere.",
       "aircraft_unavailable": "Dieses Flugzeug kann gerade nicht gebucht werden.",
-      "failed": "Das hat nicht funktioniert. Bitte versuchen Sie es erneut."
+      "failed": "Das hat nicht funktioniert. Bitte versuchen Sie es erneut.",
+      "lapl_passengers": "Mit einer LAPL(A) dürfen Sie höchstens 3 Passagiere mitnehmen."
     },
     "list": {
       "title": "Buchungen",
@@ -1956,7 +1963,8 @@
       "missing_meters": "Einige Zählerstände fehlen.",
       "leg_checks": "Prüfen Sie den Flug: Die Zeiten müssen in Reihenfolge sein (Anlassen, Off-Block, Start, Landung, On-Block, Abstellen) und innerhalb von 12 Stunden liegen, Zähler müssen weiterlaufen, Kraftstoff muss abnehmen und Öl darf während eines Flugs nicht zunehmen.",
       "failed": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
-      "aircraft_grounded": "Das Flugzeug ist vom Halter am Boden festgesetzt und kann nicht übernommen werden."
+      "aircraft_grounded": "Das Flugzeug ist vom Halter am Boden festgesetzt und kann nicht übernommen werden.",
+      "passenger_recency": "Um Passagiere mitzunehmen, bestätigen Sie zuerst die 90-Tage-Regel (3 Starts und Landungen)."
     },
     "uplifts": "Getankter Kraftstoff und Öl",
     "noUplifts": "Noch nichts hinzugefügt. Erfassen Sie jedes Tanken oder Öl-Nachfüllen mit Beleg.",
@@ -2085,7 +2093,9 @@
       "failed": "Die Erklärung konnte nicht gespeichert werden.",
       "ownerHint": "Nur Sie sehen, was dazwischen war. Damit beim nächsten Mal vom richtigen Stand ausgegangen wird, erfassen Sie die Zähler nach Flügen außerhalb von ownAplane (Meine Flugzeuge → Nutzung → Zählerstände).",
       "pilotHint": "Korrigieren Sie den Stand beim Check-out, wenn es ein Tippfehler ist. Der Halter sieht das auch."
-    }
+    },
+    "recencyConfirm": "Ich habe in den letzten 90 Tagen mindestens 3 Starts und Landungen in einem Luftfahrzeug dieser Klasse oder dieses Musters gemacht (FCL.060) und darf daher {count, plural, one {meinen Passagier} other {meine # Passagiere}} mitnehmen.",
+    "recencyConfirmed": "Der Pilot hat beim Check-out die 90-Tage-Regel für Passagiere (FCL.060) bestätigt."
   },
   "defects": {
     "report": "Mangel melden",

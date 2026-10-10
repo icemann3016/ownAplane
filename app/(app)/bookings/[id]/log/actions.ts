@@ -45,10 +45,12 @@ async function context(userId: string, bookingId: string) {
 export async function startCheckout(formData: FormData) {
   const user = await requireUser("/bookings");
   const bookingId = idSchema.parse(formData.get("bookingId"));
+  // FCL.060: with passengers the pilot confirms 3 take-offs and landings in the last 90 days.
+  const recency = formData.get("recency") === "on";
   sendNotificationsSoon();
   try {
     await asUser(user.id, (tx) =>
-      tx.execute(sql`select public.start_flight_log(${bookingId}::uuid)`),
+      tx.execute(sql`select public.start_flight_log(${bookingId}::uuid, ${recency})`),
     );
   } catch (e) {
     const { code, message } = pgError(e);

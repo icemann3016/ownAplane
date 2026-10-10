@@ -62,6 +62,8 @@ export async function submitBookingRequest(
         errors: { passengers: [t("too_many_passengers", { max: outcome.detail ?? "0" })] },
         values,
       };
+    case "lapl_passengers":
+      return { errors: { passengers: [t("lapl_passengers")] }, values };
     case "period_in_past":
     case "period_length":
       return { errors: { from: [t(outcome.error)] }, values };

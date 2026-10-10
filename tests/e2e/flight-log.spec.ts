@@ -6,6 +6,7 @@ import {
   seedVerifiedPilot,
   signUp,
   unique,
+  withDb,
 } from "./helpers";
 
 // The pilot checks out, logs a leg and checks in → the owner confirms the flown time and the
@@ -30,11 +31,14 @@ test("a pilot fills in the flight log and the owner confirms it", async ({ page,
   await seedVerifiedPilot(pilotEmail);
   const bookingId = await seedAcceptedBooking(aircraftId, pilotEmail);
 
-  // 1. Check-out opens the log
+  // 1. Check-out opens the log; with passengers the pilot confirms the 90-day rule (FCL.060)
+  await withDb((sql) => sql`update bookings set passengers = 2 where id = ${bookingId}`);
   await page.goto(`/bookings/${bookingId}`);
+  await page.getByRole("checkbox", { name: /3 take-offs and landings/ }).check();
   await page.getByRole("button", { name: "Check out" }).click();
   await expect(page).toHaveURL(new RegExp(`/bookings/${bookingId}/log$`));
   await expect(page.getByRole("heading", { name: "Flight log", level: 1 })).toBeVisible();
+  await expect(page.getByText(/confirmed the 90-day rule/)).toBeVisible();
   await page.getByLabel("Hobbs", { exact: true }).fill("1000");
   await page.getByLabel("Fuel on board (L)").fill("100");
   await page.getByRole("button", { name: "Save check-out" }).click();

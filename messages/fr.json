@@ -1228,7 +1228,9 @@
       "oilUnit": "Huile mesurée en",
       "oilUnitHint": "L'unité sur la jauge.",
       "cancellationPolicy": "Conditions d'annulation",
-      "paymentNote": "Les pilotes vous paient directement. ownAplane ne gère pas encore les paiements."
+      "paymentNote": "Les pilotes vous paient directement. ownAplane ne gère pas encore les paiements.",
+      "mtom": "Masse maximale au décollage (MTOM, {unit})",
+      "mtomHint": "D'après le manuel de vol. Les pilotes titulaires uniquement d'une LAPL peuvent piloter des avions jusqu'à 2 000 kg."
     },
     "units": {
       "litresPerHour": "L/h",
@@ -1495,7 +1497,8 @@
       "usefulLoad": "Charge utile",
       "endurance": "Autonomie",
       "hours": "{hours} h",
-      "request": "Demander une réservation"
+      "request": "Demander une réservation",
+      "mtom": "MTOM"
     },
     "eligibility": {
       "own_aircraft": "C'est votre propre avion.",
@@ -1523,7 +1526,9 @@
       "updateCredentials": "Mettre à jour vos qualifications de pilote",
       "aircraft_no_night": "Une partie de ce créneau est de nuit (de 30 minutes après le coucher du soleil à 30 minutes avant le lever), et cet avion n'est pas approuvé pour le VFR de nuit.",
       "night_rating": "Une partie de ce créneau est de nuit (de 30 minutes après le coucher du soleil à 30 minutes avant le lever) : il vous faut une qualification de vol de nuit valide et vérifiée.",
-      "night_flight": "Une partie de ce créneau est de nuit (de 30 minutes après le coucher du soleil à 30 minutes avant le lever). Les règles du VFR de nuit s'appliquent."
+      "night_flight": "Une partie de ce créneau est de nuit (de 30 minutes après le coucher du soleil à 30 minutes avant le lever). Les règles du VFR de nuit s'appliquent.",
+      "lapl_mtom": "Une LAPL(A) couvre les avions jusqu'à {need} kg de MTOM ; celui-ci pèse {have} kg. Il faut une PPL ou plus.",
+      "lapl_passengers": "Avec une LAPL(A), vous pouvez emmener au plus 3 passagers."
     },
     "calendar": {
       "previous": "Mois précédent",
@@ -1662,7 +1667,8 @@
       "send": "Envoyer la demande",
       "sending": "Envoi…",
       "cancellation": "Conditions d'annulation :",
-      "updateCredentials": "Aller à vos qualifications de pilote"
+      "updateCredentials": "Aller à vos qualifications de pilote",
+      "passengersHint": "Sans vous compter. Pour emmener des passagers, il vous faut 3 décollages et atterrissages sur cette classe ou ce type dans les 90 jours avant le vol (FCL.060) ; vous le confirmez au départ."
     },
     "errors": {
       "not_eligible": "Vous ne pouvez pas encore réserver ce vol :",
@@ -1671,7 +1677,8 @@
       "period_length": "Une réservation dure entre 30 minutes et 14 jours.",
       "not_free": "Ce créneau n'est plus libre. Veuillez en choisir un autre.",
       "aircraft_unavailable": "Cet avion ne peut pas être réservé pour le moment.",
-      "failed": "Cela n'a pas fonctionné. Veuillez réessayer."
+      "failed": "Cela n'a pas fonctionné. Veuillez réessayer.",
+      "lapl_passengers": "Avec une LAPL(A), vous pouvez emmener au plus 3 passagers."
     },
     "list": {
       "title": "Réservations",
@@ -1956,7 +1963,8 @@
       "missing_meters": "Des valeurs de compteur manquent.",
       "leg_checks": "Vérifiez l’étape : les heures doivent être dans l’ordre (mise en route, départ du parking, décollage, atterrissage, arrivée au parking, arrêt moteur) et sur 12 heures maximum, les compteurs doivent avancer, le carburant doit diminuer et l’huile ne peut pas augmenter pendant une étape.",
       "failed": "Une erreur s'est produite. Veuillez réessayer.",
-      "aircraft_grounded": "L'avion est immobilisé par le propriétaire, il ne peut donc pas être pris en charge."
+      "aircraft_grounded": "L'avion est immobilisé par le propriétaire, il ne peut donc pas être pris en charge.",
+      "passenger_recency": "Pour emmener des passagers, confirmez d'abord la règle des 90 jours (3 décollages et atterrissages)."
     },
     "uplifts": "Carburant et huile ajoutés",
     "noUplifts": "Rien d'ajouté pour l'instant. Enregistrez chaque avitaillement ou appoint d'huile avec son reçu.",
@@ -2085,7 +2093,9 @@
       "failed": "L'explication n'a pas pu être enregistrée.",
       "ownerHint": "Vous seul voyez ce qui s'est passé entre-temps. Pour repartir du bon relevé la prochaine fois, enregistrez les compteurs après un vol hors ownAplane (Mes avions → Utilisation → Relevés des compteurs).",
       "pilotHint": "Corrigez le relevé de départ s'il s'agit d'une faute de frappe. Le propriétaire le voit aussi."
-    }
+    },
+    "recencyConfirm": "J'ai effectué au moins 3 décollages et atterrissages sur un aéronef de cette classe ou de ce type au cours des 90 derniers jours (FCL.060) et je peux donc emmener {count, plural, one {mon passager} other {mes # passagers}}.",
+    "recencyConfirmed": "Le pilote a confirmé la règle des 90 jours pour les passagers (FCL.060) au départ."
   },
   "defects": {
     "report": "Signaler un défaut",

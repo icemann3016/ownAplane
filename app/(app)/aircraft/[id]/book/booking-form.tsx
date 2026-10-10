@@ -178,6 +178,7 @@ export function BookingForm({
           min={0}
           max={a.seats - 1}
           label={t("passengers")}
+          hint={t("passengersHint")}
           defaultValue={v.passengers ?? "0"}
           errors={e.passengers}
           required

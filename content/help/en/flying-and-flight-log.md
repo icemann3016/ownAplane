@@ -21,6 +21,10 @@ From **2 hours before** the booked time, your booking has a **Check out** button
 flight log and puts the booking **In progress**. Enter what you find before the first flight:
 Hobbs and tach, fuel on board, oil level, and optionally a photo of the meters.
 
+If the booking has **passengers**, tick the confirmation that you made at least 3 take-offs and
+landings in an aircraft of this class or type in the last 90 days (FCL.060) before you check
+out. The owner sees that you confirmed it.
+
 ## Legs
 
 Add one **leg** per flight (**Add leg**), for example LBSF → LBPD → LBSF as two legs:

@@ -105,6 +105,79 @@ describeDb("eligibility check", () => {
     expect(await codes(PAT, periodIn(40))).toEqual(["medical"]);
   });
 
+  it("applies the LAPL(A) limits: 2,000 kg MTOM and 3 passengers (FCL.105.A)", async () => {
+    const owner = db.getDb();
+    const plane = (values: Partial<typeof s.aircraft.$inferInsert>) =>
+      owner.update(s.aircraft).set(values).where(eq(s.aircraft.id, aircraftId));
+    // Editing a verified licence sends it back to pending; the admin verifies it again.
+    const licence = eq(s.pilotLicences.userId, PAT);
+    await owner.update(s.pilotLicences).set({ type: "lapl_a" }).where(licence);
+    await owner.update(s.pilotLicences).set({ status: "verified" }).where(licence);
+    await plane({ mtomKg: 2100 });
+    expect(await mine(PAT)).toEqual([
+      { requirement: "lapl_mtom", blocking: true, need: "2000", have: "2100" },
+    ]);
+    await plane({ mtomKg: 1310, seats: 5 });
+    expect(await mine(PAT)).toEqual([
+      { requirement: "lapl_passengers", blocking: false, need: "3", have: null },
+    ]);
+
+    // Bookings refuse a fourth passenger for a LAPL holder.
+    await owner
+      .insert(s.airports)
+      .values({
+        ident: "LBSF",
+        type: "large_airport",
+        name: "Sofia",
+        country: "BG",
+        latitude: 42.6952,
+        longitude: 23.4062,
+        timezone: "Europe/Sofia",
+      })
+      .onConflictDoNothing();
+    const book = (passengers: number) =>
+      owner
+        .insert(s.bookings)
+        .values({
+          aircraftId,
+          pilotId: PAT,
+          ownerId: OLA,
+          status: "requested",
+          period: periodIn(20 + passengers),
+          departureIdent: "LBSF",
+          arrivalIdent: "LBSF",
+          purpose: "local",
+          passengers,
+          plannedHours: 2,
+          pricePerHour: 150,
+          currency: "EUR",
+          priceBasis: "wet",
+          timeBasis: "hobbs",
+          estimate: 300,
+          expiresAt: new Date(Date.now() + 86_400_000),
+        })
+        .then(
+          () => "booked",
+          (e: { cause?: { message?: string } }) => e.cause?.message,
+        );
+    expect(await book(4)).toBe("lapl_passengers");
+    expect(await book(3)).toBe("booked");
+
+    // A PPL lifts the limits.
+    await owner.insert(s.pilotLicences).values({
+      userId: PAT,
+      type: "ppl_a",
+      issuingState: "BG",
+      number: "BG.2",
+      status: "verified",
+    });
+    expect(await mine(PAT)).toEqual([]);
+    expect(await book(4)).toBe("booked");
+    await owner.delete(s.bookings).where(eq(s.bookings.aircraftId, aircraftId));
+    await owner.delete(s.pilotLicences).where(eq(s.pilotLicences.type, "lapl_a"));
+    await plane({ mtomKg: null, seats: 4 });
+  });
+
   it("checks the owner's licence types and ratings", async () => {
     await setRequirements({
       licenceTypes: ["lapl_a", "cpl_a"],

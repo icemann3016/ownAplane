@@ -133,6 +133,7 @@ export default async function BookingPage({
         status={b.status}
         isPilot={b.pilotId === user.id}
         opensAt={new Date(period.from.getTime() - 2 * 3_600_000)}
+        passengers={b.passengers}
         error={checkout}
       />
       {b.status === "completed" && b.pilotId && (

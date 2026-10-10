@@ -53,6 +53,10 @@ export function eligibilityText(
     case "type_hours":
     case "pilot_rating":
       return t(f.requirement, { need: num(f.need), have: num(f.have), type: typeDesignator });
+    case "lapl_mtom":
+      return t(f.requirement, { need: num(f.need), have: num(f.have) });
+    case "lapl_passengers":
+      return t(f.requirement);
     case "age":
     case "age_unknown":
       return t(f.requirement, { need: num(f.need), have: num(f.have) });

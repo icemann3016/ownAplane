@@ -21,6 +21,7 @@ export function aircraftFormValues(a: Aircraft, units: UnitSystem): Record<strin
     fuelBurn: a.fuelBurnLph === null ? "" : str(litresToVolume(a.fuelBurnLph, units)),
     cruiseKt: str(a.cruiseKt),
     usefulLoad: a.usefulLoadKg === null ? "" : str(kgToMass(a.usefulLoadKg, units)),
+    mtom: a.mtomKg === null ? "" : str(kgToMass(a.mtomKg, units)),
     enduranceH: str(a.enduranceH),
     avionics: str(a.avionics),
     autopilot: box(a.autopilot),

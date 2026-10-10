@@ -80,15 +80,21 @@ export function detailsSchema(units: UnitSystem) {
       fuelBurn: optionalNumber(0.1, 2000),
       cruiseKt: optionalInt(1, 999),
       usefulLoad: optionalInt(1, 30000),
+      mtom: optionalInt(1, 50000).optional(),
       enduranceH: optionalNumber(0.1, 99.9),
     })
-    .transform(({ fuelBurn, usefulLoad, ...rest }) => ({
+    .transform(({ fuelBurn, usefulLoad, mtom, ...rest }) => ({
       ...rest,
       fuelBurnLph: fuelBurn === null ? null : volumeToLitres(fuelBurn, units),
       usefulLoadKg: usefulLoad === null ? null : massToKg(usefulLoad, units),
+      mtomKg: mtom == null ? null : massToKg(mtom, units),
     }))
     .refine((d) => d.usefulLoadKg === null || d.usefulLoadKg <= 32767, {
       path: ["usefulLoad"],
+      error: "numberInvalid",
+    })
+    .refine((d) => d.mtomKg === null || (d.mtomKg >= 100 && d.mtomKg <= 20000), {
+      path: ["mtom"],
       error: "numberInvalid",
     });
 }

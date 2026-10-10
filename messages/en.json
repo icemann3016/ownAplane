@@ -1228,7 +1228,9 @@
       "oilUnit": "Oil measured in",
       "oilUnitHint": "The unit on the dipstick.",
       "cancellationPolicy": "Cancellation policy",
-      "paymentNote": "Pilots pay you directly. ownAplane doesn't handle payments yet."
+      "paymentNote": "Pilots pay you directly. ownAplane doesn't handle payments yet.",
+      "mtom": "Maximum take-off mass (MTOM, {unit})",
+      "mtomHint": "From the flight manual. Pilots with only a LAPL may fly aircraft up to 2,000 kg."
     },
     "units": {
       "litresPerHour": "L/h",
@@ -1495,7 +1497,8 @@
       "usefulLoad": "Useful load",
       "endurance": "Endurance",
       "hours": "{hours} h",
-      "request": "Request booking"
+      "request": "Request booking",
+      "mtom": "MTOM"
     },
     "eligibility": {
       "own_aircraft": "This is your own aircraft.",
@@ -1523,7 +1526,9 @@
       "updateCredentials": "Update your pilot credentials",
       "aircraft_no_night": "Part of this time is at night (from 30 minutes after sunset to 30 minutes before sunrise), and this aircraft isn't approved for night VFR.",
       "night_rating": "Part of this time is at night (from 30 minutes after sunset to 30 minutes before sunrise): you need a valid, verified Night rating.",
-      "night_flight": "Part of this time is at night (from 30 minutes after sunset to 30 minutes before sunrise). Night VFR rules apply."
+      "night_flight": "Part of this time is at night (from 30 minutes after sunset to 30 minutes before sunrise). Night VFR rules apply.",
+      "lapl_mtom": "A LAPL(A) covers aircraft up to {need} kg MTOM; this one is {have} kg. You need a PPL or higher.",
+      "lapl_passengers": "With a LAPL(A) you may carry at most 3 passengers."
     },
     "calendar": {
       "previous": "Previous month",
@@ -1662,7 +1667,8 @@
       "send": "Send request",
       "sending": "Sending…",
       "cancellation": "Cancellation policy:",
-      "updateCredentials": "Go to your pilot credentials"
+      "updateCredentials": "Go to your pilot credentials",
+      "passengersHint": "Not counting you. To carry passengers you need 3 take-offs and landings in this class or type within the 90 days before the flight (FCL.060); you confirm it at check-out."
     },
     "errors": {
       "not_eligible": "You can't book this flight yet:",
@@ -1671,7 +1677,8 @@
       "period_length": "A booking is between 30 minutes and 14 days.",
       "not_free": "That time isn't free any more. Please choose another.",
       "aircraft_unavailable": "This aircraft can't be booked right now.",
-      "failed": "That didn't work. Please try again."
+      "failed": "That didn't work. Please try again.",
+      "lapl_passengers": "With a LAPL(A) you may carry at most 3 passengers."
     },
     "list": {
       "title": "Bookings",
@@ -1956,7 +1963,8 @@
       "missing_meters": "Some meter readings are missing.",
       "leg_checks": "Check the leg: times must be in order (engine start, block off, take-off, landing, block on, engine stop) and within 12 hours, meters must move on, fuel must go down and oil can't go up during a leg.",
       "failed": "Something went wrong. Please try again.",
-      "aircraft_grounded": "The aircraft is grounded by the owner, so it can't be checked out."
+      "aircraft_grounded": "The aircraft is grounded by the owner, so it can't be checked out.",
+      "passenger_recency": "To carry passengers, confirm the 90-day rule (3 take-offs and landings) first."
     },
     "uplifts": "Fuel and oil added",
     "noUplifts": "Nothing added yet. Record each refuelling or oil top-up with its receipt.",
@@ -2085,7 +2093,9 @@
       "failed": "The explanation couldn't be saved.",
       "ownerHint": "Only you see what happened in between. To start from the right reading next time, record the meters after flying outside ownAplane (My aircraft → Usage → Meter readings).",
       "pilotHint": "Correct the check-out reading if it's a typo. The owner sees this too."
-    }
+    },
+    "recencyConfirm": "I have made at least 3 take-offs and landings in an aircraft of this class or type within the last 90 days (FCL.060), so I may carry {count, plural, one {my passenger} other {my # passengers}}.",
+    "recencyConfirmed": "The pilot confirmed the 90-day rule for passengers (FCL.060) at check-out."
   },
   "defects": {
     "report": "Report a defect",

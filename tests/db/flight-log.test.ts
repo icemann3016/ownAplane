@@ -375,4 +375,50 @@ describeDb("flight log", () => {
       { type: "below", known: 1235.8 },
     ]);
   });
+
+  it("asks the pilot to confirm the 90-day rule at check-out when carrying passengers", async () => {
+    const owner = db.getDb();
+    const [plane] = await owner
+      .insert(s.aircraft)
+      .values({
+        ownerId: OWN,
+        registration: "LZ-PAX",
+        manufacturer: "Piper",
+        model: "PA-28",
+        typeDesignator: "P28A",
+        seats: 4,
+        fuelType: "avgas_100ll",
+      })
+      .returning();
+    const [b] = await owner
+      .insert(s.bookings)
+      .values({
+        aircraftId: plane!.id,
+        pilotId: PIL,
+        ownerId: OWN,
+        status: "accepted",
+        period: `[${at(30).toISOString()},${at(90).toISOString()})`,
+        departureIdent: "LBSF",
+        arrivalIdent: "LBSF",
+        purpose: "local",
+        passengers: 2,
+        plannedHours: 1,
+        pricePerHour: 150,
+        currency: "EUR",
+        priceBasis: "wet",
+        timeBasis: "hobbs",
+        estimate: 150,
+        expiresAt: at(20),
+      })
+      .returning();
+    expect(await call(PIL, sql`select public.start_flight_log(${b!.id}::uuid) as id`)).toEqual({
+      error: "passenger_recency",
+    });
+    const started = (await call<{ id: string }>(
+      PIL,
+      sql`select public.start_flight_log(${b!.id}::uuid, true) as id`,
+    )) as { id: string };
+    const [log] = await owner.select().from(s.flightLogs).where(eq(s.flightLogs.id, started.id));
+    expect(log!.recencyConfirmedAt).toBeInstanceOf(Date);
+  });
 });

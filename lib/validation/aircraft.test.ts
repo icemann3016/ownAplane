@@ -15,6 +15,7 @@ const details = {
   fuelBurn: "9,5",
   cruiseKt: "120",
   usefulLoad: "800",
+  mtom: "2550",
   enduranceH: "",
 };
 
@@ -30,6 +31,7 @@ describe("aircraft details", () => {
       engine: null,
       fuelBurnLph: 36,
       usefulLoadKg: 363,
+      mtomKg: 1157,
       enduranceH: null,
     });
   });

@@ -73,6 +73,8 @@ export const aircraft = pgTable(
     fuelBurnLph: numeric("fuel_burn_lph", { precision: 5, scale: 1, mode: "number" }),
     cruiseKt: smallint("cruise_kt"),
     usefulLoadKg: smallint("useful_load_kg"),
+    /** Maximum take-off mass: LAPL(A) holders may fly up to 2,000 kg (FCL.105.A). */
+    mtomKg: smallint("mtom_kg"),
     enduranceH: numeric("endurance_h", { precision: 3, scale: 1, mode: "number" }),
     // Equipment (LST-2)
     avionics: text("avionics"),
@@ -128,6 +130,7 @@ export const aircraft = pgTable(
       sql`${t.fuelBurnLph} > 0 and ${t.cruiseKt} > 0 and ${t.usefulLoadKg} > 0
         and ${t.enduranceH} > 0`,
     ),
+    check("aircraft_mtom", sql`${t.mtomKg} between 100 and 20000`),
     check("aircraft_description", sql`char_length(${t.description}) <= 4000`),
     check(
       "aircraft_prices",

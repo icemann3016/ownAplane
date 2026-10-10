@@ -9,7 +9,7 @@ don't see it until you publish it.
 |---|---|
 | **Overview** | Status, what's still missing, publish/pause/unlist, view the public listing, delete. |
 | **Calendar** | Your own use, maintenance and unavailable times; all bookings. |
-| **Details** | Registration, manufacturer, model, ICAO type, category, year, seats, engine, fuel type and burn, cruise speed, useful load, endurance. |
+| **Details** | Registration, manufacturer, model, ICAO type, category, year, seats, engine, fuel type and burn, cruise speed, useful load, maximum take-off mass (MTOM: pilots with only a LAPL may fly up to 2,000 kg), endurance. |
 | **Equipment** | Avionics, transponder, night VFR / IFR approval. |
 | **Home base** | Airfield from the airport list. |
 | **Pricing** | Price per hour, weekend price, minimum hours per day, currency, fuel (wet/dry), time measured by (Hobbs, tach, block), oil unit, cancellation policy. |

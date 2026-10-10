@@ -407,6 +407,20 @@
       "when": 1791666322680,
       "tag": "0057_meter_readings_security",
       "breakpoints": true
+    },
+    {
+      "idx": 58,
+      "version": "7",
+      "when": 1791667612109,
+      "tag": "0058_easa_pilot_rules",
+      "breakpoints": true
+    },
+    {
+      "idx": 59,
+      "version": "7",
+      "when": 1791667613192,
+      "tag": "0059_easa_pilot_rules_functions",
+      "breakpoints": true
     }
   ]
 }

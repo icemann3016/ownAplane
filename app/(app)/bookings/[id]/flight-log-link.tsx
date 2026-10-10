@@ -9,7 +9,13 @@ import { formatUtc } from "@/lib/aircraft/format";
 import type { Locale } from "@/lib/i18n/config";
 import { startCheckout } from "./log/actions";
 
-const ERRORS = new Set(["not_found", "not_accepted", "too_early", "aircraft_grounded"]);
+const ERRORS = new Set([
+  "not_found",
+  "not_accepted",
+  "too_early",
+  "aircraft_grounded",
+  "passenger_recency",
+]);
 
 /** Check-out button for the pilot of an accepted booking, or the link to its flight log (BKG-7). */
 export async function FlightLogLink({
@@ -17,6 +23,7 @@ export async function FlightLogLink({
   status,
   isPilot,
   opensAt,
+  passengers,
   error,
 }: {
   bookingId: string;
@@ -24,6 +31,8 @@ export async function FlightLogLink({
   isPilot: boolean;
   /** Check-out opens 2 hours before the booked time. */
   opensAt: Date;
+  /** With passengers the pilot confirms the 90-day rule (FCL.060) at check-out. */
+  passengers: number;
   error?: string;
 }) {
   const t = await getTranslations("flightLog");
@@ -54,6 +63,12 @@ export async function FlightLogLink({
       )}
       <input type="hidden" name="bookingId" value={bookingId} />
       <p className="text-sm text-muted-foreground">{t("checkoutHint")}</p>
+      {passengers > 0 && (
+        <label className="flex items-start gap-3 text-sm">
+          <input type="checkbox" name="recency" required className="mt-1" />
+          <span>{t("recencyConfirm", { count: passengers })}</span>
+        </label>
+      )}
       <Button type="submit" className="justify-self-start">
         <NotebookPenIcon aria-hidden /> {t("startCheckout")}
       </Button>

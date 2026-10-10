@@ -104,6 +104,7 @@ export const aircraftDetail = z.object({
     fuelBurnLitresPerHour: z.number().nullable(),
     cruiseKt: z.number().nullable(),
     usefulLoadKg: z.number().nullable(),
+    mtomKg: z.number().nullable().describe("Maximum take-off mass"),
     enduranceHours: z.number().nullable(),
   }),
   equipment: z.object({
