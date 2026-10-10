@@ -28,66 +28,21 @@ import {
 // The API's OpenAPI 3.1 description (API-5), built from the same Zod schemas the endpoints use
 // for input and the DTOs return, so it can't drift. Served at /api/v1/openapi.json.
 
-type JsonSchema = Record<string, unknown>;
-
-const output = (schema: z.ZodType) => z.toJSONSchema(schema, { io: "output" }) as JsonSchema;
-
-/** Query schema → OpenAPI query parameters. */
-function queryParameters(schema: z.ZodType) {
-  const json = z.toJSONSchema(schema, { io: "input", unrepresentable: "any" }) as {
-    properties?: Record<string, JsonSchema>;
-    required?: string[];
-  };
-  return Object.entries(json.properties ?? {}).map(([name, s]) => ({
-    name,
-    in: "query",
-    required: json.required?.includes(name) ?? false,
-    description: s.description,
-    schema: s,
-  }));
-}
-
-const pathId = (name: string, description: string) => ({
-  name,
-  in: "path",
-  required: true,
-  description,
-  schema: { type: "string" },
-});
-
-const ref = (name: string) => ({ $ref: `#/components/schemas/${name}` });
-const ok = (data: JsonSchema, list = false) => ({
-  200: {
-    description: "OK",
-    content: {
-      "application/json": {
-        schema: {
-          type: "object",
-          properties: list
-            ? { data: { type: "array", items: data }, nextCursor: { type: ["string", "null"] } }
-            : { data },
-          required: ["data"],
-        },
-      },
-    },
-  },
-});
-const errors = (...codes: number[]) =>
-  Object.fromEntries(
-    codes.map((code) => [
-      code,
-      { description: "Error", content: { "application/json": { schema: ref("Error") } } },
-    ]),
-  );
-const input = (schema: z.ZodType) =>
-  z.toJSONSchema(schema, { io: "input", unrepresentable: "any" }) as JsonSchema;
-const jsonBody = (schema: z.ZodType) => ({
-  required: true,
-  content: { "application/json": { schema: input(schema) } },
-});
-const connectionKey = [{ connectionKey: [] }];
-const signedIn = [{ bearer: [] }];
-const optionalSignIn = [{}, { bearer: [] }];
+import {
+  connectionKey,
+  errors,
+  type JsonSchema,
+  jsonBody,
+  ok,
+  optionalSignIn,
+  output,
+  pathId,
+  queryParameters,
+  ref,
+  signedIn,
+} from "./openapi-helpers";
+import { socialPaths, socialSchemas } from "./openapi-social";
+import { reviewPaths, reviewSchemas } from "./reviews";
 const takenExtras =
   "`title`, `type`, `status` and `registration` are optional and used only as the aircraft's owner chose; always sending them is fine.";
 
@@ -155,6 +110,8 @@ export function openApiDocument() {
         FlightLog: output(R.flightLog),
         Eligibility: output(R.eligibility),
         BusyPeriod: output(R.busyPeriod),
+        ...socialSchemas(),
+        ...reviewSchemas(),
         WebhookEvent: output(R.webhookEvent),
         WebhookSettings: output(R.webhookSettings),
         WebhookSaved: output(R.webhookSaved),
@@ -406,6 +363,8 @@ export function openApiDocument() {
           null,
         ),
       },
+      ...socialPaths(),
+      ...reviewPaths(),
       "/api/v1/sync": {
         get: {
           tags: ["calendar sync"],

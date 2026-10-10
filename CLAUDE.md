@@ -94,7 +94,9 @@ components/
 lib/
   auth/               # auth.ts (Better Auth config), session.ts (getUser, requireUser, requireAdmin…), errors.ts
   api/                # REST API core: http.ts (apiRoute, ApiError, parse), auth.ts (Bearer tokens only),
-                      #   schemas.ts (inputs), responses.ts (output shapes), dto.ts, openapi.ts
+                      #   schemas.ts (inputs), responses.ts (output shapes), dto.ts, openapi.ts (+ helpers);
+                      #   areas in their own file with inputs, shapes, DTOs and paths: social.ts (+ openapi-social),
+                      #   reviews.ts; flight-log.ts, booking-errors.ts (lib outcomes → API errors)
   account/            # profile.ts (profile, roles, settings), delete-files.ts
   calendar-sync/      # other booking systems (SYN): events, apply (store busy times, conflicts),
                       #   feeds (safe fetch, iCal via ical.js, JSON), sync, busy, ics (export), keys, owner,
@@ -199,6 +201,8 @@ _TODO: split areas so we don't edit the same files at the same time._
 ## Decisions log
 
 Add one line per decision, newest first.
+
+- 2026-10-10: **M13 API** (API-3): apps can do what pilots and owners do on the website for bookings (request, accept/decline/propose, cancel, availability, eligibility with reasons in the user's language), the flight log (check-out to confirmation), messages, notifications, favourites, saved searches and reviews. Website logic that lived in form handlers moved to `lib/` (`lib/bookings/flight-log-ops.ts`, `log-entries.ts`, outcomes in `outcome.ts`), so forms and API share it. Errors carry `details.reason` with the website's codes. Still website-only: credentials and aircraft management (uploads), account settings, admin. Push notifications (API-7) wait for app store keys.
 
 - 2026-10-10: **Webhooks to connected systems** (SYN-6): per connection `webhook_url` + `webhook_secret` (owner in Calendar sync, or the partner with its key via `/api/v1/sync/webhook`). Triggers queue `webhook_events` (no app access) for every visible change of a calendar entry or booking status, never to the system the busy time came from; `deliverWebhooks()` sends the busy time's current state (`busy.updated` / `busy.deleted`, same shape as GET /sync/busy incl. the new `id`, export fields respected) signed `ownaplane-signature: t=…,v1=HMAC-SHA256("t.body")`, public https only, no redirects, 8 s; retries 1 m…24 h (8 tries). Sent right after actions and by both cron jobs. OpenAPI `webhooks.busyChanged`.
 

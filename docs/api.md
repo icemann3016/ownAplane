@@ -82,7 +82,26 @@ their own text.
 
 Calendar sync endpoints for partner systems are listed below.
 
-Next (M13): messages, notifications, saved searches and reviews through the API.
+### Messages, notifications, favourites, saved searches, reviews
+
+| Method | Path | What |
+|--------|------|------|
+| GET | `/api/v1/conversations` | Your conversations (`unread`, last message) |
+| POST | `/api/v1/conversations` | `{ aircraftId, bookingId?, body? }`: open (or find) the conversation about a booking or listing |
+| GET | `/api/v1/conversations/{id}` | Its messages (`mine` true/false); marks them read |
+| POST | `/api/v1/conversations/{id}/messages` | `{ body }`: send (429 when too many in a short time) |
+| GET | `/api/v1/notifications` | Latest 50 with a `text` in the user's language, plus `unread` |
+| POST | `/api/v1/notifications/read` | Mark all read |
+| GET | `/api/v1/favourites` | Favourite aircraft |
+| PUT / DELETE | `/api/v1/favourites/{aircraftId}` | Add / remove |
+| GET / POST | `/api/v1/saved-searches` | Saved searches; `{ name, query, alerts }` where `query` is the search as a query string (`airport=LBSF&radius=50&from=2026-10-20T08:00`) |
+| PATCH / DELETE | `/api/v1/saved-searches/{id}` | `{ alerts }` / remove |
+| GET / POST | `/api/v1/bookings/{id}/reviews` | Your review and (once published) the other side's; `{ scores, comment }` to review |
+| POST | `/api/v1/reviews/{id}/reply` | `{ text }`: the owner's one public reply |
+| GET | `/api/v1/aircraft/{id}/reviews` | Published reviews of an aircraft (public) |
+
+Still website-only: pilot credentials and aircraft management (document uploads), account
+settings and admin tools.
 
 ## Calendar sync for other booking systems (SYN-1…6, SYN-8)
 

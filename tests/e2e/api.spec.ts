@@ -214,6 +214,58 @@ test.describe("with accounts", () => {
     });
     expect(R.bookingDetail.parse((await accepted.json()).data).status).toBe("accepted");
 
+    // 3b. They talk about it; the pilot is told about the acceptance in their language
+    const opened = await app("/api/v1/conversations", {
+      body: { aircraftId, bookingId: booking.id, body: "See you at the hangar at 08:45." },
+      token: owner,
+    });
+    expect(opened.status).toBe(201);
+    const conversation = (await opened.json()).data;
+    const inbox = (await (await app("/api/v1/conversations", { token: pilot })).json()).data;
+    expect(inbox).toContainEqual(
+      expect.objectContaining({ id: conversation.id, role: "pilot", unread: true }),
+    );
+    const reply = await app(`/api/v1/conversations/${conversation.id}/messages`, {
+      body: { body: "Thanks!" },
+      token: pilot,
+    });
+    expect((await reply.json()).data.messages.map((m: { mine: boolean }) => m.mine)).toEqual([
+      false,
+      true,
+    ]);
+    const notes = await (await app("/api/v1/notifications", { token: pilot })).json();
+    expect(notes.unread).toBeGreaterThan(0);
+    expect(notes.data).toContainEqual(
+      expect.objectContaining({ type: "accepted", bookingId: booking.id, read: false }),
+    );
+    expect((await app("/api/v1/notifications/read", { method: "POST", token: pilot })).status).toBe(
+      200,
+    );
+
+    // 3c. Favourites and a saved search
+    expect(
+      (await app(`/api/v1/favourites/${aircraftId}`, { method: "PUT", token: pilot })).status,
+    ).toBe(200);
+    const favourites = (await (await app("/api/v1/favourites", { token: pilot })).json()).data;
+    expect(favourites.map((f: { aircraft: { id: string } }) => f.aircraft.id)).toEqual([
+      aircraftId,
+    ]);
+    const saved = await app("/api/v1/saved-searches", {
+      body: { name: "Sofia", query: "airport=LBSF&radius=25" },
+      token: pilot,
+    });
+    const search = (await saved.json()).data;
+    expect(search).toMatchObject({ name: "Sofia", alerts: true, filters: { airport: "LBSF" } });
+    const off = await app(`/api/v1/saved-searches/${search.id}`, {
+      method: "PATCH",
+      body: { alerts: false },
+      token: pilot,
+    });
+    expect((await off.json()).data.alerts).toBe(false);
+    expect(
+      (await app(`/api/v1/saved-searches/${search.id}`, { method: "DELETE", token: owner })).status,
+    ).toBe(404);
+
     // 4. The pilot cancels in time (free under the owner's policy)
     const cancelled = await app(`/api/v1/bookings/${booking.id}/cancel`, {
       body: { reason: "Weather" },
@@ -325,5 +377,42 @@ test.describe("with accounts", () => {
     const confirmed = await log(await call("/confirm", owner, "POST"));
     expect(confirmed).toMatchObject({ status: "confirmed", editable: false });
     expect(confirmed.amount).toMatchObject({ flownMinutes: 72, confirmed: true });
+
+    // 5. Both review, double-blind; the owner replies to the published review
+    const reviews = (token: string, method = "GET", body?: unknown) =>
+      fetch(new URL(`/api/v1/bookings/${bookingId}/reviews`, baseURL), {
+        method,
+        headers: {
+          authorization: token,
+          ...(body ? { "content-type": "application/json" } : {}),
+        },
+        body: body ? JSON.stringify(body) : undefined,
+      });
+    const bad = await reviews(pilot, "POST", { scores: { airmanship: 5 } });
+    expect(bad.status).toBe(400);
+    const mine = (
+      await (
+        await reviews(pilot, "POST", {
+          scores: { aircraft_condition: 5, communication: 4, value: 5 },
+          comment: "Lovely aircraft.",
+        })
+      ).json()
+    ).data;
+    expect(mine.mine).toMatchObject({ direction: "pilot_to_owner", publishedAt: null });
+    expect(mine.theirs).toBeNull();
+    await reviews(owner, "POST", {
+      scores: { airmanship: 5, punctuality: 5, communication: 5, condition_returned: 5 },
+    });
+    const both = (await (await reviews(pilot)).json()).data;
+    expect(both.mine.publishedAt).not.toBeNull();
+    expect(both.theirs).toMatchObject({ direction: "owner_to_pilot" });
+    const replied = await fetch(new URL(`/api/v1/reviews/${both.mine.id}/reply`, baseURL), {
+      method: "POST",
+      headers: { authorization: owner, "content-type": "application/json" },
+      body: JSON.stringify({ text: "Thanks, come again!" }),
+    });
+    expect((await replied.json()).data).toMatchObject({ reply: "Thanks, come again!" });
+    const published = await fetch(new URL(`/api/v1/aircraft/${aircraftId}/reviews`, baseURL));
+    expect((await published.json()).data.map((r: { id: string }) => r.id)).toContain(both.mine.id);
   });
 });
