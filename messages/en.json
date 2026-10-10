@@ -2471,7 +2471,86 @@
     "export": {
       "name": "{registration} ({site})",
       "booked": "Booked ({site})",
-      "blocked": "Unavailable"
+      "blocked": "Unavailable",
+      "ownUse": "Owner's use",
+      "maintenance": "Maintenance",
+      "labels": {
+        "status": "Status",
+        "route": "Route",
+        "pilot": "Pilot",
+        "booking": "Booking",
+        "note": "Note",
+        "aircraft": "Aircraft"
+      },
+      "statuses": {
+        "requested": "Requested",
+        "accepted": "Accepted",
+        "in_progress": "In progress",
+        "completed": "Completed"
+      }
+    },
+    "data": {
+      "title": "Data exchanged with this system",
+      "current": "Sent: {sent}. Taken: {taken}.",
+      "nothing": "nothing (it only reads ours)",
+      "times": "times",
+      "send": "Send to this system",
+      "sendHint": "Used in our iCal link and the busy-times API.",
+      "alwaysSent": "Start and end times, and whether it's a booking (always)",
+      "take": "Take from this system",
+      "takeHint": "Used for what it sends us and for its link.",
+      "alwaysTaken": "Start and end times and its booking id (always)",
+      "save": "Save",
+      "saving": "Saving…",
+      "saved": "Saved. The other system gets the change with its next read.",
+      "export": {
+        "type": {
+          "label": "Type",
+          "hint": "Own use, maintenance or unavailable, instead of just \"unavailable\"."
+        },
+        "status": {
+          "label": "Booking status",
+          "hint": "Requested, accepted or in progress. Requests are marked tentative."
+        },
+        "route": {
+          "label": "Route",
+          "hint": "Departure and arrival airfields of each booking."
+        },
+        "pilot": {
+          "label": "Pilot's name",
+          "hint": "Personal data: share it only with a system you trust, and tell your pilots (for example in your rental terms)."
+        },
+        "reference": {
+          "label": "Booking reference",
+          "hint": "The ownAplane booking number and a link that opens for you."
+        },
+        "note": {
+          "label": "Your notes on blocked time",
+          "hint": "What you wrote when you blocked the time."
+        },
+        "registration": {
+          "label": "Aircraft registration",
+          "hint": "Helps when one system handles several aircraft."
+        }
+      },
+      "import": {
+        "title": {
+          "label": "Title",
+          "hint": "Shown in your calendar, only to you."
+        },
+        "type": {
+          "label": "Type",
+          "hint": "Its maintenance is shown as maintenance here (pilots see that too)."
+        },
+        "status": {
+          "label": "Status",
+          "hint": "Tentative bookings don't block the aircraft; only confirmed ones do."
+        },
+        "registration": {
+          "label": "Aircraft registration",
+          "hint": "Refuse bookings it sends for another aircraft."
+        }
+      }
     }
   }
 }

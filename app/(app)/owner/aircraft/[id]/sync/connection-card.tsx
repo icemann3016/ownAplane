@@ -11,7 +11,9 @@ import type { ConnectionView } from "@/lib/calendar-sync/owner";
 import type { Locale } from "@/lib/i18n/config";
 import { appUrl } from "@/lib/site-url";
 import { removeConnection, resetExportLink } from "./actions";
+import { exportFields, importFields } from "@/lib/calendar-sync/fields";
 import { ConfirmAction, ReplaceKey, SyncNow } from "./connection-controls";
+import { DataFields } from "./data-fields";
 
 const FEED_ERRORS = new Set([
   "url_invalid",
@@ -85,6 +87,14 @@ export async function ConnectionCard({ c }: { c: ConnectionView }) {
             </AlertDescription>
           </Alert>
         )}
+
+        <DataFields
+          aircraftId={c.aircraftId}
+          id={c.id}
+          inbound={c.inbound}
+          exported={exportFields(c.exportFields)}
+          imported={importFields(c.importFields)}
+        />
 
         <CopyField
           label={t("exportLink.label")}

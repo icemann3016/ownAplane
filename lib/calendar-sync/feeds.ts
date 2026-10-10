@@ -132,6 +132,8 @@ export async function fetchFeed(link: string): Promise<{ text: string; contentTy
 }
 
 // --- JSON: { "busy": [ { "id": "42", "start": "2026-10-20T08:00:00Z", "end": "…" } ] } ---
+// Optional per item: "title", "type" ("booking" | "maintenance"), "status" ("confirmed" |
+// "tentative" | "cancelled"; cancelled ones are left out), "registration".
 
 const instant = z.iso.datetime({ offset: true }).transform((v) => new Date(v));
 const jsonItem = z
@@ -141,8 +143,21 @@ const jsonItem = z
     end: instant.optional(),
     from: instant.optional(),
     to: instant.optional(),
+    title: z.string().max(500).nullish(),
+    type: z.string().max(40).nullish(),
+    status: z.string().max(40).nullish(),
+    registration: z.string().max(20).nullish(),
   })
-  .transform((i) => ({ id: i.id, from: i.start ?? i.from, to: i.end ?? i.to }))
+  .transform((i) => ({
+    id: i.id,
+    from: i.start ?? i.from,
+    to: i.end ?? i.to,
+    title: i.title ?? null,
+    type: i.type?.toLowerCase() === "maintenance" ? ("maintenance" as const) : ("booking" as const),
+    tentative: i.status?.toLowerCase() === "tentative",
+    cancelled: i.status?.toLowerCase() === "cancelled",
+    registration: i.registration ?? null,
+  }))
   .refine((i) => i.from && i.to, "start and end are required");
 const jsonFeed = z.union([z.array(jsonItem), z.object({ busy: z.array(jsonItem) })]);
 
@@ -156,7 +171,9 @@ export function parseJsonFeed(text: string): ExternalEvent[] {
   const parsed = jsonFeed.safeParse(data);
   if (!parsed.success) throw new FeedError("json_invalid", parsed.error.issues[0]?.message);
   const items = Array.isArray(parsed.data) ? parsed.data : parsed.data.busy;
-  return items.map((i) => ({ id: i.id, from: i.from!, to: i.to! }));
+  return items
+    .filter((i) => !i.cancelled)
+    .map(({ cancelled: _cancelled, ...i }) => ({ ...i, from: i.from!, to: i.to! }));
 }
 
 // --- iCal (RFC 5545), recurring events expanded with ical.js ---
@@ -218,6 +235,18 @@ export function parseIcsFeed(text: string, now = new Date()): ExternalEvent[] {
     String(component.getFirstPropertyValue("transp") ?? "").toUpperCase() !== "TRANSPARENT";
   const tzidOf = (component: ICAL.Component, prop: string) =>
     (component.getFirstProperty(prop)?.getParameter("tzid") as string | undefined) ?? null;
+  // SUMMARY = title; STATUS:TENTATIVE = not confirmed; CATEGORIES with "maintenance" = type.
+  const extras = (component: ICAL.Component) => {
+    const categories = component
+      .getAllProperties("categories")
+      .flatMap((p) => p.getValues().map((v) => String(v).toLowerCase()));
+    return {
+      title: String(component.getFirstPropertyValue("summary") ?? "") || null,
+      tentative:
+        String(component.getFirstPropertyValue("status") ?? "").toUpperCase() === "TENTATIVE",
+      type: categories.includes("maintenance") ? ("maintenance" as const) : ("booking" as const),
+    };
+  };
 
   const out: ExternalEvent[] = [];
   for (const [uid, event] of masters) {
@@ -228,7 +257,7 @@ export function parseIcsFeed(text: string, now = new Date()): ExternalEvent[] {
       const to = event.endDate
         ? toDate(event.endDate, tzidOf(event.component, "dtend") ?? startTz)
         : from;
-      out.push({ id: idFor(uid), from, to });
+      out.push({ id: idFor(uid), from, to, ...extras(event.component) });
       continue;
     }
     const it = event.iterator();
@@ -239,7 +268,12 @@ export function parseIcsFeed(text: string, now = new Date()): ExternalEvent[] {
       const to = toDate(details.endDate, startTz);
       if (to.getTime() <= windowStart) continue;
       if (!busy(details.item.component)) continue;
-      out.push({ id: idFor(uid, toDate(details.recurrenceId, startTz)), from, to });
+      out.push({
+        id: idFor(uid, toDate(details.recurrenceId, startTz)),
+        from,
+        to,
+        ...extras(details.item.component),
+      });
     }
   }
   return out;

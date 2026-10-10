@@ -2471,7 +2471,86 @@
     "export": {
       "name": "{registration} ({site})",
       "booked": "Gebucht ({site})",
-      "blocked": "Nicht verfügbar"
+      "blocked": "Nicht verfügbar",
+      "ownUse": "Eigennutzung",
+      "maintenance": "Wartung",
+      "labels": {
+        "status": "Status",
+        "route": "Route",
+        "pilot": "Pilot",
+        "booking": "Buchung",
+        "note": "Notiz",
+        "aircraft": "Flugzeug"
+      },
+      "statuses": {
+        "requested": "Angefragt",
+        "accepted": "Angenommen",
+        "in_progress": "Laufend",
+        "completed": "Abgeschlossen"
+      }
+    },
+    "data": {
+      "title": "Mit diesem System ausgetauschte Daten",
+      "current": "Gesendet: {sent}. Übernommen: {taken}.",
+      "nothing": "nichts (es liest nur unseren Kalender)",
+      "times": "Zeiten",
+      "send": "An dieses System senden",
+      "sendHint": "Wird in unserem iCal-Link und in der API für belegte Zeiten verwendet.",
+      "alwaysSent": "Beginn und Ende, und ob es eine Buchung ist (immer)",
+      "take": "Von diesem System übernehmen",
+      "takeHint": "Gilt für das, was es uns sendet, und für seinen Link.",
+      "alwaysTaken": "Beginn und Ende und seine Buchungsnummer (immer)",
+      "save": "Speichern",
+      "saving": "Wird gespeichert…",
+      "saved": "Gespeichert. Das andere System erhält die Änderung beim nächsten Lesen.",
+      "export": {
+        "type": {
+          "label": "Art",
+          "hint": "Eigennutzung, Wartung oder nicht verfügbar, statt nur „nicht verfügbar“."
+        },
+        "status": {
+          "label": "Buchungsstatus",
+          "hint": "Angefragt, angenommen oder laufend. Anfragen werden als vorläufig markiert."
+        },
+        "route": {
+          "label": "Route",
+          "hint": "Abflug- und Zielflugplatz jeder Buchung."
+        },
+        "pilot": {
+          "label": "Name des Piloten",
+          "hint": "Personenbezogene Daten: Teilen Sie sie nur mit einem System, dem Sie vertrauen, und informieren Sie Ihre Piloten (z. B. in Ihren Mietbedingungen)."
+        },
+        "reference": {
+          "label": "Buchungsreferenz",
+          "hint": "Die ownAplane-Buchungsnummer und ein Link, der sich für Sie öffnet."
+        },
+        "note": {
+          "label": "Ihre Notizen zu blockierten Zeiten",
+          "hint": "Was Sie beim Blockieren der Zeit geschrieben haben."
+        },
+        "registration": {
+          "label": "Kennzeichen des Flugzeugs",
+          "hint": "Hilfreich, wenn ein System mehrere Flugzeuge verwaltet."
+        }
+      },
+      "import": {
+        "title": {
+          "label": "Titel",
+          "hint": "Wird in Ihrem Kalender angezeigt, nur für Sie."
+        },
+        "type": {
+          "label": "Art",
+          "hint": "Seine Wartung wird hier als Wartung angezeigt (auch Piloten sehen das)."
+        },
+        "status": {
+          "label": "Status",
+          "hint": "Vorläufige Buchungen blockieren das Flugzeug nicht; nur bestätigte."
+        },
+        "registration": {
+          "label": "Kennzeichen des Flugzeugs",
+          "hint": "Buchungen ablehnen, die es für ein anderes Flugzeug sendet."
+        }
+      }
     }
   }
 }

@@ -24,8 +24,9 @@ You can connect up to 10 systems per aircraft.
 
 ## What happens with their bookings
 
-- They **block the time** here like your own blocks. Pilots only see "unavailable", never names
-  or details. In your calendar they show "From" and the connection's name.
+- They **block the time** here like your own blocks. Pilots only see "unavailable" (or
+  "maintenance", if you take the type), never names or details. In your calendar they show
+  "From" and the connection's name, and their title if you take it.
 - iCal and JSON links are read **every 15 minutes**, and again **right before** a booking is
   requested or accepted, so a time booked there a minute ago can't be booked here.
 - If a link can't be read, the connection says why, and the busy times read before stay in
@@ -42,8 +43,35 @@ itself. While another system has the time, you can't accept a request for it.
 ## Our iCal link for the other system
 
 Each connection has its own private **iCal link** with the aircraft's bookings, requests and
-blocks here (times only, no names or notes), without that system's own bookings. Subscribe to it
-in the other system. **Reset link** if it was shared by mistake; the old one stops working.
+blocks here (times only, unless you choose more below), without that system's own bookings.
+Subscribe to it in the other system. **Reset link** if it was shared by mistake; the old one stops
+working.
+
+## Choose what is shared
+
+By default, only **times** go both ways: when the aircraft is busy and whether it's a booking.
+Open **Data exchanged with this system** on a connection to choose more, then **Save**. The other
+system gets the change with its next read.
+
+**Send to this system** (our iCal link and the busy-times API):
+
+- **Type:** own use, maintenance or unavailable, instead of just "unavailable".
+- **Booking status:** requested, accepted or in progress. Requests are marked tentative.
+- **Route:** the departure and arrival airfields of each booking.
+- **Pilot's name:** personal data. Share it only with a system you trust, and tell your pilots
+  (for example in your rental terms). Pilots' email addresses and phone numbers are never sent.
+- **Booking reference:** the ownAplane booking number and a link that opens for you.
+- **Your notes on blocked time:** what you wrote when you blocked the time.
+- **Aircraft registration:** helps when one system handles several aircraft.
+
+Titles from your other connected systems are never passed on.
+
+**Take from this system** (what it sends us and its link):
+
+- **Title:** shown in your calendar, only to you.
+- **Type:** its maintenance is shown as maintenance here (pilots see that too).
+- **Status:** tentative bookings don't block the aircraft; only confirmed ones do.
+- **Aircraft registration:** bookings it sends for another aircraft are refused.
 
 ## JSON format (for developers)
 
@@ -54,4 +82,6 @@ A JSON link must return the system's bookings for the aircraft, for example:
 ```
 
 `id` is the booking's id in that system, `start` and `end` are ISO 8601 times with a time zone.
+Optional per booking: `title`, `type` (`booking` or `maintenance`), `status` (`confirmed`,
+`tentative` or `cancelled`) and `registration`; they are used only as you chose above.
 The API for pushing bookings is described at `/api/v1/openapi.json` and in the developer guide.

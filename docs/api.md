@@ -55,7 +55,7 @@ Calendar sync endpoints for partner systems are listed below.
 
 Next (M13): booking actions, flight log, messages, notifications through the API.
 
-## Calendar sync for other booking systems (SYN-1…5)
+## Calendar sync for other booking systems (SYN-1…5, SYN-8)
 
 An aircraft's owner connects other systems under **Aircraft → Calendar sync** (help article
 `/help/calendar-sync`). Each connection works in one of these ways, and every connection also gets
@@ -76,12 +76,54 @@ All with `Authorization: Bearer oap_…`; the key decides the aircraft.
 |--------|------|------|
 | GET | `/api/v1/sync` | Which connection and aircraft the key belongs to |
 | GET | `/api/v1/sync/busy?from=&to=` | When the aircraft is busy in ownAplane (bookings, requests, blocks, other systems; not yours). **Check before you confirm a booking.** |
-| PUT | `/api/v1/sync/busy/{yourId}` | `{ "start": "…Z", "end": "…Z" }`: create or move one booking. **409 `conflict`** if it overlaps an ownAplane booking: it is still recorded, the owner is told to resolve it |
+| PUT | `/api/v1/sync/busy/{yourId}` | `{ "start": "…Z", "end": "…Z" }` (+ optional details below): create or move one booking; `"status": "cancelled"` removes it. **409 `conflict`** if it overlaps an ownAplane booking: it is still recorded, the owner is told to resolve it |
 | DELETE | `/api/v1/sync/busy/{yourId}` | The booking was cancelled; the time is free again |
 | PUT | `/api/v1/sync/busy` | `{ "busy": [ { "id", "start", "end" } ] }`: replace everything (a full snapshot); missing ids are removed. Returns the ids that conflict |
 
 Statuses: `active` (blocks the aircraft), `covered` (the owner had already blocked that time),
-`ignored` (in the past or more than 400 days ahead), `conflict` (409, see above).
+`ignored` (cancelled, tentative while the owner takes the status, in the past or more than 400
+days ahead), `conflict` (409, see above). A push for another aircraft (`registration`, when the
+owner checks it) is refused with 400 `bad_request` (`fields.registration`); in a full snapshot
+those ids come back in `wrongAircraft`, tentative ones in `ignored`.
+
+### Optional details, chosen by the owner
+
+By default only times are exchanged: start, end, our id and whether it's a booking (`kind`) out;
+start, end and your id in. Per connection, the owner chooses more under **Data exchanged with this
+system** (`calendar_connections.export_fields` / `import_fields`). Fields that aren't chosen are
+left out of the response; anything you send that isn't chosen is ignored, so always sending
+everything is fine.
+
+**Sent to you** (`GET /api/v1/sync/busy` and the iCal link):
+
+| Owner's choice | JSON field | In the iCal link |
+|---|---|---|
+| Type | `type`: `booking`, `owner_use`, `maintenance`, `unavailable` | SUMMARY "Maintenance", "Owner's use" |
+| Booking status | `status`: `requested`, `accepted`, `in_progress`, `completed` | DESCRIPTION; requests are `STATUS:TENTATIVE` |
+| Route | `route`: `{ departure, arrival }` (airport idents) | DESCRIPTION, LOCATION = departure |
+| Pilot's name | `pilot`: `{ name }` | DESCRIPTION |
+| Booking reference | `booking`: `{ id, url }` (the url opens for the owner) | DESCRIPTION, URL |
+| Owner's notes on blocked time | `note` | DESCRIPTION |
+| Aircraft registration | `registration` | DESCRIPTION |
+
+Pilots' email addresses and phone numbers are never sent. Titles of other connected systems are
+never passed on. iCal texts are in the owner's language.
+
+**Taken from you** (push API, JSON link and iCal link):
+
+| Owner's choice | Push API / JSON link | iCal link | Effect |
+|---|---|---|---|
+| Title | `title` (the first 200 characters are kept) | SUMMARY | Shown in the owner's calendar, only to the owner |
+| Type | `type`: `booking` or `maintenance` | CATEGORIES containing "maintenance" | Shown as maintenance (pilots see the kind, never the title) |
+| Status | `status`: `confirmed`, `tentative` (`cancelled` always removes it) | STATUS:TENTATIVE / CANCELLED | Tentative bookings don't block the aircraft |
+| Aircraft registration | `registration` (case and dashes ignored) | — | Bookings for another aircraft are refused |
+
+Example push with every optional field:
+
+```json
+{ "start": "2026-10-20T08:00:00Z", "end": "2026-10-20T11:00:00Z",
+  "title": "Lesson, student 12", "type": "booking", "status": "confirmed", "registration": "LZ-ABC" }
+```
 
 **Avoiding double bookings both ways:** before your system confirms a booking, ask
 `GET /api/v1/sync/busy` (or read our iCal link); after it confirms, `PUT` it at once. ownAplane
@@ -94,7 +136,8 @@ refuses an acceptance while another system has the time.
 { "busy": [ { "id": "42", "start": "2026-10-20T08:00:00Z", "end": "2026-10-20T11:00:00Z" } ] }
 ```
 
-A plain array works too, and `from`/`to` instead of `start`/`end`. Times are ISO 8601 with an
+A plain array works too, and `from`/`to` instead of `start`/`end`. Items may carry the optional
+`title`, `type`, `status` and `registration` above; `"status": "cancelled"` items are skipped. Times are ISO 8601 with an
 offset. Links must be public `https` addresses (no private networks), answer within 8 seconds
 and be at most 2 MB; recurring iCal events are expanded for the next 400 days.
 

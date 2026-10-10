@@ -104,6 +104,25 @@ describeDb("calendar sync (SYN-1…5)", () => {
     expect(push!.inbound).toBe("push");
   });
 
+  it("lets the owner choose the data exchanged, from the known fields only", async () => {
+    const [conn] = await connect(OWNER, { name: "Fields" });
+    const choose = (userId: string, exportFields: string[], importFields: string[]) =>
+      rls.asUser(userId, (tx) =>
+        tx
+          .update(s.calendarConnections)
+          .set({ exportFields, importFields })
+          .where(eq(s.calendarConnections.id, conn!.id))
+          .returning(),
+      );
+    expect(conn).toMatchObject({ exportFields: [], importFields: [] });
+    const [saved] = await choose(OWNER, ["route", "pilot"], ["title"]);
+    expect(saved).toMatchObject({ exportFields: ["route", "pilot"], importFields: ["title"] });
+    expect(await choose(OTHER, ["note"], [])).toEqual([]);
+    // Contact details are never offered to other systems.
+    expect(await pgCode(choose(OWNER, ["email"], []))).toBe("23514");
+    expect(await pgCode(choose(OWNER, [], ["pilot"]))).toBe("23514");
+  });
+
   it("keeps external busy times for the sync code", async () => {
     const [conn] = await rls.asUser(OWNER, (tx) => tx.select().from(s.calendarConnections));
     expect(
@@ -357,5 +376,67 @@ describeDb("calendar sync engine", () => {
       .from(s.calendarConnections)
       .where(eq(s.calendarConnections.id, connectionId));
     expect(same!.lastSyncError).toBe("json_invalid");
+  });
+
+  it("keeps only what the owner chose to take from the other system", async () => {
+    const owner = db.getDb();
+    const [c] = await owner
+      .insert(s.calendarConnections)
+      .values({
+        aircraftId: plane,
+        name: "Choosy",
+        inbound: "push",
+        apiKeyHash: "c".repeat(64),
+        importFields: ["title", "type", "status", "registration"],
+      })
+      .returning();
+    const id = c!.id;
+    const stored = async () =>
+      (await owner.select().from(s.calendarEntries).where(eq(s.calendarEntries.connectionId, id)))
+        .map((r) => [r.externalId, r.kind, r.note])
+        .sort();
+    const lesson = { ...event("lesson", 12, 8, 10), title: "Lesson LZ-SYE" };
+    const check = { ...event("check", 13, 8, 12), type: "maintenance" as const };
+
+    const result = await apply.applyEvents(
+      id,
+      [
+        lesson,
+        { ...check, registration: "lz sye" },
+        { ...event("maybe", 14, 8, 10), tentative: true },
+        { ...event("other", 15, 8, 10), registration: "LZ-ABC" },
+      ],
+      "upsert",
+    );
+    expect(Object.fromEntries(result.statuses)).toEqual({
+      lesson: "active",
+      check: "active",
+      maybe: "ignored",
+      other: "wrong_aircraft",
+    });
+    expect(await stored()).toEqual([
+      ["check", "maintenance", null],
+      ["lesson", "unavailable", "Lesson LZ-SYE"],
+    ]);
+
+    // A booking that turns tentative is released.
+    await apply.applyEvents(id, [{ ...lesson, tentative: true }], "upsert");
+    expect(await stored()).toEqual([["check", "maintenance", null]]);
+
+    // Without the choices, every busy time blocks the aircraft, without title or type.
+    await owner
+      .update(s.calendarConnections)
+      .set({ importFields: [] })
+      .where(eq(s.calendarConnections.id, id));
+    await apply.applyEvents(
+      id,
+      [lesson, check, { ...event("other", 15, 8, 10), registration: "LZ-ABC", tentative: true }],
+      "replace",
+    );
+    expect(await stored()).toEqual([
+      ["check", "unavailable", null],
+      ["lesson", "unavailable", null],
+      ["other", "unavailable", null],
+    ]);
   });
 });

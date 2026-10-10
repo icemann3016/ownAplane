@@ -67,7 +67,12 @@ export default async function CalendarPage({
               ...e,
               pending: e.bookingStatus === "requested",
               detail:
-                e.pilotName ?? (e.source ? t("calendar.fromSource", { name: e.source }) : e.note),
+                e.pilotName ??
+                (e.source
+                  ? [t("calendar.fromSource", { name: e.source }), e.note]
+                      .filter(Boolean)
+                      .join(": ")
+                  : e.note),
               href: e.bookingId ? `/bookings/${e.bookingId}` : null,
             }))}
             mode="owner"

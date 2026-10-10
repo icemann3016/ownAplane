@@ -2471,7 +2471,86 @@
     "export": {
       "name": "{registration} ({site})",
       "booked": "Réservé ({site})",
-      "blocked": "Indisponible"
+      "blocked": "Indisponible",
+      "ownUse": "Usage du propriétaire",
+      "maintenance": "Maintenance",
+      "labels": {
+        "status": "Statut",
+        "route": "Trajet",
+        "pilot": "Pilote",
+        "booking": "Réservation",
+        "note": "Note",
+        "aircraft": "Avion"
+      },
+      "statuses": {
+        "requested": "Demandée",
+        "accepted": "Acceptée",
+        "in_progress": "En cours",
+        "completed": "Terminée"
+      }
+    },
+    "data": {
+      "title": "Données échangées avec ce système",
+      "current": "Envoyé : {sent}. Repris : {taken}.",
+      "nothing": "rien (il lit seulement notre calendrier)",
+      "times": "horaires",
+      "send": "Envoyer à ce système",
+      "sendHint": "Utilisé dans notre lien iCal et l’API des créneaux occupés.",
+      "alwaysSent": "Début et fin, et s’il s’agit d’une réservation (toujours)",
+      "take": "Reprendre de ce système",
+      "takeHint": "S’applique à ce qu’il nous envoie et à son lien.",
+      "alwaysTaken": "Début et fin et son numéro de réservation (toujours)",
+      "save": "Enregistrer",
+      "saving": "Enregistrement…",
+      "saved": "Enregistré. L’autre système reçoit la modification à sa prochaine lecture.",
+      "export": {
+        "type": {
+          "label": "Type",
+          "hint": "Usage du propriétaire, maintenance ou indisponible, au lieu de simplement « indisponible »."
+        },
+        "status": {
+          "label": "Statut de la réservation",
+          "hint": "Demandée, acceptée ou en cours. Les demandes sont marquées provisoires."
+        },
+        "route": {
+          "label": "Trajet",
+          "hint": "Aérodromes de départ et d’arrivée de chaque réservation."
+        },
+        "pilot": {
+          "label": "Nom du pilote",
+          "hint": "Donnée personnelle : partagez-la seulement avec un système de confiance, et informez vos pilotes (par exemple dans vos conditions de location)."
+        },
+        "reference": {
+          "label": "Référence de la réservation",
+          "hint": "Le numéro de réservation ownAplane et un lien qui s’ouvre pour vous."
+        },
+        "note": {
+          "label": "Vos notes sur les créneaux bloqués",
+          "hint": "Ce que vous avez écrit en bloquant le créneau."
+        },
+        "registration": {
+          "label": "Immatriculation de l’avion",
+          "hint": "Utile quand un système gère plusieurs avions."
+        }
+      },
+      "import": {
+        "title": {
+          "label": "Titre",
+          "hint": "Affiché dans votre calendrier, pour vous seul."
+        },
+        "type": {
+          "label": "Type",
+          "hint": "Sa maintenance apparaît comme maintenance ici (les pilotes la voient aussi)."
+        },
+        "status": {
+          "label": "Statut",
+          "hint": "Les réservations provisoires ne bloquent pas l’avion ; seules les confirmées le font."
+        },
+        "registration": {
+          "label": "Immatriculation de l’avion",
+          "hint": "Refuser les réservations qu’il envoie pour un autre avion."
+        }
+      }
     }
   }
 }

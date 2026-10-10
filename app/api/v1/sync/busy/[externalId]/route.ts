@@ -1,6 +1,6 @@
 import { requireConnection } from "@/lib/api/connection-auth";
 import { ApiError, apiRoute, bodyOf, json, parse } from "@/lib/api/http";
-import { externalId as externalIdSchema, pushBusyBody } from "@/lib/api/schemas";
+import { externalId as externalIdSchema, pushBusyBody, toExternalEvent } from "@/lib/api/schemas";
 import { applyEvents, removeEvent } from "@/lib/calendar-sync/apply";
 import { normalizeEvents } from "@/lib/calendar-sync/events";
 import { sendNotificationsSoon } from "@/lib/notifications/soon";
@@ -13,22 +13,30 @@ const idOf = async ({ params }: Context) =>
 /**
  * PUT /api/v1/sync/busy/{externalId}: create or move one of your bookings (SYN-4). 409 when it
  * overlaps an ownAplane booking: it is still recorded, and the owner is asked to resolve it.
+ * `status: "cancelled"` removes it, like DELETE.
  */
 export const PUT = apiRoute(async (request, context: Context) => {
   const connection = await requireConnection(request);
   const externalId = await idOf(context);
   const body = parse(pushBusyBody, await bodyOf(request));
-  const { events } = normalizeEvents([
-    { id: externalId, from: new Date(body.start), to: new Date(body.end) },
-  ]);
+  const { events } = normalizeEvents(
+    body.status === "cancelled" ? [] : [toExternalEvent(externalId, body)],
+  );
   if (!events.length) {
-    // In the past or more than 400 days ahead: nothing to block. A stored copy is removed.
+    // Cancelled, in the past or more than 400 days ahead: nothing to block.
     await removeEvent(connection.id, externalId);
     return json({ data: { externalId, status: "ignored" } });
   }
   sendNotificationsSoon(); // conflict alerts (SYN-5)
   const { statuses } = await applyEvents(connection.id, events, "upsert");
   const status = statuses.get(externalId)!;
+  if (status === "wrong_aircraft") {
+    throw new ApiError(
+      "bad_request",
+      `This key is for ${connection.registration}, not ${body.registration}.`,
+      { registration: ["Not this aircraft"] },
+    );
+  }
   if (status === "conflict") {
     throw new ApiError(
       "conflict",

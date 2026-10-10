@@ -70,7 +70,8 @@ export const calendarEntries = pgTable(
     check(
       "calendar_entries_external",
       sql`(${t.connectionId} is null and ${t.externalId} is null and not ${t.conflict})
-        or (${t.kind} = 'unavailable' and ${t.bookingId} is null and ${t.externalId} is not null
+        or (${t.kind} in ('unavailable', 'maintenance') and ${t.bookingId} is null
+          and ${t.externalId} is not null
           and char_length(${t.externalId}) between 1 and 200)`,
     ),
     check(
@@ -121,6 +122,16 @@ export const calendarConnections = pgTable(
     /** Why the last sync failed (null when it worked). */
     lastSyncError: text("last_sync_error"),
     lastSyncCount: integer("last_sync_count"),
+    /** What is sent besides the times (lib/calendar-sync/fields.ts EXPORT_FIELDS). */
+    exportFields: text("export_fields")
+      .array()
+      .notNull()
+      .default(sql`'{}'`),
+    /** What is taken besides the times (IMPORT_FIELDS). */
+    importFields: text("import_fields")
+      .array()
+      .notNull()
+      .default(sql`'{}'`),
     createdBy: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
@@ -140,6 +151,11 @@ export const calendarConnections = pgTable(
     ),
     check("calendar_connections_export", sql`char_length(${t.exportToken}) >= 32`),
     check("calendar_connections_error", sql`char_length(${t.lastSyncError}) <= 500`),
+    check(
+      "calendar_connections_fields",
+      sql`${t.exportFields} <@ array['type', 'status', 'route', 'pilot', 'reference', 'note', 'registration']::text[]
+        and ${t.importFields} <@ array['title', 'type', 'status', 'registration']::text[]`,
+    ),
   ],
 ).enableRLS();
 

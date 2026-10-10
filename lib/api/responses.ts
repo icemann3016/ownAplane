@@ -9,7 +9,13 @@ import {
   TIME_BASES,
   TRANSPONDERS,
 } from "@/lib/aircraft/catalog";
-import { aircraftStatus, appRole, bookingPurpose, bookingStatus } from "@/lib/db/schema";
+import {
+  aircraftStatus,
+  appRole,
+  bookingPurpose,
+  bookingStatus,
+  calendarEntryKind,
+} from "@/lib/db/schema";
 
 // Shapes of API responses (plan §4.9). The DTO functions (dto.ts) return exactly these types, so
 // TypeScript keeps them in step, and the OpenAPI description (openapi.ts) is generated from them.
@@ -195,24 +201,39 @@ export const busyTime = z.object({
   from: time,
   to: time,
   kind: z.enum(["booking", "blocked"]).describe("An ownAplane booking or request, or blocked time"),
+  // The rest only when the aircraft's owner shares it with your system (export settings).
+  type: z
+    .enum(calendarEntryKind.enumValues)
+    .optional()
+    .describe("booking, owner_use, maintenance or unavailable"),
+  status: z.string().optional().describe("Bookings: requested, accepted or in_progress"),
+  route: z.object({ departure: z.string(), arrival: z.string() }).optional(),
+  pilot: z.object({ name: z.string() }).optional(),
+  booking: z.object({ id, url: z.string() }).optional().describe("The link opens for the owner"),
+  note: z.string().optional().describe("The owner's note on blocked time"),
+  registration: z.string().optional(),
 });
 
 const pushStatus = z
   .enum(["active", "covered", "ignored"])
   .describe(
-    "active = blocks the aircraft; covered = the time was already blocked; ignored = in the past or too far ahead",
+    "active = blocks the aircraft; covered = the time was already blocked; ignored = in the past, too far ahead, or tentative while the owner takes statuses",
   );
 
 export const pushResult = z.object({ externalId: z.string(), status: pushStatus });
+
+const ids = z.array(z.string());
 
 export const pushAllResult = z.object({
   count: z.number().int().describe("Busy times stored"),
   removed: z.number().int().describe("Busy times removed because they were no longer sent"),
   active: z.number().int(),
   covered: z.number().int(),
-  conflicts: z
-    .array(z.string())
-    .describe("Your ids that overlap an ownAplane booking: kept for the owner to resolve"),
+  conflicts: ids.describe(
+    "Your ids that overlap an ownAplane booking: kept for the owner to resolve",
+  ),
+  ignored: ids.describe("Tentative bookings, left out because the owner takes statuses"),
+  wrongAircraft: ids.describe("Bookings for another registration, left out"),
 });
 
 export type Me = z.infer<typeof me>;

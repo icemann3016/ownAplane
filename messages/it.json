@@ -2471,7 +2471,86 @@
     "export": {
       "name": "{registration} ({site})",
       "booked": "Prenotato ({site})",
-      "blocked": "Non disponibile"
+      "blocked": "Non disponibile",
+      "ownUse": "Uso del proprietario",
+      "maintenance": "Manutenzione",
+      "labels": {
+        "status": "Stato",
+        "route": "Percorso",
+        "pilot": "Pilota",
+        "booking": "Prenotazione",
+        "note": "Nota",
+        "aircraft": "Aereo"
+      },
+      "statuses": {
+        "requested": "Richiesta",
+        "accepted": "Accettata",
+        "in_progress": "In corso",
+        "completed": "Completata"
+      }
+    },
+    "data": {
+      "title": "Dati scambiati con questo sistema",
+      "current": "Inviati: {sent}. Ricevuti: {taken}.",
+      "nothing": "nulla (legge solo il nostro calendario)",
+      "times": "orari",
+      "send": "Invia a questo sistema",
+      "sendHint": "Usato nel nostro link iCal e nell’API dei periodi occupati.",
+      "alwaysSent": "Inizio e fine, e se è una prenotazione (sempre)",
+      "take": "Ricevi da questo sistema",
+      "takeHint": "Vale per ciò che ci invia e per il suo link.",
+      "alwaysTaken": "Inizio e fine e il suo numero di prenotazione (sempre)",
+      "save": "Salva",
+      "saving": "Salvataggio…",
+      "saved": "Salvato. L’altro sistema riceve la modifica alla prossima lettura.",
+      "export": {
+        "type": {
+          "label": "Tipo",
+          "hint": "Uso del proprietario, manutenzione o non disponibile, invece di solo «non disponibile»."
+        },
+        "status": {
+          "label": "Stato della prenotazione",
+          "hint": "Richiesta, accettata o in corso. Le richieste sono segnate come provvisorie."
+        },
+        "route": {
+          "label": "Percorso",
+          "hint": "Aeroporti di partenza e di arrivo di ogni prenotazione."
+        },
+        "pilot": {
+          "label": "Nome del pilota",
+          "hint": "Dato personale: condividilo solo con un sistema di cui ti fidi e informa i tuoi piloti (ad esempio nelle condizioni di noleggio)."
+        },
+        "reference": {
+          "label": "Riferimento della prenotazione",
+          "hint": "Il numero di prenotazione ownAplane e un link che si apre per te."
+        },
+        "note": {
+          "label": "Le tue note sui periodi bloccati",
+          "hint": "Ciò che hai scritto quando hai bloccato il periodo."
+        },
+        "registration": {
+          "label": "Marche dell’aereo",
+          "hint": "Utile quando un sistema gestisce più aerei."
+        }
+      },
+      "import": {
+        "title": {
+          "label": "Titolo",
+          "hint": "Mostrato nel tuo calendario, solo a te."
+        },
+        "type": {
+          "label": "Tipo",
+          "hint": "La sua manutenzione appare come manutenzione anche qui (la vedono anche i piloti)."
+        },
+        "status": {
+          "label": "Stato",
+          "hint": "Le prenotazioni provvisorie non bloccano l’aereo; solo quelle confermate."
+        },
+        "registration": {
+          "label": "Marche dell’aereo",
+          "hint": "Rifiuta le prenotazioni che invia per un altro aereo."
+        }
+      }
     }
   }
 }

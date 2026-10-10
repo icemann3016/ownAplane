@@ -62,6 +62,20 @@ test("another system pushes its bookings and never double-books the aircraft", a
   const who = await (await club("/api/v1/sync")).json();
   expect(who.data.aircraft.id).toBe(aircraftId);
 
+  // The owner chooses what is exchanged: route and pilot's name out, titles and registrations in
+  await page.getByText("Data exchanged with this system").click();
+  const send = page.getByRole("group", { name: "Send to this system" });
+  await send.getByRole("checkbox", { name: /^Route/ }).check();
+  await send.getByRole("checkbox", { name: /^Pilot's name/ }).check();
+  const take = page.getByRole("group", { name: "Take from this system" });
+  await take.getByRole("checkbox", { name: /^Title/ }).check();
+  await take.getByRole("checkbox", { name: /^Aircraft registration/ }).check();
+  await page.getByRole("button", { name: "Save", exact: true }).click();
+  await expect(page.getByText(/^Saved\./)).toBeVisible();
+  await expect(
+    page.getByText("Sent: times, Route, Pilot's name. Taken: times, Title, Aircraft registration."),
+  ).toBeVisible();
+
   // 2. A club booking blocks the aircraft for pilots
   const now = new Date();
   const day = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 20);
@@ -69,8 +83,17 @@ test("another system pushes its bookings and never double-books the aircraft", a
     start: new Date(day + from * hour).toISOString(),
     end: new Date(day + to * hour).toISOString(),
   });
-  const first = await club("/api/v1/sync/busy/club-1", { method: "PUT", body: span(8, 11) });
+  const first = await club("/api/v1/sync/busy/club-1", {
+    method: "PUT",
+    body: { ...span(8, 11), title: "Club lesson", registration: `lz-c${letters}` },
+  });
   expect((await first.json()).data).toEqual({ externalId: "club-1", status: "active" });
+  const elsewhere = await club("/api/v1/sync/busy/club-9", {
+    method: "PUT",
+    body: { ...span(18, 19), registration: "D-EXYZ" },
+  });
+  expect(elsewhere.status).toBe(400);
+  expect((await elsewhere.json()).error.fields).toHaveProperty("registration");
   const search = await fetch(
     new URL(
       `/api/v1/aircraft?airport=LBSF&radius=25&from=${encodeURIComponent(span(9, 10).start)}&to=${encodeURIComponent(span(9, 10).end)}`,
@@ -96,18 +119,26 @@ test("another system pushes its bookings and never double-books the aircraft", a
   });
   await page.reload();
   await expect(page.getByText("Double bookings with Club system")).toBeVisible();
+  await page.getByText("Data exchanged with this system").click();
+  await expect(page.getByRole("checkbox", { name: /^Route/ })).toBeChecked();
   await expectAccessible(page);
 
   // 4. The club sees our busy times (its own excluded), by API and by iCal link
   const busy = await club(
     `/api/v1/sync/busy?from=${encodeURIComponent(new Date(Date.now()).toISOString())}&to=${encodeURIComponent(new Date(day + 24 * hour).toISOString())}`,
   );
-  const busyTimes = (await busy.json()).data as { from: string; kind: string }[];
-  expect(busyTimes.map((b) => b.kind)).toContain("booking");
+  const busyTimes = (await busy.json()).data as Record<string, unknown>[];
+  const ours = busyTimes.find((b) => b.kind === "booking");
+  expect(ours).toMatchObject({
+    route: { departure: "LBSF", arrival: "LBSF" },
+    pilot: { name: `Pilot ${id}` },
+  });
+  expect(ours).not.toHaveProperty("status"); // not chosen
   expect(busyTimes.some((b) => b.from === span(8, 11).start)).toBe(false);
   const link = await page.getByLabel("Our iCal link for this system").inputValue();
   const ics = await (await fetch(new URL(new URL(link).pathname, baseURL))).text();
   expect(ics).toContain("BEGIN:VCALENDAR");
+  expect(ics.replace(/\r\n[ \t]/g, "")).toContain(`Pilot: Pilot ${id}`);
   const stamp = (d: Date) =>
     d
       .toISOString()
@@ -120,6 +151,7 @@ test("another system pushes its bookings and never double-books the aircraft", a
   const month = new Date(day).toISOString().slice(0, 7);
   await page.goto(`/owner/aircraft/${aircraftId}/calendar?month=${month}`);
   await expect(page.getByText("From Club system").first()).toBeVisible();
+  await expect(page.getByText("Club lesson", { exact: true })).toBeVisible();
 
   // 6. While the club holds a time, the owner can't accept a request for it
   const requestId = await withDb(async (sql) => {

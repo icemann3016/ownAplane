@@ -76,6 +76,8 @@ const jsonBody = (schema: z.ZodType) => ({
 const connectionKey = [{ connectionKey: [] }];
 const signedIn = [{ bearer: [] }];
 const optionalSignIn = [{}, { bearer: [] }];
+const takenExtras =
+  "`title`, `type`, `status` and `registration` are optional and used only as the aircraft's owner chose; always sending them is fine.";
 
 export function openApiDocument() {
   return {
@@ -225,7 +227,8 @@ export function openApiDocument() {
         get: {
           tags: ["calendar sync"],
           summary: "When the aircraft is busy in ownAplane (without your own busy times)",
-          description: "Check this before you confirm a booking in your system.",
+          description:
+            "Check this before you confirm a booking in your system. Fields besides `from`, `to` and `kind` appear only when the aircraft's owner shares them with your system.",
           security: connectionKey,
           parameters: queryParameters(busyWindowQuery),
           responses: { ...ok(ref("BusyTime"), true), ...errors(400, 401) },
@@ -233,6 +236,7 @@ export function openApiDocument() {
         put: {
           tags: ["calendar sync"],
           summary: "Replace all your busy times (a full snapshot); missing ones are removed",
+          description: takenExtras,
           security: connectionKey,
           requestBody: jsonBody(pushAllBody),
           responses: { ...ok(ref("PushAllResult")), ...errors(400, 401) },
@@ -243,7 +247,8 @@ export function openApiDocument() {
           tags: ["calendar sync"],
           summary: "Create or move one of your bookings",
           description:
-            "409 `conflict` when it overlaps an ownAplane booking: it is still recorded and the owner is asked to resolve it (`error.details.recorded`).",
+            "409 `conflict` when it overlaps an ownAplane booking: it is still recorded and the owner is asked to resolve it (`error.details.recorded`). 400 with `fields.registration` when it is for another aircraft and the owner checks registrations. " +
+            takenExtras,
           security: connectionKey,
           parameters: [pathId("externalId", "Your system's id of the booking")],
           requestBody: jsonBody(pushBusyBody),

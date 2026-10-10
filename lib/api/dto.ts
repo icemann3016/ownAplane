@@ -6,7 +6,8 @@ import type { getVisibleAircraft } from "@/lib/aircraft/public";
 import type { AirportSummary } from "@/lib/airports";
 import { avatarUrl } from "@/lib/avatar-url";
 import type { BookingDetail as BookingRow, BookingListItem } from "@/lib/bookings/queries";
-import type { BusyTime } from "@/lib/calendar-sync/ics";
+import type { ExportField } from "@/lib/calendar-sync/fields";
+import { type BusyDetail, sharedDetails } from "@/lib/calendar-sync/outgoing";
 import { appUrl } from "@/lib/site-url";
 import type * as R from "./responses";
 
@@ -215,10 +216,12 @@ export function bookingDto(d: BookingRow, viewerId: string): R.BookingDetail {
   };
 }
 
-export function busyTimeDto(b: BusyTime): R.BusyTimeDto {
+/** One of ownAplane's busy times for a partner system, with what the owner shares. */
+export function busyTimeDto(b: BusyDetail, fields: readonly ExportField[]): R.BusyTimeDto {
   return {
     from: b.from.toISOString(),
     to: b.to.toISOString(),
-    kind: b.booking ? "booking" : "blocked",
+    kind: b.kind === "booking" ? "booking" : "blocked",
+    ...sharedDetails(b, fields, b.bookingId ? `${appUrl()}/bookings/${b.bookingId}` : ""),
   };
 }

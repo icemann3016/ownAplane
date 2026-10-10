@@ -56,19 +56,21 @@ describe("API keys", () => {
 });
 
 describe("iCal export", () => {
-  it("lists busy times without personal details", () => {
+  it("writes the calendar with what the owner shares", () => {
     const ics = buildIcs({
       name: "LZ-ABC, ownAplane",
       host: "ownaplane.eu",
-      busy: [
+      events: [
         {
           id: "e1",
           from: new Date("2026-10-20T08:00:00Z"),
           to: new Date("2026-10-20T11:30:00Z"),
-          booking: true,
+          summary: "Booked (ownAplane)",
+          description: "Pilot: Ana\nRoute: LBSF → LBPD",
+          location: "LBSF",
+          status: "CONFIRMED",
         },
       ],
-      titles: { booking: "Booked (ownAplane)", blocked: "Unavailable" },
       now,
     });
     expect(ics).toContain("BEGIN:VCALENDAR\r\n");
@@ -77,16 +79,13 @@ describe("iCal export", () => {
     expect(ics).toContain("DTSTART:20261020T080000Z\r\n");
     expect(ics).toContain("DTEND:20261020T113000Z\r\n");
     expect(ics).toContain("SUMMARY:Booked (ownAplane)\r\n");
+    expect(ics).toContain("DESCRIPTION:Pilot: Ana\\nRoute: LBSF → LBPD\r\n");
+    expect(ics).toContain("LOCATION:LBSF\r\nSTATUS:CONFIRMED\r\n");
     expect(ics.endsWith("END:VCALENDAR\r\n")).toBe(true);
   });
 
   it("folds long lines", () => {
-    const ics = buildIcs({
-      name: "x".repeat(200),
-      host: "h",
-      busy: [],
-      titles: { booking: "", blocked: "" },
-    });
+    const ics = buildIcs({ name: "x".repeat(200), host: "h", events: [] });
     for (const line of ics.split("\r\n")) expect(Buffer.byteLength(line)).toBeLessThanOrEqual(75);
   });
 });

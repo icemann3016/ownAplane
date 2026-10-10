@@ -6,6 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 
 import { requireUser } from "@/lib/auth/session";
+import { exportFields, importFields } from "@/lib/calendar-sync/fields";
 import { newApiKey } from "@/lib/calendar-sync/keys";
 import { syncConnection } from "@/lib/calendar-sync/sync";
 import { sendNotificationsSoon } from "@/lib/notifications/soon";
@@ -137,6 +138,27 @@ export async function replaceApiKey(_prev: FormState, formData: FormData): Promi
   );
   refresh(conn.aircraftId);
   return { ok: true, message: t("keyReplaced"), secret: key.key };
+}
+
+/** What this connection exchanges besides the times (export and import fields). */
+export async function saveDataFields(_prev: FormState, formData: FormData): Promise<FormState> {
+  const user = await requireUser("/owner/aircraft");
+  const t = await getTranslations("calendarSync");
+  const conn = await ownConnection(user.id, formValues(formData));
+  if (!conn) return { message: t("errors.not_found") };
+  const strings = (name: string) => formData.getAll(name).map(String);
+  await asUser(user.id, (tx) =>
+    tx
+      .update(calendarConnections)
+      .set({
+        exportFields: exportFields(strings("export")),
+        // An export-only connection takes nothing.
+        importFields: conn.inbound === "none" ? [] : importFields(strings("import")),
+      })
+      .where(eq(calendarConnections.id, conn.id)),
+  );
+  refresh(conn.aircraftId);
+  return { ok: true, message: t("data.saved") };
 }
 
 /** A new private iCal link; the old one stops working at once. */

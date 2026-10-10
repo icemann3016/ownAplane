@@ -5,7 +5,20 @@ export type ExternalEvent = {
   id: string;
   from: Date;
   to: Date;
+  // Optional extras; used only when the owner chose to take them (IMPORT_FIELDS).
+  /** The booking's title or summary. */
+  title?: string | null;
+  /** Maintenance, or anything else (a booking). */
+  type?: "booking" | "maintenance";
+  /** Not confirmed yet (iCal STATUS:TENTATIVE, JSON/API status "tentative"). */
+  tentative?: boolean;
+  /** The aircraft the other system says this is for. */
+  registration?: string | null;
 };
+
+/** Registrations compared loosely: "lz-abc", "LZABC" and "LZ-ABC" are the same aircraft. */
+export const sameRegistration = (a: string, b: string) =>
+  a.replace(/[^a-z0-9]/gi, "").toUpperCase() === b.replace(/[^a-z0-9]/gi, "").toUpperCase();
 
 /** How far back and ahead busy times are kept: past ones don't matter, far future ones rarely. */
 export const SYNC_PAST_MS = 24 * 60 * 60 * 1000;
@@ -41,7 +54,12 @@ export function normalizeEvents(
       continue;
     }
     if (to <= earliest || from >= latest) continue; // outside the window: nothing to block
-    byId.set(id, { id, from: e.from, to: new Date(Math.min(to, latest)) });
+    byId.set(id, {
+      ...e,
+      id,
+      title: e.title?.trim().slice(0, 200) || null,
+      to: new Date(Math.min(to, latest)),
+    });
   }
   const sorted = [...byId.values()].sort((a, b) => a.from.getTime() - b.from.getTime());
   return { events: sorted.slice(0, MAX_EVENTS), problems };

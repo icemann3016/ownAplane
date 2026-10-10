@@ -379,6 +379,20 @@
       "when": 1791525676830,
       "tag": "0053_calendar_sync_security",
       "breakpoints": true
+    },
+    {
+      "idx": 54,
+      "version": "7",
+      "when": 1791662064027,
+      "tag": "0054_calendar_sync_fields",
+      "breakpoints": true
+    },
+    {
+      "idx": 55,
+      "version": "7",
+      "when": 1791662072627,
+      "tag": "0055_calendar_sync_fields_grant",
+      "breakpoints": true
     }
   ]
 }

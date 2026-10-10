@@ -1,7 +1,16 @@
-// Our busy times as an iCal feed (SYN-3), for other systems to subscribe to. Only times and a
-// neutral title: no pilots, notes or anything personal. Pure.
+// Our busy times as an iCal feed (SYN-3), for other systems to subscribe to. Only what the
+// owner chose to share (outgoing.ts builds the events). Pure.
 
-export type BusyTime = { id: string; from: Date; to: Date; booking: boolean };
+export type IcsEvent = {
+  id: string;
+  from: Date;
+  to: Date;
+  summary: string;
+  description?: string;
+  location?: string;
+  status?: "TENTATIVE" | "CONFIRMED";
+  url?: string;
+};
 
 const stamp = (d: Date) =>
   d
@@ -10,7 +19,7 @@ const stamp = (d: Date) =>
     .replace(/\.\d{3}/, "");
 
 /** Escape text values (RFC 5545 §3.3.11). */
-const text = (v: string) => v.replace(/[\;,]/g, (c) => `\\${c}`).replace(/\n/g, "\\n");
+const text = (v: string) => v.replace(/[\;,]/g, (c) => `\\${c}`).replace(/\r?\n/g, "\\n");
 
 /** Fold lines longer than 75 octets (RFC 5545 §3.1). */
 function fold(line: string): string {
@@ -29,8 +38,7 @@ function fold(line: string): string {
 export function buildIcs(opts: {
   name: string;
   host: string;
-  busy: BusyTime[];
-  titles: { booking: string; blocked: string };
+  events: IcsEvent[];
   now?: Date;
 }): string {
   const now = stamp(opts.now ?? new Date());
@@ -42,13 +50,17 @@ export function buildIcs(opts: {
     "METHOD:PUBLISH",
     `X-WR-CALNAME:${text(opts.name)}`,
     "X-PUBLISHED-TTL:PT15M",
-    ...opts.busy.flatMap((b) => [
+    ...opts.events.flatMap((e) => [
       "BEGIN:VEVENT",
-      `UID:${b.id}@${opts.host}`,
+      `UID:${e.id}@${opts.host}`,
       `DTSTAMP:${now}`,
-      `DTSTART:${stamp(b.from)}`,
-      `DTEND:${stamp(b.to)}`,
-      `SUMMARY:${text(b.booking ? opts.titles.booking : opts.titles.blocked)}`,
+      `DTSTART:${stamp(e.from)}`,
+      `DTEND:${stamp(e.to)}`,
+      `SUMMARY:${text(e.summary)}`,
+      ...(e.description ? [`DESCRIPTION:${text(e.description)}`] : []),
+      ...(e.location ? [`LOCATION:${text(e.location)}`] : []),
+      ...(e.status ? [`STATUS:${e.status}`] : []),
+      ...(e.url ? [`URL:${e.url}`] : []),
       "TRANSP:OPAQUE",
       "END:VEVENT",
     ]),

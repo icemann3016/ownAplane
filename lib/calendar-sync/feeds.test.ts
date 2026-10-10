@@ -119,6 +119,27 @@ describe("iCal feeds", () => {
     expect(daily.length).toBeLessThanOrEqual(2000);
   });
 
+  it("reads titles, tentative status and maintenance categories", () => {
+    const [event] = parseIcsFeed(
+      ics(
+        "BEGIN:VEVENT",
+        "UID:m1",
+        "SUMMARY:Annual inspection",
+        "STATUS:TENTATIVE",
+        "CATEGORIES:Hangar,Maintenance",
+        "DTSTART:20261025T080000Z",
+        "DTEND:20261025T170000Z",
+        "END:VEVENT",
+      ),
+      now,
+    );
+    expect(event).toMatchObject({
+      title: "Annual inspection",
+      tentative: true,
+      type: "maintenance",
+    });
+  });
+
   it("refuses something that isn't a calendar", () => {
     expect(() => parseIcsFeed("<html>Sign in</html>", now)).toThrow(FeedError);
   });
@@ -131,13 +152,48 @@ describe("JSON feeds", () => {
         busy: [{ id: 42, start: "2026-10-20T10:00:00+02:00", end: "2026-10-20T12:00:00+02:00" }],
       }),
     );
-    expect(a).toEqual([
+    expect(a).toMatchObject([
       { id: "42", from: new Date("2026-10-20T08:00:00Z"), to: new Date("2026-10-20T10:00:00Z") },
     ]);
     const b = parseJsonFeed(
       JSON.stringify([{ id: "x", from: "2026-10-20T08:00:00Z", to: "2026-10-20T09:00:00Z" }]),
     );
     expect(b[0]!.id).toBe("x");
+  });
+
+  it("reads the optional extras and leaves out cancelled bookings", () => {
+    const events = parseJsonFeed(
+      JSON.stringify({
+        busy: [
+          {
+            id: "1",
+            start: "2026-10-20T08:00:00Z",
+            end: "2026-10-20T09:00:00Z",
+            title: "Ivan",
+            type: "Maintenance",
+            status: "tentative",
+            registration: "LZ-ABC",
+          },
+          {
+            id: "2",
+            start: "2026-10-21T08:00:00Z",
+            end: "2026-10-21T09:00:00Z",
+            status: "cancelled",
+          },
+        ],
+      }),
+    );
+    expect(events).toEqual([
+      {
+        id: "1",
+        from: new Date("2026-10-20T08:00:00Z"),
+        to: new Date("2026-10-20T09:00:00Z"),
+        title: "Ivan",
+        type: "maintenance",
+        tentative: true,
+        registration: "LZ-ABC",
+      },
+    ]);
   });
 
   it("explains what is wrong", () => {

@@ -78,10 +78,29 @@ export const busyWindowQuery = z
     message: "to must be after from, at most 400 days later",
   });
 
+/** Optional extras; ownAplane keeps only what the owner chose to take (import settings). */
+const busyExtras = {
+  title: z.string().max(500).nullish().describe("Shown to the owner only, if they take titles"),
+  type: z
+    .enum(["booking", "maintenance"])
+    .nullish()
+    .describe("maintenance is shown as maintenance, if the owner takes types"),
+  status: z
+    .enum(["confirmed", "tentative", "cancelled"])
+    .nullish()
+    .describe("cancelled frees the time; tentative is ignored if the owner takes statuses"),
+  registration: z
+    .string()
+    .max(20)
+    .nullish()
+    .describe("Refused when it isn't this aircraft, if the owner checks registrations"),
+};
+
 const busyTimes = z
   .object({
     start: instant.describe("ISO 8601 with offset, e.g. 2026-10-20T08:00:00Z"),
     end: instant,
+    ...busyExtras,
   })
   .refine((b) => new Date(b.end) > new Date(b.start), {
     path: ["end"],
@@ -89,6 +108,27 @@ const busyTimes = z
   });
 
 export const pushBusyBody = busyTimes;
+
+/** A pushed or listed busy time with its extras, as the store takes it. */
+export const toExternalEvent = (
+  id: string,
+  b: {
+    start: string;
+    end: string;
+    title?: string | null;
+    type?: "booking" | "maintenance" | null;
+    status?: string | null;
+    registration?: string | null;
+  },
+) => ({
+  id,
+  from: new Date(b.start),
+  to: new Date(b.end),
+  title: b.title ?? null,
+  type: b.type ?? undefined,
+  tentative: b.status === "tentative",
+  registration: b.registration ?? null,
+});
 
 export const pushAllBody = z.object({
   busy: z
@@ -98,6 +138,7 @@ export const pushAllBody = z.object({
           id: z.union([z.string().min(1).max(200), z.number()]).transform(String),
           start: instant,
           end: instant,
+          ...busyExtras,
         })
         .refine((b) => new Date(b.end) > new Date(b.start), {
           path: ["end"],

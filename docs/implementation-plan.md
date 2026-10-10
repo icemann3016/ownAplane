@@ -123,7 +123,7 @@ Aircraft home bases are airports with latitude/longitude. The search (`lib/aircr
 - Request bodies validated with the same Zod schemas as the website; OpenAPI generated from them
   (`z.toJSONSchema`) at `/api/v1/openapi.json`.
 
-### 4.10 Calendar sync (SYN-1…7)
+### 4.10 Calendar sync (SYN-1…8)
 - Each other system is a **connection** of the aircraft (`calendar_connections`): its bookings
   reach us by push API (API key), iCal link or JSON link, or not at all (it only reads ours).
 - External busy times are rows in `calendar_entries` (kind `unavailable`, with `connection_id` and
@@ -146,6 +146,11 @@ Aircraft home bases are airports with latitude/longitude. The search (`lib/aircr
   overlap with a booking (still recorded as a conflict).
 - Reading links: every 15 min (`/api/cron/sync` from a GitHub Actions schedule), hourly in the
   daily job, and right before a booking is requested or accepted.
+- Data exchanged (SYN-8): `calendar_connections.export_fields` / `import_fields` (text arrays,
+  checked against the catalog in `lib/calendar-sync/fields.ts`, empty by default). Outgoing
+  details are built in one pure place (`outgoing.ts`) for both the API and the iCal link; incoming
+  extras are filtered in `incoming.ts` before storing (title → the entry's note, owner-only;
+  maintenance → kind `maintenance`; tentative and wrong registrations skipped).
 
 ## 5. Data model (Phase 1)
 
@@ -245,7 +250,7 @@ Sizes: **S** ≈ a few hours · **M** ≈ 1–2 sessions · **L** ≈ 3+ session
 | # | Milestone | Requirements | Demo at the end | Rough time |
 |---|-----------|--------------|-----------------|------------|
 | M11 | API foundation | API-1, 2, 4, 5 | An app signs in with a token and reads its profile, airports, aircraft search and bookings through `/api/v1`; OpenAPI published | 1–2 wk |
-| M12 | Calendar sync | SYN-1…5 | An aircraft linked to a Google Calendar can't be booked over its events; the other system subscribes to ownAplane's iCal link; a partner pushes a booking, gets 409 on overlap | 2 wk |
+| M12 | Calendar sync | SYN-1…5, SYN-8 | An aircraft linked to a Google Calendar can't be booked over its events; the other system subscribes to ownAplane's iCal link; a partner pushes a booking, gets 409 on overlap | 2 wk |
 | M13 | Full API | API-3, 6, 7, SYN-6 | Everything on the website is possible through the API (booking flow, flight log, messages); push notifications | 3–4 wk |
 
 ## 9. How we build each task (with Claude)

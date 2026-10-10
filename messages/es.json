@@ -2471,7 +2471,86 @@
     "export": {
       "name": "{registration} ({site})",
       "booked": "Reservado ({site})",
-      "blocked": "No disponible"
+      "blocked": "No disponible",
+      "ownUse": "Uso del propietario",
+      "maintenance": "Mantenimiento",
+      "labels": {
+        "status": "Estado",
+        "route": "Ruta",
+        "pilot": "Piloto",
+        "booking": "Reserva",
+        "note": "Nota",
+        "aircraft": "Aeronave"
+      },
+      "statuses": {
+        "requested": "Solicitada",
+        "accepted": "Aceptada",
+        "in_progress": "En curso",
+        "completed": "Completada"
+      }
+    },
+    "data": {
+      "title": "Datos intercambiados con este sistema",
+      "current": "Se envía: {sent}. Se recibe: {taken}.",
+      "nothing": "nada (solo lee nuestro calendario)",
+      "times": "horarios",
+      "send": "Enviar a este sistema",
+      "sendHint": "Se usa en nuestro enlace iCal y en la API de periodos ocupados.",
+      "alwaysSent": "Inicio y fin, y si es una reserva (siempre)",
+      "take": "Recibir de este sistema",
+      "takeHint": "Se aplica a lo que nos envía y a su enlace.",
+      "alwaysTaken": "Inicio y fin y su número de reserva (siempre)",
+      "save": "Guardar",
+      "saving": "Guardando…",
+      "saved": "Guardado. El otro sistema recibe el cambio en su próxima lectura.",
+      "export": {
+        "type": {
+          "label": "Tipo",
+          "hint": "Uso propio, mantenimiento o no disponible, en lugar de solo «no disponible»."
+        },
+        "status": {
+          "label": "Estado de la reserva",
+          "hint": "Solicitada, aceptada o en curso. Las solicitudes se marcan como provisionales."
+        },
+        "route": {
+          "label": "Ruta",
+          "hint": "Aeródromos de salida y llegada de cada reserva."
+        },
+        "pilot": {
+          "label": "Nombre del piloto",
+          "hint": "Dato personal: compártelo solo con un sistema de confianza e informa a tus pilotos (por ejemplo en tus condiciones de alquiler)."
+        },
+        "reference": {
+          "label": "Referencia de la reserva",
+          "hint": "El número de reserva de ownAplane y un enlace que se abre para ti."
+        },
+        "note": {
+          "label": "Tus notas sobre el tiempo bloqueado",
+          "hint": "Lo que escribiste al bloquear el tiempo."
+        },
+        "registration": {
+          "label": "Matrícula de la aeronave",
+          "hint": "Útil cuando un sistema gestiona varias aeronaves."
+        }
+      },
+      "import": {
+        "title": {
+          "label": "Título",
+          "hint": "Se muestra en tu calendario, solo para ti."
+        },
+        "type": {
+          "label": "Tipo",
+          "hint": "Su mantenimiento se muestra aquí como mantenimiento (los pilotos también lo ven)."
+        },
+        "status": {
+          "label": "Estado",
+          "hint": "Las reservas provisionales no bloquean la aeronave; solo las confirmadas."
+        },
+        "registration": {
+          "label": "Matrícula de la aeronave",
+          "hint": "Rechazar las reservas que envíe para otra aeronave."
+        }
+      }
     }
   }
 }
