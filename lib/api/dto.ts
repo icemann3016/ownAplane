@@ -5,9 +5,13 @@ import type { SearchResult } from "@/lib/aircraft/search";
 import type { getVisibleAircraft } from "@/lib/aircraft/public";
 import type { AirportSummary } from "@/lib/airports";
 import { avatarUrl } from "@/lib/avatar-url";
+import { bookingAmount } from "@/lib/bookings/amount";
+import type { FlightLogData } from "@/lib/bookings/flight-log";
 import type { BookingDetail as BookingRow, BookingListItem } from "@/lib/bookings/queries";
 import type { ExportField } from "@/lib/calendar-sync/fields";
 import { type BusyDetail, sharedDetails } from "@/lib/calendar-sync/outgoing";
+import { fuelSettlement } from "@/lib/domain/flight-log";
+import type { LogCheck } from "@/lib/domain/log-checks";
 import { appUrl } from "@/lib/site-url";
 import type * as R from "./responses";
 
@@ -238,5 +242,96 @@ export function webhookDto(w: {
     url: w.url,
     lastDeliveryAt: w.lastDeliveryAt?.toISOString() ?? null,
     lastError: w.lastError,
+  };
+}
+
+/** A rental's flight log for its pilot or owner (BKG-7, BKG-12…15), in SI units and UTC. */
+export function flightLogDto(
+  detail: BookingRow,
+  data: FlightLogData,
+  checks: LogCheck[],
+  viewerId: string,
+): R.FlightLogDto {
+  const { log, legs, uplifts, remarks } = data;
+  const confirmed = log.status === "confirmed";
+  const fuel = fuelSettlement(uplifts, detail.booking.priceBasis);
+  const adjustment = confirmed ? (log.fuelAdjustment ?? 0) : fuel.adjustment;
+  const result = bookingAmount(detail.booking, detail.period, "UTC", legs, adjustment);
+  const at = (d: Date | null) => (d ? d.toISOString() : null);
+  return {
+    id: log.id,
+    bookingId: log.bookingId,
+    status: log.status,
+    editable:
+      detail.booking.pilotId === viewerId &&
+      (log.status === "draft" || log.status === "correction_requested"),
+    checkout: {
+      at: log.checkedOutAt.toISOString(),
+      hobbsStart: log.hobbsStart,
+      tachStart: log.tachStart,
+      fuelStartL: log.fuelStartL,
+      oilStartL: log.oilStartL,
+      recencyConfirmedAt: at(log.recencyConfirmedAt),
+    },
+    legs: legs.map((l) => ({
+      id: l.id,
+      seq: l.seq,
+      from: l.fromIdent,
+      to: l.toIdent,
+      engineStart: l.engineStart.toISOString(),
+      blockOff: l.blockOff.toISOString(),
+      takeoffAt: at(l.takeoffAt),
+      landingAt: at(l.landingAt),
+      blockOn: l.blockOn.toISOString(),
+      engineStop: l.engineStop.toISOString(),
+      landings: l.landings,
+      hobbsStart: l.hobbsStart,
+      hobbsEnd: l.hobbsEnd,
+      tachStart: l.tachStart,
+      tachEnd: l.tachEnd,
+      fuelBeforeL: l.fuelBeforeL,
+      fuelAfterL: l.fuelAfterL,
+      oilBeforeL: l.oilBeforeL,
+      oilAfterL: l.oilAfterL,
+    })),
+    uplifts: uplifts.map((u) => ({
+      id: u.id,
+      kind: u.kind,
+      airport: u.airportIdent,
+      quantityL: u.quantityL,
+      fuelType: u.fuelType,
+      oilGrade: u.oilGrade,
+      price: u.price,
+      paidBy: u.paidBy,
+      receiptId: u.receiptId,
+    })),
+    remarks: remarks.map((r) => ({
+      id: r.id,
+      kind: r.kind,
+      airport: r.airportIdent,
+      body: r.body,
+      knownSince: at(r.knownSince),
+      resolvedAt: at(r.resolvedAt),
+      createdAt: r.createdAt.toISOString(),
+    })),
+    amount: result
+      ? {
+          flownMinutes: confirmed ? (log.flownMinutes ?? result.minutes) : result.minutes,
+          billedHours: result.hours,
+          fuelAdjustment: adjustment,
+          amountDue: confirmed ? (log.amountDue ?? result.amount) : result.amount,
+          currency: detail.booking.currency,
+          confirmed,
+        }
+      : null,
+    checks: checks.map(
+      (c) =>
+        Object.fromEntries(
+          Object.entries(c).map(([k, v]) => [k, v instanceof Date ? v.toISOString() : v]),
+        ) as { type: string },
+    ),
+    correctionNote: log.correctionNote,
+    submittedAt: at(log.submittedAt),
+    confirmedAt: at(log.confirmedAt),
   };
 }

@@ -85,6 +85,7 @@ export async function LegList({
                   />
                   <form action={deleteLeg}>
                     <input type="hidden" name="legId" value={leg.id} />
+                    <input type="hidden" name="logId" value={logId} />
                     <input type="hidden" name="bookingId" value={bookingId} />
                     <Button variant="ghost" size="sm" aria-label={t("deleteLegOf", { leg: title })}>
                       <Trash2Icon aria-hidden /> {t("delete")}

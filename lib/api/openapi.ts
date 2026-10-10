@@ -12,7 +12,13 @@ import {
   bookingRequestBody,
   busyWindowQuery,
   cancelBody,
+  checkoutBody,
+  correctionBody,
   declineBody,
+  legBody,
+  remarkBody,
+  startLogBody,
+  upliftBody,
   periodQuery,
   pushAllBody,
   pushBusyBody,
@@ -85,6 +91,26 @@ const optionalSignIn = [{}, { bearer: [] }];
 const takenExtras =
   "`title`, `type`, `status` and `registration` are optional and used only as the aircraft's owner chose; always sending them is fine.";
 
+const booking = pathId("id", "Booking id (uuid)");
+const logCreated = {
+  description: "The flight log",
+  content: {
+    "application/json": { schema: { type: "object", properties: { data: ref("FlightLog") } } },
+  },
+};
+
+/** A flight log change: answers with the whole log as it is now. */
+function logOp(summary: string, body: z.ZodType | null, extra: JsonSchema[] = []) {
+  return {
+    tags: ["flight log"],
+    summary,
+    security: signedIn,
+    parameters: [booking, ...extra],
+    ...(body ? { requestBody: jsonBody(body) } : {}),
+    responses: { ...ok(ref("FlightLog")), ...errors(400, 401, 404, 409) },
+  };
+}
+
 export function openApiDocument() {
   return {
     openapi: "3.1.0",
@@ -126,6 +152,7 @@ export function openApiDocument() {
         BusyTime: output(R.busyTime),
         PushResult: output(R.pushResult),
         PushAllResult: output(R.pushAllResult),
+        FlightLog: output(R.flightLog),
         Eligibility: output(R.eligibility),
         BusyPeriod: output(R.busyPeriod),
         WebhookEvent: output(R.webhookEvent),
@@ -306,6 +333,78 @@ export function openApiDocument() {
           requestBody: jsonBody(cancelBody),
           responses: { ...ok(ref("Booking")), ...errors(400, 401, 404, 409) },
         },
+      },
+      "/api/v1/bookings/{id}/log": {
+        get: {
+          tags: ["flight log"],
+          summary:
+            "The rental's flight log: check-out, legs, fuel and oil, remarks, amount, checks",
+          security: signedIn,
+          parameters: [booking],
+          responses: { ...ok(ref("FlightLog")), ...errors(401, 404) },
+        },
+        post: {
+          tags: ["flight log"],
+          summary: "Check-out: start the flight log (the pilot, from 2 hours before the start)",
+          description:
+            "409 with `details.reason`: `not_accepted`, `too_early`, `aircraft_grounded`; 400 `fields.recencyConfirmed` when the booking has passengers and FCL.060 isn't confirmed.",
+          security: signedIn,
+          parameters: [booking],
+          requestBody: { ...jsonBody(startLogBody), required: false },
+          responses: { 201: logCreated, ...errors(400, 401, 404, 409) },
+        },
+      },
+      "/api/v1/bookings/{id}/log/checkout": {
+        put: logOp("Readings found at check-out (litres)", checkoutBody),
+      },
+      "/api/v1/bookings/{id}/log/legs": {
+        post: {
+          ...logOp(
+            "Add a leg; times in the order they happen (400 `details.reason: leg_order` with the fields to fix)",
+            legBody,
+          ),
+          responses: { 201: logCreated, ...errors(400, 401, 404, 409) },
+        },
+      },
+      "/api/v1/bookings/{id}/log/legs/{legId}": {
+        put: logOp("Change a leg", legBody, [pathId("legId", "Leg id (uuid)")]),
+        delete: logOp("Remove a leg", null, [pathId("legId", "Leg id (uuid)")]),
+      },
+      "/api/v1/bookings/{id}/log/uplifts": {
+        post: {
+          ...logOp(
+            "Fuel or oil added (litres, price in the booking's currency, who paid)",
+            upliftBody,
+          ),
+          responses: { 201: logCreated, ...errors(400, 401, 404, 409) },
+        },
+      },
+      "/api/v1/bookings/{id}/log/uplifts/{upliftId}": {
+        put: logOp("Change fuel or oil added", upliftBody, [
+          pathId("upliftId", "Uplift id (uuid)"),
+        ]),
+        delete: logOp("Remove fuel or oil added", null, [pathId("upliftId", "Uplift id (uuid)")]),
+      },
+      "/api/v1/bookings/{id}/log/remarks": {
+        post: {
+          ...logOp("A remark or PIREP (aircraft, weather, airfield)", remarkBody),
+          responses: { 201: logCreated, ...errors(400, 401, 404, 409) },
+        },
+      },
+      "/api/v1/bookings/{id}/log/remarks/{remarkId}": {
+        delete: logOp("Remove a remark", null, [pathId("remarkId", "Remark id (uuid)")]),
+      },
+      "/api/v1/bookings/{id}/log/submit": {
+        post: logOp("Check-in: the pilot sends the log to the owner", null),
+      },
+      "/api/v1/bookings/{id}/log/correction": {
+        post: logOp("The owner asks for a correction, with a note", correctionBody),
+      },
+      "/api/v1/bookings/{id}/log/confirm": {
+        post: logOp(
+          "The owner confirms; the amount is worked out on the server and the booking completed",
+          null,
+        ),
       },
       "/api/v1/sync": {
         get: {

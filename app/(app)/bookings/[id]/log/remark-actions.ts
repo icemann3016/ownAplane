@@ -1,14 +1,11 @@
 "use server";
 
-import { eq, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 
-import { getAirport } from "@/lib/airports";
 import { requireUser } from "@/lib/auth/session";
-import { asUser } from "@/lib/db/rls";
-import { flightRemarks } from "@/lib/db/schema";
+import { addRemark as storeRemark, deleteRemark as removeRemark } from "@/lib/bookings/log-entries";
 import { type FormState, formValues } from "@/lib/forms";
 import { localizedFieldErrors } from "@/lib/i18n/server";
 import { remarkSchema } from "@/lib/validation/flight-log";
@@ -24,23 +21,12 @@ export async function addRemark(_prev: FormState, formData: FormData): Promise<F
   const parsed = remarkSchema.safeParse(raw);
   if (!parsed.success) return { errors: await localizedFieldErrors(parsed.error), values: raw };
   const { logId, kind, airport, body } = parsed.data;
-  const found = airport ? await getAirport(airport) : null;
-  if (airport && !found) return { errors: { airport: [v("airportUnknown")] }, values: raw };
-  try {
-    await asUser(user.id, (tx) =>
-      tx.insert(flightRemarks).values({
-        flightLogId: logId,
-        // Filled in from the booking by a database trigger.
-        aircraftId: sql`null`,
-        kind,
-        airportIdent: found?.ident ?? null,
-        body,
-      }),
-    );
-  } catch (e) {
-    const code = (e as { cause?: { code?: string } }).cause?.code;
-    if (code === "42501") return { message: t("errors.not_editable"), values: raw };
-    throw e;
+  const outcome = await storeRemark(user.id, logId, { kind, airport: airport || null, body });
+  if (!outcome.ok) {
+    if (outcome.error === "unknown_airfield") {
+      return { errors: { airport: [v("airportUnknown")] }, values: raw };
+    }
+    return { message: t("errors.not_editable"), values: raw };
   }
   revalidatePath(`/bookings/${bookingId.data}`, "layout");
   return { ok: true, message: t("remarkSaved") };
@@ -50,7 +36,8 @@ export async function addRemark(_prev: FormState, formData: FormData): Promise<F
 export async function deleteRemark(formData: FormData) {
   const user = await requireUser("/bookings");
   const remarkId = z.uuid().parse(formData.get("remarkId"));
+  const logId = z.uuid().parse(formData.get("logId"));
   const bookingId = z.uuid().parse(formData.get("bookingId"));
-  await asUser(user.id, (tx) => tx.delete(flightRemarks).where(eq(flightRemarks.id, remarkId)));
+  await removeRemark(user.id, logId, remarkId);
   revalidatePath(`/bookings/${bookingId}`, "layout");
 }

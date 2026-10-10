@@ -238,6 +238,88 @@ export const pushAllResult = z.object({
   wrongAircraft: ids.describe("Bookings for another registration, left out"),
 });
 
+const litres = z.number().nullable().describe("Litres");
+const meter = z.number().nullable();
+
+export const flightLeg = z.object({
+  id,
+  seq: z.number().int(),
+  from: z.string().describe("Airfield ident"),
+  to: z.string(),
+  engineStart: time,
+  blockOff: time,
+  takeoffAt: time.nullable(),
+  landingAt: time.nullable(),
+  blockOn: time,
+  engineStop: time,
+  landings: z.number().int(),
+  hobbsStart: meter,
+  hobbsEnd: meter,
+  tachStart: meter,
+  tachEnd: meter,
+  fuelBeforeL: litres,
+  fuelAfterL: litres,
+  oilBeforeL: litres,
+  oilAfterL: litres,
+});
+
+export const flightUplift = z.object({
+  id,
+  kind: z.enum(["fuel", "oil"]),
+  airport: z.string(),
+  quantityL: z.number(),
+  fuelType: z.string().nullable(),
+  oilGrade: z.string().nullable(),
+  price: z.number().nullable().describe("In the booking's currency"),
+  paidBy: z.enum(["pilot", "owner"]),
+  receiptId: id.nullable().describe("A private document (POST /api/documents)"),
+});
+
+export const flightRemark = z.object({
+  id,
+  kind: z.enum(["aircraft", "weather", "airfield"]),
+  airport: z.string().nullable(),
+  body: z.string(),
+  knownSince: time.nullable().describe("The owner marked it a known item"),
+  resolvedAt: time.nullable(),
+  createdAt: time,
+});
+
+export const flightLog = z.object({
+  id,
+  bookingId: id,
+  status: z.enum(["draft", "submitted", "correction_requested", "confirmed"]),
+  editable: z.boolean().describe("The signed-in user (the pilot) may change it now"),
+  checkout: z.object({
+    at: time,
+    hobbsStart: meter,
+    tachStart: meter,
+    fuelStartL: litres,
+    oilStartL: litres,
+    recencyConfirmedAt: time.nullable().describe("FCL.060 confirmed at check-out (passengers)"),
+  }),
+  legs: z.array(flightLeg),
+  uplifts: z.array(flightUplift),
+  remarks: z.array(flightRemark),
+  amount: z
+    .object({
+      flownMinutes: z.number().int(),
+      billedHours: z.number(),
+      fuelAdjustment: z.number(),
+      amountDue: z.number(),
+      currency: z.string(),
+      confirmed: z.boolean().describe("true once the owner confirmed it"),
+    })
+    .nullable()
+    .describe("null until the meters needed for the time basis are entered"),
+  checks: z
+    .array(z.object({ type: z.string() }).catchall(z.unknown()))
+    .describe("Warnings (wrong fuel, meters, fuel burn, times outside the booking), never blocks"),
+  correctionNote: z.string().nullable(),
+  submittedAt: time.nullable(),
+  confirmedAt: time.nullable(),
+});
+
 export const eligibility = z.object({
   eligible: z.boolean().describe("No blocking reason: the pilot may send a request"),
   reasons: z.array(
@@ -301,3 +383,4 @@ export type BookingDetail = z.infer<typeof bookingDetail>;
 export type BusyTimeDto = z.infer<typeof busyTime>;
 export type WebhookEventDto = z.infer<typeof webhookEvent>;
 export type WebhookSettingsDto = z.infer<typeof webhookSettings>;
+export type FlightLogDto = z.infer<typeof flightLog>;

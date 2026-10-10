@@ -96,6 +96,7 @@ export async function UpliftList({
                   />
                   <form action={deleteUplift}>
                     <input type="hidden" name="upliftId" value={u.id} />
+                    <input type="hidden" name="logId" value={logId} />
                     <input type="hidden" name="bookingId" value={bookingId} />
                     <Button
                       variant="ghost"

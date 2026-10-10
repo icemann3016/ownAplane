@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { CATEGORIES, PRICE_BASES } from "@/lib/aircraft/catalog";
+import { CATEGORIES, FUEL_TYPES, PRICE_BASES } from "@/lib/aircraft/catalog";
 import { BOOKING_PURPOSES, type BookingRequestInput, MAX_STOPS } from "@/lib/validation/booking";
 import { webhookUrlSchema } from "@/lib/validation/calendar-sync";
 import { RADII_KM, SORTS, type SearchFilters } from "@/lib/validation/search";
@@ -118,6 +118,80 @@ export const periodQuery = z
     path: ["to"],
     message: "to must be after from, at most 400 days later",
   });
+
+// --- Flight log (BKG-7, BKG-12…15): SI units (litres) and UTC instants ---
+
+const reading = z.number().min(0).max(999999).nullable().default(null);
+const litre = (max: number) => z.number().min(0).max(max).nullable().default(null);
+
+export const startLogBody = z.object({
+  recencyConfirmed: z
+    .boolean()
+    .default(false)
+    .describe("With passengers: 3 take-offs and landings in the class/type in 90 days (FCL.060)"),
+});
+
+export const checkoutBody = z.object({
+  hobbsStart: reading,
+  tachStart: reading,
+  fuelStartL: litre(5000),
+  oilStartL: litre(100),
+});
+
+export const legBody = z
+  .object({
+    from: airfieldIdent,
+    to: airfieldIdent,
+    engineStart: instant,
+    blockOff: instant,
+    takeoffAt: instant.nullable().default(null),
+    landingAt: instant.nullable().default(null),
+    blockOn: instant,
+    engineStop: instant,
+    landings: z.number().int().min(1).max(99).default(1),
+    hobbsStart: reading,
+    hobbsEnd: reading,
+    tachStart: reading,
+    tachEnd: reading,
+    fuelBeforeL: litre(5000),
+    fuelAfterL: litre(5000),
+    oilBeforeL: litre(100),
+    oilAfterL: litre(100),
+  })
+  .transform((l) => ({
+    ...l,
+    engineStart: new Date(l.engineStart),
+    blockOff: new Date(l.blockOff),
+    takeoffAt: l.takeoffAt ? new Date(l.takeoffAt) : null,
+    landingAt: l.landingAt ? new Date(l.landingAt) : null,
+    blockOn: new Date(l.blockOn),
+    engineStop: new Date(l.engineStop),
+  }));
+
+export const upliftBody = z
+  .object({
+    kind: z.enum(["fuel", "oil"]),
+    airport: airfieldIdent,
+    quantityL: z.number().positive().max(5000),
+    fuelType: z.enum(FUEL_TYPES).nullable().default(null),
+    oilGrade: z.string().trim().max(40).nullable().default(null),
+    price: z.number().min(0).max(99999).nullable().default(null),
+    paidBy: z.enum(["pilot", "owner"]),
+    receiptId: z.uuid().nullable().default(null),
+  })
+  .transform((u) => ({
+    ...u,
+    fuelType: u.kind === "fuel" ? u.fuelType : null,
+    oilGrade: u.kind === "oil" ? u.oilGrade : null,
+  }));
+
+export const remarkBody = z.object({
+  kind: z.enum(["aircraft", "weather", "airfield"]),
+  airport: airfieldIdent.nullable().default(null),
+  body: z.string().trim().min(1).max(1000),
+});
+
+export const correctionBody = z.object({ note: z.string().trim().min(1).max(500) });
 
 // --- Calendar sync for partner systems (SYN-4) ---
 

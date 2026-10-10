@@ -64,6 +64,7 @@ export async function RemarksCard({
                     {editable && !known && (
                       <form action={deleteRemark}>
                         <input type="hidden" name="remarkId" value={r.id} />
+                        <input type="hidden" name="logId" value={logId} />
                         <input type="hidden" name="bookingId" value={bookingId} />
                         <Button variant="ghost" size="sm" aria-label={t("deleteLabel")}>
                           <Trash2Icon aria-hidden /> {t("delete")}

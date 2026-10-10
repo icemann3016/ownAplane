@@ -57,13 +57,32 @@ Authorization: Bearer <token>
 | POST | `/api/v1/bookings/{id}/decline` | required | The owner declines (`{ note, proposal: { from, to } }` optional) |
 | POST | `/api/v1/bookings/{id}/cancel` | required | Pilot or owner cancels with `{ reason }`; `details.late` |
 
+### Flight log (BKG-7, BKG-12…15)
+
+All under `/api/v1/bookings/{id}/log`, signed in as the booking's pilot (entries) or owner
+(correction, confirm). Every call answers with the whole log as it is now: check-out, legs, fuel
+and oil, remarks, the `amount` (worked out on the server) and the `checks` (warnings such as
+`wrongFuel`, `hobbsLong`, `fuelHigh`, `late`, `intoNext`; never blocks). Litres and UTC instants.
+
+| Method | Path | What |
+|--------|------|------|
+| GET | `…/log` | The log |
+| POST | `…/log` | Check-out (pilot, from 2 hours before). `{ recencyConfirmed: true }` when carrying passengers (FCL.060) |
+| PUT | `…/log/checkout` | `{ hobbsStart, tachStart, fuelStartL, oilStartL }` |
+| POST / PUT / DELETE | `…/log/legs`, `…/log/legs/{legId}` | Legs; times must be in order (400 `details.reason: leg_order`, `fields.blockOff: ["not_before:engineStart"]`) |
+| POST / PUT / DELETE | `…/log/uplifts`, `…/log/uplifts/{upliftId}` | Fuel or oil added (`kind`, `airport`, `quantityL`, `fuelType`/`oilGrade`, `price`, `paidBy`, `receiptId`) |
+| POST / DELETE | `…/log/remarks`, `…/log/remarks/{remarkId}` | Remarks and PIREPs |
+| POST | `…/log/submit` | Check-in: the pilot sends it to the owner |
+| POST | `…/log/correction` | `{ note }`: the owner asks for a correction |
+| POST | `…/log/confirm` | The owner confirms; the booking is completed |
+
 Booking errors carry `details.reason`, the same codes the website uses (`not_free`,
 `not_open`, `booked_elsewhere`, `aircraft_grounded`, `lapl_passengers`…), for apps to show
 their own text.
 
 Calendar sync endpoints for partner systems are listed below.
 
-Next (M13): flight log, messages, notifications, saved searches and reviews through the API.
+Next (M13): messages, notifications, saved searches and reviews through the API.
 
 ## Calendar sync for other booking systems (SYN-1…6, SYN-8)
 

@@ -223,4 +223,107 @@ test.describe("with accounts", () => {
     expect(body.data.status).toBe("cancelled");
     expect(body.details).toEqual({ late: false });
   });
+
+  test("a pilot keeps the flight log and the owner confirms it through the API", async ({
+    browser,
+    baseURL,
+  }) => {
+    test.setTimeout(90_000);
+    const id = unique();
+    const letters = id
+      .replace(/[^a-z]/g, "")
+      .slice(0, 3)
+      .toUpperCase()
+      .padEnd(3, "X");
+    const ownerEmail = `api-l-owner-${id}@example.com`;
+    const pilotEmail = `api-l-pilot-${id}@example.com`;
+    for (const [name, email] of [
+      [`Owner ${id}`, ownerEmail],
+      [`Pilot ${id}`, pilotEmail],
+    ] as const) {
+      const context = await browser.newContext();
+      await signUp(await context.newPage(), name, email);
+      await context.close();
+    }
+    const aircraftId = await seedListedAircraft(ownerEmail, `LZ-G${letters}`);
+    await seedVerifiedPilot(pilotEmail);
+    const bookingId = await seedAcceptedBooking(aircraftId, pilotEmail, 30);
+    const [{ from }] = await withDb(
+      (sql) =>
+        sql<{ from: Date }[]>`select lower(period) as "from" from bookings where id = ${bookingId}`,
+    );
+    const pilot = `Bearer ${await apiSignIn(baseURL, pilotEmail)}`;
+    const owner = `Bearer ${await apiSignIn(baseURL, ownerEmail)}`;
+    const call = (path: string, token: string, method = "GET", body?: unknown) =>
+      fetch(new URL(`/api/v1/bookings/${bookingId}/log${path}`, baseURL), {
+        method,
+        headers: {
+          authorization: token,
+          ...(body ? { "content-type": "application/json" } : {}),
+        },
+        body: body ? JSON.stringify(body) : undefined,
+      });
+    const log = async (res: Response, status = 200) => {
+      expect(res.status).toBe(status);
+      return R.flightLog.parse((await res.json()).data);
+    };
+    const at = (minutes: number) => new Date(from.getTime() + minutes * 60_000).toISOString();
+
+    // 1. Check-out and the readings found
+    expect((await call("", pilot)).status).toBe(404);
+    expect((await log(await call("", pilot, "POST"), 201)).status).toBe("draft");
+    await log(await call("/checkout", pilot, "PUT", { hobbsStart: 1000, fuelStartL: 120 }));
+
+    // 2. A leg with times out of order is refused, with the field to fix
+    const leg = {
+      from: "LBSF",
+      to: "LBSF",
+      engineStart: at(5),
+      blockOff: at(10),
+      takeoffAt: at(15),
+      landingAt: at(65),
+      blockOn: at(70),
+      engineStop: at(75),
+      hobbsStart: 1000,
+      hobbsEnd: 1001.2,
+      fuelBeforeL: 120,
+      fuelAfterL: 84,
+    };
+    const wrong = await call("/legs", pilot, "POST", { ...leg, blockOff: at(2) });
+    expect(wrong.status).toBe(400);
+    expect((await wrong.json()).error).toMatchObject({
+      details: { reason: "leg_order" },
+      fields: { blockOff: ["not_before:engineStart"] },
+    });
+    const withLeg = await log(await call("/legs", pilot, "POST", leg), 201);
+    expect(withLeg.legs).toHaveLength(1);
+    expect(withLeg.amount).toMatchObject({ flownMinutes: 72, confirmed: false });
+
+    // 3. Fuel of the wrong type shows up in the checks; a remark for the owner
+    const fuelled = await log(
+      await call("/uplifts", pilot, "POST", {
+        kind: "fuel",
+        airport: "LBSF",
+        quantityL: 30,
+        fuelType: "jet_a1",
+        paidBy: "pilot",
+      }),
+      201,
+    );
+    expect(fuelled.checks).toContainEqual(
+      expect.objectContaining({ type: "wrongFuel", severity: "danger" }),
+    );
+    await log(await call("/uplifts/" + fuelled.uplifts[0]!.id, pilot, "DELETE"));
+    await log(
+      await call("/remarks", pilot, "POST", { kind: "aircraft", body: "COM2 scratchy" }),
+      201,
+    );
+
+    // 4. Check-in; only the owner confirms
+    expect((await log(await call("/submit", pilot, "POST"))).status).toBe("submitted");
+    expect((await call("/confirm", pilot, "POST")).status).toBe(404);
+    const confirmed = await log(await call("/confirm", owner, "POST"));
+    expect(confirmed).toMatchObject({ status: "confirmed", editable: false });
+    expect(confirmed.amount).toMatchObject({ flownMinutes: 72, confirmed: true });
+  });
 });
