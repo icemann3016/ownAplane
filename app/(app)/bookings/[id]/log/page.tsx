@@ -9,7 +9,6 @@ import { WeatherCard } from "@/components/bookings/weather-card";
 import { ReportDefectDialog } from "@/components/bookings/report-defect-dialog";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FUEL_TYPES } from "@/lib/aircraft/catalog";
 import { getUnits, isUuid } from "@/lib/aircraft/queries";
 import { requireUser } from "@/lib/auth/session";
@@ -17,19 +16,20 @@ import { bookingAmount } from "@/lib/bookings/amount";
 import { getFlightLog } from "@/lib/bookings/flight-log";
 import { getBooking } from "@/lib/bookings/queries";
 import { getKnownItems } from "@/lib/bookings/remarks";
+import { getLogChecks } from "@/lib/bookings/log-checks";
+import { getMeterCheck } from "@/lib/bookings/meter-gap";
 import { logAirports, logDocuments } from "@/lib/bookings/log-view";
 import { fuelSettlement } from "@/lib/domain/flight-log";
 import { continuityIssues } from "@/lib/domain/fuel-checks";
-import { zonedDay } from "@/lib/domain/time";
 import { litresToOil, litresToVolume, volumeUnitOf } from "@/lib/domain/units";
 import { CheckoutCard } from "./checkout-card";
 import { ContinuityAlert } from "./continuity-alert";
-import { LegDialog } from "./leg-dialog";
-import { LegList } from "./leg-list";
+import { LegsCard } from "./legs-card";
+import { LogChecksAlert, WrongFuelAlert } from "./log-checks-alert";
+import { MeterGapAlert } from "./meter-gap-alert";
 import { LogSummary } from "./log-summary";
 import { RemarksCard } from "./remarks-card";
-import { UpliftDialog } from "./uplift-dialog";
-import { UpliftList } from "./uplift-list";
+import { UpliftsCard } from "./uplifts-card";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("flightLog");
@@ -85,7 +85,10 @@ export default async function FlightLogPage({ params }: { params: Promise<{ id: 
     ...common,
     currency: b.currency,
     fuelTypes: FUEL_TYPES.map((f) => ({ value: f, label: ta(`fuelTypes.${f}`) })),
+    aircraftFuel: plane.fuelType,
   };
+  const checks = await getLogChecks(user.id, detail, data);
+  const meters = await getMeterCheck(log, plane.id, role);
 
   return (
     <div className="mx-auto grid w-full max-w-3xl gap-6 px-4 py-10">
@@ -104,6 +107,7 @@ export default async function FlightLogPage({ params }: { params: Promise<{ id: 
         <InfoIcon />
         <AlertDescription>{t("disclaimer")}</AlertDescription>
       </Alert>
+      <WrongFuelAlert checks={checks} />
       {role === "pilot" && <KnownItems items={knownItems} />}
       {(log.status === "draft" || log.status === "correction_requested") && (
         <WeatherCard
@@ -133,54 +137,23 @@ export default async function FlightLogPage({ params }: { params: Promise<{ id: 
         }}
       />
 
-      <Card>
-        <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2">
-          <CardTitle as="h2">{t("legs")}</CardTitle>
-          {editable && legs.length < 50 && (
-            <LegDialog
-              {...common}
-              from={lastAirport}
-              to={null}
-              values={{ date: zonedDay(new Date(), timeZone), landings: "1" }}
-            />
-          )}
-        </CardHeader>
-        <CardContent>
-          <LegList
-            legs={legs}
-            airports={airports}
-            units={units}
-            dipstick={plane.oilUnit}
-            editable={editable}
-            {...common}
-          />
-        </CardContent>
-      </Card>
+      <LegsCard
+        list={{ legs, airports, units, dipstick: plane.oilUnit, editable, ...common }}
+        from={lastAirport}
+      />
 
-      <Card>
-        <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2">
-          <CardTitle as="h2">{t("uplifts")}</CardTitle>
-          {editable && (
-            <UpliftDialog
-              {...upliftProps}
-              airport={lastAirport}
-              receipt={null}
-              values={{ kind: "fuel", fuelType: plane.fuelType, paidBy: "pilot" }}
-            />
-          )}
-        </CardHeader>
-        <CardContent>
-          <UpliftList
-            uplifts={uplifts}
-            airports={airports}
-            receipts={docs}
-            units={units}
-            dipstick={plane.oilUnit}
-            editable={editable}
-            {...upliftProps}
-          />
-        </CardContent>
-      </Card>
+      <UpliftsCard
+        list={{
+          uplifts,
+          airports,
+          receipts: docs,
+          units,
+          dipstick: plane.oilUnit,
+          editable,
+          ...upliftProps,
+        }}
+        airport={lastAirport}
+      />
 
       <RemarksCard
         bookingId={b.id}
@@ -199,6 +172,8 @@ export default async function FlightLogPage({ params }: { params: Promise<{ id: 
         units={units}
         dipstick={plane.oilUnit}
       />
+      <MeterGapAlert check={meters} role={role} bookingId={b.id} logId={log.id} />
+      <LogChecksAlert checks={checks} units={units} />
 
       <LogSummary
         bookingId={b.id}

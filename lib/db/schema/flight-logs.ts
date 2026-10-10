@@ -18,6 +18,7 @@ import {
 
 import { aircraft, fuelType } from "./aircraft";
 import { airports } from "./airports";
+import { users } from "./auth";
 import { bookings } from "./bookings";
 import { documents } from "./documents";
 
@@ -26,6 +27,14 @@ export const flightLogStatus = pgEnum("flight_log_status", [
   "submitted",
   "correction_requested",
   "confirmed",
+]);
+
+/** Why the meters moved between two rentals, as the owner explains it. */
+export const meterGapReason = pgEnum("meter_gap_reason", [
+  "outside",
+  "maintenance",
+  "meter_replaced",
+  "other",
 ]);
 
 const meter = (name: string) => numeric(name, { precision: 8, scale: 2, mode: "number" });
@@ -56,6 +65,8 @@ export const flightLogs = pgTable(
     submittedAt: timestamp("submitted_at", { withTimezone: true }),
     confirmedAt: timestamp("confirmed_at", { withTimezone: true }),
     correctionNote: text("correction_note"),
+    /** The owner's explanation of a meter gap before this rental (outside, maintenance…). */
+    meterGapReason: meterGapReason("meter_gap_reason"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
@@ -207,7 +218,37 @@ export const flightRemarks = pgTable(
   ],
 ).enableRLS();
 
+/**
+ * Hobbs/tach readings the owner records between rentals (after flying outside ownAplane,
+ * maintenance or a meter change): the starting point for the next rental's meter check.
+ */
+export const meterReadings = pgTable(
+  "meter_readings",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    aircraftId: uuid("aircraft_id")
+      .notNull()
+      .references(() => aircraft.id, { onDelete: "cascade" }),
+    readAt: timestamp("read_at", { withTimezone: true }).notNull().defaultNow(),
+    hobbs: meter("hobbs"),
+    tach: meter("tach"),
+    note: text("note"),
+    createdBy: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index("meter_readings_aircraft_idx").on(t.aircraftId, t.readAt),
+    check(
+      "meter_readings_values",
+      sql`(${t.hobbs} is not null or ${t.tach} is not null) and ${t.hobbs} >= 0
+        and ${t.tach} >= 0 and char_length(${t.note}) <= 200`,
+    ),
+  ],
+).enableRLS();
+
 export type FlightLog = typeof flightLogs.$inferSelect;
+export type MeterReading = typeof meterReadings.$inferSelect;
+export type MeterGapReason = (typeof meterGapReason.enumValues)[number];
 export type FlightLeg = typeof flightLegs.$inferSelect;
 export type FlightUplift = typeof flightUplifts.$inferSelect;
 export type FlightRemark = typeof flightRemarks.$inferSelect;

@@ -230,7 +230,8 @@
     "fuelNotBurned": "Le carburant après doit être inférieur au carburant avant. Enregistrez un avitaillement avec « Ajouter carburant ou huile ».",
     "oilRose": "L’huile après ne peut pas dépasser l’huile avant. Enregistrez l’huile ajoutée avec « Ajouter carburant ou huile ».",
     "connectionNameRequired": "Donnez un nom à la connexion.",
-    "feedUrlInvalid": "Saisissez le lien complet en https://."
+    "feedUrlInvalid": "Saisissez le lien complet en https://.",
+    "meterRequired": "Saisissez le relevé Hobbs ou du compte-tours."
   },
   "dashboard": {
     "title": "Bienvenue, {name}",
@@ -1838,6 +1839,21 @@
       "landing": "Atterrissage (UTC)",
       "blockTime": "Temps bloc (h:mm)",
       "landings": "Atterrissages"
+    },
+    "meters": {
+      "title": "Relevés des compteurs",
+      "text": "Enregistrez le Hobbs et le compte-tours après un vol hors ownAplane, une maintenance ou un changement de compteur. Le départ de la location suivante est comparé au relevé le plus récent (ou au retour de la dernière location s'il est plus récent).",
+      "readAt": "Relevé à (UTC)",
+      "hobbs": "Hobbs",
+      "tach": "Compte-tours",
+      "note": "Note (facultative)",
+      "notePlaceholder": "ex. vol du club, visite 100 h",
+      "save": "Enregistrer le relevé",
+      "saving": "Enregistrement…",
+      "added": "Relevé enregistré.",
+      "inFuture": "L'heure ne peut pas être dans le futur.",
+      "notAllowed": "Seul le propriétaire de l'avion peut enregistrer des relevés.",
+      "remove": "Supprimer le relevé du {when}"
     }
   },
   "flightLog": {
@@ -2018,6 +2034,57 @@
         "fuel": "Du carburant a été ajouté à {airport}, mais aucune étape n’y commence ni n’y finit.",
         "oil": "De l’huile a été ajoutée à {airport}, mais aucune étape n’y commence ni n’y finit."
       }
+    },
+    "wrongFuel": {
+      "dangerTitle": "Mauvais carburant ?",
+      "cautionTitle": "Vérifiez le type de carburant",
+      "danger": "Du {fuel} a été ajouté à {airport}, mais cet avion utilise du {expected}. Si c'est exact, ne volez pas : un mauvais carburant peut arrêter le moteur. Signalez-le comme défaut dangereux pour que le propriétaire puisse vidanger les réservoirs. Si c'est une faute de frappe, corrigez la saisie.",
+      "caution": "Du {fuel} a été ajouté à {airport} ; le carburant de cet avion est le {expected}. Ce n'est acceptable que si le moteur est approuvé pour le {fuel} (voir le POH/AFM).",
+      "dangerTyped": "Cet avion utilise du {expected}, pas du {fuel}. Un mauvais carburant peut arrêter le moteur.",
+      "cautionTyped": "Le carburant de cet avion est le {expected}. Le {fuel} n'est acceptable que si le moteur est approuvé pour celui-ci."
+    },
+    "checks": {
+      "title": "Vérifiez ces heures et relevés",
+      "hint": "Corrigez la saisie s'il s'agit d'une faute de frappe. Le propriétaire le voit aussi et décide lors de la confirmation.",
+      "perHour": "{amount}/h",
+      "hobbsLong": "Étape {leg} : le Hobbs indique {meter} h, mais le moteur a tourné {engine} h.",
+      "tachLong": "Étape {leg} : le compte-tours indique {meter} h, mais le moteur a tourné {engine} h.",
+      "hobbsShort": "Étape {leg} : le Hobbs indique {meter} h, moins que les {air} h entre le décollage et l'atterrissage.",
+      "fuelHigh": "Étape {leg} : {used} en {hours} h de fonctionnement moteur ({rate}), alors que cet avion consomme normalement {expected}. Vérifiez les relevés et l'unité (L ou US gal), ou signalez une fuite possible.",
+      "fuelLow": "Étape {leg} : seulement {used} en {hours} h de fonctionnement moteur ({rate}), alors que cet avion consomme normalement {expected}. Vérifiez les relevés et l'unité (L ou US gal).",
+      "early": "Étape {leg} : le moteur a été démarré à {at}, avant l'heure réservée ({limit}).",
+      "late": "Étape {leg} : le moteur a été arrêté à {at}, après l'heure réservée ({limit}).",
+      "intoNext": "Étape {leg} : le moteur a été arrêté à {at}, après le début de la réservation suivante de l'avion ({limit})."
+    },
+    "meters": {
+      "title": "Compteurs depuis le dernier relevé connu",
+      "names": {
+        "hobbs": "Hobbs",
+        "tach": "Compte-tours"
+      },
+      "sources": {
+        "log": "le retour de la location précédente ({at})",
+        "reading": "le relevé enregistré par le propriétaire ({at})"
+      },
+      "gap": "{meter} : {known} → {start} (+{diff} h) depuis {since}.",
+      "below": "{meter} : le relevé de départ {start} est inférieur de {diff} h à {known} lors de {since}. Les compteurs ne reculent pas : vérifiez le relevé.",
+      "between": "Dans le calendrier entre-temps :",
+      "nothingBetween": "Rien dans le calendrier entre-temps : vol hors ownAplane, ou location sans carnet de vol ?",
+      "explained": "Expliqué : {reason}.",
+      "reasons": {
+        "outside": "Volé hors ownAplane",
+        "maintenance": "Maintenance ou essais au sol",
+        "meter_replaced": "Compteur remplacé ou remis à zéro",
+        "other": "Autre, vérifié"
+      },
+      "reasonLabel": "Explication",
+      "notExplained": "Pas encore expliqué",
+      "save": "Enregistrer",
+      "saving": "Enregistrement…",
+      "saved": "Enregistré.",
+      "failed": "L'explication n'a pas pu être enregistrée.",
+      "ownerHint": "Vous seul voyez ce qui s'est passé entre-temps. Pour repartir du bon relevé la prochaine fois, enregistrez les compteurs après un vol hors ownAplane (Mes avions → Utilisation → Relevés des compteurs).",
+      "pilotHint": "Corrigez le relevé de départ s'il s'agit d'une faute de frappe. Le propriétaire le voit aussi."
     }
   },
   "defects": {

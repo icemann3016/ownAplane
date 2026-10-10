@@ -230,7 +230,8 @@
     "fuelNotBurned": "Il carburante dopo deve essere inferiore a quello prima. Registra il rifornimento con «Aggiungi carburante o olio».",
     "oilRose": "L’olio dopo non può essere superiore a quello prima. Registra l’olio aggiunto con «Aggiungi carburante o olio».",
     "connectionNameRequired": "Dai un nome al collegamento.",
-    "feedUrlInvalid": "Inserisci il link completo con https://."
+    "feedUrlInvalid": "Inserisci il link completo con https://.",
+    "meterRequired": "Inserisci la lettura dell'Hobbs o del contagiri."
   },
   "dashboard": {
     "title": "Benvenuto, {name}",
@@ -1838,6 +1839,21 @@
       "landing": "Atterraggio (UTC)",
       "blockTime": "Tempo di blocco (h:mm)",
       "landings": "Atterraggi"
+    },
+    "meters": {
+      "title": "Letture dei contatori",
+      "text": "Registra Hobbs e contagiri dopo voli fuori da ownAplane, manutenzione o una sostituzione del contatore. La partenza del noleggio successivo viene confrontata con la lettura più recente (o con la riconsegna dell'ultimo noleggio, se più recente).",
+      "readAt": "Letto alle (UTC)",
+      "hobbs": "Hobbs",
+      "tach": "Contagiri",
+      "note": "Nota (facoltativa)",
+      "notePlaceholder": "es. volo del club, ispezione 100 h",
+      "save": "Salva la lettura",
+      "saving": "Salvataggio…",
+      "added": "Lettura salvata.",
+      "inFuture": "L'orario non può essere nel futuro.",
+      "notAllowed": "Solo il proprietario dell'aereo può registrare letture.",
+      "remove": "Rimuovi la lettura del {when}"
     }
   },
   "flightLog": {
@@ -2018,6 +2034,57 @@
         "fuel": "È stato aggiunto carburante a {airport}, ma nessuna tratta parte o arriva lì.",
         "oil": "È stato aggiunto olio a {airport}, ma nessuna tratta parte o arriva lì."
       }
+    },
+    "wrongFuel": {
+      "dangerTitle": "Carburante sbagliato?",
+      "cautionTitle": "Controlla il tipo di carburante",
+      "danger": "A {airport} è stato aggiunto {fuel}, ma questo aereo usa {expected}. Se è corretto, non volare: il carburante sbagliato può fermare il motore. Segnalalo come difetto pericoloso, così il proprietario può svuotare i serbatoi. Se è un errore di battitura, correggi la voce.",
+      "caution": "A {airport} è stato aggiunto {fuel}; il carburante di questo aereo è {expected}. Va bene solo se il motore è approvato per {fuel} (verifica il POH/AFM).",
+      "dangerTyped": "Questo aereo usa {expected}, non {fuel}. Il carburante sbagliato può fermare il motore.",
+      "cautionTyped": "Il carburante di questo aereo è {expected}. {fuel} va bene solo se il motore è approvato."
+    },
+    "checks": {
+      "title": "Controlla questi orari e letture",
+      "hint": "Correggi la voce se è un errore di battitura. Anche il proprietario lo vede e decide alla conferma.",
+      "perHour": "{amount}/h",
+      "hobbsLong": "Tratta {leg}: l'Hobbs indica {meter} h, ma il motore ha funzionato {engine} h.",
+      "tachLong": "Tratta {leg}: il contagiri indica {meter} h, ma il motore ha funzionato {engine} h.",
+      "hobbsShort": "Tratta {leg}: l'Hobbs indica {meter} h, meno delle {air} h tra decollo e atterraggio.",
+      "fuelHigh": "Tratta {leg}: {used} in {hours} h di moto ({rate}), ma questo aereo consuma normalmente {expected}. Controlla le letture e l'unità (L o US gal), o segnala una possibile perdita.",
+      "fuelLow": "Tratta {leg}: solo {used} in {hours} h di moto ({rate}), ma questo aereo consuma normalmente {expected}. Controlla le letture e l'unità (L o US gal).",
+      "early": "Tratta {leg}: il motore è stato avviato alle {at}, prima dell'orario prenotato ({limit}).",
+      "late": "Tratta {leg}: il motore è stato spento alle {at}, dopo l'orario prenotato ({limit}).",
+      "intoNext": "Tratta {leg}: il motore è stato spento alle {at}, dopo l'inizio della prenotazione successiva dell'aereo ({limit})."
+    },
+    "meters": {
+      "title": "Contatori dall'ultima lettura nota",
+      "names": {
+        "hobbs": "Hobbs",
+        "tach": "Contagiri"
+      },
+      "sources": {
+        "log": "la riconsegna del noleggio precedente ({at})",
+        "reading": "la lettura registrata dal proprietario ({at})"
+      },
+      "gap": "{meter}: {known} → {start} (+{diff} h) da {since}.",
+      "below": "{meter}: la lettura iniziale {start} è inferiore di {diff} h a {known} alla {since}. I contatori non vanno all'indietro: controlla la lettura.",
+      "between": "Nel calendario nel frattempo:",
+      "nothingBetween": "Nel calendario non c'è nulla nel frattempo: volato fuori da ownAplane, o un noleggio senza registro di volo?",
+      "explained": "Spiegato: {reason}.",
+      "reasons": {
+        "outside": "Volato fuori da ownAplane",
+        "maintenance": "Manutenzione o prove a terra",
+        "meter_replaced": "Contatore sostituito o azzerato",
+        "other": "Altro, verificato"
+      },
+      "reasonLabel": "Spiegazione",
+      "notExplained": "Non ancora spiegato",
+      "save": "Salva",
+      "saving": "Salvataggio…",
+      "saved": "Salvato.",
+      "failed": "Non è stato possibile salvare la spiegazione.",
+      "ownerHint": "Solo tu vedi cosa è successo nel frattempo. Per partire dalla lettura giusta la prossima volta, registra i contatori dopo i voli fuori da ownAplane (I miei aerei → Utilizzo → Letture dei contatori).",
+      "pilotHint": "Correggi la lettura alla partenza se è un errore di battitura. Anche il proprietario lo vede."
     }
   },
   "defects": {

@@ -58,6 +58,7 @@ export async function getBooking(viewerId: string, id: string) {
       typeDesignator: aircraft.typeDesignator,
       oilUnit: aircraft.oilUnit,
       fuelType: aircraft.fuelType,
+      fuelBurnLph: aircraft.fuelBurnLph,
       status: aircraft.status,
       ifr: aircraft.ifr,
     })

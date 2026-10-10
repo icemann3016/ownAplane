@@ -221,3 +221,14 @@ export const calendarBlockSchema = z
     note: optionalText(200, "textTooLong").optional().default(null),
   })
   .refine((d) => d.to > d.from, { path: ["to"], error: "endBeforeStart" });
+
+/** Hobbs/tach the owner records between rentals (BKG-7); the time is entered in UTC. */
+export const meterReadingSchema = z
+  .object({
+    aircraftId: z.uuid(),
+    readAt: localDateTime,
+    hobbs: optionalNumber(0, 999999),
+    tach: optionalNumber(0, 999999),
+    note: optionalText(200, "textTooLong").optional().default(null),
+  })
+  .refine((d) => d.hobbs !== null || d.tach !== null, { path: ["hobbs"], error: "meterRequired" });

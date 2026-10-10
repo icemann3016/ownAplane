@@ -7,6 +7,7 @@ import type { AirportSummary } from "@/lib/airports";
 import type { FlightUplift } from "@/lib/db/schema";
 import { litresToOil, litresToVolume, type UnitSystem, type VolumeUnit } from "@/lib/domain/units";
 import type { Locale } from "@/lib/i18n/config";
+import type { FuelType } from "@/lib/domain/log-checks";
 import { UpliftDialog } from "./uplift-dialog";
 import { deleteUplift } from "./uplift-actions";
 
@@ -27,6 +28,7 @@ export async function UpliftList({
   oilUnit,
   currency,
   fuelTypes,
+  aircraftFuel,
 }: {
   uplifts: FlightUplift[];
   airports: Record<string, AirportSummary>;
@@ -40,6 +42,7 @@ export async function UpliftList({
   oilUnit: string;
   currency: string;
   fuelTypes: { value: string; label: string }[];
+  aircraftFuel: FuelType;
 }) {
   const t = await getTranslations("flightLog");
   const ta = await getTranslations("aircraft");
@@ -74,6 +77,7 @@ export async function UpliftList({
                     oilUnit={oilUnit}
                     currency={currency}
                     fuelTypes={fuelTypes}
+                    aircraftFuel={aircraftFuel}
                     airport={airport ?? null}
                     receipt={receipt ?? null}
                     label={t("editUpliftOf", { uplift: title })}

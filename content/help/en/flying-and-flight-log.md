@@ -71,6 +71,24 @@ Something that may affect airworthiness? Use **Report a defect** (on the booking
 log): how serious it is (**minor**, **major**, or **unsafe**: shouldn't fly), what's wrong, and
 an optional photo. The owner is emailed straight away.
 
+## Checks on your entries
+
+The log checks your entries as you go and shows what doesn't add up, to you and the owner. These
+are warnings, never blocks: correct a typo, or leave it and the owner decides when confirming.
+
+- **Wrong fuel:** fuel that doesn't suit the aircraft. Jet A-1 in a petrol engine (or the other
+  way round) shows a red warning: if it's true, **don't fly** and report an unsafe defect. A
+  lower grade than the aircraft's (for example UL91 or MOGAS instead of AVGAS 100LL) is only fine
+  if the engine is approved for it.
+- **Meters:** a Hobbs or tach that moved more than the engine ran, or a Hobbs that moved less
+  than the time between take-off and landing.
+- **Fuel burn:** much more or much less than the aircraft's usual litres per hour. Often a mix-up
+  between litres and US gallons; otherwise it could be a leak.
+- **Times:** a leg that starts before or ends after your booked time (15 minutes either way are
+  fine), or runs into the aircraft's next booking.
+- **Check-out readings:** a Hobbs or tach lower than at the end of the last rental. Meters don't
+  run backwards, so it's a typo.
+
 ## Check-in
 
 When you're back, **Check in and send to the owner**. The summary shows the **flown time** (on

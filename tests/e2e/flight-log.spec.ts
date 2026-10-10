@@ -79,6 +79,11 @@ test("a pilot fills in the flight log and the owner confirms it", async ({ page,
   await fuel.getByRole("combobox", { name: "Airfield" }).fill("LBSF");
   await fuel.getByRole("listbox").getByRole("option").first().click();
   await fuel.getByLabel("Quantity (L)").fill("40");
+  // Picking a fuel that doesn't suit the aircraft warns at once.
+  await fuel.getByLabel("Fuel type").selectOption("jet_a1");
+  await expect(fuel.getByText("This aircraft uses AVGAS 100LL, not Jet A-1.")).toBeVisible();
+  await fuel.getByLabel("Fuel type").selectOption("avgas_100ll");
+  await expect(fuel.getByText(/This aircraft uses/)).toHaveCount(0);
   await fuel.getByLabel("Price paid (EUR, optional)").fill("100");
   await fuel.getByRole("button", { name: "Save" }).click();
   await expect(fuel).toBeHidden();
@@ -127,6 +132,11 @@ test("a pilot fills in the flight log and the owner confirms it", async ({ page,
   const usageText = await usageResponse.text();
   expect(usageText).toContain("Block off (UTC)");
   expect(usageText).toContain(`Pilot ${id}`);
+  // The owner records the meters after a flight outside ownAplane.
+  await owner.getByLabel("Hobbs", { exact: true }).fill("1001.5");
+  await owner.getByRole("button", { name: "Save reading" }).click();
+  await expect(owner.getByText("Reading saved.")).toBeVisible();
+  await expect(owner.getByText("Hobbs 1001.5")).toBeVisible();
   await ownerContext.close();
 
   // 9. The pilot exports their own legs for the logbook

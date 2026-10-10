@@ -230,7 +230,8 @@
     "fuelNotBurned": "Kraftstoff danach muss niedriger sein als davor. Tanken erfassen Sie mit „Kraftstoff oder Öl hinzufügen“.",
     "oilRose": "Öl danach darf nicht höher sein als davor. Nachgefülltes Öl erfassen Sie mit „Kraftstoff oder Öl hinzufügen“.",
     "connectionNameRequired": "Geben Sie der Verbindung einen Namen.",
-    "feedUrlInvalid": "Geben Sie den vollständigen https://-Link ein."
+    "feedUrlInvalid": "Geben Sie den vollständigen https://-Link ein.",
+    "meterRequired": "Geben Sie den Hobbs- oder den Tachostand ein."
   },
   "dashboard": {
     "title": "Willkommen, {name}",
@@ -1838,6 +1839,21 @@
       "landing": "Landung (UTC)",
       "blockTime": "Blockzeit (h:mm)",
       "landings": "Landungen"
+    },
+    "meters": {
+      "title": "Zählerstände",
+      "text": "Erfassen Sie Hobbs und Tacho nach Flügen außerhalb von ownAplane, Wartung oder einem Zählertausch. Der Check-out der nächsten Miete wird mit dem neuesten Stand verglichen (oder mit dem Check-in der letzten Miete, wenn der später ist).",
+      "readAt": "Abgelesen um (UTC)",
+      "hobbs": "Hobbs",
+      "tach": "Tacho",
+      "note": "Notiz (optional)",
+      "notePlaceholder": "z. B. Vereinsflug, 100-h-Kontrolle",
+      "save": "Stand speichern",
+      "saving": "Wird gespeichert…",
+      "added": "Stand gespeichert.",
+      "inFuture": "Die Zeit darf nicht in der Zukunft liegen.",
+      "notAllowed": "Nur der Halter des Flugzeugs kann Stände erfassen.",
+      "remove": "Stand vom {when} entfernen"
     }
   },
   "flightLog": {
@@ -2018,6 +2034,57 @@
         "fuel": "In {airport} wurde Kraftstoff getankt, aber kein Flug beginnt oder endet dort.",
         "oil": "In {airport} wurde Öl nachgefüllt, aber kein Flug beginnt oder endet dort."
       }
+    },
+    "wrongFuel": {
+      "dangerTitle": "Falscher Kraftstoff?",
+      "cautionTitle": "Kraftstoffsorte prüfen",
+      "danger": "In {airport} wurde {fuel} getankt, dieses Flugzeug verwendet aber {expected}. Wenn das stimmt, nicht fliegen: Falscher Kraftstoff kann zum Motorausfall führen. Melden Sie es als unsicheren Mangel, damit der Halter die Tanks entleeren kann. Ist es ein Tippfehler, korrigieren Sie den Eintrag.",
+      "caution": "In {airport} wurde {fuel} getankt; der Kraftstoff dieses Flugzeugs ist {expected}. Das ist nur in Ordnung, wenn der Motor für {fuel} zugelassen ist (siehe POH/AFM).",
+      "dangerTyped": "Dieses Flugzeug verwendet {expected}, nicht {fuel}. Falscher Kraftstoff kann zum Motorausfall führen.",
+      "cautionTyped": "Der Kraftstoff dieses Flugzeugs ist {expected}. {fuel} ist nur in Ordnung, wenn der Motor dafür zugelassen ist."
+    },
+    "checks": {
+      "title": "Diese Zeiten und Werte prüfen",
+      "hint": "Korrigieren Sie den Eintrag, wenn es ein Tippfehler ist. Der Halter sieht das auch und entscheidet beim Bestätigen.",
+      "perHour": "{amount}/h",
+      "hobbsLong": "Abschnitt {leg}: Der Hobbs zeigt {meter} h, der Motor lief aber {engine} h.",
+      "tachLong": "Abschnitt {leg}: Der Tacho zeigt {meter} h, der Motor lief aber {engine} h.",
+      "hobbsShort": "Abschnitt {leg}: Der Hobbs zeigt {meter} h, weniger als die {air} h zwischen Start und Landung.",
+      "fuelHigh": "Abschnitt {leg}: {used} in {hours} h Motorlaufzeit ({rate}), dieses Flugzeug verbraucht aber normalerweise {expected}. Prüfen Sie die Werte und die Einheit (L oder US gal) oder melden Sie ein mögliches Leck.",
+      "fuelLow": "Abschnitt {leg}: nur {used} in {hours} h Motorlaufzeit ({rate}), dieses Flugzeug verbraucht aber normalerweise {expected}. Prüfen Sie die Werte und die Einheit (L oder US gal).",
+      "early": "Abschnitt {leg}: Der Motor wurde um {at} gestartet, vor der gebuchten Zeit ({limit}).",
+      "late": "Abschnitt {leg}: Der Motor wurde um {at} abgestellt, nach der gebuchten Zeit ({limit}).",
+      "intoNext": "Abschnitt {leg}: Der Motor wurde um {at} abgestellt, nachdem die nächste Buchung des Flugzeugs begonnen hatte ({limit})."
+    },
+    "meters": {
+      "title": "Zählerstände seit dem letzten bekannten Stand",
+      "names": {
+        "hobbs": "Hobbs",
+        "tach": "Tacho"
+      },
+      "sources": {
+        "log": "dem Check-in der vorherigen Miete ({at})",
+        "reading": "dem vom Halter erfassten Stand ({at})"
+      },
+      "gap": "{meter}: {known} → {start} (+{diff} h) seit {since}.",
+      "below": "{meter}: Der Anfangsstand {start} ist {diff} h niedriger als {known} bei {since}. Zähler laufen nicht rückwärts: Prüfen Sie den Stand.",
+      "between": "Im Kalender dazwischen:",
+      "nothingBetween": "Dazwischen steht nichts im Kalender: außerhalb von ownAplane geflogen oder eine Miete ohne Flugbuch?",
+      "explained": "Erklärt: {reason}.",
+      "reasons": {
+        "outside": "Außerhalb von ownAplane geflogen",
+        "maintenance": "Wartung oder Standläufe",
+        "meter_replaced": "Zähler getauscht oder zurückgesetzt",
+        "other": "Anderes, geprüft"
+      },
+      "reasonLabel": "Erklärung",
+      "notExplained": "Noch nicht erklärt",
+      "save": "Speichern",
+      "saving": "Wird gespeichert…",
+      "saved": "Gespeichert.",
+      "failed": "Die Erklärung konnte nicht gespeichert werden.",
+      "ownerHint": "Nur Sie sehen, was dazwischen war. Damit beim nächsten Mal vom richtigen Stand ausgegangen wird, erfassen Sie die Zähler nach Flügen außerhalb von ownAplane (Meine Flugzeuge → Nutzung → Zählerstände).",
+      "pilotHint": "Korrigieren Sie den Stand beim Check-out, wenn es ein Tippfehler ist. Der Halter sieht das auch."
     }
   },
   "defects": {

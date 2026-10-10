@@ -18,6 +18,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { fuelMismatch, type FuelType } from "@/lib/domain/log-checks";
 import { type VolumeUnit } from "@/lib/domain/units";
 import { type FormState, initialFormState } from "@/lib/forms";
 import { useFuelUnit } from "./fuel-unit";
@@ -34,6 +35,7 @@ export function UpliftDialog({
   oilUnit,
   currency,
   fuelTypes,
+  aircraftFuel,
   label,
 }: {
   bookingId: string;
@@ -46,6 +48,7 @@ export function UpliftDialog({
   oilUnit: string;
   currency: string;
   fuelTypes: { value: string; label: string }[];
+  aircraftFuel: FuelType;
   label?: string;
 }) {
   const t = useTranslations("flightLog");
@@ -58,6 +61,9 @@ export function UpliftDialog({
   const v = { ...values, ...state.values };
   const e = state.errors ?? {};
   const [kind, setKind] = useState(v.kind === "oil" ? "oil" : "fuel");
+  const [fuelType, setFuelType] = useState(v.fuelType ?? aircraftFuel);
+  const mismatch = kind === "fuel" ? fuelMismatch(aircraftFuel, fuelType as FuelType) : null;
+  const fuelName = (f: string) => fuelTypes.find((o) => o.value === f)?.label ?? f;
   const editing = Boolean(values.upliftId);
   const fuel = useFuelUnit("uplift", v.fuelUnit, fuelUnit);
 
@@ -135,7 +141,8 @@ export function UpliftDialog({
                 id="uplift-fuel-type"
                 name="fuelType"
                 label={t("fuelType")}
-                defaultValue={v.fuelType}
+                value={fuelType}
+                onChange={(event) => setFuelType(event.target.value)}
                 options={fuelTypes}
               />
             ) : (
@@ -150,6 +157,14 @@ export function UpliftDialog({
               />
             )}
           </div>
+          {mismatch && (
+            <p className="text-sm font-medium text-destructive">
+              {t(`wrongFuel.${mismatch}Typed`, {
+                fuel: fuelName(fuelType),
+                expected: fuelName(aircraftFuel),
+              })}
+            </p>
+          )}
           <TextField
             id="uplift-price"
             name="price"

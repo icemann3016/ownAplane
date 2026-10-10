@@ -307,4 +307,72 @@ describeDb("flight log", () => {
       "log_confirmed",
     ]);
   });
+
+  it("lets only the owner record meter readings and explain a gap before a rental", async () => {
+    const [b] = await db.getDb().select().from(s.bookings).where(eq(s.bookings.id, bookingId));
+    const aircraftId = b!.aircraftId;
+    const code = (p: Promise<unknown>) =>
+      p.then(
+        () => undefined,
+        (e: { cause?: { code?: string; message?: string } }) =>
+          e.cause?.code === "P0001" ? e.cause.message : e.cause?.code,
+      );
+    const record = (user: string, values: Partial<typeof s.meterReadings.$inferInsert>) =>
+      rls.asUser(user, (tx) =>
+        tx
+          .insert(s.meterReadings)
+          .values({ aircraftId, hobbs: 1236, ...values })
+          .returning(),
+      );
+    const [mine] = await record(OWN, { note: "Club flight" });
+    expect(mine).toMatchObject({ createdBy: OWN, hobbs: 1236 });
+    expect(await code(record(PIL, {}))).toBe("42501");
+    expect(await code(record(OTH, {}))).toBe("42501");
+    expect(await code(record(OWN, { readAt: at(60) }))).toBe("reading_in_future");
+    expect(await code(record(OWN, { hobbs: null, tach: null }))).toBe("23514");
+    for (const user of [PIL, OTH]) {
+      expect(await rls.asUser(user, (tx) => tx.select().from(s.meterReadings))).toEqual([]);
+    }
+    expect(await rls.asAnon((tx) => tx.select().from(s.meterReadings))).toEqual([]);
+
+    // Only the booking's owner explains a gap.
+    expect(
+      await call(PIL, sql`select public.explain_meter_gap(${logId}::uuid, 'outside')`),
+    ).toEqual({ error: "not_found" });
+    await call(OWN, sql`select public.explain_meter_gap(${logId}::uuid, 'outside')`);
+    const [log] = await db.getDb().select().from(s.flightLogs).where(eq(s.flightLogs.id, logId));
+    expect(log!.meterGapReason).toBe("outside");
+  });
+
+  it("compares a rental's start readings with the previous rental's end", async () => {
+    const { getMeterCheck } = await import("@/lib/bookings/meter-gap");
+    const owner = db.getDb();
+    const [b] = await owner.select().from(s.bookings).where(eq(s.bookings.id, bookingId));
+    // A later rental of the same aircraft, checked out after the first one's check-in.
+    const [next] = await owner
+      .insert(s.bookings)
+      .values({
+        ...b!,
+        id: undefined,
+        status: "in_progress",
+        period: `[${at(600).toISOString()},${at(700).toISOString()})`,
+      })
+      .returning();
+    const [nextLog] = await owner
+      .insert(s.flightLogs)
+      .values({ bookingId: next!.id, hobbsStart: 1236.4, checkedOutAt: at(590) })
+      .returning();
+
+    // The first rental ended at 1235.8 h: +0.6 h in between, shown to the owner only.
+    const forOwner = await getMeterCheck(nextLog!, b!.aircraftId, "owner");
+    expect(forOwner.findings).toMatchObject([{ meter: "hobbs", type: "gap", diff: 0.6 }]);
+    expect(forOwner.between).toEqual([]);
+    expect((await getMeterCheck(nextLog!, b!.aircraftId, "pilot")).findings).toEqual([]);
+
+    // A start below the last reading is a typo the pilot sees too.
+    const below = { ...nextLog!, hobbsStart: 1230 };
+    expect((await getMeterCheck(below, b!.aircraftId, "pilot")).findings).toMatchObject([
+      { type: "below", known: 1235.8 },
+    ]);
+  });
 });

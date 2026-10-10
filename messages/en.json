@@ -230,7 +230,8 @@
     "fuelNotBurned": "Fuel after must be lower than fuel before. Record refuelling with “Add fuel or oil”.",
     "oilRose": "Oil after can't be higher than oil before. Record oil you added with “Add fuel or oil”.",
     "connectionNameRequired": "Give the connection a name.",
-    "feedUrlInvalid": "Enter the full https:// link."
+    "feedUrlInvalid": "Enter the full https:// link.",
+    "meterRequired": "Enter the Hobbs or the tach reading."
   },
   "dashboard": {
     "title": "Welcome, {name}",
@@ -1838,6 +1839,21 @@
       "landing": "Landing (UTC)",
       "blockTime": "Block time (h:mm)",
       "landings": "Landings"
+    },
+    "meters": {
+      "title": "Meter readings",
+      "text": "Record the Hobbs and tach after flying outside ownAplane, maintenance or a meter change. The next rental's check-out is compared with the latest reading (or the last rental's check-in, whichever is later).",
+      "readAt": "Read at (UTC)",
+      "hobbs": "Hobbs",
+      "tach": "Tach",
+      "note": "Note (optional)",
+      "notePlaceholder": "e.g. club flight, 100 h inspection",
+      "save": "Save reading",
+      "saving": "Saving…",
+      "added": "Reading saved.",
+      "inFuture": "The time can't be in the future.",
+      "notAllowed": "Only the aircraft's owner can record readings.",
+      "remove": "Remove the reading of {when}"
     }
   },
   "flightLog": {
@@ -2018,6 +2034,57 @@
         "fuel": "Fuel was added at {airport}, but no leg starts or ends there.",
         "oil": "Oil was added at {airport}, but no leg starts or ends there."
       }
+    },
+    "wrongFuel": {
+      "dangerTitle": "Wrong fuel?",
+      "cautionTitle": "Check the fuel grade",
+      "danger": "{fuel} was added at {airport}, but this aircraft uses {expected}. If that's right, don't fly: wrong fuel can stop the engine. Report it as an unsafe defect so the owner can drain the tanks. If it's a typo, correct the entry.",
+      "caution": "{fuel} was added at {airport}; this aircraft's fuel is {expected}. That's only fine if the engine is approved for {fuel} (check the POH/AFM).",
+      "dangerTyped": "This aircraft uses {expected}, not {fuel}. Wrong fuel can stop the engine.",
+      "cautionTyped": "This aircraft's fuel is {expected}. {fuel} is only fine if the engine is approved for it."
+    },
+    "checks": {
+      "title": "Check these times and readings",
+      "hint": "Correct the entry if it's a typo. The owner sees this too and decides when confirming.",
+      "perHour": "{amount}/h",
+      "hobbsLong": "Leg {leg}: the Hobbs shows {meter} h, but the engine ran {engine} h.",
+      "tachLong": "Leg {leg}: the tach shows {meter} h, but the engine ran {engine} h.",
+      "hobbsShort": "Leg {leg}: the Hobbs shows {meter} h, less than the {air} h between take-off and landing.",
+      "fuelHigh": "Leg {leg}: {used} in {hours} h of engine time ({rate}), but this aircraft normally burns {expected}. Check the readings and the unit (L or US gal), or report a possible leak.",
+      "fuelLow": "Leg {leg}: only {used} in {hours} h of engine time ({rate}), but this aircraft normally burns {expected}. Check the readings and the unit (L or US gal).",
+      "early": "Leg {leg}: the engine started at {at}, before the booked time ({limit}).",
+      "late": "Leg {leg}: the engine stopped at {at}, after the booked time ({limit}).",
+      "intoNext": "Leg {leg}: the engine stopped at {at}, after the aircraft's next booking had started ({limit})."
+    },
+    "meters": {
+      "title": "Meters since the last known reading",
+      "names": {
+        "hobbs": "Hobbs",
+        "tach": "Tach"
+      },
+      "sources": {
+        "log": "the previous rental's check-in ({at})",
+        "reading": "the owner's recorded reading ({at})"
+      },
+      "gap": "{meter}: {known} → {start} (+{diff} h) since {since}.",
+      "below": "{meter}: the start reading {start} is {diff} h lower than {known} at {since}. Meters don't run backwards: check the reading.",
+      "between": "In the calendar in between:",
+      "nothingBetween": "Nothing is in the calendar in between: flown outside ownAplane, or a rental without a flight log?",
+      "explained": "Explained: {reason}.",
+      "reasons": {
+        "outside": "Flown outside ownAplane",
+        "maintenance": "Maintenance or ground runs",
+        "meter_replaced": "Meter replaced or reset",
+        "other": "Other, checked"
+      },
+      "reasonLabel": "Explanation",
+      "notExplained": "Not explained yet",
+      "save": "Save",
+      "saving": "Saving…",
+      "saved": "Saved.",
+      "failed": "The explanation couldn't be saved.",
+      "ownerHint": "Only you see what happened in between. To start from the right reading next time, record the meters after flying outside ownAplane (My aircraft → Usage → Meter readings).",
+      "pilotHint": "Correct the check-out reading if it's a typo. The owner sees this too."
     }
   },
   "defects": {

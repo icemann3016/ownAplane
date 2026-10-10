@@ -393,6 +393,20 @@
       "when": 1791662072627,
       "tag": "0055_calendar_sync_fields_grant",
       "breakpoints": true
+    },
+    {
+      "idx": 56,
+      "version": "7",
+      "when": 1791666318762,
+      "tag": "0056_meter_readings",
+      "breakpoints": true
+    },
+    {
+      "idx": 57,
+      "version": "7",
+      "when": 1791666322680,
+      "tag": "0057_meter_readings_security",
+      "breakpoints": true
     }
   ]
 }

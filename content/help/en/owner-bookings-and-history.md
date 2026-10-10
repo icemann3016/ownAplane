@@ -26,6 +26,18 @@ entered (check-out readings and photo, legs, fuel and oil with receipts, remarks
 - **Confirm log and amount**: the booking is completed and any unused booked time is freed.
 - **Ask for a correction**, with a note: the pilot can change the log and send it again.
 
+The log also shows its **checks** (wrong fuel, meters against engine times, unusual fuel burn,
+flying outside the booked time or into the next booking): see the pilot's article for the list.
+They're warnings to look at before you confirm.
+
+**Meters between rentals:** the check-out readings are compared with the last known ones (the
+previous rental's check-in, or a reading you recorded). If the Hobbs or tach moved in between,
+you see by how much and what your calendar shows then (another connected system's booking, your
+own use, maintenance). Only you see this. Choose an explanation (flown outside ownAplane,
+maintenance, meter replaced, other) and **Save**. To avoid gaps, record the meters under
+**Usage → Meter readings** after flying outside ownAplane or a meter change: the next check-out
+is compared with that reading.
+
 ## Defects and grounding
 
 A reported defect is emailed to you straight away and listed under **Defects** (who reported it,

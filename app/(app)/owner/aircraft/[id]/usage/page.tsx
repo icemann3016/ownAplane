@@ -10,6 +10,7 @@ import { getUnits } from "@/lib/aircraft/queries";
 import { getAircraftUsage, pilotNames } from "@/lib/bookings/usage";
 import { usageByMonth, usageByPilot, usageTotals } from "@/lib/domain/usage";
 import { intlLocale, type Locale } from "@/lib/i18n/config";
+import { MeterReadings } from "./meter-readings";
 import { UsageTable } from "./usage-table";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -43,7 +44,7 @@ export default async function UsagePage({ params }: { params: Promise<{ id: stri
   const tableProps = { units, oilUnit: aircraft.oilUnit, timeBasis: aircraft.timeBasis };
 
   return (
-    <div className="grid gap-6">
+    <div className="grid grid-cols-1 gap-6">
       <SectionHeading title={ta("sections.usage")} text={ta("sectionText.usage")} />
       {flights.length === 0 ? (
         <Card>
@@ -105,6 +106,7 @@ export default async function UsagePage({ params }: { params: Promise<{ id: stri
           <p className="text-xs text-muted-foreground">{t("note")}</p>
         </>
       )}
+      <MeterReadings userId={user.id} aircraftId={id} />
     </div>
   );
 }
