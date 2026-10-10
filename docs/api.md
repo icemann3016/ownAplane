@@ -39,7 +39,7 @@ Authorization: Bearer <token>
 - Invalid query parameters are errors (400), not ignored.
 - Responses are never cached (`cache-control: no-store`), except the OpenAPI description.
 
-## Endpoints (M11)
+## Endpoints
 
 | Method | Path | Sign-in | What |
 |--------|------|---------|------|
@@ -48,12 +48,22 @@ Authorization: Bearer <token>
 | GET | `/api/v1/airports/{ident}` | – | One airfield |
 | GET | `/api/v1/aircraft?airport=&radius=&from=&to=&…` | optional | Search listed aircraft (`eligible=true` needs sign-in) |
 | GET | `/api/v1/aircraft/{id}` | optional | A listed aircraft, or one of your own |
+| GET | `/api/v1/aircraft/{id}/availability?from=&to=` | optional | When it's busy (times and kinds; `pending` = unanswered request) |
+| GET | `/api/v1/aircraft/{id}/eligibility?from=&to=` | required | "Can I rent this": `eligible` + reasons with a sentence in the user's language |
 | GET | `/api/v1/bookings` | required | Your bookings as pilot and owner |
+| POST | `/api/v1/bookings` | required | Request a booking (pilot). 403 `forbidden` + `details.reasons` if not eligible, 409 + `details.reason` (`not_free`…) |
 | GET | `/api/v1/bookings/{id}` | required | One booking with its history |
+| POST | `/api/v1/bookings/{id}/accept` | required | The owner accepts (`{ note }` optional) |
+| POST | `/api/v1/bookings/{id}/decline` | required | The owner declines (`{ note, proposal: { from, to } }` optional) |
+| POST | `/api/v1/bookings/{id}/cancel` | required | Pilot or owner cancels with `{ reason }`; `details.late` |
+
+Booking errors carry `details.reason`, the same codes the website uses (`not_free`,
+`not_open`, `booked_elsewhere`, `aircraft_grounded`, `lapl_passengers`…), for apps to show
+their own text.
 
 Calendar sync endpoints for partner systems are listed below.
 
-Next (M13): booking actions, flight log, messages, notifications through the API.
+Next (M13): flight log, messages, notifications, saved searches and reviews through the API.
 
 ## Calendar sync for other booking systems (SYN-1…6, SYN-8)
 

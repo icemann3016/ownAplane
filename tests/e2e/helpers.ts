@@ -105,3 +105,25 @@ export async function seedCompletedBooking(aircraftId: string, pilotEmail: strin
   });
   return id;
 }
+
+/**
+ * Sign in like the mobile app (token in `set-auth-token`). Sign-in is rate-limited per address,
+ * and tests run in parallel, so a 429 waits for the window to pass and tries again.
+ */
+export async function apiSignIn(baseURL: string | undefined, email: string): Promise<string> {
+  for (let attempt = 0; attempt < 4; attempt++) {
+    const res = await fetch(new URL("/api/auth/sign-in/email", baseURL), {
+      method: "POST",
+      headers: { origin: "ownaplane://app", "content-type": "application/json" },
+      body: JSON.stringify({ email, password: PASSWORD }),
+    });
+    if (res.status === 429) {
+      await new Promise((resolve) => setTimeout(resolve, 5_000));
+      continue;
+    }
+    const token = res.headers.get("set-auth-token");
+    if (res.status !== 200 || !token) throw new Error(`sign-in failed: ${res.status}`);
+    return token;
+  }
+  throw new Error("sign-in kept being rate-limited");
+}

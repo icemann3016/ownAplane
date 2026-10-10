@@ -94,9 +94,12 @@ export function queryOf(request: Request): Record<string, string> {
 }
 
 /** JSON body of a request, or 400. */
-export async function bodyOf(request: Request): Promise<unknown> {
+/** The JSON body; an empty body gives `whenEmpty` if the endpoint allows one. */
+export async function bodyOf(request: Request, whenEmpty?: unknown): Promise<unknown> {
+  const text = await request.text();
+  if (!text.trim() && whenEmpty !== undefined) return whenEmpty;
   try {
-    return await request.json();
+    return JSON.parse(text);
   } catch {
     throw new ApiError("bad_request", "The request body must be JSON.");
   }

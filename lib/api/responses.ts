@@ -238,6 +238,26 @@ export const pushAllResult = z.object({
   wrongAircraft: ids.describe("Bookings for another registration, left out"),
 });
 
+export const eligibility = z.object({
+  eligible: z.boolean().describe("No blocking reason: the pilot may send a request"),
+  reasons: z.array(
+    z.object({
+      requirement: z.string().describe("e.g. medical, night_rating, type_hours, lapl_mtom"),
+      blocking: z.boolean().describe("false = a condition or note, e.g. a checkout flight"),
+      need: z.string().nullable(),
+      have: z.string().nullable(),
+      text: z.string().describe("A sentence in the user's language"),
+    }),
+  ),
+});
+
+export const busyPeriod = z.object({
+  from: time,
+  to: time,
+  kind: z.enum(calendarEntryKind.enumValues),
+  pending: z.boolean().describe("A request the owner hasn't answered yet"),
+});
+
 /** What we POST to a connected system's webhook (SYN-6). */
 export const webhookEvent = z.object({
   id: z.string().describe("Unique per change; a retry of the same change keeps it"),

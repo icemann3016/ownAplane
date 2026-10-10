@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { CATEGORIES, PRICE_BASES } from "@/lib/aircraft/catalog";
+import { BOOKING_PURPOSES, type BookingRequestInput, MAX_STOPS } from "@/lib/validation/booking";
 import { webhookUrlSchema } from "@/lib/validation/calendar-sync";
 import { RADII_KM, SORTS, type SearchFilters } from "@/lib/validation/search";
 
@@ -59,6 +60,64 @@ export function toSearchFilters(q: z.infer<typeof aircraftSearchQuery>): SearchF
     eligible: q.eligible ?? false,
   };
 }
+
+// --- Bookings (BKG-1, BKG-3, BKG-6) ---
+
+const airfieldIdent = z.string().trim().min(2).max(10).describe("Airfield ident, e.g. LBSF");
+
+export const bookingRequestBody = z
+  .object({
+    aircraftId: z.uuid(),
+    from: instant.describe("Start of the rental (ISO 8601)"),
+    to: instant,
+    departure: airfieldIdent,
+    arrival: airfieldIdent,
+    stops: z.array(airfieldIdent).max(MAX_STOPS).default([]),
+    purpose: z.enum(BOOKING_PURPOSES),
+    passengers: z.number().int().min(0).max(19).describe("Not counting the pilot"),
+    plannedHours: z.number().min(0.1).max(99),
+    message: z.string().trim().max(1000).default("").describe("To the owner"),
+  })
+  .refine((b) => new Date(b.to) > new Date(b.from), {
+    path: ["to"],
+    message: "to must be after from",
+  });
+
+/** API booking request → the website's input (UTC "YYYY-MM-DDTHH:MM"). */
+export function toBookingInput(b: z.infer<typeof bookingRequestBody>): BookingRequestInput {
+  const minute = (v: string) => new Date(v).toISOString().slice(0, 16);
+  return {
+    ...b,
+    from: minute(b.from),
+    to: minute(b.to),
+    plannedHours: Math.round(b.plannedHours * 10) / 10,
+  };
+}
+
+export const acceptBody = z.object({
+  note: z.string().trim().max(500).default("").describe("To the pilot"),
+});
+
+export const declineBody = z.object({
+  note: z.string().trim().max(500).default(""),
+  proposal: z
+    .object({ from: instant, to: instant })
+    .refine((p) => new Date(p.to) > new Date(p.from), { message: "to must be after from" })
+    .optional()
+    .describe("Another time to suggest; the pilot can request it"),
+});
+
+export const cancelBody = z.object({
+  reason: z.string().trim().min(1).max(500),
+});
+
+export const periodQuery = z
+  .object({ from: instant, to: instant })
+  .transform((q) => ({ from: new Date(q.from), to: new Date(q.to) }))
+  .refine((p) => p.to > p.from && p.to.getTime() - p.from.getTime() <= 400 * 24 * 60 * 60 * 1000, {
+    path: ["to"],
+    message: "to must be after from, at most 400 days later",
+  });
 
 // --- Calendar sync for partner systems (SYN-4) ---
 

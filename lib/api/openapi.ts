@@ -8,7 +8,12 @@ import * as R from "./responses";
 import {
   aircraftSearchQuery,
   airportQuery,
+  acceptBody,
+  bookingRequestBody,
   busyWindowQuery,
+  cancelBody,
+  declineBody,
+  periodQuery,
   pushAllBody,
   pushBusyBody,
   webhookBody,
@@ -121,6 +126,8 @@ export function openApiDocument() {
         BusyTime: output(R.busyTime),
         PushResult: output(R.pushResult),
         PushAllResult: output(R.pushAllResult),
+        Eligibility: output(R.eligibility),
+        BusyPeriod: output(R.busyPeriod),
         WebhookEvent: output(R.webhookEvent),
         WebhookSettings: output(R.webhookSettings),
         WebhookSaved: output(R.webhookSaved),
@@ -217,12 +224,44 @@ export function openApiDocument() {
           responses: { ...ok(ref("Aircraft")), ...errors(401, 404) },
         },
       },
+      "/api/v1/aircraft/{id}/availability": {
+        get: {
+          tags: ["aircraft"],
+          summary: "When the aircraft is busy (times and kinds only)",
+          security: optionalSignIn,
+          parameters: [pathId("id", "Aircraft id (uuid)"), ...queryParameters(periodQuery)],
+          responses: { ...ok(ref("BusyPeriod"), true), ...errors(400, 404) },
+        },
+      },
+      "/api/v1/aircraft/{id}/eligibility": {
+        get: {
+          tags: ["aircraft"],
+          summary: "Can the signed-in pilot rent this aircraft (for these dates)?",
+          description:
+            "Without `from`/`to`, credentials are checked for today and night isn't. Each reason has a sentence in the user's language.",
+          security: signedIn,
+          parameters: [pathId("id", "Aircraft id (uuid)"), ...queryParameters(periodQuery)],
+          responses: { ...ok(ref("Eligibility")), ...errors(400, 401, 404) },
+        },
+      },
       "/api/v1/bookings": {
         get: {
           tags: ["bookings"],
           summary: "Your bookings as pilot and owner, newest first",
           security: signedIn,
           responses: { ...ok(ref("BookingSummary"), true), ...errors(401) },
+        },
+        post: {
+          tags: ["bookings"],
+          summary: "Request a booking as the signed-in pilot",
+          description:
+            "201 with the booking (`requested`, or `accepted` with instant booking). 403 `forbidden` with `details.reasons` when the pilot doesn't meet the requirements; 409 `conflict` with `details.reason` (e.g. `not_free`); 400 with `fields` for invalid input (e.g. `lapl_passengers`).",
+          security: signedIn,
+          requestBody: jsonBody(bookingRequestBody),
+          responses: {
+            201: { description: "Requested", content: ok(ref("Booking"))[200].content },
+            ...errors(400, 401, 403, 409),
+          },
         },
       },
       "/api/v1/bookings/{id}": {
@@ -232,6 +271,40 @@ export function openApiDocument() {
           security: signedIn,
           parameters: [pathId("id", "Booking id (uuid)")],
           responses: { ...ok(ref("Booking")), ...errors(401, 404) },
+        },
+      },
+      "/api/v1/bookings/{id}/accept": {
+        post: {
+          tags: ["bookings"],
+          summary: "The owner accepts a request (body optional: `{ note }`)",
+          description:
+            "409 `conflict` with `details.reason`: `not_open`, `pilot_not_eligible`, `aircraft_grounded` or `booked_elsewhere` (another connected system has the time).",
+          security: signedIn,
+          parameters: [pathId("id", "Booking id (uuid)")],
+          requestBody: { ...jsonBody(acceptBody), required: false },
+          responses: { ...ok(ref("Booking")), ...errors(401, 404, 409) },
+        },
+      },
+      "/api/v1/bookings/{id}/decline": {
+        post: {
+          tags: ["bookings"],
+          summary: "The owner declines, optionally suggesting another time",
+          security: signedIn,
+          parameters: [pathId("id", "Booking id (uuid)")],
+          requestBody: { ...jsonBody(declineBody), required: false },
+          responses: { ...ok(ref("Booking")), ...errors(400, 401, 404, 409) },
+        },
+      },
+      "/api/v1/bookings/{id}/cancel": {
+        post: {
+          tags: ["bookings"],
+          summary: "The pilot or owner cancels before the start, with a reason",
+          description:
+            "`details.late` is true when it was after the free-cancellation time of the owner's policy.",
+          security: signedIn,
+          parameters: [pathId("id", "Booking id (uuid)")],
+          requestBody: jsonBody(cancelBody),
+          responses: { ...ok(ref("Booking")), ...errors(400, 401, 404, 409) },
         },
       },
       "/api/v1/sync": {

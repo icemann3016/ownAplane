@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 import * as R from "../../lib/api/responses";
 import {
-  PASSWORD,
+  apiSignIn,
   seedAcceptedBooking,
   seedListedAircraft,
   seedVerifiedPilot,
@@ -67,11 +67,7 @@ test.describe("with accounts", () => {
     const bookingId = await seedAcceptedBooking(aircraftId, pilotEmail, 24 * 60);
 
     // 1. Sign in: the token comes in the set-auth-token header
-    const signIn = await app("/api/auth/sign-in/email", {
-      body: { email: pilotEmail, password: PASSWORD },
-    });
-    expect(signIn.status).toBe(200);
-    const token = signIn.headers.get("set-auth-token");
+    const token = await apiSignIn(baseURL, pilotEmail);
     expect(token).toBeTruthy();
     const bearer = `Bearer ${token}`;
     const get = (path: string, auth = bearer) => app(path, { token: auth });
@@ -126,5 +122,105 @@ test.describe("with accounts", () => {
     // 6. Signing out revokes the token
     expect((await app("/api/auth/sign-out", { body: {}, token: bearer })).status).toBe(200);
     expect((await get("/api/v1/me")).status).toBe(401);
+  });
+
+  test("a pilot books and the owner answers through the API", async ({ browser, baseURL }) => {
+    test.setTimeout(90_000);
+    const id = unique();
+    const letters = id
+      .replace(/[^a-z]/g, "")
+      .slice(0, 3)
+      .toUpperCase()
+      .padEnd(3, "X");
+    const ownerEmail = `api-b-owner-${id}@example.com`;
+    const pilotEmail = `api-b-pilot-${id}@example.com`;
+    for (const [name, email] of [
+      [`Owner ${id}`, ownerEmail],
+      [`Pilot ${id}`, pilotEmail],
+    ] as const) {
+      const context = await browser.newContext();
+      await signUp(await context.newPage(), name, email);
+      await context.close();
+    }
+    const aircraftId = await seedListedAircraft(ownerEmail, `LZ-B${letters}`);
+    await seedVerifiedPilot(pilotEmail);
+    const app = (path: string, init: { method?: string; body?: unknown; token?: string } = {}) =>
+      fetch(new URL(path, baseURL), {
+        method: init.method ?? (init.body ? "POST" : "GET"),
+        headers: {
+          origin: "ownaplane://app",
+          ...(init.body ? { "content-type": "application/json" } : {}),
+          ...(init.token ? { authorization: init.token } : {}),
+        },
+        body: init.body ? JSON.stringify(init.body) : undefined,
+      });
+    const pilot = `Bearer ${await apiSignIn(baseURL, pilotEmail)}`;
+    const owner = `Bearer ${await apiSignIn(baseURL, ownerEmail)}`;
+
+    // A daytime slot ten days ahead.
+    const day = new Date();
+    day.setUTCDate(day.getUTCDate() + 10);
+    const at = (h: number) =>
+      new Date(
+        Date.UTC(day.getUTCFullYear(), day.getUTCMonth(), day.getUTCDate(), h),
+      ).toISOString();
+    const window = `from=${encodeURIComponent(at(0))}&to=${encodeURIComponent(at(23))}`;
+
+    // 1. Free, and the pilot may rent it (reasons in the user's language)
+    const free = await app(`/api/v1/aircraft/${aircraftId}/availability?${window}`);
+    expect((await free.json()).data).toEqual([]);
+    const daytime = `from=${encodeURIComponent(at(9))}&to=${encodeURIComponent(at(12))}`;
+    const can = await app(`/api/v1/aircraft/${aircraftId}/eligibility?${daytime}`, {
+      token: pilot,
+    });
+    expect(R.eligibility.parse((await can.json()).data).eligible).toBe(true);
+
+    // 2. The pilot requests it
+    const request = {
+      aircraftId,
+      from: at(9),
+      to: at(12),
+      departure: "LBSF",
+      arrival: "LBSF",
+      purpose: "local",
+      passengers: 0,
+      plannedHours: 1.5,
+    };
+    expect(
+      (await app("/api/v1/bookings", { body: { ...request, passengers: 25 }, token: pilot }))
+        .status,
+    ).toBe(400);
+    const created = await app("/api/v1/bookings", { body: request, token: pilot });
+    expect(created.status).toBe(201);
+    const booking = R.bookingDetail.parse((await created.json()).data);
+    expect(booking).toMatchObject({ status: "requested", role: "pilot" });
+    const busy = (await (await app(`/api/v1/aircraft/${aircraftId}/availability?${window}`)).json())
+      .data;
+    expect(busy.map((b: unknown) => R.busyPeriod.parse(b))).toMatchObject([
+      { kind: "booking", pending: true, from: at(9) },
+    ]);
+    // The same time again isn't free.
+    const twice = await app("/api/v1/bookings", { body: request, token: pilot });
+    expect(twice.status).toBe(409);
+    expect((await twice.json()).error.details.reason).toBe("not_free");
+
+    // 3. Only the owner answers
+    expect(
+      (await app(`/api/v1/bookings/${booking.id}/accept`, { method: "POST", token: pilot })).status,
+    ).toBe(404);
+    const accepted = await app(`/api/v1/bookings/${booking.id}/accept`, {
+      method: "POST",
+      token: owner,
+    });
+    expect(R.bookingDetail.parse((await accepted.json()).data).status).toBe("accepted");
+
+    // 4. The pilot cancels in time (free under the owner's policy)
+    const cancelled = await app(`/api/v1/bookings/${booking.id}/cancel`, {
+      body: { reason: "Weather" },
+      token: pilot,
+    });
+    const body = await cancelled.json();
+    expect(body.data.status).toBe("cancelled");
+    expect(body.details).toEqual({ late: false });
   });
 });
