@@ -2636,6 +2636,36 @@
           "hint": "Refuse bookings it sends for another aircraft."
         }
       }
+    },
+    "webhook": {
+      "title": "Tell this system about changes (webhook)",
+      "text": "When a booking, request or block of this aircraft is made, changed or cancelled here, we send it at once to this address, signed with the secret below, with the data you chose to send. The other system then doesn't need to read our link to stay up to date.",
+      "url": "Webhook address (https)",
+      "save": "Save address",
+      "saving": "Saving…",
+      "saved": "Saved. Changes are sent to this address from now on.",
+      "urlInvalid": "Enter an https address.",
+      "notFound": "This connection no longer exists.",
+      "secret": "Signing secret",
+      "secretHint": "Give it to the other system's developers: it checks that calls really come from ownAplane.",
+      "test": "Send a test",
+      "testing": "Sending…",
+      "testOk": "The other system received the test.",
+      "replaceSecret": "New secret",
+      "secretReplaced": "New secret made. The old one stops working now: give the new one to the other system.",
+      "remove": "Stop sending",
+      "removed": "Changes are no longer sent to this system.",
+      "lastOk": "Last sent {when}.",
+      "lastFailed": "The last call failed: {reason} We try again with growing pauses for a day.",
+      "nothingYet": "Nothing sent yet.",
+      "errors": {
+        "url_invalid": "The address isn't a valid https address.",
+        "address_blocked": "The address points to a private network, which isn't allowed.",
+        "unreachable": "The address couldn't be reached.",
+        "no_webhook": "No address is set.",
+        "not_found": "This connection no longer exists.",
+        "http": "The other system answered with error {status}."
+      }
     }
   },
   "saved": {

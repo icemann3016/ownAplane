@@ -220,9 +220,23 @@ export function bookingDto(d: BookingRow, viewerId: string): R.BookingDetail {
 /** One of ownAplane's busy times for a partner system, with what the owner shares. */
 export function busyTimeDto(b: BusyDetail, fields: readonly ExportField[]): R.BusyTimeDto {
   return {
+    id: b.id,
     from: b.from.toISOString(),
     to: b.to.toISOString(),
     kind: b.kind === "booking" ? "booking" : "blocked",
     ...sharedDetails(b, fields, b.bookingId ? `${appUrl()}/bookings/${b.bookingId}` : ""),
+  };
+}
+
+/** A connection's webhook (SYN-6); the secret only right after it was made. */
+export function webhookDto(w: {
+  url: string | null;
+  lastDeliveryAt: Date | null;
+  lastError: string | null;
+}): R.WebhookSettingsDto {
+  return {
+    url: w.url,
+    lastDeliveryAt: w.lastDeliveryAt?.toISOString() ?? null,
+    lastError: w.lastError,
   };
 }

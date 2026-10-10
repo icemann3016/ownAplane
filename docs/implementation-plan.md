@@ -146,6 +146,11 @@ Aircraft home bases are airports with latitude/longitude. The search (`lib/aircr
   overlap with a booking (still recorded as a conflict).
 - Reading links: every 15 min (`/api/cron/sync` from a GitHub Actions schedule), hourly in the
   daily job, and right before a booking is requested or accepted.
+- Webhooks (SYN-6): `calendar_connections.webhook_url/secret`; triggers on `calendar_entries` and
+  `bookings` queue `webhook_events` per connection (not for its own busy times);
+  `lib/calendar-sync/webhooks.ts` sends the current state of each changed busy time, signed
+  (HMAC-SHA256, Stripe-style header), right after actions (`sendNotificationsSoon()`) and from the
+  15-minute and daily jobs, retrying 8 times over a day. Partners manage it via `/api/v1/sync/webhook`.
 - Data exchanged (SYN-8): `calendar_connections.export_fields` / `import_fields` (text arrays,
   checked against the catalog in `lib/calendar-sync/fields.ts`, empty by default). Outgoing
   details are built in one pure place (`outgoing.ts`) for both the API and the iCal link; incoming

@@ -73,6 +73,16 @@ Titles from your other connected systems are never passed on.
 - **Status:** tentative bookings don't block the aircraft; only confirmed ones do.
 - **Aircraft registration:** bookings it sends for another aircraft are refused.
 
+## Tell the other system about changes (webhook)
+
+If the other system can receive calls from the internet, open **Tell this system about changes
+(webhook)** on its connection, enter the address its developers give you and **Save address**.
+From then on, every booking, request or block of the aircraft that is made, changed or cancelled
+here is sent there at once, with the data you chose to send. Give the **signing secret** to the
+developers: it proves the calls come from ownAplane. **Send a test** checks that it works; the
+connection shows when the last call went through or why it failed (failed calls are tried again
+for a day). The other system can also set this up itself with its API key.
+
 ## JSON format (for developers)
 
 A JSON link must return the system's bookings for the aircraft, for example:

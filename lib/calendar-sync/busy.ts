@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, eq, isNull, ne, or, sql } from "drizzle-orm";
+import { and, asc, eq, inArray, isNull, ne, or, type SQL, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 
 import { getDb } from "@/lib/db";
@@ -36,16 +36,14 @@ export async function findConnection(by: { apiKeyHash: string } | { exportToken:
   return row ?? null;
 }
 
-/**
- * When the aircraft is busy in ownAplane, for another system (SYN-3, SYN-4): bookings, requests
- * and blocks, and other systems' busy times, but not this connection's own (no echo). With the
- * details callers may share (outgoing.ts decides which, from the owner's choice).
- */
-export async function busyTimesFor(
-  connection: { id: string; aircraftId: string },
-  from: Date,
-  to: Date,
-): Promise<BusyDetail[]> {
+type BusyRow = Omit<BusyDetail, "from" | "to" | "external"> & {
+  from: string;
+  to: string;
+  connectionId: string | null;
+};
+
+/** Active busy times of the aircraft other than this connection's own, matching `where`. */
+async function selectBusy(connection: { id: string; aircraftId: string }, where: SQL) {
   const pilot = alias(profiles, "pilot");
   const rows = (await getDb()
     .select({
@@ -71,19 +69,39 @@ export async function busyTimesFor(
         eq(calendarEntries.aircraftId, connection.aircraftId),
         eq(calendarEntries.active, true),
         or(isNull(calendarEntries.connectionId), ne(calendarEntries.connectionId, connection.id)),
-        sql`${calendarEntries.period} && tstzrange(${from.toISOString()}::timestamptz, ${to.toISOString()}::timestamptz)`,
+        where,
       ),
     )
     .orderBy(asc(sql`lower(${calendarEntries.period})`))
-    .limit(5000)) as unknown as (Omit<BusyDetail, "from" | "to" | "external"> & {
-    from: string;
-    to: string;
-    connectionId: string | null;
-  })[];
+    .limit(5000)) as unknown as BusyRow[];
   return rows.map(({ connectionId, ...r }) => ({
     ...r,
     from: new Date(r.from),
     to: new Date(r.to),
     external: connectionId !== null,
   }));
+}
+
+/**
+ * When the aircraft is busy in ownAplane, for another system (SYN-3, SYN-4): bookings, requests
+ * and blocks, and other systems' busy times, but not this connection's own (no echo). With the
+ * details callers may share (outgoing.ts decides which, from the owner's choice).
+ */
+export async function busyTimesFor(
+  connection: { id: string; aircraftId: string },
+  from: Date,
+  to: Date,
+): Promise<BusyDetail[]> {
+  return selectBusy(
+    connection,
+    sql`${calendarEntries.period} && tstzrange(${from.toISOString()}::timestamptz, ${to.toISOString()}::timestamptz)`,
+  );
+}
+
+/** These busy times as the connection sees them now; missing ones are gone (SYN-6). */
+export async function busyTimesById(
+  connection: { id: string; aircraftId: string },
+  ids: string[],
+): Promise<BusyDetail[]> {
+  return ids.length ? selectBusy(connection, inArray(calendarEntries.id, ids)) : [];
 }

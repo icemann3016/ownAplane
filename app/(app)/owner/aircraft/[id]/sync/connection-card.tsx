@@ -14,6 +14,7 @@ import { removeConnection, resetExportLink } from "./actions";
 import { exportFields, importFields } from "@/lib/calendar-sync/fields";
 import { ConfirmAction, ReplaceKey, SyncNow } from "./connection-controls";
 import { DataFields } from "./data-fields";
+import { WebhookSettings } from "./webhook-settings";
 
 const FEED_ERRORS = new Set([
   "url_invalid",
@@ -25,6 +26,8 @@ const FEED_ERRORS = new Set([
   "json_invalid",
 ]);
 
+const WEBHOOK_ERRORS = new Set(["url_invalid", "address_blocked", "unreachable", "no_webhook"]);
+
 /** One connected system: status, conflicts, our iCal link for it, and its controls. */
 export async function ConnectionCard({ c }: { c: ConnectionView }) {
   const t = await getTranslations("calendarSync");
@@ -32,6 +35,12 @@ export async function ConnectionCard({ c }: { c: ConnectionView }) {
   const ids = { aircraftId: c.aircraftId, id: c.id };
   const pull = c.inbound === "ical" || c.inbound === "json";
   const when = c.lastSyncAt ? formatUtc(c.lastSyncAt, locale) : "";
+  const webhookReason = (error: string) =>
+    error.startsWith("http_")
+      ? t("webhook.errors.http", { status: error.slice(5) })
+      : t(
+          `webhook.errors.${WEBHOOK_ERRORS.has(error) ? error : "unreachable"}` as "webhook.errors.unreachable",
+        );
   const reason = c.lastSyncError
     ? t(
         `feedErrors.${FEED_ERRORS.has(c.lastSyncError) ? c.lastSyncError : "failed"}` as "feedErrors.failed",
@@ -94,6 +103,19 @@ export async function ConnectionCard({ c }: { c: ConnectionView }) {
           inbound={c.inbound}
           exported={exportFields(c.exportFields)}
           imported={importFields(c.importFields)}
+        />
+
+        <WebhookSettings
+          ids={ids}
+          url={c.webhookUrl}
+          secret={c.webhookSecret}
+          status={
+            c.webhookLastError
+              ? t("webhook.lastFailed", { reason: webhookReason(c.webhookLastError) })
+              : c.webhookLastAt
+                ? t("webhook.lastOk", { when: formatUtc(c.webhookLastAt, locale) })
+                : t("webhook.nothingYet")
+          }
         />
 
         <CopyField

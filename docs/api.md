@@ -55,7 +55,7 @@ Calendar sync endpoints for partner systems are listed below.
 
 Next (M13): booking actions, flight log, messages, notifications through the API.
 
-## Calendar sync for other booking systems (SYN-1…5, SYN-8)
+## Calendar sync for other booking systems (SYN-1…6, SYN-8)
 
 An aircraft's owner connects other systems under **Aircraft → Calendar sync** (help article
 `/help/calendar-sync`). Each connection works in one of these ways, and every connection also gets
@@ -129,6 +129,54 @@ Example push with every optional field:
 `GET /api/v1/sync/busy` (or read our iCal link); after it confirms, `PUT` it at once. ownAplane
 does the same in reverse: it refreshes linked calendars right before a request or acceptance, and
 refuses an acceptance while another system has the time.
+
+### Webhooks: we tell you about changes (SYN-6)
+
+Instead of reading our busy times regularly, your system can get a call whenever one changes:
+a booking, request or owner block of the aircraft is made, moved, cancelled, or changes status,
+or another connected system's busy time changes. Your own busy times are never sent back.
+
+| Method | Path | What |
+|--------|------|------|
+| PUT | `/api/v1/sync/webhook` | `{ "url": "https://…", "newSecret"?: true }`: send changes there. The first call (or `newSecret`) returns a **signing secret**, only once |
+| GET | `/api/v1/sync/webhook` | The address, the last successful delivery and the last error |
+| POST | `/api/v1/sync/webhook/test` | We send a `ping` now and answer `{ ok, error? }` |
+| DELETE | `/api/v1/sync/webhook` | Stop sending changes |
+
+The owner can also set the address in the app (Calendar sync → the connection → **Tell this
+system about changes**) and give you the secret.
+
+Each call is a `POST` with JSON and these headers:
+
+- `ownaplane-event`: `busy.updated` (created or changed), `busy.deleted` (free again) or `ping`
+- `ownaplane-signature`: `t=<unix seconds>,v1=<hex HMAC-SHA256 of "<t>.<raw body>" with the secret>`
+
+```json
+{ "id": "5f0c…", "type": "busy.updated", "createdAt": "2026-10-20T07:12:03.000Z",
+  "aircraft": { "id": "…", "registration": "LZ-ABC" },
+  "busy": { "id": "…", "from": "2026-10-20T08:00:00.000Z", "to": "2026-10-20T11:00:00.000Z", "kind": "booking" } }
+```
+
+`busy` has the same shape as `GET /api/v1/sync/busy` (with the details the owner shares); for
+`busy.deleted` it has only the `id`. Several quick changes to the same busy time may arrive as
+one call with its latest state; use `busy.id` to update or remove it on your side.
+
+**Check the signature** (Node.js):
+
+```js
+import { createHmac, timingSafeEqual } from "node:crypto";
+function fromOwnAplane(rawBody, header, secret) {
+  const { t, v1 } = Object.fromEntries(header.split(",").map((p) => p.split("=")));
+  if (Math.abs(Date.now() / 1000 - Number(t)) > 300) return false; // older than 5 minutes
+  const expected = createHmac("sha256", secret).update(`${t}.${rawBody}`).digest();
+  const given = Buffer.from(v1 ?? "", "hex");
+  return given.length === expected.length && timingSafeEqual(given, expected);
+}
+```
+
+Answer with any **2xx within 8 seconds**. Otherwise we try again after 1, 5, 15 and 60 minutes,
+then 3, 6, 12 and 24 hours, and then give up (GET /sync/busy always has the full picture). The
+address must be a public `https` address; redirects aren't followed.
 
 ### JSON link format
 

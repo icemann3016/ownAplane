@@ -29,3 +29,16 @@ export const connectionSchema = z
     ...d,
     feedUrl: d.inbound === "ical" || d.inbound === "json" ? d.feedUrl : null,
   }));
+
+/** A webhook address (SYN-6): https only, at most 500 characters. */
+export const webhookUrlSchema = z
+  .string()
+  .trim()
+  .max(500)
+  .refine((v) => {
+    try {
+      return new URL(v).protocol === "https:";
+    } catch {
+      return false;
+    }
+  });

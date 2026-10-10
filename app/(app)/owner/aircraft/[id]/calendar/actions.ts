@@ -11,6 +11,7 @@ import { aircraft, calendarEntries } from "@/lib/db/schema";
 import { toRange, zonedToUtc } from "@/lib/domain/time";
 import { type FormState, formValues } from "@/lib/forms";
 import { localizedFieldErrors } from "@/lib/i18n/server";
+import { sendNotificationsSoon } from "@/lib/notifications/soon";
 import { calendarBlockSchema } from "@/lib/validation/aircraft";
 
 /** Postgres error code of a failed query (drizzle wraps the driver error). */
@@ -60,6 +61,7 @@ export async function addCalendarBlock(_prev: FormState, formData: FormData): Pr
     throw e;
   }
   refresh(aircraftId);
+  sendNotificationsSoon(); // webhooks to connected systems (SYN-6)
   return { ok: true, message: t("added") };
 }
 
@@ -81,4 +83,5 @@ export async function deleteCalendarBlock(formData: FormData) {
       ),
   );
   refresh(aircraftId);
+  sendNotificationsSoon(); // webhooks to connected systems (SYN-6)
 }

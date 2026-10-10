@@ -199,6 +199,7 @@ export const syncConnection = z.object({
 });
 
 export const busyTime = z.object({
+  id: z.string().describe("Our id of this busy time (also in webhooks)"),
   from: time,
   to: time,
   kind: z.enum(["booking", "blocked"]).describe("An ownAplane booking or request, or blocked time"),
@@ -237,6 +238,40 @@ export const pushAllResult = z.object({
   wrongAircraft: ids.describe("Bookings for another registration, left out"),
 });
 
+/** What we POST to a connected system's webhook (SYN-6). */
+export const webhookEvent = z.object({
+  id: z.string().describe("Unique per change; a retry of the same change keeps it"),
+  type: z
+    .enum(["busy.updated", "busy.deleted", "ping"])
+    .describe(
+      "busy.updated: created or changed; busy.deleted: the time is free again; ping: a test",
+    ),
+  createdAt: time,
+  aircraft: z.object({ id, registration: z.string() }),
+  busy: z
+    .union([busyTime, z.object({ id: z.string() })])
+    .optional()
+    .describe("The busy time as GET /api/v1/sync/busy shows it; only its id when deleted"),
+});
+
+export const webhookSettings = z.object({
+  url: z.string().nullable(),
+  lastDeliveryAt: time.nullable(),
+  lastError: z.string().nullable(),
+});
+
+export const webhookSaved = webhookSettings.extend({
+  secret: z
+    .string()
+    .nullable()
+    .describe("A new signing secret, only when one was made: keep it, it isn't shown again"),
+});
+
+export const webhookTest = z.object({
+  ok: z.boolean(),
+  error: z.string().optional().describe("Why the test call failed, e.g. http_500 or unreachable"),
+});
+
 export type Me = z.infer<typeof me>;
 export type Airport = z.infer<typeof airport>;
 export type AircraftSummary = z.infer<typeof aircraftSummary>;
@@ -244,3 +279,5 @@ export type AircraftDetail = z.infer<typeof aircraftDetail>;
 export type BookingSummary = z.infer<typeof bookingSummary>;
 export type BookingDetail = z.infer<typeof bookingDetail>;
 export type BusyTimeDto = z.infer<typeof busyTime>;
+export type WebhookEventDto = z.infer<typeof webhookEvent>;
+export type WebhookSettingsDto = z.infer<typeof webhookSettings>;

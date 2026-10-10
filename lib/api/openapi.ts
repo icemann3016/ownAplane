@@ -11,6 +11,7 @@ import {
   busyWindowQuery,
   pushAllBody,
   pushBusyBody,
+  webhookBody,
 } from "./schemas";
 
 // The API's OpenAPI 3.1 description (API-5), built from the same Zod schemas the endpoints use
@@ -120,6 +121,24 @@ export function openApiDocument() {
         BusyTime: output(R.busyTime),
         PushResult: output(R.pushResult),
         PushAllResult: output(R.pushAllResult),
+        WebhookEvent: output(R.webhookEvent),
+        WebhookSettings: output(R.webhookSettings),
+        WebhookSaved: output(R.webhookSaved),
+        WebhookTest: output(R.webhookTest),
+      },
+    },
+    webhooks: {
+      busyChanged: {
+        post: {
+          summary: "A busy time of the aircraft was created, changed or removed in ownAplane",
+          description:
+            "Sent to the webhook address of a connected system (PUT /api/v1/sync/webhook), signed in the `ownaplane-signature` header. Answer 2xx within 8 seconds; otherwise we retry with growing pauses for about a day. Changes to the same busy time may be merged into one call with its current state.",
+          requestBody: {
+            required: true,
+            content: { "application/json": { schema: ref("WebhookEvent") } },
+          },
+          responses: { 200: { description: "Received" } },
+        },
       },
     },
     paths: {
@@ -260,6 +279,37 @@ export function openApiDocument() {
           security: connectionKey,
           parameters: [pathId("externalId", "Your system's id of the booking")],
           responses: { 200: { description: "Deleted" }, ...errors(401, 404) },
+        },
+      },
+      "/api/v1/sync/webhook": {
+        get: {
+          tags: ["calendar sync"],
+          summary: "Where we send changes to our busy times, and how the last call went",
+          security: connectionKey,
+          responses: { ...ok(ref("WebhookSettings")), ...errors(401) },
+        },
+        put: {
+          tags: ["calendar sync"],
+          summary: "Send changes to this address (see webhooks: busyChanged)",
+          description:
+            'The first call (or `newSecret: true`) returns a signing secret, once. Every call we make carries `ownaplane-signature: t=<unix seconds>,v1=<hex HMAC-SHA256 of "<t>.<body>">`.',
+          security: connectionKey,
+          requestBody: jsonBody(webhookBody),
+          responses: { ...ok(ref("WebhookSaved")), ...errors(400, 401) },
+        },
+        delete: {
+          tags: ["calendar sync"],
+          summary: "Stop sending changes",
+          security: connectionKey,
+          responses: { 200: { description: "Removed" }, ...errors(401) },
+        },
+      },
+      "/api/v1/sync/webhook/test": {
+        post: {
+          tags: ["calendar sync"],
+          summary: "We send a signed `ping` to your webhook now and say how it went",
+          security: connectionKey,
+          responses: { ...ok(ref("WebhookTest")), ...errors(401) },
         },
       },
       "/api/v1/calendars/{token}.ics": {

@@ -2636,6 +2636,36 @@
           "hint": "Refuser les réservations qu’il envoie pour un autre avion."
         }
       }
+    },
+    "webhook": {
+      "title": "Prévenir ce système des changements (webhook)",
+      "text": "Quand une réservation, une demande ou un blocage de cet avion est créé, modifié ou annulé ici, nous l'envoyons aussitôt à cette adresse, signé avec la clé ci-dessous et avec les données que vous avez choisi d'envoyer. L'autre système n'a alors pas besoin de lire notre lien pour rester à jour.",
+      "url": "Adresse du webhook (https)",
+      "save": "Enregistrer l'adresse",
+      "saving": "Enregistrement…",
+      "saved": "Enregistré. Les changements sont désormais envoyés à cette adresse.",
+      "urlInvalid": "Saisissez une adresse https.",
+      "notFound": "Cette connexion n'existe plus.",
+      "secret": "Clé de signature",
+      "secretHint": "Donnez-la aux développeurs de l'autre système : elle lui permet de vérifier que les appels viennent bien d'ownAplane.",
+      "test": "Envoyer un test",
+      "testing": "Envoi…",
+      "testOk": "L'autre système a reçu le test.",
+      "replaceSecret": "Nouvelle clé",
+      "secretReplaced": "Nouvelle clé créée. L'ancienne cesse de fonctionner tout de suite : donnez la nouvelle à l'autre système.",
+      "remove": "Arrêter l'envoi",
+      "removed": "Les changements ne sont plus envoyés à ce système.",
+      "lastOk": "Dernier envoi {when}.",
+      "lastFailed": "Le dernier appel a échoué : {reason} Nous réessayons pendant une journée avec des pauses croissantes.",
+      "nothingYet": "Rien n'a encore été envoyé.",
+      "errors": {
+        "url_invalid": "L'adresse n'est pas une adresse https valide.",
+        "address_blocked": "L'adresse mène à un réseau privé, ce qui n'est pas autorisé.",
+        "unreachable": "L'adresse n'a pas pu être jointe.",
+        "no_webhook": "Aucune adresse n'est définie.",
+        "not_found": "Cette connexion n'existe plus.",
+        "http": "L'autre système a répondu avec l'erreur {status}."
+      }
     }
   },
   "saved": {

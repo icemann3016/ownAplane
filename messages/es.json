@@ -2636,6 +2636,36 @@
           "hint": "Rechazar las reservas que envíe para otra aeronave."
         }
       }
+    },
+    "webhook": {
+      "title": "Avisar a este sistema de los cambios (webhook)",
+      "text": "Cuando aquí se crea, cambia o cancela una reserva, solicitud o bloqueo de este avión, lo enviamos al momento a esta dirección, firmado con la clave de abajo y con los datos que elegiste enviar. Así el otro sistema no necesita leer nuestro enlace para estar al día.",
+      "url": "Dirección del webhook (https)",
+      "save": "Guardar dirección",
+      "saving": "Guardando…",
+      "saved": "Guardado. A partir de ahora los cambios se envían a esta dirección.",
+      "urlInvalid": "Introduce una dirección https.",
+      "notFound": "Esta conexión ya no existe.",
+      "secret": "Clave de firma",
+      "secretHint": "Dásela a los desarrolladores del otro sistema: con ella comprueba que las llamadas vienen de verdad de ownAplane.",
+      "test": "Enviar una prueba",
+      "testing": "Enviando…",
+      "testOk": "El otro sistema recibió la prueba.",
+      "replaceSecret": "Nueva clave",
+      "secretReplaced": "Nueva clave creada. La anterior deja de funcionar ya: dale la nueva al otro sistema.",
+      "remove": "Dejar de enviar",
+      "removed": "Los cambios ya no se envían a este sistema.",
+      "lastOk": "Último envío {when}.",
+      "lastFailed": "La última llamada falló: {reason} Lo reintentamos durante un día con pausas crecientes.",
+      "nothingYet": "Aún no se ha enviado nada.",
+      "errors": {
+        "url_invalid": "La dirección no es una dirección https válida.",
+        "address_blocked": "La dirección apunta a una red privada, lo que no está permitido.",
+        "unreachable": "No se pudo acceder a la dirección.",
+        "no_webhook": "No hay ninguna dirección.",
+        "not_found": "Esta conexión ya no existe.",
+        "http": "El otro sistema respondió con el error {status}."
+      }
     }
   },
   "saved": {

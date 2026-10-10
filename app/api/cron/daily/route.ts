@@ -1,6 +1,7 @@
 import { sendAircraftExpiryReminders, unlistExpiredAircraft } from "@/lib/aircraft/expiry";
 import { expireBookingRequests } from "@/lib/bookings/queries";
 import { syncDueCalendars } from "@/lib/calendar-sync/sync";
+import { deliverWebhooks } from "@/lib/calendar-sync/webhooks";
 import { cronAuthorized } from "@/lib/cron";
 import { deleteOrphanDocuments } from "@/lib/documents";
 import { deliverMessageEmails } from "@/lib/messages/emails";
@@ -23,6 +24,7 @@ import { runSavedSearchAlerts } from "@/lib/saved/alerts";
  * - publishes reviews whose 14-day window has closed (RAT-3)
  * - reads linked calendars not read for an hour (SYN-2; /api/cron/sync does it every 15 min)
  * - tells users about aircraft that newly match their saved searches (SRC-6)
+ * - sends (or retries) webhooks to connected systems (SYN-6)
  */
 export const maxDuration = 60;
 
@@ -41,6 +43,7 @@ export async function GET(request: Request) {
   const notificationEmails = await deliverNotificationEmails(500);
   const messageEmails = await deliverMessageEmails(500);
   const linkedCalendars = await syncDueCalendars(60 * 60_000, 200);
+  const webhooks = await deliverWebhooks(500);
   const result = {
     expiredRequests,
     reminders,
@@ -53,6 +56,7 @@ export async function GET(request: Request) {
     notificationEmails,
     messageEmails,
     linkedCalendars,
+    webhooks,
   };
   console.info("[cron] daily", result);
   return Response.json({ ok: true, ...result });

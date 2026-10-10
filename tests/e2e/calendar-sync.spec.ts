@@ -123,6 +123,31 @@ test("another system pushes its bookings and never double-books the aircraft", a
   await expect(page.getByRole("checkbox", { name: /^Route/ })).toBeChecked();
   await expectAccessible(page);
 
+  // 3b. The club registers a webhook for changes (SYN-6); the owner sees it and sends a test
+  const hook = await club("/api/v1/sync/webhook", {
+    method: "PUT",
+    body: { url: "https://hooks.club-system.invalid/ownaplane" },
+  });
+  const saved = (await hook.json()).data;
+  expect(saved).toMatchObject({ url: "https://hooks.club-system.invalid/ownaplane" });
+  expect(saved.secret).toMatch(/^[0-9a-f]{64}$/);
+  const again = await club("/api/v1/sync/webhook", {
+    method: "PUT",
+    body: { url: "https://hooks.club-system.invalid/ownaplane" },
+  });
+  expect((await again.json()).data.secret).toBeNull();
+  expect(
+    (await club("/api/v1/sync/webhook", { method: "PUT", body: { url: "http://x.test" } })).status,
+  ).toBe(400);
+  await page.reload();
+  await page.getByText("Tell this system about changes (webhook)").click();
+  await expect(page.getByLabel("Webhook address (https)")).toHaveValue(
+    "https://hooks.club-system.invalid/ownaplane",
+  );
+  await expect(page.getByLabel("Signing secret")).toHaveValue(saved.secret);
+  await page.getByRole("button", { name: "Send a test" }).click();
+  await expect(page.getByText("The address couldn't be reached.").first()).toBeVisible();
+
   // 4. The club sees our busy times (its own excluded), by API and by iCal link
   const busy = await club(
     `/api/v1/sync/busy?from=${encodeURIComponent(new Date(Date.now()).toISOString())}&to=${encodeURIComponent(new Date(day + 24 * hour).toISOString())}`,

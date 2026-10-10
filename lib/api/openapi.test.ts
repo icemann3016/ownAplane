@@ -15,8 +15,12 @@ describe("OpenAPI description", () => {
         "/api/v1/aircraft/{id}",
         "/api/v1/bookings",
         "/api/v1/bookings/{id}",
+        "/api/v1/sync/webhook",
       ]),
     );
+    expect(doc.webhooks.busyChanged.post.requestBody.content["application/json"].schema).toEqual({
+      $ref: "#/components/schemas/WebhookEvent",
+    });
     expect(doc.components.securitySchemes.bearer.scheme).toBe("bearer");
   });
 

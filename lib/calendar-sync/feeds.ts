@@ -65,7 +65,7 @@ export function isPrivateAddress(ip: string): boolean {
   );
 }
 
-async function assertPublic(url: URL) {
+export async function assertPublic(url: URL) {
   if (url.protocol !== "https:") throw new FeedError("url_invalid", "only https links");
   const host = url.hostname.replace(/^\[|\]$/g, "");
   const addresses = isIP(host)

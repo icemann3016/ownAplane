@@ -132,6 +132,12 @@ export const calendarConnections = pgTable(
       .array()
       .notNull()
       .default(sql`'{}'`),
+    /** Where we POST changes to our busy times (SYN-6), signed with `webhook_secret`. */
+    webhookUrl: text("webhook_url"),
+    webhookSecret: text("webhook_secret"),
+    webhookLastAt: timestamp("webhook_last_at", { withTimezone: true }),
+    /** Why the last delivery failed (null when it worked). */
+    webhookLastError: text("webhook_last_error"),
     createdBy: uuid("created_by").references(() => users.id, { onDelete: "set null" }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
@@ -152,10 +158,44 @@ export const calendarConnections = pgTable(
     check("calendar_connections_export", sql`char_length(${t.exportToken}) >= 32`),
     check("calendar_connections_error", sql`char_length(${t.lastSyncError}) <= 500`),
     check(
+      "calendar_connections_webhook",
+      sql`(${t.webhookUrl} is null) = (${t.webhookSecret} is null)
+        and (${t.webhookUrl} is null or (${t.webhookUrl} ~ '^https://' and char_length(${t.webhookUrl}) <= 500))
+        and (${t.webhookSecret} is null or ${t.webhookSecret} ~ '^[0-9a-f]{64}$')
+        and char_length(${t.webhookLastError}) <= 200`,
+    ),
+    check(
       "calendar_connections_fields",
       sql`${t.exportFields} <@ array['type', 'status', 'route', 'pilot', 'reference', 'note', 'registration']::text[]
         and ${t.importFields} <@ array['title', 'type', 'status', 'registration']::text[]`,
     ),
+  ],
+).enableRLS();
+
+/**
+ * Changes to tell connected systems about (SYN-6): queued by a trigger on calendar_entries and
+ * bookings, sent by lib/calendar-sync/webhooks.ts (trusted only, no app access).
+ */
+export const webhookEvents = pgTable(
+  "webhook_events",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    connectionId: uuid("connection_id")
+      .notNull()
+      .references(() => calendarConnections.id, { onDelete: "cascade" }),
+    /** The calendar entry that changed (it may be gone by now: then it's a deletion). */
+    entryId: uuid("entry_id").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    attempts: integer("attempts").notNull().default(0),
+    nextAttemptAt: timestamp("next_attempt_at", { withTimezone: true }).notNull().defaultNow(),
+    deliveredAt: timestamp("delivered_at", { withTimezone: true }),
+    lastError: text("last_error"),
+  },
+  (t) => [
+    index("webhook_events_due_idx")
+      .on(t.nextAttemptAt)
+      .where(sql`delivered_at is null`),
+    index("webhook_events_connection_idx").on(t.connectionId, t.entryId),
   ],
 ).enableRLS();
 

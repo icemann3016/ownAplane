@@ -2636,6 +2636,36 @@
           "hint": "Buchungen ablehnen, die es für ein anderes Flugzeug sendet."
         }
       }
+    },
+    "webhook": {
+      "title": "Dieses System über Änderungen informieren (Webhook)",
+      "text": "Wenn hier eine Buchung, Anfrage oder Sperre dieses Flugzeugs angelegt, geändert oder storniert wird, senden wir sie sofort an diese Adresse, signiert mit dem Schlüssel unten und mit den Daten, die Sie freigegeben haben. So muss das andere System unseren Link nicht lesen, um aktuell zu bleiben.",
+      "url": "Webhook-Adresse (https)",
+      "save": "Adresse speichern",
+      "saving": "Wird gespeichert…",
+      "saved": "Gespeichert. Änderungen gehen ab jetzt an diese Adresse.",
+      "urlInvalid": "Geben Sie eine https-Adresse ein.",
+      "notFound": "Diese Verbindung gibt es nicht mehr.",
+      "secret": "Signaturschlüssel",
+      "secretHint": "Geben Sie ihn den Entwicklern des anderen Systems: Damit prüft es, dass Aufrufe wirklich von ownAplane kommen.",
+      "test": "Test senden",
+      "testing": "Wird gesendet…",
+      "testOk": "Das andere System hat den Test empfangen.",
+      "replaceSecret": "Neuer Schlüssel",
+      "secretReplaced": "Neuer Schlüssel erstellt. Der alte gilt ab sofort nicht mehr: Geben Sie den neuen an das andere System weiter.",
+      "remove": "Senden beenden",
+      "removed": "Änderungen werden nicht mehr an dieses System gesendet.",
+      "lastOk": "Zuletzt gesendet {when}.",
+      "lastFailed": "Der letzte Aufruf ist fehlgeschlagen: {reason} Wir versuchen es einen Tag lang mit wachsenden Pausen erneut.",
+      "nothingYet": "Noch nichts gesendet.",
+      "errors": {
+        "url_invalid": "Die Adresse ist keine gültige https-Adresse.",
+        "address_blocked": "Die Adresse zeigt in ein privates Netz, das ist nicht erlaubt.",
+        "unreachable": "Die Adresse war nicht erreichbar.",
+        "no_webhook": "Es ist keine Adresse eingetragen.",
+        "not_found": "Diese Verbindung gibt es nicht mehr.",
+        "http": "Das andere System hat mit Fehler {status} geantwortet."
+      }
     }
   },
   "saved": {

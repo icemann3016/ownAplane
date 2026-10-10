@@ -98,7 +98,8 @@ lib/
   account/            # profile.ts (profile, roles, settings), delete-files.ts
   calendar-sync/      # other booking systems (SYN): events, apply (store busy times, conflicts),
                       #   feeds (safe fetch, iCal via ical.js, JSON), sync, busy, ics (export), keys, owner,
-                      #   fields (what can be exchanged), outgoing (what is sent), incoming (what is kept)
+                      #   fields (what can be exchanged), outgoing (what is sent), incoming (what is kept),
+                      #   webhooks + signature + webhook-settings (SYN-6)
   admin/              # verification queues, moderation (suspend, unlist, hide, reports), members, roles, queries, metrics
                       #   (trusted admin code, after requireAdmin())
   reviews/            # review queries, submit/reply, daily publishing
@@ -198,6 +199,8 @@ _TODO: split areas so we don't edit the same files at the same time._
 ## Decisions log
 
 Add one line per decision, newest first.
+
+- 2026-10-10: **Webhooks to connected systems** (SYN-6): per connection `webhook_url` + `webhook_secret` (owner in Calendar sync, or the partner with its key via `/api/v1/sync/webhook`). Triggers queue `webhook_events` (no app access) for every visible change of a calendar entry or booking status, never to the system the busy time came from; `deliverWebhooks()` sends the busy time's current state (`busy.updated` / `busy.deleted`, same shape as GET /sync/busy incl. the new `id`, export fields respected) signed `ownaplane-signature: t=…,v1=HMAC-SHA256("t.body")`, public https only, no redirects, 8 s; retries 1 m…24 h (8 tries). Sent right after actions and by both cron jobs. OpenAPI `webhooks.busyChanged`.
 
 - 2026-10-10: **Favourites and saved searches** (SRC-6): `favourite_aircraft` (own only, only aircraft the user may see), `saved_searches` (own only, max 20, filters stored as the search URL query via `filtersToQuery()`), `saved_search_hits` (no app access). The daily job (`runSavedSearchAlerts()`, `lib/saved`) reruns each search with alerts as its user; aircraft not seen before give one `saved_search` notification (in-app + email, `notifications.saved_search_id`); what a search showed when saved never alerts; searches whose dates are over are skipped. Page `/saved` (menu "Saved"); heart on the aircraft page; "Save this search" on the results.
 

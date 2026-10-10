@@ -2636,6 +2636,36 @@
           "hint": "Rifiuta le prenotazioni che invia per un altro aereo."
         }
       }
+    },
+    "webhook": {
+      "title": "Avvisa questo sistema delle modifiche (webhook)",
+      "text": "Quando qui viene creata, modificata o annullata una prenotazione, una richiesta o un blocco di questo aereo, lo inviamo subito a questo indirizzo, firmato con la chiave qui sotto e con i dati che hai scelto di inviare. Così l'altro sistema non deve leggere il nostro link per restare aggiornato.",
+      "url": "Indirizzo del webhook (https)",
+      "save": "Salva l'indirizzo",
+      "saving": "Salvataggio…",
+      "saved": "Salvato. Da ora le modifiche vengono inviate a questo indirizzo.",
+      "urlInvalid": "Inserisci un indirizzo https.",
+      "notFound": "Questa connessione non esiste più.",
+      "secret": "Chiave di firma",
+      "secretHint": "Dalla agli sviluppatori dell'altro sistema: serve a verificare che le chiamate arrivino davvero da ownAplane.",
+      "test": "Invia una prova",
+      "testing": "Invio…",
+      "testOk": "L'altro sistema ha ricevuto la prova.",
+      "replaceSecret": "Nuova chiave",
+      "secretReplaced": "Nuova chiave creata. La vecchia smette subito di funzionare: dai la nuova all'altro sistema.",
+      "remove": "Interrompi l'invio",
+      "removed": "Le modifiche non vengono più inviate a questo sistema.",
+      "lastOk": "Ultimo invio {when}.",
+      "lastFailed": "L'ultima chiamata non è riuscita: {reason} Riproviamo per un giorno con pause crescenti.",
+      "nothingYet": "Non è ancora stato inviato nulla.",
+      "errors": {
+        "url_invalid": "L'indirizzo non è un indirizzo https valido.",
+        "address_blocked": "L'indirizzo porta a una rete privata, il che non è consentito.",
+        "unreachable": "Non è stato possibile raggiungere l'indirizzo.",
+        "no_webhook": "Nessun indirizzo impostato.",
+        "not_found": "Questa connessione non esiste più.",
+        "http": "L'altro sistema ha risposto con l'errore {status}."
+      }
     }
   },
   "saved": {

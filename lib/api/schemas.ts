@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { CATEGORIES, PRICE_BASES } from "@/lib/aircraft/catalog";
+import { webhookUrlSchema } from "@/lib/validation/calendar-sync";
 import { RADII_KM, SORTS, type SearchFilters } from "@/lib/validation/search";
 
 // Request inputs of the API (plan §4.9). Unlike the website's lenient search links, invalid
@@ -150,3 +151,12 @@ export const pushAllBody = z.object({
 });
 
 export const externalId = z.string().min(1).max(200).describe("Your system's id of the booking");
+
+/** PUT /api/v1/sync/webhook (SYN-6). */
+export const webhookBody = z.object({
+  url: webhookUrlSchema.describe("Where we POST changes: a public https address"),
+  newSecret: z
+    .boolean()
+    .optional()
+    .describe("Make a new signing secret (the first PUT always makes one)"),
+});
