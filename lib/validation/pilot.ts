@@ -66,14 +66,17 @@ export const ratingSchema = z
     documentId,
   })
   .superRefine((d, ctx) => {
-    const ok =
-      d.kind === "class"
-        ? (CLASS_RATINGS as readonly string[]).includes(d.code)
-        : d.kind === "privilege"
-          ? (PRIVILEGES as readonly string[]).includes(d.code)
-          : /^[A-Z0-9]{2,6}$/.test(d.code);
-    if (!ok) ctx.addIssue({ code: "custom", path: ["code"], message: "ratingCodeInvalid" });
+    if (!ratingCodeValid(d.kind, d.code)) {
+      ctx.addIssue({ code: "custom", path: ["code"], message: "ratingCodeInvalid" });
+    }
   });
+
+/** Class and privilege ratings from the catalogue; type ratings as an ICAO type designator. */
+export function ratingCodeValid(kind: (typeof RATING_KINDS)[number], code: string): boolean {
+  if (kind === "class") return (CLASS_RATINGS as readonly string[]).includes(code);
+  if (kind === "privilege") return (PRIVILEGES as readonly string[]).includes(code);
+  return /^[A-Z0-9]{2,6}$/.test(code);
+}
 
 export const medicalSchema = z.object({
   id: recordId,

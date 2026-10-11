@@ -136,6 +136,11 @@ export const checkoutBody = z.object({
   tachStart: reading,
   fuelStartL: litre(5000),
   oilStartL: litre(100),
+  checkoutPhotoId: z
+    .uuid()
+    .nullable()
+    .optional()
+    .describe("Photo of the meters and gauges, from POST /api/v1/documents; leave out to keep it"),
 });
 
 export const legBody = z

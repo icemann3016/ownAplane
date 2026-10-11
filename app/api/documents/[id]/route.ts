@@ -1,5 +1,6 @@
 import { getUser } from "@/lib/auth/session";
 import { readDocument } from "@/lib/documents";
+import { documentResponse } from "@/lib/files/document-response";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -20,20 +21,5 @@ export async function GET(request: Request, ctx: RouteContext<"/api/documents/[i
   if (!result) return notFound();
   const { doc, body } = result;
 
-  const download = new URL(request.url).searchParams.has("download");
-  const headers: Record<string, string> = {
-    "content-type": doc.contentType,
-    "content-length": String(body.length),
-    "content-disposition": `${download ? "attachment" : "inline"}; filename*=UTF-8''${encodeURIComponent(doc.filename)}`,
-    "cache-control": "private, no-store",
-    "x-content-type-options": "nosniff",
-    "referrer-policy": "no-referrer",
-  };
-  // Images can't run anything, but lock them down anyway. (A CSP sandbox would stop the
-  // browser's PDF viewer, so PDFs rely on the checked content type + nosniff.)
-  if (doc.contentType.startsWith("image/")) {
-    headers["content-security-policy"] =
-      "default-src 'none'; img-src 'self'; style-src 'unsafe-inline'";
-  }
-  return new Response(Buffer.from(body), { headers });
+  return documentResponse(doc, body, new URL(request.url).searchParams.has("download"));
 }

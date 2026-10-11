@@ -85,9 +85,9 @@ and oil, remarks, the `amount` (worked out on the server) and the `checks` (warn
 |--------|------|------|
 | GET | `…/log` | The log |
 | POST | `…/log` | Check-out (pilot, from 2 hours before). `{ recencyConfirmed: true }` when carrying passengers (FCL.060) |
-| PUT | `…/log/checkout` | `{ hobbsStart, tachStart, fuelStartL, oilStartL }` |
+| PUT | `…/log/checkout` | `{ hobbsStart, tachStart, fuelStartL, oilStartL, checkoutPhotoId? }` |
 | POST / PUT / DELETE | `…/log/legs`, `…/log/legs/{legId}` | Legs; times must be in order (400 `details.reason: leg_order`, `fields.blockOff: ["not_before:engineStart"]`) |
-| POST / PUT / DELETE | `…/log/uplifts`, `…/log/uplifts/{upliftId}` | Fuel or oil added (`kind`, `airport`, `quantityL`, `fuelType`/`oilGrade`, `price`, `paidBy`, `receiptId`) |
+| POST / PUT / DELETE | `…/log/uplifts`, `…/log/uplifts/{upliftId}` | Fuel or oil added (`kind`, `airport`, `quantityL`, `fuelType`/`oilGrade`, `price`, `paidBy`, `receiptId` from `POST /api/v1/documents`) |
 | POST / DELETE | `…/log/remarks`, `…/log/remarks/{remarkId}` | Remarks and PIREPs |
 | POST | `…/log/submit` | Check-in: the pilot sends it to the owner |
 | POST | `…/log/correction` | `{ note }`: the owner asks for a correction |
@@ -117,8 +117,17 @@ Calendar sync endpoints for partner systems are listed below.
 | POST | `/api/v1/reviews/{id}/reply` | `{ text }`: the owner's one public reply |
 | GET | `/api/v1/aircraft/{id}/reviews` | Published reviews of an aircraft (public) |
 
-Still website-only: pilot credentials and aircraft management (document uploads), account
-settings and admin tools.
+| POST | `/api/v1/documents` | Upload a private document (multipart, field `file`: PDF, JPEG, PNG, WebP, ≤ 4 MB) → `{ id, filename, sizeBytes }`; send the id with a credential, the check-out photo or a receipt. Uploads nothing refers to are removed after a day (413 too large, 409 `tooMany` over 50) |
+| GET | `/api/v1/documents/{id}` | The file: yours, or a flight log photo/receipt of your booking (404 otherwise); `?download` |
+| GET | `/api/v1/me/credentials` | Licences, ratings, medicals (status `pending`/`verified`/`rejected`, `usable`, `expiry`, scan), experience, hours per type, `summary` |
+| POST | `/api/v1/me/credentials/{licences\|ratings\|medicals}` | Add one (an admin verifies it); licences and medicals need `documentId` |
+| PUT / DELETE | `/api/v1/me/credentials/{kind}/{id}` | Change (all fields; a verified item goes back to pending) / remove with its scan |
+| PUT | `/api/v1/me/credentials/experience` | `{ totalHours, picHours, last90DaysHours, birthDate? }` |
+| PUT / DELETE | `/api/v1/me/credentials/type-hours/{aircraftType}` | `{ hours }` on an ICAO type (C172) / remove |
+
+Changes to credentials answer with all of them as they are now.
+
+Still website-only: aircraft management, account settings and admin tools.
 
 ## Calendar sync for other booking systems (SYN-1…6, SYN-8)
 

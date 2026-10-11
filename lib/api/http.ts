@@ -16,6 +16,7 @@ export type ApiErrorCode =
   | "forbidden"
   | "not_found"
   | "conflict"
+  | "payload_too_large"
   | "rate_limited"
   | "internal";
 
@@ -26,6 +27,7 @@ const STATUS: Record<ApiErrorCode, number> = {
   forbidden: 403,
   not_found: 404,
   conflict: 409,
+  payload_too_large: 413,
   rate_limited: 429,
   internal: 500,
 };
