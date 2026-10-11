@@ -102,6 +102,10 @@ export const aircraft = pgTable(
     status: aircraftStatus("status").notNull().default("draft"),
     /** Set by the system (daily job) when a required document expired; cleared on re-listing. */
     unlistedReason: text("unlisted_reason"),
+    /** When it was last listed (set by the status trigger); the plan limit keeps the oldest. */
+    listedAt: timestamp("listed_at", { withTimezone: true }),
+    /** Shown first in search, labelled "Featured" (SUB-10; as many as the plan allows). */
+    featured: boolean("featured").notNull().default(false),
     ratingAvg: numeric("rating_avg", { precision: 3, scale: 2, mode: "number" }),
     ratingCount: integer("rating_count").notNull().default(0),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

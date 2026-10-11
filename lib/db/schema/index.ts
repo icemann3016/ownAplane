@@ -15,3 +15,4 @@ export * from "./messages";
 export * from "./saved";
 export * from "./api-usage";
 export * from "./logbook";
+export * from "./billing";

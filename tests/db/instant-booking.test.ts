@@ -138,4 +138,18 @@ describeDb("instant booking", () => {
       .where(eq(s.rentalRequirements.aircraftId, planeId));
     expect(await statusOf(await request(PIL, 60 * 120, 60 * 120 + 120))).toBe("requested");
   });
+
+  it("needs the owner to have a paid plan (SUB-10)", async () => {
+    await db
+      .getDb()
+      .update(s.rentalRequirements)
+      .set({ instantBooking: true })
+      .where(eq(s.rentalRequirements.aircraftId, planeId));
+    // Listing made the owner a founding owner during the beta: take both away.
+    await db.getDb().update(s.billingSettings).set({ beta: false });
+    await db.getDb().update(s.planGrants).set({ revokedAt: new Date() });
+    expect(await statusOf(await request(PIL, 60 * 144, 60 * 144 + 120))).toBe("requested");
+    await db.getDb().update(s.planGrants).set({ revokedAt: null });
+    expect(await statusOf(await request(PIL, 60 * 168, 60 * 168 + 120))).toBe("accepted");
+  });
 });
