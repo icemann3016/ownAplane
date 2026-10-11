@@ -129,6 +129,8 @@ export async function setAircraftStatus(_prev: FormState, formData: FormData): P
       return { message: t("notReady", { missing: missing.join(", ") }) };
     }
     if (outcome.error === "blocked") return { message: t("blocked") };
+    if (outcome.error === "plan_limit")
+      return { message: t("planLimit", { limit: outcome.limit ?? 1 }) };
     if (outcome.error === "registration_taken") return { message: t("registrationTaken") };
     return { message: t("failed") };
   }

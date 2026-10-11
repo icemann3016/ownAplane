@@ -1,9 +1,13 @@
 import { sendAircraftExpiryReminders, unlistExpiredAircraft } from "@/lib/aircraft/expiry";
+import { enforcePlanLimits, warnPlanChanges } from "@/lib/billing/enforce";
+import { isTestMode } from "@/lib/billing/provider";
+import { renewDueSubscriptions } from "@/lib/billing/test-renewals";
 import { pruneApiUsage } from "@/lib/api/rate-limit";
 import { expireBookingRequests } from "@/lib/bookings/queries";
 import { syncDueCalendars } from "@/lib/calendar-sync/sync";
 import { deliverWebhooks } from "@/lib/calendar-sync/webhooks";
 import { cronAuthorized } from "@/lib/cron";
+import { sendCurrencyReminders } from "@/lib/logbook/currency-reminders";
 import { deleteOrphanDocuments } from "@/lib/documents";
 import { deliverMessageEmails } from "@/lib/messages/emails";
 import { createBookingReminders, deliverNotificationEmails } from "@/lib/notifications";
@@ -27,6 +31,9 @@ import { runSavedSearchAlerts } from "@/lib/saved/alerts";
  * - tells users about aircraft that newly match their saved searches (SRC-6)
  * - sends (or retries) webhooks to connected systems (SYN-6)
  * - forgets API request counts older than an hour (API-6)
+ * - plans (SUB-6): renews test-mode subscriptions whose period ended, warns owners a week before
+ *   a smaller plan starts, then unlists aircraft beyond its limit
+ * - reminds Pilot Plus users of passenger recency ending and SEP revalidation due (currency)
  */
 export const maxDuration = 60;
 
@@ -47,6 +54,10 @@ export async function GET(request: Request) {
   const linkedCalendars = await syncDueCalendars(60 * 60_000, 200);
   const webhooks = await deliverWebhooks(500);
   await pruneApiUsage();
+  const renewedSubscriptions = isTestMode() ? await renewDueSubscriptions() : 0;
+  const planWarnings = await warnPlanChanges();
+  const unlistedForPlan = await enforcePlanLimits();
+  const currencyReminders = await sendCurrencyReminders();
   const result = {
     expiredRequests,
     reminders,
@@ -60,6 +71,10 @@ export async function GET(request: Request) {
     messageEmails,
     linkedCalendars,
     webhooks,
+    renewedSubscriptions,
+    planWarnings,
+    unlistedForPlan,
+    currencyReminders,
   };
   console.info("[cron] daily", result);
   return Response.json({ ok: true, ...result });

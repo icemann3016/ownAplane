@@ -42,6 +42,8 @@ import {
   ref,
   signedIn,
 } from "./openapi-helpers";
+import { billingPaths, billingSchemas } from "./billing";
+import { pilotPlusPaths, pilotPlusSchemas } from "./pilot-plus";
 import { aircraftOpsPaths, aircraftOpsSchemas } from "./openapi-aircraft-ops";
 import { credentialSchemas, documentAndCredentialPaths } from "./openapi-credentials";
 import { logbookPaths, logbookSchemas } from "./openapi-logbook";
@@ -126,6 +128,8 @@ export function openApiDocument() {
         ...myAircraftSchemas(),
         ...aircraftOpsSchemas(),
         ...logbookSchemas(),
+        ...billingSchemas(),
+        ...pilotPlusSchemas(),
         WebhookEvent: output(R.webhookEvent),
         WebhookSettings: output(R.webhookSettings),
         WebhookSaved: output(R.webhookSaved),
@@ -383,6 +387,8 @@ export function openApiDocument() {
       ...myAircraftPaths(),
       ...aircraftOpsPaths(),
       ...logbookPaths(),
+      ...billingPaths(),
+      ...pilotPlusPaths(),
       "/api/v1/sync": {
         get: {
           tags: ["calendar sync"],

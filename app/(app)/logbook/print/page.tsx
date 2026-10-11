@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import { getLocale, getTranslations } from "next-intl/server";
 
+import { PlusGate } from "@/components/billing/plus-gate";
 import { getProfileAndRoles } from "@/lib/account/profile";
 import { formatUtc } from "@/lib/aircraft/format";
 import { requireUser } from "@/lib/auth/session";
+import { getMyPlan } from "@/lib/billing/plan";
+import { PLANS } from "@/lib/billing/plans";
 import type { Locale } from "@/lib/i18n/config";
 import { entriesInOrder } from "@/lib/logbook/entries";
 import { paginate } from "@/lib/logbook/pages";
@@ -19,6 +22,14 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function PrintLogbookPage() {
   const user = await requireUser("/logbook/print");
   const t = await getTranslations("logbook");
+  // The EASA print comes with Pilot Plus; the CSV export stays free (the data is the pilot's).
+  if (!PLANS[(await getMyPlan(user.id)).plan].logbookExtras) {
+    return (
+      <div className="mx-auto grid w-full max-w-3xl gap-6 px-4 py-8">
+        <PlusGate title={t("print.title")} text={t("print.planNeeded")} />
+      </div>
+    );
+  }
   const locale = (await getLocale()) as Locale;
   const [entries, profile] = await Promise.all([
     entriesInOrder(user.id),

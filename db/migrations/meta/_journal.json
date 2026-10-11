@@ -505,6 +505,13 @@
       "when": 1791716478879,
       "tag": "0071_billing_security",
       "breakpoints": true
+    },
+    {
+      "idx": 72,
+      "version": "7",
+      "when": 1791720578117,
+      "tag": "0072_booking_feeds",
+      "breakpoints": true
     }
   ]
 }

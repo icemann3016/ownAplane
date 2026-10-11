@@ -1,6 +1,6 @@
 CREATE TYPE "public"."billing_interval" AS ENUM('month', 'year');--> statement-breakpoint
 CREATE TYPE "public"."plan_grant_reason" AS ENUM('admin', 'founding');--> statement-breakpoint
-CREATE TYPE "public"."plan_name" AS ENUM('free', 'owner', 'fleet');--> statement-breakpoint
+CREATE TYPE "public"."plan_name" AS ENUM('free', 'pilot', 'owner', 'fleet');--> statement-breakpoint
 CREATE TYPE "public"."subscription_status" AS ENUM('active', 'past_due', 'ended');--> statement-breakpoint
 CREATE TABLE "ai_credit_entries" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,

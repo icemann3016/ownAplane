@@ -15,6 +15,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /** The user's notifications, newest first; opening the page marks them read (BKG-9). */
+/** Notifications about the plan (SUB-6) open Plan & billing. */
+const PLAN_TYPES = new Set(["plan_ending", "plan_unlisted", "payment_failed"]);
+/** Currency reminders (Pilot Plus) open the currency page. */
+const CURRENCY_TYPES = new Set(["currency_ending", "revalidation_due"]);
+
 export default async function NotificationsPage() {
   const user = await requireUser("/notifications");
   const t = await getTranslations("notifications");
@@ -45,9 +50,13 @@ export default async function NotificationsPage() {
                 const text = t(`types.${knownType(n.type)}`, values);
                 const href = n.search
                   ? `/search${n.search.query ? `?${n.search.query}` : ""}`
-                  : n.bookingId
-                    ? `/bookings/${n.bookingId}`
-                    : "/bookings";
+                  : PLAN_TYPES.has(n.type)
+                    ? "/account/billing"
+                    : CURRENCY_TYPES.has(n.type)
+                      ? "/logbook/currency"
+                      : n.bookingId
+                        ? `/bookings/${n.bookingId}`
+                        : "/bookings";
                 return (
                   <li key={n.id}>
                     <Link

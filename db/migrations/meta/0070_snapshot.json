@@ -7637,6 +7637,7 @@
       "schema": "public",
       "values": [
         "free",
+        "pilot",
         "owner",
         "fleet"
       ]

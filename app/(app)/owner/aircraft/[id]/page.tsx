@@ -3,6 +3,7 @@ import Link from "next/link";
 import { CircleCheckIcon, CircleIcon, ExternalLinkIcon, TriangleAlertIcon } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 
+import { PlanNote } from "@/components/billing/plan-note";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +12,9 @@ import { requireOwnAircraft } from "@/lib/aircraft/owner";
 import { getListingGaps } from "@/lib/aircraft/queries";
 import { formatPrice } from "@/lib/aircraft/format";
 import { airportPlace, getAirport } from "@/lib/airports";
+import { getMyPlan, planUsage } from "@/lib/billing/plan";
 import { DeleteAircraft } from "./delete-aircraft";
+import { FeaturedControl } from "./featured-control";
 import { StatusControls } from "./status-controls";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -38,6 +41,7 @@ export default async function AircraftOverviewPage({
   const t = await getTranslations("aircraft");
   const locale = await getLocale();
   const gaps = await getListingGaps(user.id, id);
+  const usage = await planUsage(user.id, (await getMyPlan(user.id)).plan);
   const airport = await getAirport(aircraft.homeAirportIdent);
   const base = `/owner/aircraft/${id}`;
 
@@ -104,6 +108,27 @@ export default async function AircraftOverviewPage({
           )}
         </CardContent>
       </Card>
+
+      {aircraft.status === "listed" && (
+        <Card>
+          <CardHeader>
+            <CardTitle as="h2">{t("featured.title")}</CardTitle>
+            <CardDescription>
+              {aircraft.featured ? t("featured.isOn") : t("featured.text")}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-3 text-sm">
+            <p className="text-muted-foreground">
+              {t("featured.usage", { used: usage.featured, limit: usage.featuredLimit })}
+            </p>
+            {usage.featuredLimit > 0 || aircraft.featured ? (
+              <FeaturedControl id={id} featured={aircraft.featured} />
+            ) : (
+              <PlanNote>{t("featured.planNeeded")}</PlanNote>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>

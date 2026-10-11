@@ -7,6 +7,7 @@ export const maxDuration = 60;
 
 const MESSAGES = {
   not_configured: "Reading scans isn't available on this server.",
+  no_credits: "No AI reading credits left: buy credits on the website (Plan & billing).",
   limit: "Too many pages read in the last 24 hours.",
   not_this_document: "This doesn't look like a logbook page.",
   nothing_read: "No lines with a readable date were found.",
@@ -28,6 +29,8 @@ export const POST = apiRoute(async (request) => {
     if (read.error === "not_found") throw new ApiError("not_found", "No such document of yours.");
     if (read.error === "limit")
       throw new ApiError("rate_limited", MESSAGES.limit, undefined, details);
+    if (read.error === "no_credits")
+      throw new ApiError("payment_required", MESSAGES.no_credits, undefined, details);
     throw new ApiError("conflict", MESSAGES[read.error], undefined, details);
   }
   const found = await getSpread(user.id, read.spreadId);

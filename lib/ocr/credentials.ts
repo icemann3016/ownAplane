@@ -14,8 +14,9 @@ import {
   PRIVILEGES,
   RATING_KINDS,
 } from "@/lib/pilot/catalog";
+import { refundCredit, spendCredit } from "@/lib/billing/credits";
 import { ratingCodeValid } from "@/lib/validation/pilot";
-import { readScan } from ".";
+import { isOcrConfigured, readScan } from ".";
 import { logRead, readsLeft } from "./usage";
 
 // Reading a licence or medical scan to fill in the pilot's form (VER-9). Only suggestions: the
@@ -168,6 +169,7 @@ export type ScanReadError =
   | "not_configured"
   | "not_found"
   | "limit"
+  | "no_credits"
   | "consent_required"
   | "not_this_document"
   | "unreadable"
@@ -194,17 +196,23 @@ export async function readCredentialScan(
     tx.select({ ownerId: documents.ownerId }).from(documents).where(eq(documents.id, documentId)),
   );
   if (own?.ownerId !== userId) return { ok: false, error: "not_found" };
+  if (!isOcrConfigured()) return { ok: false, error: "not_configured" };
   if ((await readsLeft(userId)) < 1) return { ok: false, error: "limit" };
   const file = await readDocument(userId, documentId);
   if (!file) return { ok: false, error: "not_found" };
   const page = { contentType: file.doc.contentType, body: file.body };
+  // One AI credit per read; a read that doesn't work gets it back.
+  const credit = await spendCredit(userId);
+  if (!credit.ok) return credit;
 
-  const log = (outcome: "ok" | "unreadable" | "failed") =>
-    logRead({ userId, documentId, kind, outcome, consentAt });
+  const log = async (outcome: "ok" | "unreadable" | "failed") => {
+    if (outcome !== "ok") await refundCredit(credit.entryId);
+    await logRead({ userId, documentId, kind, outcome, consentAt });
+  };
   if (kind === "licence") {
     const read = await readScan(LICENCE_TASK, [page]);
     if (!read.ok) {
-      if (read.error !== "not_configured") await log(read.error);
+      await log(read.error === "unreadable" ? "unreadable" : "failed");
       return read;
     }
     await log("ok");
@@ -213,7 +221,7 @@ export async function readCredentialScan(
   }
   const read = await readScan(MEDICAL_TASK, [page]);
   if (!read.ok) {
-    if (read.error !== "not_configured") await log(read.error);
+    await log(read.error === "unreadable" ? "unreadable" : "failed");
     return read;
   }
   await log("ok");

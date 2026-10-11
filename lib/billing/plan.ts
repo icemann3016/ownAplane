@@ -72,3 +72,13 @@ export async function getBillingSettings(): Promise<BillingSettings> {
 /** Whether the beta (Owner features for everyone) is on right now. */
 export const betaActive = (s: BillingSettings, now = new Date()) =>
   s.beta && (!s.betaEndsAt || now < s.betaEndsAt);
+
+/**
+ * The plan a week from now and when the current one stops, for the warning before a smaller
+ * plan starts (SUB-6).
+ */
+export async function planInAWeek(userId: string, current: CurrentPlan) {
+  const week = new Date(Date.now() + 7 * 86_400_000);
+  const ahead = await planOf(userId, { at: week });
+  return { ...ahead, at: current.until && current.until < week ? current.until : week };
+}

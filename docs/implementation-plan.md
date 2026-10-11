@@ -181,6 +181,40 @@ Aircraft home bases are airports with latitude/longitude. The search (`lib/aircr
   pages joined by line number plus the page totals written on the page; the app checks the sums
   and flags differences. Rows become drafts linked to the spread (`logbook_spreads`).
 
+### 4.12 Plans, payments and AI credits (SUB-1…15)
+- **One plan per user**, computed by `public.plan_of(user, at, with_beta)`: the highest of an
+  active subscription (after its period it renews into a scheduled downgrade unless cancelled), a
+  subscription whose payment failed until its 7-day grace ends, an unrevoked plan grant (admins,
+  founding owners) and the beta switch (Owner for everyone). `at` lets jobs look a week ahead.
+- **Plans in rank order** free < pilot (Pilot Plus) < owner < fleet; each includes the ones
+  before it (`plan_rank()`), so Owner and Fleet give the Pilot Plus features too.
+- **Limits live in `lib/billing/plans.ts`** and are mirrored in `public.plan_limit()` (a test keeps
+  them equal). The database refuses listing or featuring beyond the plan (`check_plan_limit()`
+  from the status/featured triggers, `plan_limit` with `aircraft:<n>`); `request_booking()`
+  accepts instantly only for owners on Owner or Fleet; `saved_search_defaults` caps saved searches
+  at `my_plan_limit('saved_searches')`. Usage history windows, statistics, export-only calendar
+  links and the Pilot Plus pages (currency, logbook print, statistics, the bookings iCal link) are
+  checked in `lib/` and the pages; the API answers 402 `plan_required`.
+- **Pilot Plus (SUB-15)**: the currency tracker is pure code over certified logbook entries
+  (`lib/logbook/currency.ts`: FCL.060 passengers by day/night, FCL.740.A SEP revalidation,
+  FCL.140.A LAPL recency), with daily reminders (`currency_ending`, `revalidation_due`); flying
+  statistics in `lib/logbook/stats.ts`; the bookings feed is a `booking_feeds` token (no app
+  access) served at `/api/v1/calendars/bookings/{token}.ics` while the plan includes it.
+- **Payments behind a provider**: `BILLING_PROVIDER` (only `test` today). A checkout is a
+  `billing_checkouts` row and the provider's page (in test mode `/billing/checkout/[id]`, where the
+  user picks the outcome). Every change to a subscription is saved as the provider would report
+  it (`saveSubscription()` with a `billing_events` row, each event once), so a real provider's
+  webhook only has to map its payloads to the same snapshot. Test mode also does what the
+  provider would: prorated upgrades, downgrades at renewal, renewals (daily job), failed payments.
+- **AI credits**: a ledger (`ai_credit_entries`): welcome (5, once), purchases, admin gifts,
+  reads (−1) and refunds (+1, once per read). The plan's monthly allowance (UTC month, not the
+  beta) is used first. `spendCredit()` takes a per-user advisory lock.
+- **Downgrades (SUB-6)**: the daily job warns owners a week before a smaller plan starts
+  (`plan_ending`), then unlists the most recently listed aircraft beyond the limit
+  (`unlisted_reason = 'plan_limit'`, `plan_unlisted`) and clears extra featured labels.
+- **Going live** (not code yet): a Paddle driver (checkout, webhook signature, customer portal),
+  terms with subscription and refund rules, the company to receive the money.
+
 ## 5. Data model (Phase 1)
 
 | Table | Key columns | Notes |
@@ -282,6 +316,7 @@ Sizes: **S** ≈ a few hours · **M** ≈ 1–2 sessions · **L** ≈ 3+ session
 | M12 | Calendar sync | SYN-1…5, SYN-8 | An aircraft linked to a Google Calendar can't be booked over its events; the other system subscribes to ownAplane's iCal link; a partner pushes a booking, gets 409 on overlap | 2 wk |
 | M13 | Full API | API-3, 6, 7, SYN-6 | Everything on the website is possible through the API (booking flow, flight log, messages); push notifications | 3–4 wk |
 | M14 | Document reading & e-logbook | VER-9, LOG-1…8 | A pilot uploads a licence and the form fills itself; keeps an EASA logbook with certified entries, corrections and totals; rentals appear in it; a scanned paper spread becomes draft entries with its page totals checked | 3 wk |
+| M15 | Plans & billing (test mode) | SUB-1…10, 13…15 | An owner or pilot subscribes, upgrades, downgrades and cancels without paying; limits hold in the database; AI reads use credits; Pilot Plus gives currency, the logbook print and statistics, more saved searches and a bookings calendar link; admins give plans and credits and run the beta | 2 wk |
 
 ## 9. How we build each task (with Claude)
 

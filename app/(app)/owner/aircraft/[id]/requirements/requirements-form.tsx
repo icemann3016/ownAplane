@@ -16,11 +16,14 @@ export function RequirementsForm({
   aircraftId,
   values,
   isDraft,
+  instantIncluded,
 }: {
   aircraftId: string;
   /** licenceTypes and requiredRatings comma separated. */
   values: Record<string, string>;
   isDraft: boolean;
+  /** Instant booking needs a paid plan (SUB-10); the setting is kept either way. */
+  instantIncluded: boolean;
 }) {
   const t = useTranslations("aircraft.requirements");
   const tp = useTranslations("pilot");
@@ -77,7 +80,11 @@ export function RequirementsForm({
         <CheckboxField
           name="instantBooking"
           label={t("instantBooking")}
-          hint={t("instantBookingHint")}
+          hint={
+            instantIncluded
+              ? t("instantBookingHint")
+              : `${t("instantBookingHint")} ${t("instantBookingPlan")}`
+          }
           defaultChecked={v.instantBooking === "on"}
         />
       </fieldset>

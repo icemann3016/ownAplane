@@ -1,6 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CheckCircle2Icon, DownloadIcon, PlusIcon, PrinterIcon, ScanLineIcon } from "lucide-react";
+import {
+  ChartColumnIcon,
+  CheckCircle2Icon,
+  DownloadIcon,
+  GaugeIcon,
+  PlusIcon,
+  PrinterIcon,
+  ScanLineIcon,
+} from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -62,6 +70,16 @@ export default async function LogbookPage({
             </Link>
           </Button>
         )}
+        <Button asChild size="sm" variant="ghost">
+          <Link href="/logbook/currency">
+            <GaugeIcon aria-hidden /> {t("currency.link")}
+          </Link>
+        </Button>
+        <Button asChild size="sm" variant="ghost">
+          <Link href="/logbook/stats">
+            <ChartColumnIcon aria-hidden /> {t("stats.link")}
+          </Link>
+        </Button>
         <Button asChild size="sm" variant="ghost">
           <Link href="/logbook/print">
             <PrinterIcon aria-hidden /> {t("printLink")}

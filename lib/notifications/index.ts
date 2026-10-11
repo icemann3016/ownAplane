@@ -32,6 +32,11 @@ export const NOTIFICATION_TYPES = [
   "reminder",
   "calendar_conflict",
   "saved_search",
+  "plan_ending",
+  "plan_unlisted",
+  "payment_failed",
+  "currency_ending",
+  "revalidation_due",
 ] as const;
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
 export const knownType = (type: string): NotificationType | "other" =>

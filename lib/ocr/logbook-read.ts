@@ -2,10 +2,11 @@ import "server-only";
 
 import { and, asc, eq, inArray } from "drizzle-orm";
 
+import { refundCredit, spendCredit } from "@/lib/billing/credits";
 import { asUser } from "@/lib/db/rls";
 import { documents, logbookEntries, logbookSpreads } from "@/lib/db/schema";
 import { readDocument } from "@/lib/documents";
-import { readScan, type ScanFile } from ".";
+import { isOcrConfigured, readScan, type ScanFile } from ".";
 import { lineValues, SPREAD_TASK, totalDifferences, writtenTotals } from "./logbook";
 import { logRead, readsLeft } from "./usage";
 
@@ -16,6 +17,7 @@ export type SpreadReadError =
   | "not_configured"
   | "not_found"
   | "limit"
+  | "no_credits"
   | "not_this_document"
   | "nothing_read"
   | "unreadable"
@@ -34,6 +36,7 @@ export async function readLogbookSpread(
       .where(and(inArray(documents.id, ids), eq(documents.ownerId, userId))),
   );
   if (own.length !== ids.length) return { ok: false, error: "not_found" };
+  if (!isOcrConfigured()) return { ok: false, error: "not_configured" };
   if ((await readsLeft(userId)) < ids.length) return { ok: false, error: "limit" };
   const files: ScanFile[] = [];
   for (const id of ids) {
@@ -42,17 +45,19 @@ export async function readLogbookSpread(
     files.push({ contentType: file.doc.contentType, body: file.body });
   }
 
+  // One AI credit per spread; a read that gives nothing usable gets it back.
+  const credit = await spendCredit(userId);
+  if (!credit.ok) return credit;
   const read = await readScan(SPREAD_TASK, files);
   if (!read.ok) {
-    if (read.error !== "not_configured") {
-      await logRead({
-        userId,
-        documentId: leftDocumentId,
-        kind: "logbook",
-        outcome: read.error,
-        pages: ids.length,
-      });
-    }
+    await refundCredit(credit.entryId);
+    await logRead({
+      userId,
+      documentId: leftDocumentId,
+      kind: "logbook",
+      outcome: read.error === "unreadable" ? "unreadable" : "failed",
+      pages: ids.length,
+    });
     return read;
   }
   await logRead({
@@ -69,7 +74,10 @@ export async function readLogbookSpread(
   const drafts = lines
     .map((l) => ({ line: l.line, values: lineValues(l, today) }))
     .filter((d): d is { line: number; values: NonNullable<typeof d.values> } => d.values !== null);
-  if (!drafts.length) return { ok: false, error: "nothing_read" };
+  if (!drafts.length) {
+    await refundCredit(credit.entryId);
+    return { ok: false, error: "nothing_read" };
+  }
   const written = writtenTotals(read.data.totalThisPage);
 
   const spreadId = await asUser(userId, async (tx) => {

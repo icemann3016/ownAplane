@@ -21,7 +21,7 @@ import {
 
 import { users } from "./auth";
 
-export const planName = pgEnum("plan_name", ["free", "owner", "fleet"]);
+export const planName = pgEnum("plan_name", ["free", "pilot", "owner", "fleet"]);
 export const billingInterval = pgEnum("billing_interval", ["month", "year"]);
 export const subscriptionStatus = pgEnum("subscription_status", ["active", "past_due", "ended"]);
 
@@ -130,7 +130,7 @@ export const billingCheckouts = pgTable(
 ).enableRLS();
 
 export type CheckoutItem =
-  | { type: "plan"; plan: "owner" | "fleet"; interval: "month" | "year" }
+  | { type: "plan"; plan: "pilot" | "owner" | "fleet"; interval: "month" | "year" }
   | { type: "credits"; pack: string };
 
 /** Payments (and failed attempts), for the user's billing history. */

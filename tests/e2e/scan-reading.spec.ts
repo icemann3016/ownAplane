@@ -101,4 +101,17 @@ test("a pilot lets the app fill in a licence and a medical from the scans", asyn
       { kind: "privilege", code: "NIGHT", expiresOn: null },
     ],
   });
+
+  // 5. Every read took one of the 5 welcome credits: one left, then 402 no_credits
+  const plan = async () =>
+    (
+      await (
+        await fetch(new URL("/api/v1/me/plan", baseURL), { headers: { authorization: token } })
+      ).json()
+    ).data;
+  expect((await plan()).aiCredits).toMatchObject({ available: 1, balance: 1 });
+  expect((await read({ as: "licence" })).status).toBe(200);
+  const none = await read({ as: "licence" });
+  expect(none.status).toBe(402);
+  expect((await none.json()).error.details).toEqual({ reason: "no_credits" });
 });

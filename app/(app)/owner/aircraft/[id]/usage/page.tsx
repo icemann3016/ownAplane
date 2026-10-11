@@ -5,12 +5,16 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { SectionHeading } from "@/components/aircraft/section-heading";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PlanNote } from "@/components/billing/plan-note";
 import { requireOwnAircraft } from "@/lib/aircraft/owner";
+import { getMyPlan } from "@/lib/billing/plan";
+import { PLANS, usageSince } from "@/lib/billing/plans";
 import { getUnits } from "@/lib/aircraft/queries";
 import { getAircraftUsage, pilotNames } from "@/lib/bookings/usage";
 import { usageByMonth, usageByPilot, usageTotals } from "@/lib/domain/usage";
 import { intlLocale, type Locale } from "@/lib/i18n/config";
 import { MeterReadings } from "./meter-readings";
+import { StatsCard } from "./stats-card";
 import { UsageTable } from "./usage-table";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -25,8 +29,10 @@ export default async function UsagePage({ params }: { params: Promise<{ id: stri
   const t = await getTranslations("usage");
   const ta = await getTranslations("aircraft");
   const locale = (await getLocale()) as Locale;
+  const { plan } = await getMyPlan(user.id);
+  const since = usageSince(plan);
   const [{ flights }, units] = await Promise.all([
-    getAircraftUsage(user.id, id),
+    getAircraftUsage(user.id, id, since),
     getUnits(user.id),
   ]);
   const timeZone = "UTC";
@@ -46,6 +52,7 @@ export default async function UsagePage({ params }: { params: Promise<{ id: stri
   return (
     <div className="grid grid-cols-1 gap-6">
       <SectionHeading title={ta("sections.usage")} text={ta("sectionText.usage")} />
+      {since && <PlanNote>{t("planWindow", { months: PLANS[plan].usageMonths ?? 0 })}</PlanNote>}
       {flights.length === 0 ? (
         <Card>
           <CardContent>
@@ -54,6 +61,12 @@ export default async function UsagePage({ params }: { params: Promise<{ id: stri
         </Card>
       ) : (
         <>
+          <StatsCard
+            ownerId={user.id}
+            aircraftId={id}
+            flights={flights}
+            included={PLANS[plan].statistics}
+          />
           <Card>
             <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2">
               <CardTitle as="h2">{t("total")}</CardTitle>

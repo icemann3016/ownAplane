@@ -2,13 +2,18 @@ import { getTranslations } from "next-intl/server";
 
 import { getOwnAircraft, isUuid } from "@/lib/aircraft/queries";
 import { getUser } from "@/lib/auth/session";
+import { getMyPlan } from "@/lib/billing/plan";
+import { usageSince } from "@/lib/billing/plans";
 import { airportCodes, getAircraftUsage, pilotNames } from "@/lib/bookings/usage";
 import { csvResponse, toCsv } from "@/lib/csv";
 
 const utc = (d: Date | null) => (d ? d.toISOString().slice(0, 16).replace("T", " ") : "");
 const minutes = (from: Date, to: Date) => Math.round((to.getTime() - from.getTime()) / 60_000);
 
-/** The owner's CSV of all legs of an aircraft's confirmed flight logs (BKG-16). SI units, UTC. */
+/**
+ * The owner's CSV of the legs of an aircraft's confirmed flight logs (BKG-16): all of them, or the
+ * last months on the Free plan (SUB-10). SI units, UTC.
+ */
 export async function GET(_request: Request, ctx: RouteContext<"/api/aircraft/[id]/usage">) {
   const { id } = await ctx.params;
   const user = await getUser();
@@ -17,7 +22,8 @@ export async function GET(_request: Request, ctx: RouteContext<"/api/aircraft/[i
   if (!plane) return new Response("Not found", { status: 404 });
 
   const t = await getTranslations("usage.csv");
-  const { legs } = await getAircraftUsage(user.id, id);
+  const { plan } = await getMyPlan(user.id);
+  const { legs } = await getAircraftUsage(user.id, id, usageSince(plan));
   const [names, codes] = await Promise.all([
     pilotNames(
       user.id,

@@ -2,13 +2,24 @@
 // public.plan_limit() (db/migrations/0071_billing_security.sql; a test keeps them equal).
 // Prices are in euro cents incl. VAT; with a payment provider they also live there.
 
-export const PLAN_NAMES = ["free", "owner", "fleet"] as const;
+/** In order: each plan includes what the ones before it give (Owner and Fleet include Pilot Plus). */
+export const PLAN_NAMES = ["free", "pilot", "owner", "fleet"] as const;
 export type Plan = (typeof PLAN_NAMES)[number];
 export type PaidPlan = Exclude<Plan, "free">;
 export const INTERVALS = ["month", "year"] as const;
 export type Interval = (typeof INTERVALS)[number];
 
 export type PlanFeatures = {
+  // For pilots
+  /** Passenger and night recency, class rating revalidation and LAPL recency from the logbook. */
+  currencyTracker: boolean;
+  /** EASA print of the logbook and pilot statistics. */
+  logbookExtras: boolean;
+  /** Saved searches with alerts. */
+  savedSearches: number;
+  /** A private calendar link of the user's own bookings. */
+  bookingsCalendar: boolean;
+  // For owners
   /** Listed aircraft at a time. */
   aircraft: number;
   /** Aircraft shown first in search, labelled "Featured". */
@@ -23,26 +34,42 @@ export type PlanFeatures = {
   aiCreditsPerMonth: number;
 };
 
+const PILOT_FREE = {
+  currencyTracker: false,
+  logbookExtras: false,
+  savedSearches: 2,
+  bookingsCalendar: false,
+};
+const PILOT_PLUS = {
+  currencyTracker: true,
+  logbookExtras: true,
+  savedSearches: 20,
+  bookingsCalendar: true,
+};
+const OWNER_FREE = {
+  aircraft: 1,
+  featured: 0,
+  instantBooking: false,
+  usageMonths: 3,
+  statistics: false,
+  calendarLink: false,
+};
+
 export const PLANS: Record<Plan, PlanFeatures> = {
-  free: {
-    aircraft: 1,
-    featured: 0,
-    instantBooking: false,
-    usageMonths: 3,
-    statistics: false,
-    calendarLink: false,
-    aiCreditsPerMonth: 0,
-  },
+  free: { ...PILOT_FREE, ...OWNER_FREE, aiCreditsPerMonth: 0 },
+  pilot: { ...PILOT_PLUS, ...OWNER_FREE, aiCreditsPerMonth: 20 },
   owner: {
+    ...PILOT_PLUS,
     aircraft: 2,
     featured: 1,
     instantBooking: true,
     usageMonths: null,
     statistics: true,
     calendarLink: true,
-    aiCreditsPerMonth: 10,
+    aiCreditsPerMonth: 20,
   },
   fleet: {
+    ...PILOT_PLUS,
     aircraft: 10,
     featured: 3,
     instantBooking: true,
@@ -55,6 +82,7 @@ export const PLANS: Record<Plan, PlanFeatures> = {
 
 /** Price per period in euro cents incl. VAT. */
 export const PRICES: Record<PaidPlan, Record<Interval, number>> = {
+  pilot: { month: 400, year: 4000 },
   owner: { month: 900, year: 9000 },
   fleet: { month: 3900, year: 39000 },
 };
@@ -69,11 +97,12 @@ export const CREDIT_PACKS = {
 } as const;
 export type CreditPack = keyof typeof CREDIT_PACKS;
 
-const RANK: Record<Plan, number> = { free: 0, owner: 1, fleet: 2 };
+const RANK: Record<Plan, number> = { free: 0, pilot: 1, owner: 2, fleet: 3 };
 
 export const planRank = (plan: Plan) => RANK[plan];
 
-export const isPaidPlan = (plan: string): plan is PaidPlan => plan === "owner" || plan === "fleet";
+export const isPaidPlan = (plan: string): plan is PaidPlan =>
+  plan === "pilot" || plan === "owner" || plan === "fleet";
 
 /**
  * What changing from one paid plan to another does: upgrades (a higher plan, or monthly →
@@ -114,4 +143,13 @@ export function periodEnd(start: Date, interval: Interval): Date {
   const last = new Date(Date.UTC(end.getUTCFullYear(), end.getUTCMonth() + 1, 0)).getUTCDate();
   end.setUTCDate(Math.min(day, last));
   return end;
+}
+
+/** Where a plan's usage history starts (null = all of it): the same day N months ago. */
+export function usageSince(plan: Plan, now = new Date()): Date | null {
+  const months = PLANS[plan].usageMonths;
+  if (months === null) return null;
+  const since = new Date(now);
+  since.setUTCMonth(since.getUTCMonth() - months);
+  return since;
 }

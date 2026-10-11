@@ -6,7 +6,15 @@ import { formatUtc } from "@/lib/aircraft/format";
 import type { MemberDetail } from "@/lib/admin/member-detail";
 import type { Locale } from "@/lib/i18n/config";
 
-const KNOWN = ["suspend_user", "unsuspend_user", "grant_admin", "revoke_admin"] as const;
+const KNOWN = [
+  "suspend_user",
+  "unsuspend_user",
+  "grant_admin",
+  "revoke_admin",
+  "grant_plan",
+  "revoke_plan",
+  "give_credits",
+] as const;
 type Known = (typeof KNOWN)[number];
 
 /** Open reports about the member or their aircraft, and admin actions on the account. */

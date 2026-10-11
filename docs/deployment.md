@@ -111,6 +111,18 @@ All three work the same way: the button appears once the keys are set, new accou
 - `EMAIL_DRIVER=smtp` + `SMTP_*` + `EMAIL_FROM`. Every major provider offers SMTP.
 - Once real email works, set `AUTH_REQUIRE_EMAIL_VERIFICATION=true`.
 
+### Plans and payments
+- `BILLING_PROVIDER` (default `test`): payments run in **test mode**. Subscribing, upgrading,
+  downgrading, cancelling, renewals and failed payments all work and show as test payments, but
+  no card is asked for and no money moves. The daily job renews test subscriptions whose period
+  ended, warns owners a week before a smaller plan starts and unlists aircraft beyond the limit.
+- Admin → Billing: the beta switch (everyone has the Owner plan's features; ending it gives 7
+  days' notice) and the founding-owner cut-off. Admin → Members → a member: give a plan or AI
+  credits.
+- Before charging for real: a company to receive the money, terms with subscription and refund
+  rules (EU 14-day withdrawal), and a provider driver (Paddle: checkout, signed webhook, customer
+  portal) next to the test one in `lib/billing`.
+
 ### Reading scans with AI (optional)
 - `ANTHROPIC_API_KEY` (console.anthropic.com → API keys) and `OCR_MODEL` (a vision-capable
   Claude model id from Anthropic's model list). Both set → pilots see **Fill in from the scan**
@@ -121,7 +133,8 @@ All three work the same way: the button appears once the keys are set, new accou
 - No SDK: `lib/ocr` calls the Messages API with `fetch`. Another provider means another driver
   there; nothing else changes.
 - `OCR_DAILY_LIMIT` (default 40) caps pages read per user per 24 hours; Admin → API shows the
-  reads per day. Each read is a paid API call (a few cents at most per page).
+  reads per day. Each read is a paid API call (a few cents at most per page) and uses one of the
+  user's AI credits (5 free, then packs or the plan's monthly reads).
 - `OCR_EFFORT` (default `low`): how much the model thinks before answering (`low`, `medium`,
   `high`, `xhigh`, `max`). Low keeps a read well inside the page's one-minute limit; `off` sends
   nothing, for older models without the setting.

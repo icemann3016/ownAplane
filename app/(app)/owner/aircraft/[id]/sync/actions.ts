@@ -6,6 +6,8 @@ import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 
 import { requireUser } from "@/lib/auth/session";
+import { getMyPlan } from "@/lib/billing/plan";
+import { PLANS } from "@/lib/billing/plans";
 import { exportFields, importFields } from "@/lib/calendar-sync/fields";
 import { newApiKey } from "@/lib/calendar-sync/keys";
 import { syncConnection } from "@/lib/calendar-sync/sync";
@@ -58,6 +60,11 @@ export async function addConnection(_prev: FormState, formData: FormData): Promi
   const parsed = connectionSchema.safeParse(raw);
   if (!parsed.success) return { errors: await localizedFieldErrors(parsed.error), values: raw };
   const { aircraftId, name, inbound, feedUrl } = parsed.data;
+  // A calendar link only (for Google or Outlook) comes with a paid plan (SUB-10); syncing with
+  // other booking systems, which prevents double bookings, is on every plan.
+  if (inbound === "none" && !PLANS[(await getMyPlan(user.id)).plan].calendarLink) {
+    return { message: t("errors.planNeeded"), values: raw };
+  }
   const key = inbound === "push" ? newApiKey() : null;
   let created;
   try {

@@ -149,6 +149,9 @@ describeDb("instant booking", () => {
     await db.getDb().update(s.billingSettings).set({ beta: false });
     await db.getDb().update(s.planGrants).set({ revokedAt: new Date() });
     expect(await statusOf(await request(PIL, 60 * 144, 60 * 144 + 120))).toBe("requested");
+    // Pilot Plus is not an owner plan.
+    await db.getDb().insert(s.planGrants).values({ userId: OWN, plan: "pilot", reason: "admin" });
+    expect(await statusOf(await request(PIL, 60 * 150, 60 * 150 + 120))).toBe("requested");
     await db.getDb().update(s.planGrants).set({ revokedAt: null });
     expect(await statusOf(await request(PIL, 60 * 168, 60 * 168 + 120))).toBe("accepted");
   });

@@ -4,10 +4,11 @@ import Link from "next/link";
 import {
   BookOpenIcon,
   CalendarDaysIcon,
+  CreditCardIcon,
   HeartIcon,
   LayoutDashboardIcon,
-  LogOutIcon,
   LifeBuoyIcon,
+  LogOutIcon,
   MessagesSquareIcon,
   SettingsIcon,
   ShieldCheckIcon,
@@ -75,6 +76,11 @@ export function UserMenu({ account }: { account: AccountSummary }) {
         <DropdownMenuItem asChild>
           <Link href="/account">
             <SettingsIcon /> {t("account")}
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/account/billing">
+            <CreditCardIcon /> {t("billing")}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>

@@ -10,6 +10,7 @@ export const maxDuration = 60;
 
 const MESSAGES = {
   not_configured: "Reading scans isn't available on this server.",
+  no_credits: "No AI reading credits left: buy credits on the website (Plan & billing).",
   limit: "Too many documents read in the last 24 hours.",
   not_this_document: "This doesn't look like that kind of document.",
   unreadable: "The scan couldn't be read; a sharper, straight photo usually helps.",
@@ -52,6 +53,8 @@ export const POST = apiRoute(async (request, { params }: Context) => {
       );
     case "limit":
       throw new ApiError("rate_limited", MESSAGES.limit, undefined, details);
+    case "no_credits":
+      throw new ApiError("payment_required", MESSAGES.no_credits, undefined, details);
     case "not_configured":
       throw new ApiError("conflict", MESSAGES.not_configured, undefined, details);
     default:

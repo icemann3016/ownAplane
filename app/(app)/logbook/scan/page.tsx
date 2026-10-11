@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { CreditsNote } from "@/components/billing/credits-note";
 import { requireUser } from "@/lib/auth/session";
 import { isOcrConfigured } from "@/lib/ocr";
 import { ScanForm } from "./scan-form";
@@ -17,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /** Read a scanned two-page spread of a paper logbook into drafts (LOG-6). */
 export default async function ScanPage() {
-  await requireUser("/logbook/scan");
+  const user = await requireUser("/logbook/scan");
   const t = await getTranslations("logbook");
   return (
     <div className="mx-auto grid w-full max-w-2xl gap-6 px-4 py-8">
@@ -28,6 +29,7 @@ export default async function ScanPage() {
         <CardHeader>
           <CardTitle as="h1">{t("scan.title")}</CardTitle>
           <CardDescription>{t("scan.description")}</CardDescription>
+          {isOcrConfigured() && <CreditsNote userId={user.id} />}
         </CardHeader>
         <CardContent>
           {isOcrConfigured() ? (

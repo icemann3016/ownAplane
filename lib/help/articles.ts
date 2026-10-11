@@ -21,6 +21,7 @@ export const HELP_CATEGORIES = [
     slugs: [
       "notifications",
       "messages",
+      "plans-and-billing",
       "reviews",
       "rules",
       "questions-and-answers",

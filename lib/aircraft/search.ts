@@ -106,6 +106,7 @@ export async function searchAircraft(viewerId: string | null, f: SearchFilters) 
         priceBasis: aircraft.priceBasis,
         ratingAvg: aircraft.ratingAvg,
         ratingCount: aircraft.ratingCount,
+        featured: aircraft.featured,
         airportIdent: airports.ident,
         airportCode: sql<string>`coalesce(${airports.icaoCode}, ${airports.ident})`,
         airportName: airports.name,
@@ -121,7 +122,8 @@ export async function searchAircraft(viewerId: string | null, f: SearchFilters) 
       .from(aircraft)
       .innerJoin(airports, eq(airports.ident, aircraft.homeAirportIdent))
       .where(and(...where))
-      .orderBy(...order)
+      // Featured aircraft (SUB-10, labelled in the results) come first, then the chosen order.
+      .orderBy(desc(aircraft.featured), ...order)
       .limit(MAX_RESULTS);
 
   const rows = viewerId ? await asUser(viewerId, query) : await asAnon(query);

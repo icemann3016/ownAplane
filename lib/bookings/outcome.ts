@@ -12,6 +12,8 @@ export type Fail = {
   issues?: LegTimeIssue[];
   /** What is still missing, e.g. listing gaps. */
   missing?: string[];
+  /** The plan's limit that was reached (SUB-3). */
+  limit?: number;
 };
 export type Done<T = object> = ({ ok: true } & T) | Fail;
 

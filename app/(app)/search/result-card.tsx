@@ -2,6 +2,7 @@ import Link from "next/link";
 import { MapPinIcon, PlaneIcon, StarIcon } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 
+import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { formatPrice } from "@/lib/aircraft/format";
 import type { SearchResult } from "@/lib/aircraft/search";
@@ -33,6 +34,11 @@ export async function ResultCard({ result: r, query }: { result: SearchResult; q
           )}
         </div>
         <div className="grid flex-1 content-start gap-1.5 p-4">
+          {r.featured && (
+            <Badge variant="secondary" className="justify-self-start">
+              {t("featured")}
+            </Badge>
+          )}
           <h2 className="text-lg font-semibold">
             <Link href={href} className="after:absolute after:inset-0 focus-visible:outline-none">
               {r.manufacturer} {r.model}

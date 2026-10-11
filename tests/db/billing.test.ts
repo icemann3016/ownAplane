@@ -1,7 +1,7 @@
 import { eq, sql } from "drizzle-orm";
 import { beforeAll, beforeEach, expect, it } from "vitest";
 
-import { PLAN_NAMES, PLANS } from "@/lib/billing/plans";
+import { PLAN_NAMES, PLANS, planRank } from "@/lib/billing/plans";
 import { describeDb, forceListed, prepareDatabase } from "./setup";
 
 // Plans (SUB-1…9): where a user's plan comes from, the limits the database keeps, founding
@@ -73,18 +73,41 @@ describeDb("plans and billing (SUB)", () => {
     await settings({ beta: false, betaEndsAt: null, foundingCutoff: null });
     await db.getDb().delete(s.subscriptions);
     await db.getDb().delete(s.planGrants);
+    await db.getDb().delete(s.bookingFeeds);
   });
 
   it("keeps the same limits as the code", async () => {
     for (const plan of PLAN_NAMES) {
       const [row] = (await db.getDb().execute(sql`select
           public.plan_limit(${plan}::public.plan_name, 'aircraft') as aircraft,
-          public.plan_limit(${plan}::public.plan_name, 'featured') as featured`)) as unknown as {
+          public.plan_limit(${plan}::public.plan_name, 'featured') as featured,
+          public.plan_limit(${plan}::public.plan_name, 'saved_searches') as "savedSearches",
+          public.plan_rank(${plan}::public.plan_name) as rank`)) as unknown as {
         aircraft: number;
         featured: number;
+        savedSearches: number;
+        rank: number;
       }[];
-      expect(row).toEqual({ aircraft: PLANS[plan].aircraft, featured: PLANS[plan].featured });
+      expect(row).toEqual({
+        aircraft: PLANS[plan].aircraft,
+        featured: PLANS[plan].featured,
+        savedSearches: PLANS[plan].savedSearches,
+        rank: planRank(plan),
+      });
     }
+  });
+
+  it("allows saved searches by plan (Free 2, Pilot Plus 20)", async () => {
+    const save = (name: string) =>
+      rls.asUser(OTH, (tx) =>
+        tx.insert(s.savedSearches).values({ userId: OTH, name, query: "", alerts: true }),
+      );
+    await save("one");
+    await save("two");
+    expect(await code(save("three"))).toBe("too_many_searches");
+    await db.getDb().insert(s.planGrants).values({ userId: OTH, plan: "pilot", reason: "admin" });
+    expect(await code(save("three"))).toBeUndefined();
+    expect(await planOf(OTH)).toBe("pilot:admin");
   });
 
   it("picks the highest plan from subscriptions, grants and the beta", async () => {
@@ -208,6 +231,14 @@ describeDb("plans and billing (SUB)", () => {
     ).toBe("permission denied for table plan_grants");
     expect(await code(rls.asUser(OWN, (tx) => tx.select().from(s.billingEvents)))).toBe(
       "permission denied for table billing_events",
+    );
+    // Calendar link tokens of one's bookings (SUB-15) are secrets: only trusted code reads them.
+    await db
+      .getDb()
+      .insert(s.bookingFeeds)
+      .values({ userId: OWN, token: "f".repeat(48) });
+    expect(await code(rls.asUser(OWN, (tx) => tx.select().from(s.bookingFeeds)))).toBe(
+      "permission denied for table booking_feeds",
     );
     expect(
       await code(

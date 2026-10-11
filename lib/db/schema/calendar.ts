@@ -203,3 +203,20 @@ export type CalendarEntry = typeof calendarEntries.$inferSelect;
 export type CalendarConnection = typeof calendarConnections.$inferSelect;
 export type CalendarConnectionInbound = (typeof calendarConnectionInbound.enumValues)[number];
 export type CalendarEntryKind = (typeof calendarEntryKind.enumValues)[number];
+
+/**
+ * A private calendar link of the user's own bookings, as pilot and as owner (Pilot Plus), for
+ * Google Calendar or Outlook. The token is the secret; resetting it makes a new link. Trusted
+ * code only (no access for app_user).
+ */
+export const bookingFeeds = pgTable(
+  "booking_feeds",
+  {
+    userId: uuid("user_id")
+      .primaryKey()
+      .references(() => users.id, { onDelete: "cascade" }),
+    token: text("token").notNull().unique(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [check("booking_feeds_token", sql`char_length(${t.token}) >= 32`)],
+).enableRLS();

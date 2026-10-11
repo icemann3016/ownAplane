@@ -10,6 +10,7 @@ import {
 import { getLocale, getTranslations } from "next-intl/server";
 
 import { AccountTabs } from "@/components/account/account-tabs";
+import { CreditsNote } from "@/components/billing/credits-note";
 import { SubmitButton } from "@/components/forms/submit-button";
 import { ExpiryText, StatusBadge } from "@/components/pilot/status-badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -164,6 +165,7 @@ export default async function PilotPage() {
       <div className="grid gap-1">
         <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
         <p className="text-muted-foreground">{t("description")}</p>
+        {canRead && <CreditsNote userId={userId} />}
       </div>
 
       <SummaryAlert summary={summary} t={t} />

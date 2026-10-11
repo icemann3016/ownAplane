@@ -9,9 +9,10 @@ import { cn } from "@/lib/utils";
 const TABS = [
   { href: "/account", key: "general" },
   { href: "/account/credentials", key: "credentials" },
+  { href: "/account/billing", key: "billing" },
 ] as const;
 
-/** Tabs of the account area: general settings and pilot credentials. */
+/** Tabs of the account area: general settings, pilot credentials, plan & billing. */
 export function AccountTabs() {
   const t = useTranslations("account.tabs");
   const pathname = usePathname();

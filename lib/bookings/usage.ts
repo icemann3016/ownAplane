@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, eq, inArray, sql } from "drizzle-orm";
+import { and, asc, eq, gte, inArray, sql } from "drizzle-orm";
 
 import { getDb } from "@/lib/db";
 import { asUser } from "@/lib/db/rls";
@@ -14,7 +14,12 @@ export type UsageLegRow = FlightLeg & { bookingId: string; pilotId: string | nul
  * Legs of the aircraft's confirmed flight logs (BKG-16), oldest first, with the booking and pilot.
  * RLS: only the booking's owner (and admins) see them.
  */
-export async function getAircraftUsage(ownerId: string, aircraftId: string) {
+export async function getAircraftUsage(
+  ownerId: string,
+  aircraftId: string,
+  /** From when (the plan's usage history, SUB-10); null = all. */
+  since: Date | null = null,
+) {
   const rows = await asUser(ownerId, (tx) =>
     tx
       .select({
@@ -31,6 +36,7 @@ export async function getAircraftUsage(ownerId: string, aircraftId: string) {
           eq(bookings.aircraftId, aircraftId),
           eq(bookings.ownerId, ownerId),
           eq(flightLogs.status, "confirmed"),
+          since ? gte(flightLegs.blockOff, since) : undefined,
         ),
       )
       .orderBy(asc(flightLegs.blockOff), asc(flightLegs.seq)),

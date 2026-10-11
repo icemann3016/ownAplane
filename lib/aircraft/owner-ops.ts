@@ -156,3 +156,26 @@ export async function deleteMeterReading(
   );
   return deleted.length ? { ok: true } : { ok: false, error: "not_found" };
 }
+
+/**
+ * Show a listed aircraft first in search, labelled "Featured" (SUB-10); beyond the plan's
+ * featured spots: `plan_limit` with the limit.
+ */
+export async function setFeatured(userId: string, aircraftId: string, on: boolean): Promise<Done> {
+  try {
+    const rows = await asUser(userId, (tx) =>
+      tx
+        .update(aircraft)
+        .set({ featured: on })
+        .where(and(eq(aircraft.id, aircraftId), eq(aircraft.ownerId, userId)))
+        .returning({ id: aircraft.id }),
+    );
+    return rows.length ? { ok: true } : { ok: false, error: "not_found" };
+  } catch (e) {
+    const { message, detail } = pgError(e);
+    if (message === "plan_limit") {
+      return { ok: false, error: "plan_limit", limit: Number(detail?.split(":")[1] ?? 0) };
+    }
+    throw e;
+  }
+}

@@ -130,13 +130,13 @@ describeDb("test-mode payments", () => {
 
     expect(await buy(PIL, { type: "credits", pack: "small" })).toBe("paid");
     expect((await credits.creditStatus(PIL)).balance).toBe(51);
-    // An admin-given Owner plan brings 10 reads a month, used before the credits.
+    // An admin-given Owner plan brings 20 reads a month, used before the credits.
     await db.getDb().insert(s.planGrants).values({ userId: PIL, plan: "owner", reason: "admin" });
     await credits.spendCredit(PIL);
     expect(await credits.creditStatus(PIL)).toMatchObject({
       balance: 51,
-      allowance: { perMonth: 10, used: 1, left: 9 },
-      available: 60,
+      allowance: { perMonth: 20, used: 1, left: 19 },
+      available: 70,
     });
   });
 

@@ -10,6 +10,7 @@ import { formatPrice, formatSpan } from "@/lib/aircraft/format";
 import { requireUser } from "@/lib/auth/session";
 import { type BookingListItem, listBookings } from "@/lib/bookings/queries";
 import type { Locale } from "@/lib/i18n/config";
+import { FeedCard } from "./feed-card";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("booking.list");
@@ -42,6 +43,7 @@ export default async function BookingsPage() {
           <p className="text-xs text-muted-foreground">{t("exportLegsHint")}</p>
         </div>
       )}
+      <FeedCard userId={user.id} />
     </div>
   );
 }

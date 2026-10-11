@@ -33,7 +33,9 @@ Authorization: Bearer <token>
 - JSON in and out; single objects as `{ "data": … }`, lists as `{ "data": [...], "nextCursor": … }`.
 - Errors: `{ "error": { "code": "not_found", "message": "…", "fields"?: { "field": ["…"] } } }`
   with the HTTP status (400 `validation_failed`/`bad_request`, 401 `unauthorized`, 403, 404
-  `not_found`, 409 `conflict`, 429, 500 `internal`). `message` is for developers (English).
+  `not_found`, 402 `payment_required` (no AI reading credits left, `details.reason: no_credits`;
+  or the feature needs another plan, `details.reason: plan_required` with `details.feature`), 409 `conflict`, 429, 500
+  `internal`). `message` is for developers (English).
 - Times ISO 8601 in UTC. Quantities in SI units as stored (litres, kg, minutes). Money as numbers
   with an ISO currency code.
 - Invalid query parameters are errors (400), not ignored.
@@ -61,6 +63,7 @@ per user and connection (7 days) and who went over a limit (last hour) under Adm
 | Method | Path | Sign-in | What |
 |--------|------|---------|------|
 | GET | `/api/v1/me` | required | Account, profile, roles, settings |
+| GET | `/api/v1/me/plan` | required | Your plan (SUB-4): `plan` (`free`, `pilot` = Pilot Plus, `owner`, `fleet`), `source` (subscription, admin, founding, beta, free), `until`, `limits`, `usage`, the `subscription` (`test: true` in test mode) and `aiCredits` (`available`, `balance`, `allowanceLeft`). Buying and changing plans is on the website |
 | GET | `/api/v1/airports?q=` | – | Search European airfields |
 | GET | `/api/v1/airports/{ident}` | – | One airfield |
 | GET | `/api/v1/aircraft?airport=&radius=&from=&to=&…` | optional | Search listed aircraft (`eligible=true` needs sign-in) |
@@ -111,14 +114,14 @@ Calendar sync endpoints for partner systems are listed below.
 | POST | `/api/v1/notifications/read` | Mark all read |
 | GET | `/api/v1/favourites` | Favourite aircraft |
 | PUT / DELETE | `/api/v1/favourites/{aircraftId}` | Add / remove |
-| GET / POST | `/api/v1/saved-searches` | Saved searches; `{ name, query, alerts }` where `query` is the search as a query string (`airport=LBSF&radius=50&from=2026-10-20T08:00`) |
+| GET / POST | `/api/v1/saved-searches` | Saved searches; `{ name, query, alerts }` where `query` is the search as a query string (`airport=LBSF&radius=50&from=2026-10-20T08:00`). 2 on Free, 20 with Pilot Plus or an owner plan: 409 `conflict` with `details.limit` beyond that |
 | PATCH / DELETE | `/api/v1/saved-searches/{id}` | `{ alerts }` / remove |
 | GET / POST | `/api/v1/bookings/{id}/reviews` | Your review and (once published) the other side's; `{ scores, comment }` to review |
 | POST | `/api/v1/reviews/{id}/reply` | `{ text }`: the owner's one public reply |
 | GET | `/api/v1/aircraft/{id}/reviews` | Published reviews of an aircraft (public) |
 
 | POST | `/api/v1/documents` | Upload a private document (multipart, field `file`: PDF, JPEG, PNG, WebP, ≤ 4 MB) → `{ id, filename, sizeBytes }`; send the id with a credential, the check-out photo or a receipt. Uploads nothing refers to are removed after a day (413 too large, 409 `tooMany` over 50) |
-| POST | `/api/v1/documents/{id}/read` | `{ as: licence \| medical, consent }`: read your own scan with AI and get the fields to fill in (licence type, state, number, dates, ratings with validity; medical class, state and the validity for private flying, null when the scan doesn't show the expiry dates, item IX). Nothing is saved. A medical needs `consent: true` (the pilot agreed to sending it); 429 `limit` after the daily limit; 409 when reading isn't available or failed (`details.reason`) |
+| POST | `/api/v1/documents/{id}/read` | `{ as: licence \| medical, consent }`: read your own scan with AI and get the fields to fill in (licence type, state, number, dates, ratings with validity; medical class, state and the validity for private flying, null when the scan doesn't show the expiry dates, item IX). Nothing is saved. A medical needs `consent: true` (the pilot agreed to sending it); each read uses one AI credit (402 `payment_required`, `details.reason: no_credits`, when none are left; a failed read gives it back); 429 `limit` after the daily limit; 409 when reading isn't available or failed (`details.reason`) |
 | GET | `/api/v1/documents/{id}` | The file: yours, or a flight log photo/receipt of your booking (404 otherwise); `?download` |
 | GET | `/api/v1/me/credentials` | Licences, ratings, medicals (status `pending`/`verified`/`rejected`, `usable`, `expiry`, scan), experience, hours per type, `summary` |
 | POST | `/api/v1/me/credentials/{licences\|ratings\|medicals}` | Add one (an admin verifies it); licences and medicals need `documentId` |
@@ -143,8 +146,10 @@ flight log.
 | POST | `/api/v1/me/logbook/{id}/void` | `{ reason }`: strike a certified entry through |
 | GET | `/api/v1/me/logbook/totals` | Totals per column to date, the last 90 days, hours per type |
 | GET | `/api/v1/me/logbook/export` | CSV in the EASA column order |
-| POST | `/api/v1/me/logbook/scans` | `{ leftDocumentId, rightDocumentId? }`: read a scanned two-page spread of a paper logbook (LOG-6); every line with a readable date becomes a draft (`source: scan`); answers with `linesRead`, `linesSkipped`, the written `pageTotals` and the `differences` from the lines |
+| POST | `/api/v1/me/logbook/scans` | `{ leftDocumentId, rightDocumentId? }`: read a scanned two-page spread of a paper logbook (LOG-6); every line with a readable date becomes a draft (`source: scan`); answers with `linesRead`, `linesSkipped`, the written `pageTotals` and the `differences` from the lines; one AI credit per spread (402 `no_credits`) |
 | GET | `/api/v1/me/logbook/scans/{id}` | A read spread with its entries |
+| GET | `/api/v1/me/logbook/currency` | Pilot Plus (SUB-15): passengers by day and night (FCL.060: landings in the last 90 days, `current`, `until`), SEP revalidation by experience (FCL.740.A: `sepExpiry`, the window `from`–`to`, `requirements` with `done`/`need`/`met`) and LAPL recency (FCL.140.A), from certified entries; `drafts` counts what isn't counted yet. 402 `plan_required` on Free |
+| GET | `/api/v1/me/logbook/stats` | Pilot Plus: minutes and landings per month (last 12 UTC months), minutes per aircraft type and per pilot function, confirmed rentals per currency (`count`, `minutes`, `due`). 402 `plan_required` on Free |
 
 **Your aircraft (owners, LST-1…8).** Quantities in SI units (`fuelBurnLph`, `usefulLoadKg`,
 `mtomKg`); every change answers with the whole aircraft as it is now, including `gaps` (what still
@@ -155,7 +160,7 @@ stops the listing: `home_base`, `price`, `photo`, `arc`, `insurance`). Refusals 
 |--------|------|------|
 | GET / POST | `/api/v1/me/aircraft` | Your aircraft / a new draft (`registration`, `manufacturer`, `model`, `typeDesignator`, `seats`, `fuelType` + any other field); 403 `owner_role_needed` |
 | GET / PATCH / DELETE | `/api/v1/me/aircraft/{id}` | Everything about it / change any fields (`homeAirport`, `pricePerHour`, `nightVfr`…; 400 `registration_taken`, `unknown_airfield`) / delete (409 `has_bookings`) |
-| PUT | `…/{id}/status` | `{ status: listed \| paused \| unlisted }`; 409 `not_ready` with `details.missing`, `blocked` (an admin unlisted it), `not_allowed` |
+| PUT | `…/{id}/status` | `{ status: listed \| paused \| unlisted }`; 409 `not_ready` with `details.missing`, `plan_limit` with `details.limit` (the plan's listed aircraft), `blocked` (an admin unlisted it), `not_allowed` |
 | PUT | `…/{id}/requirements` | Who may rent it: `licenceTypes`, `requiredRatings`, minimum hours/age/rating, `allowUnrated`, `checkoutFirstRental`, `instantBooking` |
 | POST | `…/{id}/photos` | Add a photo (multipart `file`, JPEG/PNG/WebP ≤ 4 MB, at most 20) |
 | PUT | `…/{id}/photos/order` | `{ order: [photoId…] }`, cover first |
@@ -178,8 +183,14 @@ Running the aircraft (BKG-7, BKG-8, BKG-15, SRC-5):
 | GET / POST | `…/{id}/meter-readings` | Hobbs/tach you recorded / `{ readAt, hobbs, tach, note }` (the next check-out is compared with it) |
 | DELETE | `…/{id}/meter-readings/{readingId}` | Remove one recorded by mistake |
 
+**My bookings in my calendar (Pilot Plus, SUB-15).** Under **Bookings** the user creates a
+private link, `/api/v1/calendars/bookings/{token}.ics`, with their bookings as pilot and as owner
+(a month back to a year ahead; requests are `TENTATIVE`), in their language. No sign-in: the token
+is the secret; resetting it stops the old link. 404 for an unknown or reset link, 402
+`plan_required` once the plan no longer includes it.
+
 Still website-only: calendar sync settings (connections, webhooks), usage exports, account
-settings and admin tools.
+settings, the bookings calendar link settings and admin tools.
 
 ## Calendar sync for other booking systems (SYN-1…6, SYN-8)
 

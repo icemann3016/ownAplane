@@ -188,6 +188,8 @@ const MESSAGES: Record<string, string> = {
   not_allowed: "The aircraft's status doesn't allow this.",
   not_ready: "Not ready to be listed.",
   blocked: "An admin unlisted this aircraft; ask them to allow it again.",
+  plan_limit:
+    "The plan's limit of listed aircraft is reached (details.limit): unlist another one or upgrade on the website.",
   registration_taken: "This registration is already listed by someone else.",
   has_bookings: "Cancel or finish its open bookings first.",
   add_renewal: "Add the renewal as a new document instead: the aircraft would lose its listing.",
@@ -203,6 +205,7 @@ export function aircraftError(fail: Fail): ApiError {
   const details = {
     reason: fail.error,
     ...(fail.missing ? { missing: fail.missing } : {}),
+    ...(fail.limit !== undefined ? { limit: fail.limit } : {}),
   };
   if (fail.error === "not_found") return new ApiError("not_found", "No such aircraft or item.");
   if (fail.field) {

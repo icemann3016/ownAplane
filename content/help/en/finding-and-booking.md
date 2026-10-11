@@ -20,8 +20,9 @@ A search at night only shows aircraft approved for night VFR.
   that's no longer listed says so there.
 - **Save this search** on the search results keeps the airfield, radius, dates and filters under
   a name. With **alerts** on, once a day you get a notification (and an email) when aircraft
-  that weren't there before match it. Searches whose dates are over don't alert. You can save up
-  to 20 searches, switch alerts off or remove them under **Saved**.
+  that weren't there before match it. Searches whose dates are over don't alert. You can save 2
+  searches on the Free plan and 20 with Pilot Plus or an owner plan, and switch alerts off or
+  remove them under **Saved**.
 
 ## The aircraft page
 

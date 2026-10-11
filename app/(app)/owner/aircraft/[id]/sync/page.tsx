@@ -5,6 +5,8 @@ import { getTranslations } from "next-intl/server";
 import { SectionHeading } from "@/components/aircraft/section-heading";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireOwnAircraft } from "@/lib/aircraft/owner";
+import { getMyPlan } from "@/lib/billing/plan";
+import { PLANS } from "@/lib/billing/plans";
 import { listConnections } from "@/lib/calendar-sync/owner";
 import { AddConnection } from "./add-connection";
 import { ConnectionCard } from "./connection-card";
@@ -45,7 +47,10 @@ export default async function SyncPage({ params }: { params: Promise<{ id: strin
             <CardTitle as="h2">{t("add.title")}</CardTitle>
           </CardHeader>
           <CardContent>
-            <AddConnection aircraftId={id} />
+            <AddConnection
+              aircraftId={id}
+              exportAllowed={PLANS[(await getMyPlan(user.id)).plan].calendarLink}
+            />
           </CardContent>
         </Card>
       )}

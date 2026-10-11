@@ -5,6 +5,8 @@ import { SectionHeading } from "@/components/aircraft/section-heading";
 import { Card, CardContent } from "@/components/ui/card";
 import { requireOwnAircraft } from "@/lib/aircraft/owner";
 import { getRequirements, requirementsFormValues } from "@/lib/aircraft/requirements";
+import { getMyPlan } from "@/lib/billing/plan";
+import { PLANS } from "@/lib/billing/plans";
 import { RequirementsForm } from "./requirements-form";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -16,7 +18,10 @@ export default async function RequirementsPage({ params }: { params: Promise<{ i
   const { id } = await params;
   const { user, aircraft } = await requireOwnAircraft(id, "requirements");
   const t = await getTranslations("aircraft");
-  const requirements = await getRequirements(user.id, id);
+  const [requirements, { plan }] = await Promise.all([
+    getRequirements(user.id, id),
+    getMyPlan(user.id),
+  ]);
 
   return (
     <div className="grid gap-6">
@@ -27,6 +32,7 @@ export default async function RequirementsPage({ params }: { params: Promise<{ i
             aircraftId={id}
             values={requirementsFormValues(requirements)}
             isDraft={aircraft.status === "draft"}
+            instantIncluded={PLANS[plan].instantBooking}
           />
         </CardContent>
       </Card>

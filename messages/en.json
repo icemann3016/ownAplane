@@ -22,7 +22,8 @@
       "help": "Help",
       "messages": "Messages",
       "saved": "Saved",
-      "logbook": "Logbook"
+      "logbook": "Logbook",
+      "billing": "Plan & billing"
     },
     "footer": {
       "tagline": "Made for general aviation in Europe.",
@@ -30,7 +31,8 @@
       "privacy": "Privacy",
       "language": "Language",
       "help": "Help",
-      "cookies": "Cookies"
+      "cookies": "Cookies",
+      "pricing": "Pricing"
     },
     "notFound": {
       "title": "Off the charts",
@@ -394,7 +396,8 @@
     "tabs": {
       "label": "Account sections",
       "general": "General",
-      "credentials": "Pilot credentials"
+      "credentials": "Pilot credentials",
+      "billing": "Plan & billing"
     },
     "contact": {
       "title": "Contact phone",
@@ -815,7 +818,8 @@
         "consent_required": "Agree to sending the scan first.",
         "not_this_document": "This doesn't look like the right document. Check the upload.",
         "unreadable": "The scan couldn't be read. A sharper, straight photo usually helps; or fill in the form yourself.",
-        "failed": "Reading the scan didn't work this time. Please try again or fill in the form yourself."
+        "failed": "Reading the scan didn't work this time. Please try again or fill in the form yourself.",
+        "no_credits": "You've used all your AI reads. Get more credits under Account → Plan & billing, or fill in the form yourself."
       },
       "filledPartly": "Filled in what the scan shows; the empty fields weren't on it. Check every field before you save.",
       "medicalNoDates": "The scan doesn't show the expiry dates (item IX, usually on the next page of the certificate), so the class and the date couldn't be read. Upload a scan with that page too (both pages in one PDF), or choose the class and enter the date yourself."
@@ -905,7 +909,8 @@
       "users": "Members",
       "aircraft": "Aircraft",
       "audit": "Audit log",
-      "api": "API"
+      "api": "API",
+      "billing": "Billing"
     },
     "dashboard": {
       "title": "Admin dashboard",
@@ -1163,7 +1168,10 @@
           "suspend_user": "Suspended",
           "unsuspend_user": "Suspension lifted",
           "grant_admin": "Made admin",
-          "revoke_admin": "Admin rights removed"
+          "revoke_admin": "Admin rights removed",
+          "grant_plan": "Plan given",
+          "revoke_plan": "Plan taken back",
+          "give_credits": "AI credits given"
         }
       }
     },
@@ -1216,6 +1224,72 @@
           "medical": "Medical",
           "logbook": "Logbook"
         }
+      }
+    },
+    "billing": {
+      "title": "Billing",
+      "description": "Plans, the beta and founding owners.",
+      "descriptionTest": "Plans, the beta and founding owners. Payments are in test mode: no money moves.",
+      "beta": {
+        "title": "Beta",
+        "text": "While the beta is on, every member has the Owner plan's features for free (not its monthly AI reads). Ending it gives members 7 days' notice; founding owners' 12 free months start then.",
+        "on": "The beta is on.",
+        "off": "The beta is over.",
+        "ending": "The beta ends on {date}.",
+        "end": "End the beta in 7 days",
+        "turnOn": "Turn the beta on"
+      },
+      "founding": {
+        "title": "Founding owners",
+        "text": "Owners who list their first aircraft during the beta get the Owner plan for 12 months after it. Set a day to keep this offer open after the beta.",
+        "cutoff": "Founding offer open until",
+        "cutoffHint": "Leave empty: only during the beta.",
+        "save": "Save"
+      },
+      "subscriptions": "Subscriptions",
+      "payments": "Payments in the last 30 days",
+      "none": "None yet.",
+      "reads": "{count, plural, one {# AI read} other {# AI reads}} this month",
+      "paid": {
+        "plan": "{count, plural, one {# plan payment} other {# plan payments}}",
+        "credits": "{count, plural, one {# credit pack} other {# credit packs}}"
+      },
+      "grants": {
+        "admin": "{count, plural, one {# plan given by admins} other {# plans given by admins}}",
+        "founding": "{count, plural, one {# founding owner} other {# founding owners}}"
+      },
+      "status": {
+        "active": "active",
+        "past_due": "payment failed",
+        "ended": "ended"
+      },
+      "memberTitle": "Plan and AI credits",
+      "memberText": "Give a plan (e.g. to partners or testers) or AI credits. Logged in the audit log.",
+      "subscription": "Subscription: {plan}, {interval}, {status} (period ends {date})",
+      "credits": "AI reads available: {available} (credits: {balance})",
+      "grant": {
+        "admin": "{plan}, given by an admin",
+        "founding": "{plan}, founding owner"
+      },
+      "revoke": "Take back",
+      "plan": "Plan",
+      "endsOn": "Until",
+      "endsOnHint": "Leave empty for no end date.",
+      "note": "Note (optional)",
+      "grantButton": "Give plan",
+      "creditsAmount": "AI credits",
+      "creditsButton": "Give credits",
+      "done": {
+        "grant": "Plan given.",
+        "revoke": "Plan taken back.",
+        "credits": "Credits given.",
+        "beta_on": "The beta is on.",
+        "beta_end": "The beta ends in 7 days.",
+        "cutoff": "Saved."
+      },
+      "errors": {
+        "notFound": "Not found. It may have changed; reload the page.",
+        "invalid": "Check the values and try again."
       }
     }
   },
@@ -1405,7 +1479,8 @@
         "paused": "Paused. Pilots can't see it for now.",
         "unlisted": "Unlisted."
       },
-      "blocked": "This aircraft can't be listed at the moment: our team unlisted it. Please contact us."
+      "blocked": "This aircraft can't be listed at the moment: our team unlisted it. Please contact us.",
+      "planLimit": "Your plan lists up to {limit, plural, one {# aircraft} other {# aircraft}} at a time. Unlist another one, or upgrade under Account → Plan & billing."
     },
     "gaps": {
       "home_base": "home base",
@@ -1434,7 +1509,8 @@
       "arc": "We unlisted this aircraft because its ARC expired. Upload the new ARC to list it again.",
       "insurance": "We unlisted this aircraft because its insurance expired. Upload the new certificate to list it again.",
       "admin": "Our team unlisted this aircraft because it breaks the rules. Contact us to list it again.",
-      "suspended": "This aircraft was unlisted because your account is suspended."
+      "suspended": "This aircraft was unlisted because your account is suspended.",
+      "plan_limit": "Unlisted because your plan lists fewer aircraft. Upgrade under Account → Plan & billing, or unlist another aircraft, then list this one again."
     },
     "delete": {
       "button": "Delete aircraft",
@@ -1553,7 +1629,8 @@
       "checkoutFirstRental": "Every pilot new to this aircraft needs a checkout flight with an instructor first",
       "checkoutFirstRentalHint": "Once you record a pilot's checkout flight (on their booking), they don't need another one.",
       "instantBooking": "Instant booking for pilots who have flown this aircraft before",
-      "instantBookingHint": "Their requests are accepted at once when they meet every requirement and nothing is left to check (such as a checkout flight). Everyone else sends a request as usual."
+      "instantBookingHint": "Their requests are accepted at once when they meet every requirement and nothing is left to check (such as a checkout flight). Everyone else sends a request as usual.",
+      "instantBookingPlan": "Instant booking works with the Owner or Fleet plan; on Free, requests wait for your answer."
     },
     "requirementsList": {
       "verified": "Licence, class rating and medical verified by ownAplane and valid",
@@ -1671,6 +1748,19 @@
       "title": "Availability",
       "free": "Free {when}",
       "busy": "Not available {when}"
+    },
+    "featured": {
+      "title": "Featured in search",
+      "text": "Show this aircraft first in search results, labelled \"Featured\".",
+      "isOn": "This aircraft is shown first in search results, labelled \"Featured\".",
+      "usage": "Featured spots on your plan: {used} of {limit} used",
+      "planNeeded": "Featured spots come with the Owner (1) and Fleet (3) plans.",
+      "turnOn": "Feature it",
+      "turnOff": "Stop featuring",
+      "on": "Featured: it's shown first in search.",
+      "off": "No longer featured.",
+      "limit": "Your plan has {limit, plural, =0 {no featured spots} one {# featured spot} other {# featured spots}}, all in use. Stop featuring another aircraft first, or upgrade.",
+      "failed": "That didn't work. Please try again."
     }
   },
   "search": {
@@ -1715,7 +1805,8 @@
     "map": {
       "label": "Map of the aircraft found",
       "marker": "{code}: {count, plural, one {# aircraft} other {# aircraft}}"
-    }
+    },
+    "featured": "Featured"
   },
   "booking": {
     "statuses": {
@@ -1884,6 +1975,22 @@
       "noPhone": "No phone number added.",
       "note": "Shared because the booking is accepted. Use it only for this booking.",
       "afterAccept": "Email and phone are shown here once the owner accepts. Until then, use messages."
+    },
+    "feed": {
+      "title": "Your bookings in your calendar",
+      "text": "A private link for Google Calendar, Outlook or Apple Calendar with your bookings as pilot and as owner. It updates by itself.",
+      "planNeeded": "Calendar links come with Pilot Plus and the owner plans.",
+      "link": "Calendar link",
+      "hint": "In Google Calendar: Other calendars → From URL. Keep the link private; reset it if it got out.",
+      "reset": "Reset link",
+      "remove": "Remove link",
+      "create": "Create a calendar link",
+      "events": {
+        "pilot": "✈ {registration} · {route}",
+        "owner": "{registration} rented out · {route}",
+        "requested": "(request)",
+        "name": "My bookings · {site}"
+      }
     }
   },
   "usage": {
@@ -1954,6 +2061,17 @@
       "inFuture": "The time can't be in the future.",
       "notAllowed": "Only the aircraft's owner can record readings.",
       "remove": "Remove the reading of {when}"
+    },
+    "planWindow": "The Free plan shows the last {months} months here and in the export; Owner and Fleet show the full history.",
+    "stats": {
+      "title": "Statistics",
+      "flights": "Rentals flown",
+      "hours": "Hours flown (time basis)",
+      "earnings": "Earned (confirmed amounts due)",
+      "lastYear": "· {amount} in the last 12 months",
+      "busiest": "Busiest months",
+      "note": "From confirmed flight logs. Payments happen outside the app, so these are the amounts due, not money received.",
+      "planNeeded": "Statistics (hours, earnings, busiest months) come with the Owner and Fleet plans."
     }
   },
   "flightLog": {
@@ -2257,7 +2375,12 @@
       "reviews_published": "The reviews for {registration} are now published.",
       "review_replied": "{other} replied to your review of {registration}.",
       "calendar_conflict": "A booking in a connected system overlaps the booking of {registration} from {when}. Cancel one of them.",
-      "saved_search": "New aircraft match your saved search “{search}”."
+      "saved_search": "New aircraft match your saved search “{search}”.",
+      "plan_ending": "Your plan changes within a week and allows fewer listed aircraft than you have. Choose which stay listed, or keep your plan, under Plan & billing.",
+      "plan_unlisted": "Some of your aircraft were unlisted because your plan lists fewer. Nothing was deleted: upgrade under Plan & billing to list them again.",
+      "payment_failed": "A payment for your plan didn't go through. Pay within 7 days under Plan & billing to keep your plan.",
+      "currency_ending": "Your passenger recency ends within a week. Plan a few take-offs and landings.",
+      "revalidation_due": "Your SEP rating expires within 60 days and the experience for revalidation isn't complete yet."
     }
   },
   "checkoutFlight": {
@@ -2561,7 +2684,8 @@
       "urlHint": "The private link from the other system. webcal:// links work too.",
       "linkIs": "Link:",
       "submit": "Connect",
-      "connecting": "Connecting…"
+      "connecting": "Connecting…",
+      "exportPlan": "With the Owner or Fleet plan."
     },
     "kinds": {
       "push": {
@@ -2627,7 +2751,8 @@
     "errors": {
       "too_many": "An aircraft can have at most 10 connected systems.",
       "not_allowed": "You can't change this aircraft.",
-      "not_found": "We couldn't find this connection."
+      "not_found": "We couldn't find this connection.",
+      "planNeeded": "A calendar link on its own comes with the Owner or Fleet plan. Connecting another booking system works on every plan."
     },
     "feedErrors": {
       "url_invalid": "the link isn't a valid https address",
@@ -2784,7 +2909,8 @@
       "lastAlert": "Alerts on · last new match {when}",
       "turnOn": "Turn alerts on",
       "turnOff": "Turn alerts off",
-      "remove": "Remove the saved search {name}"
+      "remove": "Remove the saved search {name}",
+      "tooManyPlan": "Your plan saves up to {limit} searches. Remove one, or get Pilot Plus for up to 20."
     }
   },
   "logbook": {
@@ -2924,7 +3050,8 @@
       "previous": "Total from previous pages",
       "toDate": "Total time",
       "button": "Print",
-      "note": "Struck-through lines were corrected or removed; their replacement is in the logbook. Each line was certified by the pilot in ownAplane."
+      "note": "Struck-through lines were corrected or removed; their replacement is in the logbook. Each line was certified by the pilot in ownAplane.",
+      "planNeeded": "Print your logbook in the EASA layout or save it as a PDF. The CSV export stays free for everyone."
     },
     "printLink": "Print (EASA layout)",
     "scan": {
@@ -2957,8 +3084,273 @@
         "not_this_document": "This doesn't look like a logbook page. Check the photos.",
         "nothing_read": "No lines with a readable date were found. A sharper, straight photo usually helps.",
         "unreadable": "The pages couldn't be read. A sharper, straight photo in good light usually helps.",
-        "failed": "Reading didn't work this time. Please try again."
+        "failed": "Reading didn't work this time. Please try again.",
+        "no_credits": "You've used all your AI reads. Get more credits under Account → Plan & billing."
       }
+    },
+    "currency": {
+      "link": "Currency",
+      "title": "Currency",
+      "description": "What EASA asks of you to carry passengers and to keep your SEP rating, worked out from your certified logbook entries.",
+      "drafts": "{count, plural, one {# draft isn't counted until you certify it.} other {# drafts aren't counted until you certify them.}}",
+      "currentUntil": "current until {date}",
+      "notCurrent": "not current ({count} of {need} landings in the last 90 days)",
+      "passengers": {
+        "title": "Carrying passengers (FCL.060)",
+        "text": "3 take-offs and landings in the last 90 days in single-engine aeroplanes; for passengers at night, 1 of them at night.",
+        "day": "By day:",
+        "night": "At night:",
+        "ir": "With an instrument rating the night landing isn't needed."
+      },
+      "sep": {
+        "title": "SEP rating revalidation by experience (FCL.740.A)",
+        "window": "Counts flights from {from} to {to} (the 12 months before the rating expires).",
+        "noExpiry": "Counts the last 12 months. Add your SEP (land) rating with its expiry date under Pilot credentials to count the right 12 months.",
+        "expired": "The rating expired on {date}: renewing it needs training and a proficiency check.",
+        "met": "The experience is complete. The rating still has to be revalidated in your licence before it expires.",
+        "notMet": "Not complete yet. You can also revalidate with a proficiency check."
+      },
+      "lapl": {
+        "title": "LAPL(A) recency (FCL.140.A)",
+        "window": "Counts flights from {from} to {to} (the last 24 months).",
+        "met": "You meet the LAPL recency requirements.",
+        "notMet": "Not met: complete the missing items (or a proficiency check) before flying as pilot in command."
+      },
+      "disclaimer": "A guide worked out from your logbook, not a legal check: you remain responsible for meeting the requirements. Single-engine flights count for the SEP class; simulator sessions don't count here.",
+      "req": {
+        "hours": "Flight time",
+        "pic": "As pilot in command",
+        "landings": "Take-offs and landings",
+        "refresher": "Refresher flight of at least 1 hour with an instructor",
+        "count": "{done} of {need}",
+        "time": "{done} of {need}",
+        "done": "Done",
+        "notYet": "Not yet"
+      }
+    },
+    "stats": {
+      "link": "Statistics",
+      "title": "Flying statistics",
+      "description": "Your flying from certified logbook entries, and your rentals on ownAplane.",
+      "months": "The last 12 months",
+      "monthValue": "{time} · {landings} ldg",
+      "types": "By aircraft type",
+      "none": "No certified flights yet.",
+      "functions": "By pilot function",
+      "function": {
+        "pic": "PIC",
+        "dual": "Dual",
+        "instructor": "Instructor",
+        "copilot": "Co-pilot"
+      },
+      "rentals": "Rentals on ownAplane",
+      "rentalsValue": "{count, plural, one {# rental} other {# rentals}} · {time} flown · {due} due",
+      "noRentals": "No confirmed rentals yet.",
+      "rentalsNote": "From confirmed flight logs; payments happen outside the app."
+    }
+  },
+  "billing": {
+    "plans": {
+      "free": "Free",
+      "owner": "Owner",
+      "fleet": "Fleet",
+      "tagline": {
+        "free": "Rent, fly and keep your logbook.",
+        "owner": "For owners with an aircraft or two.",
+        "fleet": "For clubs, flight schools and operators.",
+        "pilot": "For pilots who fly often."
+      },
+      "pilot": "Pilot Plus"
+    },
+    "interval": {
+      "month": "Monthly",
+      "year": "Yearly",
+      "label": "Billing period",
+      "yearSaves": "Yearly: 2 months free"
+    },
+    "price": {
+      "perMonth": "{price} / month",
+      "perYear": "{price} / year",
+      "vat": "incl. VAT",
+      "orYearly": "or {price}"
+    },
+    "pricing": {
+      "title": "Pricing",
+      "description": "Plans for pilots, aircraft owners, clubs and schools.",
+      "lead": "Renting, flying and keeping your logbook are free for every pilot. Pilot Plus adds tools for pilots who fly often, and owners choose the plan that fits their fleet. Safety features are the same on every plan.",
+      "beta": "During the beta everyone has the Owner plan, with Pilot Plus, for free, and owners who list an aircraft now keep it free for 12 months after the beta.",
+      "testMode": "Payments are in test mode: you can try every plan and nothing is charged.",
+      "choose": "Choose {plan}",
+      "start": "Start for free",
+      "current": "Your plan",
+      "creditsTitle": "AI reading credits",
+      "creditsText": "Fill in licences, medicals and paper logbook pages from a scan. One credit reads one document or one logbook spread. Every account gets {welcome} free credits to try it; bought credits never expire. Pilot Plus, Owner and Fleet include reads every month.",
+      "pack": "{credits} credits",
+      "notesTitle": "Good to know",
+      "notes": {
+        "pilots": "Searching, booking, the flight log and keeping your logbook are free for every pilot.",
+        "safety": "Safety and trust are never paid: credential checks, eligibility, defects and grounding, reviews and reports work the same on every plan.",
+        "vat": "Prices include VAT.",
+        "cancel": "Cancel any time: your plan runs to the end of the period you paid for.",
+        "data": "Changing to a smaller plan never deletes anything: you get a week's notice, then aircraft beyond the plan's limit are unlisted until you upgrade again."
+      },
+      "compareTitle": "Compare the plans"
+    },
+    "account": {
+      "title": "Plan & billing",
+      "testMode": "Test mode: subscribing, changing and cancelling work as they will, but nothing is charged. Payments are marked as test payments.",
+      "current": "Your plan",
+      "source": {
+        "free": "Free plan",
+        "subscription": "Your subscription",
+        "admin": "Given by our team",
+        "founding": "Founding owner: free for 12 months after the beta",
+        "beta": "Free during the beta"
+      },
+      "until": "until {date}",
+      "renews": "Renews on {date} for {price}.",
+      "endsOn": "Ends on {date}; after that you're on Free.",
+      "scheduled": "Changes to {plan} ({interval}) on {date}.",
+      "resume": "Keep my current plan",
+      "pastDue": "The last payment didn't go through. Your plan continues until {date}; pay now to keep it.",
+      "payNow": "Pay now",
+      "usage": "Listed aircraft: {used} of {limit}",
+      "featuredUsage": "Featured aircraft: {used} of {limit}",
+      "overLimit": "On {date} your plan becomes {plan}, which lists up to {limit} aircraft. Unlist the ones you don't need before then; otherwise the most recently listed ones are unlisted. Nothing is deleted.",
+      "change": "Change plan",
+      "subscribe": "Choose {plan}",
+      "payFirst": "Pay the open payment first.",
+      "freeFrom": "From {date}",
+      "cancel": "Cancel at the end of the period",
+      "downgrade": "Switch to {plan} on {date}",
+      "switchYearly": "Switch to yearly now · {price}",
+      "upgrade": "Upgrade to {plan} now · {price}",
+      "creditsTitle": "AI reading credits",
+      "creditsText": "Fill in licences, medicals and logbook pages from a scan. One credit reads one document or one logbook spread; a read that fails is given back.",
+      "creditsAvailable": "{count, plural, =0 {No reads left} one {# read left} other {# reads left}}",
+      "allowance": "Included this month: {left} of {perMonth} left",
+      "allowanceBeta": "Monthly reads come with a paid plan (not with the beta).",
+      "allowanceNone": "Pilot Plus, Owner and Fleet include reads every month.",
+      "creditsBalance": "{count, plural, one {# credit} other {# credits}} (never expire)",
+      "buy": "Buy {credits} credits · {price}",
+      "historyTitle": "Payments",
+      "historyEmpty": "No payments yet.",
+      "history": {
+        "subscribe": "{plan} plan, {interval}",
+        "upgrade": "Change to {plan}, {interval} (prorated)",
+        "renewal": "Renewal: {plan}, {interval}",
+        "retry": "Payment: {plan}, {interval}",
+        "credits": "{credits} AI reading credits"
+      },
+      "status": {
+        "paid": "Paid",
+        "failed": "Failed",
+        "refunded": "Refunded"
+      },
+      "testPayment": "Test",
+      "testTitle": "Try it out",
+      "testText": "Test mode only: see what happens at a renewal or when a payment fails, without waiting.",
+      "failNextOn": "Make the next payment fail",
+      "failNextOff": "Let payments go through again",
+      "failNextSet": "The next payment will fail.",
+      "renewNow": "End the billing period now",
+      "done": {
+        "checkout_paid": "Payment done. Thank you!",
+        "checkout_failed": "The payment didn't go through. Nothing changed; try again when you're ready.",
+        "checkout_canceled": "Checkout cancelled. Nothing changed.",
+        "upgraded": "Your new plan starts now.",
+        "scheduled": "Done: the change starts with your next billing period.",
+        "canceled": "Cancelled: your plan runs to the end of the period you paid for.",
+        "kept": "You keep your current plan.",
+        "renewed": "The billing period ended and the plan renewed.",
+        "ended": "The billing period ended: you're on Free now.",
+        "payment_failed": "The payment didn't go through.",
+        "past_due": "Pay the open payment first.",
+        "no_subscription": "You don't have a subscription to change.",
+        "fail_next_on": "The next payment will fail.",
+        "fail_next_off": "Payments go through again.",
+        "already_subscribed": "You already have a subscription: change it below instead.",
+        "not_available": "Payments aren't available right now.",
+        "unknown_item": "That isn't something you can buy.",
+        "failed": "Something went wrong. Please try again."
+      },
+      "compare": "Compare all features"
+    },
+    "checkout": {
+      "title": "Checkout",
+      "testMode": "Test payment: no card is needed and nothing is charged. Choose what the payment does.",
+      "plan": "{plan} plan, {interval}",
+      "credits": "{credits} AI reading credits",
+      "total": "Total",
+      "renews": "Renews automatically until you cancel.",
+      "pay": "Pay (test)",
+      "fail": "Make the payment fail",
+      "cancel": "Cancel",
+      "closed": "This checkout is closed.",
+      "back": "Back to Plan & billing"
+    },
+    "note": {
+      "left": "{count, plural, =0 {No AI reads left} one {# AI read left} other {# AI reads left}}",
+      "more": "Get more credits"
+    },
+    "seePlans": "See the plans",
+    "highlights": {
+      "free": {
+        "h1": "Search, book and fly",
+        "h2": "Your e-logbook and credential checks",
+        "h3": "List 1 aircraft",
+        "h4": "5 AI reads to try"
+      },
+      "pilot": {
+        "h1": "Currency and revalidation tracker",
+        "h2": "Logbook print and flying statistics",
+        "h3": "20 saved searches, your bookings in your calendar",
+        "h4": "20 AI reads a month"
+      },
+      "owner": {
+        "h1": "Everything in Pilot Plus",
+        "h2": "Up to 2 listed aircraft",
+        "h3": "Instant booking, statistics, 1 featured spot",
+        "h4": "Full usage history and calendar links"
+      },
+      "fleet": {
+        "h1": "Everything in Owner",
+        "h2": "Up to 10 listed aircraft",
+        "h3": "3 featured spots in search",
+        "h4": "50 AI reads a month"
+      }
+    },
+    "table": {
+      "caption": "What each plan includes",
+      "feature": "Feature",
+      "yes": "Included",
+      "no": "Not included",
+      "full": "Full",
+      "months": "{months} months",
+      "groups": {
+        "pilots": "For pilots",
+        "owners": "For owners",
+        "ai": "AI reading"
+      },
+      "rows": {
+        "basics": "Search, booking, flight log, e-logbook, credential checks, reviews and messages",
+        "currencyTracker": "Currency tracker: passenger and night recency, class rating revalidation",
+        "logbookExtras": "Logbook print (EASA layout) and flying statistics",
+        "savedSearches": "Saved searches with alerts",
+        "bookingsCalendar": "Your bookings in Google Calendar or Outlook",
+        "aircraft": "Listed aircraft",
+        "instantBooking": "Instant booking",
+        "usage": "Usage history and CSV exports",
+        "statistics": "Owner statistics",
+        "featured": "Featured spots in search",
+        "calendarLink": "Aircraft calendar link for Google or Outlook",
+        "aiCredits": "AI reads included each month"
+      }
+    },
+    "plus": {
+      "included": "This comes with Pilot Plus and with the Owner and Fleet plans.",
+      "get": "Get Pilot Plus",
+      "compare": "Compare the plans"
     }
   }
 }

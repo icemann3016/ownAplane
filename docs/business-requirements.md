@@ -37,7 +37,7 @@ _Numbers are placeholders to refine together._
 | **Phase 3 — Airports** | Airport profiles, PPR requests, parking/hangar requests, ground services, customs requests | Pilots from Phase 1 are the customers for airports |
 | **Phase 4 — Payments** | In-app payments, deposits, payouts, platform commission | Deliberately postponed. See §8 |
 | **API & calendar sync** (next) | Versioned REST API for a mobile app and partner systems; calendar sync with other booking systems so an aircraft is never double-booked | A mobile app is planned, and aircraft are often also booked elsewhere (clubs, Google Calendar). See §5.12 and §5.13 |
-| **Subscriptions** (not scheduled) | Free / Owner / Fleet plans for owners, billing through a payment provider | Planned for the future, not built yet. Can start any time after launch, before Phase 4. See §5.11 and §8 |
+| **Subscriptions** (built in test mode, M15) | Free / Owner / Fleet plans for owners, paid AI reading credits, billing through a payment provider | Everything works in test mode (no money moves); a real provider (probably Paddle) is connected before going live. See §5.11 and §8 |
 
 **MVP payments decision:** In Phase 1 the app shows prices and confirms bookings, but **no money moves through the platform**. Pilots pay owners directly (bank transfer, cash, club account). See §8.
 
@@ -192,13 +192,13 @@ Owners need to know who's flying their aircraft. Verification is the trust found
 | APT-6 | S | The operator sees a daily list of expected arrivals, departures and parked aircraft. |
 | APT-7 | C | The pilot can attach the PPR to an aircraft booking so the whole trip is in one place. |
 
-### 5.11 Subscriptions (SUB) — future, not scheduled
+### 5.11 Subscriptions (SUB) — built in test mode (2026-10-11)
 
-Owners pay for growth and convenience; **pilots are always free**. Plans and prices are in [§8](#8-business-model--payments).
+Owners pay for growth and convenience. **Pilots can rent and fly for free**: everything a rental needs (verification, search, bookings, flight log, logbook, reviews) is on every plan; **Pilot Plus** (SUB-15) adds conveniences for pilots who fly often, and AI reading is paid with credits (SUB-13). Plans and prices are in [§8](#8-business-model--payments). Built as a proof of concept: every flow works with a **test payment provider** that never moves money; SUB-11 (co-managers, organisation page) is not built yet.
 
 | ID | Pri | Requirement |
 |----|-----|-------------|
-| SUB-1 | M | Every account has a **plan**: Free (default), Owner or Fleet. Limits and features per plan are defined in one place in the code; prices live with the payment provider. |
+| SUB-1 | M | Every account has a **plan**: Free (default), Pilot Plus, Owner or Fleet (each includes the ones before it). Limits and features per plan are defined in one place in the code; prices live with the payment provider. |
 | SUB-2 | M | **Safety and trust are never paid features:** pilot verification, eligibility checks, defects and grounding, flight log, reviews, messages and reports work the same on every plan. |
 | SUB-3 | M | Plan limits are **enforced in the database** (e.g. listing an aircraft beyond the plan's limit is refused), like the listing checks for LST-6. |
 | SUB-4 | M | As an owner I see my plan, what I use ("2 of 3 aircraft") and when it renews under **Account → Plan & billing**, and can upgrade, change payment details or cancel there (the provider's hosted pages; the app never handles card data). |
@@ -210,6 +210,9 @@ Owners pay for growth and convenience; **pilots are always free**. Plans and pri
 | SUB-10 | S | Paid features: instant booking (BKG-4), full usage history and CSV exports, owner statistics (hours, earnings, busiest months), "Featured" (clearly labelled) spots in search, calendar link for Google/Outlook. |
 | SUB-11 | C | Fleet features: co-managers who answer requests and manage the calendar; organisation page (club name, logo, its aircraft). |
 | SUB-12 | C | Technician and airport plans in Phases 2–3. |
+| SUB-13 | M | **AI reading is paid with credits** (VER-9, LOG-6): one credit reads one document or logbook spread; every account gets 5 free credits; packs of 50 (€5) and 200 (€15) never expire; Pilot Plus and Owner include 20 reads a month and Fleet 50 (not during the beta), used first; a read that fails gives its credit back. Apps get 402 `no_credits`. |
+| SUB-14 | M | **Test mode** until a provider is connected: checkouts, upgrades (prorated), downgrades at renewal, cancel/resume, renewals and failed payments (7-day grace) all work and are logged as test payments; nothing is charged. |
+| SUB-15 | S | **Pilot Plus** (€4/month or €40/year; included in Owner and Fleet): a **currency tracker** from the certified logbook (passengers in the last 90 days by day and by night, FCL.060; SEP class rating revalidation by experience, FCL.740.A; LAPL recency, FCL.140.A) with reminders before currency or the rating runs out; the **EASA print** of the logbook and **flying statistics** (hours and landings per month, per type and per function, rentals on ownAplane); **20 saved searches** with alerts (Free: 2); **my bookings in my calendar** (a private iCal link of the user's bookings as pilot and owner); 20 AI reads a month. The logbook itself, its CSV export and the passenger-recency confirmation at check-out stay free; the tracker is a guide, not a legal check. |
 
 ### 5.12 API for apps and partners (API) — next
 
@@ -293,25 +296,32 @@ as the pilot's electronic logbook. Decided 2026-10-11 (Zlati).
 - Owner subscription (e.g. monthly per listed aircraft) or featured listings.
 - Technician and airport subscriptions in Phases 2–3.
 
-**Proposed subscription plans (2026-10-02, not built yet; requirements in §5.11):**
+**Subscription plans (decided 2026-10-11, built in test mode; requirements in §5.11):**
 
-| | **Free** | **Owner** | **Fleet** (clubs, schools, operators) |
-|---|---|---|---|
-| Price (suggested) | €0 | €15/month or €150/year | €49/month or €490/year |
-| Listed aircraft | 1 | up to 3 | up to 15 |
-| Booking requests, calendar, flight log, defects, reviews, messages | ✓ | ✓ | ✓ |
-| Instant booking | – | ✓ | ✓ |
-| Usage history and CSV exports | last 3 months | full | full |
-| Owner statistics (hours flown, earnings, busiest months) | – | ✓ | ✓ |
-| "Featured" spot in search (labelled) | – | 1 aircraft | 3 aircraft |
-| Calendar link for Google/Outlook | – | ✓ | ✓ |
-| Co-managers | – | – | ✓ |
-| Organisation page | – | – | ✓ |
+| | **Free** | **Pilot Plus** | **Owner** | **Fleet** (clubs, schools, operators) |
+|---|---|---|---|---|
+| Price (incl. VAT) | €0 | €4/month or €40/year | €9/month or €90/year | €39/month or €390/year |
+| Renting: verification, search, bookings, flight log, logbook + CSV, reviews, messages | ✓ | ✓ | ✓ | ✓ |
+| Currency tracker with reminders | – | ✓ | ✓ | ✓ |
+| EASA logbook print and flying statistics | – | ✓ | ✓ | ✓ |
+| Saved searches with alerts | 2 | 20 | 20 | 20 |
+| My bookings in my calendar (private iCal link) | – | ✓ | ✓ | ✓ |
+| Listed aircraft | 1 | 1 | up to 2 | up to 10 |
+| Booking requests, calendar, flight log, defects for owners | ✓ | ✓ | ✓ | ✓ |
+| Instant booking | – | – | ✓ | ✓ |
+| Usage history and CSV exports | last 3 months | last 3 months | full | full |
+| Owner statistics (hours flown, earnings, busiest months) | – | – | ✓ | ✓ |
+| "Featured" spot in search (labelled) | – | – | 1 aircraft | 3 aircraft |
+| Calendar link for Google/Outlook (export-only connection) | – | – | ✓ | ✓ |
+| AI reads included per month | – | 20 | 20 | 50 |
+| Co-managers, organisation page | – | – | – | ✓ (not built yet) |
 
-- **Pilots never pay.** They bring the bookings; one extra rental hour (≈ €150–200 for a C172) pays for the Owner plan.
-- **Launch free:** everything is free during the beta; founding owners get the Owner plan free for 12 months (SUB-9). Charging starts once there is real use.
-- **Payment provider (to decide):** a merchant of record (**Paddle** or Lemon Squeezy) handles EU VAT for consumers in every country (≈ 5% + €0.50 per payment); **Stripe Billing** is cheaper (≈ 1.5–2.5%) but we register for VAT OSS and file returns ourselves. Recommendation: Paddle for subscriptions; Stripe Connect stays the plan for Phase 4 payouts. Called with plain HTTP (no SDK) to keep the app portable.
-- **Data:** a `subscriptions` table (user, plan, status, current period end, provider and its customer/subscription ids, granted-by-admin flag and end date) with RLS: users read only their own row; only the webhook and admins write.
+**AI reading credits (SUB-13):** 5 free per account; packs of 50 for €5 and 200 for €15, never expiring. A read costs us about €0.02–0.10, so packs keep a margin after provider fees.
+
+- **Pilots never pay to rent.** They bring the bookings; one extra rental hour (≈ €150–200 for a C172) pays for the Owner plan. Pilot Plus is optional (about the price of a coffee a month) and sells what saves an active pilot time: currency, the logbook print and statistics, more saved searches, bookings in their calendar. AI reading is paid by credits or the plans' monthly reads.
+- **Launch free:** during the beta (an admin switch) everyone has the Owner plan's features (Pilot Plus included); owners who list their first aircraft in the beta (or until a cut-off day) are founding owners with Owner free for 12 months after the beta (SUB-9). Ending the beta gives 7 days' notice.
+- **Payment provider:** test mode now (SUB-14); probably **Paddle** at go-live (merchant of record: EU VAT for consumers in every country, ≈ 5% + €0.50 per payment); Stripe Billing is cheaper but we'd file VAT OSS ourselves. Stripe Connect stays the plan for Phase 4 payouts. Called with plain HTTP (no SDK) to keep the app portable; the provider's webhook events update the same tables as the test provider.
+- **Data:** `subscriptions` (one per user, as the provider last reported it), `plan_grants` (admins, founding owners), `billing_settings` (beta switch, founding cut-off), `billing_checkouts`, `billing_payments`, `billing_events` (each provider event once) and `ai_credit_entries` (a ledger). RLS: users read their own rows; only trusted code writes. The plan a user has is `public.plan_of()`; limits are enforced in the database.
 - **Before charging (not code):** a company to receive the money (Q7), terms with subscription and refund rules incl. the EU 14-day right of withdrawal for consumers, prices shown with VAT.
 - **Build order when we start:** S1 plans, limits and admin-given plans (no payments) → S2 Pricing page and Plan & billing page → S3 checkout, webhook and billing portal → S4 the paid features (SUB-10, SUB-11).
 
@@ -353,7 +363,7 @@ _Not legal advice. Verify each point with an aviation lawyer and the national CA
 |---|----------|-------|
 | Q1 | ~~App name~~ **Decided: ownAplane** (2026-09-26). Logo and brand look still open. | Zlati + friend |
 | Q2 | Launch country: Bulgaria only first, or a wider EU area? | |
-| Q3 | Phase 1 revenue: free, subscription, or featured listings? **Proposed (2026-10-02):** free at launch, later owner subscriptions (Free / Owner / Fleet, §8, SUB). Open: final prices and limits, payment provider (Paddle vs Stripe). | Zlati |
+| Q3 | Phase 1 revenue: free, subscription, or featured listings? **Decided (2026-10-11):** plans Free / Pilot Plus (€4 or €40/year) / Owner (€9 or €90/year, 2 aircraft) / Fleet (€39 or €390/year, 10 aircraft) plus AI reading credits, built in test mode; beta free with founding owners. Open: payment provider at go-live (probably Paddle), company to receive the money (Q7), subscription terms. | Zlati |
 | Q4 | Do we verify flight hours (logbook upload) or keep them self-declared with a label? **Partly answered (2026-10-11):** pilots can keep their EASA logbook in the app and fill their experience from it (LOG-7); hours stay self-declared until we decide how far admins check logbooks. | |
 | Q5 | Which ultralight/microlight categories do we support? These are often nationally regulated, not EASA. | |
 | Q6 | Who handles disputes (damage, no-shows) when no money passes through us? | |

@@ -22,7 +22,8 @@
       "help": "Hilfe",
       "messages": "Nachrichten",
       "saved": "Gemerkt",
-      "logbook": "Flugbuch"
+      "logbook": "Flugbuch",
+      "billing": "Tarif & Zahlungen"
     },
     "footer": {
       "tagline": "Gemacht für die Allgemeine Luftfahrt in Europa.",
@@ -30,7 +31,8 @@
       "privacy": "Datenschutz",
       "language": "Sprache",
       "help": "Hilfe",
-      "cookies": "Cookies"
+      "cookies": "Cookies",
+      "pricing": "Preise"
     },
     "notFound": {
       "title": "Nicht auf der Karte",
@@ -394,7 +396,8 @@
     "tabs": {
       "label": "Kontobereiche",
       "general": "Allgemein",
-      "credentials": "Pilotennachweise"
+      "credentials": "Pilotennachweise",
+      "billing": "Tarif & Zahlungen"
     },
     "contact": {
       "title": "Telefon für Kontakt",
@@ -815,7 +818,8 @@
         "consent_required": "Stimmen Sie zuerst dem Senden des Scans zu.",
         "not_this_document": "Das sieht nicht nach dem richtigen Dokument aus. Prüfen Sie den Upload.",
         "unreadable": "Der Scan konnte nicht gelesen werden. Ein schärferes, gerades Foto hilft meist; oder füllen Sie das Formular selbst aus.",
-        "failed": "Das Lesen hat diesmal nicht geklappt. Bitte versuchen Sie es erneut oder füllen Sie das Formular selbst aus."
+        "failed": "Das Lesen hat diesmal nicht geklappt. Bitte versuchen Sie es erneut oder füllen Sie das Formular selbst aus.",
+        "no_credits": "Sie haben alle KI-Lesungen verbraucht. Holen Sie sich unter Konto → Tarif & Zahlungen weitere Credits oder füllen Sie das Formular selbst aus."
       },
       "filledPartly": "Ausgefüllt, was auf dem Scan zu sehen ist; die leeren Felder standen nicht darauf. Prüfen Sie jedes Feld, bevor Sie speichern.",
       "medicalNoDates": "Auf dem Scan sind die Ablaufdaten nicht zu sehen (Punkt IX, meist auf der nächsten Seite des Zeugnisses), daher konnten Klasse und Datum nicht gelesen werden. Laden Sie einen Scan mit dieser Seite hoch (beide Seiten in einem PDF) oder wählen Sie die Klasse und geben Sie das Datum selbst ein."
@@ -905,7 +909,8 @@
       "users": "Mitglieder",
       "aircraft": "Flugzeuge",
       "audit": "Prüfprotokoll",
-      "api": "API"
+      "api": "API",
+      "billing": "Abrechnung"
     },
     "dashboard": {
       "title": "Admin-Übersicht",
@@ -1163,7 +1168,10 @@
           "suspend_user": "Gesperrt",
           "unsuspend_user": "Sperre aufgehoben",
           "grant_admin": "Zum Admin gemacht",
-          "revoke_admin": "Admin-Rechte entfernt"
+          "revoke_admin": "Admin-Rechte entfernt",
+          "grant_plan": "Tarif vergeben",
+          "revoke_plan": "Tarif entzogen",
+          "give_credits": "KI-Credits vergeben"
         }
       }
     },
@@ -1216,6 +1224,72 @@
           "medical": "Tauglichkeitszeugnis",
           "logbook": "Flugbuch"
         }
+      }
+    },
+    "billing": {
+      "title": "Abrechnung",
+      "description": "Tarife, die Beta und Gründungshalter.",
+      "descriptionTest": "Tarife, die Beta und Gründungshalter. Zahlungen laufen im Testmodus: Es fließt kein Geld.",
+      "beta": {
+        "title": "Beta",
+        "text": "Solange die Beta läuft, hat jedes Mitglied die Funktionen des Tarifs Halter kostenlos (ohne dessen monatliche KI-Lesungen). Das Beenden gibt Mitgliedern 7 Tage Vorlauf; dann beginnen die 12 kostenlosen Monate der Gründungshalter.",
+        "on": "Die Beta läuft.",
+        "off": "Die Beta ist vorbei.",
+        "ending": "Die Beta endet am {date}.",
+        "end": "Beta in 7 Tagen beenden",
+        "turnOn": "Beta einschalten"
+      },
+      "founding": {
+        "title": "Gründungshalter",
+        "text": "Halter, die ihr erstes Flugzeug während der Beta veröffentlichen, erhalten den Tarif Halter für 12 Monate danach. Legen Sie ein Datum fest, um das Angebot auch nach der Beta offen zu halten.",
+        "cutoff": "Gründungsangebot offen bis",
+        "cutoffHint": "Leer lassen: nur während der Beta.",
+        "save": "Speichern"
+      },
+      "subscriptions": "Abonnements",
+      "payments": "Zahlungen der letzten 30 Tage",
+      "none": "Noch keine.",
+      "reads": "{count, plural, one {# KI-Lesung} other {# KI-Lesungen}} diesen Monat",
+      "paid": {
+        "plan": "{count, plural, one {# Tarifzahlung} other {# Tarifzahlungen}}",
+        "credits": "{count, plural, one {# Credit-Paket} other {# Credit-Pakete}}"
+      },
+      "grants": {
+        "admin": "{count, plural, one {# von Admins vergebener Tarif} other {# von Admins vergebene Tarife}}",
+        "founding": "{count, plural, one {# Gründungshalter} other {# Gründungshalter}}"
+      },
+      "status": {
+        "active": "aktiv",
+        "past_due": "Zahlung fehlgeschlagen",
+        "ended": "beendet"
+      },
+      "memberTitle": "Tarif und KI-Credits",
+      "memberText": "Einen Tarif (z. B. für Partner oder Tester) oder KI-Credits vergeben. Wird im Audit-Log protokolliert.",
+      "subscription": "Abonnement: {plan}, {interval}, {status} (Zeitraum endet {date})",
+      "credits": "Verfügbare KI-Lesungen: {available} (Credits: {balance})",
+      "grant": {
+        "admin": "{plan}, von einem Admin vergeben",
+        "founding": "{plan}, Gründungshalter"
+      },
+      "revoke": "Entziehen",
+      "plan": "Tarif",
+      "endsOn": "Bis",
+      "endsOnHint": "Leer lassen für kein Enddatum.",
+      "note": "Notiz (optional)",
+      "grantButton": "Tarif vergeben",
+      "creditsAmount": "KI-Credits",
+      "creditsButton": "Credits vergeben",
+      "done": {
+        "grant": "Tarif vergeben.",
+        "revoke": "Tarif entzogen.",
+        "credits": "Credits vergeben.",
+        "beta_on": "Die Beta läuft.",
+        "beta_end": "Die Beta endet in 7 Tagen.",
+        "cutoff": "Gespeichert."
+      },
+      "errors": {
+        "notFound": "Nicht gefunden. Vielleicht hat es sich geändert; laden Sie die Seite neu.",
+        "invalid": "Prüfen Sie die Werte und versuchen Sie es erneut."
       }
     }
   },
@@ -1405,7 +1479,8 @@
         "paused": "Pausiert. Piloten sehen es vorerst nicht.",
         "unlisted": "Aus dem Angebot genommen."
       },
-      "blocked": "Dieses Flugzeug kann derzeit nicht angeboten werden: Unser Team hat es entfernt. Bitte kontaktieren Sie uns."
+      "blocked": "Dieses Flugzeug kann derzeit nicht angeboten werden: Unser Team hat es entfernt. Bitte kontaktieren Sie uns.",
+      "planLimit": "Ihr Tarif erlaubt bis zu {limit, plural, one {# veröffentlichtes Flugzeug} other {# veröffentlichte Flugzeuge}} gleichzeitig. Nehmen Sie ein anderes offline oder wechseln Sie unter Konto → Tarif & Zahlungen zu einem größeren Tarif."
     },
     "gaps": {
       "home_base": "Heimatflugplatz",
@@ -1434,7 +1509,8 @@
       "arc": "Wir haben dieses Flugzeug entfernt, weil seine ARC abgelaufen ist. Laden Sie die neue ARC hoch, um es wieder anzubieten.",
       "insurance": "Wir haben dieses Flugzeug entfernt, weil seine Versicherung abgelaufen ist. Laden Sie den neuen Nachweis hoch, um es wieder anzubieten.",
       "admin": "Unser Team hat dieses Flugzeug entfernt, weil es gegen die Regeln verstößt. Kontaktieren Sie uns, um es wieder anzubieten.",
-      "suspended": "Dieses Flugzeug wurde entfernt, weil Ihr Konto gesperrt ist."
+      "suspended": "Dieses Flugzeug wurde entfernt, weil Ihr Konto gesperrt ist.",
+      "plan_limit": "Offline genommen, weil Ihr Tarif weniger Flugzeuge erlaubt. Upgraden Sie unter Konto → Tarif & Zahlungen oder nehmen Sie ein anderes Flugzeug offline und veröffentlichen Sie dieses dann erneut."
     },
     "delete": {
       "button": "Flugzeug löschen",
@@ -1553,7 +1629,8 @@
       "checkoutFirstRental": "Jeder Pilot, der neu auf diesem Flugzeug ist, braucht zuerst einen Einweisungsflug mit Fluglehrer",
       "checkoutFirstRentalHint": "Sobald Sie den Einweisungsflug eines Piloten (in seiner Buchung) erfassen, braucht er keinen weiteren.",
       "instantBooking": "Sofortbuchung für Piloten, die dieses Flugzeug schon geflogen sind",
-      "instantBookingHint": "Ihre Anfragen werden sofort angenommen, wenn sie alle Anforderungen erfüllen und nichts mehr zu klären ist (z. B. ein Einweisungsflug). Alle anderen senden wie gewohnt eine Anfrage."
+      "instantBookingHint": "Ihre Anfragen werden sofort angenommen, wenn sie alle Anforderungen erfüllen und nichts mehr zu klären ist (z. B. ein Einweisungsflug). Alle anderen senden wie gewohnt eine Anfrage.",
+      "instantBookingPlan": "Sofortbuchung funktioniert mit dem Tarif Halter oder Flotte; bei Kostenlos warten Anfragen auf Ihre Antwort."
     },
     "requirementsList": {
       "verified": "Lizenz, Klassenberechtigung und Tauglichkeitszeugnis von ownAplane verifiziert und gültig",
@@ -1671,6 +1748,19 @@
       "title": "Verfügbarkeit",
       "free": "Frei {when}",
       "busy": "Nicht verfügbar {when}"
+    },
+    "featured": {
+      "title": "In der Suche hervorgehoben",
+      "text": "Dieses Flugzeug zuerst in den Suchergebnissen zeigen, mit dem Hinweis „Hervorgehoben“.",
+      "isOn": "Dieses Flugzeug wird zuerst in den Suchergebnissen gezeigt, mit dem Hinweis „Hervorgehoben“.",
+      "usage": "Hervorgehobene Plätze in Ihrem Tarif: {used} von {limit} genutzt",
+      "planNeeded": "Hervorgehobene Plätze gibt es mit den Tarifen Halter (1) und Flotte (3).",
+      "turnOn": "Hervorheben",
+      "turnOff": "Nicht mehr hervorheben",
+      "on": "Hervorgehoben: Es wird zuerst in der Suche gezeigt.",
+      "off": "Nicht mehr hervorgehoben.",
+      "limit": "Ihr Tarif hat {limit, plural, =0 {keine hervorgehobenen Plätze} one {# hervorgehobenen Platz} other {# hervorgehobene Plätze}}, alle belegt. Heben Sie zuerst ein anderes Flugzeug nicht mehr hervor oder upgraden Sie.",
+      "failed": "Das hat nicht geklappt. Bitte versuchen Sie es erneut."
     }
   },
   "search": {
@@ -1715,7 +1805,8 @@
     "map": {
       "label": "Karte der gefundenen Flugzeuge",
       "marker": "{code}: {count, plural, one {# Flugzeug} other {# Flugzeuge}}"
-    }
+    },
+    "featured": "Hervorgehoben"
   },
   "booking": {
     "statuses": {
@@ -1884,6 +1975,22 @@
       "noPhone": "Keine Telefonnummer hinterlegt.",
       "note": "Geteilt, weil die Buchung angenommen ist. Nur für diese Buchung verwenden.",
       "afterAccept": "E-Mail und Telefon werden hier angezeigt, sobald der Halter annimmt. Bis dahin nutzen Sie Nachrichten."
+    },
+    "feed": {
+      "title": "Ihre Buchungen in Ihrem Kalender",
+      "text": "Ein privater Link für Google Kalender, Outlook oder Apple Kalender mit Ihren Buchungen als Pilot und als Halter. Er aktualisiert sich von selbst.",
+      "planNeeded": "Kalender-Links gibt es mit Pilot Plus und den Halter-Tarifen.",
+      "link": "Kalender-Link",
+      "hint": "In Google Kalender: Weitere Kalender → Per URL. Halten Sie den Link privat; setzen Sie ihn zurück, falls er weitergegeben wurde.",
+      "reset": "Link zurücksetzen",
+      "remove": "Link entfernen",
+      "create": "Kalender-Link erstellen",
+      "events": {
+        "pilot": "✈ {registration} · {route}",
+        "owner": "{registration} vermietet · {route}",
+        "requested": "(Anfrage)",
+        "name": "Meine Buchungen · {site}"
+      }
     }
   },
   "usage": {
@@ -1954,6 +2061,17 @@
       "inFuture": "Die Zeit darf nicht in der Zukunft liegen.",
       "notAllowed": "Nur der Halter des Flugzeugs kann Stände erfassen.",
       "remove": "Stand vom {when} entfernen"
+    },
+    "planWindow": "Der Tarif Kostenlos zeigt hier und im Export die letzten {months} Monate; Halter und Flotte zeigen die ganze Historie.",
+    "stats": {
+      "title": "Statistik",
+      "flights": "Geflogene Vermietungen",
+      "hours": "Geflogene Stunden (Zeitbasis)",
+      "earnings": "Einnahmen (bestätigte fällige Beträge)",
+      "lastYear": "· {amount} in den letzten 12 Monaten",
+      "busiest": "Stärkste Monate",
+      "note": "Aus bestätigten Flugberichten. Zahlungen laufen außerhalb der App, daher sind das fällige Beträge, kein erhaltenes Geld.",
+      "planNeeded": "Die Statistik (Stunden, Einnahmen, stärkste Monate) gibt es mit den Tarifen Halter und Flotte."
     }
   },
   "flightLog": {
@@ -2257,7 +2375,12 @@
       "reviews_published": "Die Bewertungen zu {registration} sind jetzt veröffentlicht.",
       "review_replied": "{other} hat auf Ihre Bewertung von {registration} geantwortet.",
       "calendar_conflict": "Eine Buchung in einem verbundenen System überschneidet sich mit der Buchung von {registration} ab {when}. Stornieren Sie eine davon.",
-      "saved_search": "Neue Flugzeuge passen zu Ihrer gespeicherten Suche „{search}“."
+      "saved_search": "Neue Flugzeuge passen zu Ihrer gespeicherten Suche „{search}“.",
+      "plan_ending": "Ihr Tarif ändert sich innerhalb einer Woche und erlaubt weniger veröffentlichte Flugzeuge, als Sie haben. Wählen Sie unter Tarif & Zahlungen, welche bleiben, oder behalten Sie Ihren Tarif.",
+      "plan_unlisted": "Einige Ihrer Flugzeuge wurden offline genommen, weil Ihr Tarif weniger erlaubt. Nichts wurde gelöscht: Upgraden Sie unter Tarif & Zahlungen, um sie wieder zu veröffentlichen.",
+      "payment_failed": "Eine Zahlung für Ihren Tarif ist fehlgeschlagen. Zahlen Sie innerhalb von 7 Tagen unter Tarif & Zahlungen, um Ihren Tarif zu behalten.",
+      "currency_ending": "Ihre Passagier-Erfahrung endet innerhalb einer Woche. Planen Sie ein paar Starts und Landungen.",
+      "revalidation_due": "Ihre SEP-Berechtigung läuft innerhalb von 60 Tagen ab und die Erfahrung für die Verlängerung ist noch nicht vollständig."
     }
   },
   "checkoutFlight": {
@@ -2561,7 +2684,8 @@
       "urlHint": "Der private Link aus dem anderen System. webcal://-Links funktionieren auch.",
       "linkIs": "Link:",
       "submit": "Verbinden",
-      "connecting": "Wird verbunden…"
+      "connecting": "Wird verbunden…",
+      "exportPlan": "Mit dem Tarif Halter oder Flotte."
     },
     "kinds": {
       "push": {
@@ -2627,7 +2751,8 @@
     "errors": {
       "too_many": "Ein Flugzeug kann höchstens 10 verbundene Systeme haben.",
       "not_allowed": "Sie können dieses Flugzeug nicht ändern.",
-      "not_found": "Diese Verbindung wurde nicht gefunden."
+      "not_found": "Diese Verbindung wurde nicht gefunden.",
+      "planNeeded": "Ein reiner Kalender-Link gehört zum Tarif Halter oder Flotte. Die Verbindung mit einem anderen Buchungssystem funktioniert in jedem Tarif."
     },
     "feedErrors": {
       "url_invalid": "der Link ist keine gültige https-Adresse",
@@ -2784,7 +2909,8 @@
       "lastAlert": "Benachrichtigungen an · letzter neuer Treffer {when}",
       "turnOn": "Benachrichtigungen einschalten",
       "turnOff": "Benachrichtigungen ausschalten",
-      "remove": "Gespeicherte Suche {name} entfernen"
+      "remove": "Gespeicherte Suche {name} entfernen",
+      "tooManyPlan": "Ihr Tarif speichert bis zu {limit} Suchen. Entfernen Sie eine oder holen Sie sich Pilot Plus für bis zu 20."
     }
   },
   "logbook": {
@@ -2924,7 +3050,8 @@
       "previous": "Übertrag von vorherigen Seiten",
       "toDate": "Gesamtzeit",
       "button": "Drucken",
-      "note": "Durchgestrichene Zeilen wurden korrigiert oder entfernt; ihr Ersatz steht im Flugbuch. Jede Zeile wurde vom Piloten in ownAplane bestätigt."
+      "note": "Durchgestrichene Zeilen wurden korrigiert oder entfernt; ihr Ersatz steht im Flugbuch. Jede Zeile wurde vom Piloten in ownAplane bestätigt.",
+      "planNeeded": "Drucken Sie Ihr Flugbuch im EASA-Format oder speichern Sie es als PDF. Der CSV-Export bleibt für alle kostenlos."
     },
     "printLink": "Drucken (EASA-Layout)",
     "scan": {
@@ -2957,8 +3084,273 @@
         "not_this_document": "Das sieht nicht nach einer Flugbuchseite aus. Prüfen Sie die Fotos.",
         "nothing_read": "Keine Zeilen mit lesbarem Datum gefunden. Ein schärferes, gerades Foto hilft meist.",
         "unreadable": "Die Seiten konnten nicht gelesen werden. Ein schärferes, gerades Foto bei gutem Licht hilft meist.",
-        "failed": "Das Lesen hat diesmal nicht geklappt. Bitte versuchen Sie es erneut."
+        "failed": "Das Lesen hat diesmal nicht geklappt. Bitte versuchen Sie es erneut.",
+        "no_credits": "Sie haben alle KI-Lesungen verbraucht. Holen Sie sich unter Konto → Tarif & Zahlungen weitere Credits."
       }
+    },
+    "currency": {
+      "link": "Fristen",
+      "title": "Fristen und Erfahrung",
+      "description": "Was EASA verlangt, damit Sie Passagiere mitnehmen und Ihre SEP-Berechtigung behalten, berechnet aus Ihren bestätigten Flugbucheinträgen.",
+      "drafts": "{count, plural, one {# Entwurf zählt erst, wenn Sie ihn bestätigen.} other {# Entwürfe zählen erst, wenn Sie sie bestätigen.}}",
+      "currentUntil": "gültig bis {date}",
+      "notCurrent": "nicht erfüllt ({count} von {need} Landungen in den letzten 90 Tagen)",
+      "passengers": {
+        "title": "Passagiere befördern (FCL.060)",
+        "text": "3 Starts und Landungen in den letzten 90 Tagen mit einmotorigen Flugzeugen; für Passagiere bei Nacht 1 davon bei Nacht.",
+        "day": "Bei Tag:",
+        "night": "Bei Nacht:",
+        "ir": "Mit einer Instrumentenflugberechtigung ist die Nachtlandung nicht nötig."
+      },
+      "sep": {
+        "title": "Verlängerung der SEP-Berechtigung durch Erfahrung (FCL.740.A)",
+        "window": "Zählt Flüge vom {from} bis {to} (die 12 Monate vor Ablauf der Berechtigung).",
+        "noExpiry": "Zählt die letzten 12 Monate. Tragen Sie Ihre SEP-(land)-Berechtigung mit Ablaufdatum unter Pilotennachweise ein, damit die richtigen 12 Monate zählen.",
+        "expired": "Die Berechtigung ist am {date} abgelaufen: Für die Erneuerung sind Schulung und eine Befähigungsüberprüfung nötig.",
+        "met": "Die Erfahrung ist vollständig. Die Berechtigung muss vor Ablauf noch in Ihrer Lizenz verlängert werden.",
+        "notMet": "Noch nicht vollständig. Sie können auch mit einer Befähigungsüberprüfung verlängern."
+      },
+      "lapl": {
+        "title": "LAPL(A)-Erfahrung (FCL.140.A)",
+        "window": "Zählt Flüge vom {from} bis {to} (die letzten 24 Monate).",
+        "met": "Sie erfüllen die LAPL-Erfahrungsanforderungen.",
+        "notMet": "Nicht erfüllt: Holen Sie das Fehlende (oder eine Befähigungsüberprüfung) nach, bevor Sie als verantwortlicher Pilot fliegen."
+      },
+      "disclaimer": "Eine Orientierung aus Ihrem Flugbuch, keine rechtliche Prüfung: Sie bleiben für die Einhaltung verantwortlich. Einmotorige Flüge zählen für die SEP-Klasse; Simulatorsitzungen zählen hier nicht.",
+      "req": {
+        "hours": "Flugzeit",
+        "pic": "Als verantwortlicher Pilot",
+        "landings": "Starts und Landungen",
+        "refresher": "Übungsflug von mindestens 1 Stunde mit einem Lehrer",
+        "count": "{done} von {need}",
+        "time": "{done} von {need}",
+        "done": "Erledigt",
+        "notYet": "Noch nicht"
+      }
+    },
+    "stats": {
+      "link": "Statistik",
+      "title": "Flugstatistik",
+      "description": "Ihr Fliegen laut bestätigten Flugbucheinträgen und Ihre Vermietungen auf ownAplane.",
+      "months": "Die letzten 12 Monate",
+      "monthValue": "{time} · {landings} Ldg.",
+      "types": "Nach Flugzeugmuster",
+      "none": "Noch keine bestätigten Flüge.",
+      "functions": "Nach Pilotenfunktion",
+      "function": {
+        "pic": "PIC",
+        "dual": "Mit Lehrer",
+        "instructor": "Lehrer",
+        "copilot": "Kopilot"
+      },
+      "rentals": "Vermietungen auf ownAplane",
+      "rentalsValue": "{count, plural, one {# Vermietung} other {# Vermietungen}} · {time} geflogen · {due} fällig",
+      "noRentals": "Noch keine bestätigten Vermietungen.",
+      "rentalsNote": "Aus bestätigten Flugberichten; Zahlungen laufen außerhalb der App."
+    }
+  },
+  "billing": {
+    "plans": {
+      "free": "Kostenlos",
+      "owner": "Halter",
+      "fleet": "Flotte",
+      "tagline": {
+        "free": "Mieten, fliegen und Ihr Flugbuch führen.",
+        "owner": "Für Halter mit ein oder zwei Flugzeugen.",
+        "fleet": "Für Vereine, Flugschulen und Betreiber.",
+        "pilot": "Für Piloten, die oft fliegen."
+      },
+      "pilot": "Pilot Plus"
+    },
+    "interval": {
+      "month": "Monatlich",
+      "year": "Jährlich",
+      "label": "Abrechnungszeitraum",
+      "yearSaves": "Jährlich: 2 Monate gratis"
+    },
+    "price": {
+      "perMonth": "{price} / Monat",
+      "perYear": "{price} / Jahr",
+      "vat": "inkl. MwSt.",
+      "orYearly": "oder {price}"
+    },
+    "pricing": {
+      "title": "Preise",
+      "description": "Tarife für Piloten, Flugzeughalter, Vereine und Schulen.",
+      "lead": "Mieten, Fliegen und das Flugbuch sind für jeden Piloten kostenlos. Pilot Plus bringt Werkzeuge für Vielflieger, und Halter wählen den Tarif, der zu ihrer Flotte passt. Die Sicherheitsfunktionen sind in jedem Tarif gleich.",
+      "beta": "Während der Beta hat jeder den Tarif Halter mit Pilot Plus kostenlos, und wer jetzt ein Flugzeug veröffentlicht, behält ihn nach der Beta noch 12 Monate kostenlos.",
+      "testMode": "Zahlungen laufen im Testmodus: Sie können jeden Tarif ausprobieren, es wird nichts berechnet.",
+      "choose": "{plan} wählen",
+      "start": "Kostenlos starten",
+      "current": "Ihr Tarif",
+      "creditsTitle": "Credits für KI-Lesen",
+      "creditsText": "Lizenzen, Tauglichkeitszeugnisse und Seiten aus dem Papierflugbuch aus einem Scan ausfüllen. Ein Credit liest ein Dokument oder eine Doppelseite des Flugbuchs. Jedes Konto erhält {welcome} kostenlose Credits zum Ausprobieren; gekaufte Credits verfallen nie. Pilot Plus, Halter und Flotte enthalten jeden Monat Lesungen.",
+      "pack": "{credits} Credits",
+      "notesTitle": "Gut zu wissen",
+      "notes": {
+        "pilots": "Suchen, Buchen, der Flugbericht und das Führen Ihres Flugbuchs sind für jeden Piloten kostenlos.",
+        "safety": "Sicherheit und Vertrauen kosten nie etwas: Prüfung der Nachweise, Berechtigung, Mängel und Stilllegung, Bewertungen und Meldungen funktionieren in jedem Tarif gleich.",
+        "vat": "Preise inklusive MwSt.",
+        "cancel": "Jederzeit kündbar: Ihr Tarif läuft bis zum Ende des bezahlten Zeitraums.",
+        "data": "Ein Wechsel zu einem kleineren Tarif löscht nie etwas: Sie werden eine Woche vorher informiert, danach werden Flugzeuge über dem Limit offline genommen, bis Sie wieder upgraden."
+      },
+      "compareTitle": "Tarife vergleichen"
+    },
+    "account": {
+      "title": "Tarif & Zahlungen",
+      "testMode": "Testmodus: Abschließen, Ändern und Kündigen funktionieren wie später, aber es wird nichts berechnet. Zahlungen sind als Testzahlungen markiert.",
+      "current": "Ihr Tarif",
+      "source": {
+        "free": "Kostenloser Tarif",
+        "subscription": "Ihr Abonnement",
+        "admin": "Von unserem Team vergeben",
+        "founding": "Gründungshalter: 12 Monate nach der Beta kostenlos",
+        "beta": "Kostenlos während der Beta"
+      },
+      "until": "bis {date}",
+      "renews": "Verlängert sich am {date} für {price}.",
+      "endsOn": "Endet am {date}; danach gilt Kostenlos.",
+      "scheduled": "Wechselt am {date} zu {plan} ({interval}).",
+      "resume": "Aktuellen Tarif behalten",
+      "pastDue": "Die letzte Zahlung ist fehlgeschlagen. Ihr Tarif läuft bis {date} weiter; zahlen Sie jetzt, um ihn zu behalten.",
+      "payNow": "Jetzt zahlen",
+      "usage": "Veröffentlichte Flugzeuge: {used} von {limit}",
+      "featuredUsage": "Hervorgehobene Flugzeuge: {used} von {limit}",
+      "overLimit": "Am {date} wird Ihr Tarif zu {plan}, der bis zu {limit} Flugzeuge erlaubt. Nehmen Sie die nicht benötigten bis dahin offline; sonst werden die zuletzt veröffentlichten offline genommen. Es wird nichts gelöscht.",
+      "change": "Tarif ändern",
+      "subscribe": "{plan} wählen",
+      "payFirst": "Begleichen Sie zuerst die offene Zahlung.",
+      "freeFrom": "Ab {date}",
+      "cancel": "Zum Ende des Zeitraums kündigen",
+      "downgrade": "Wechsel zu {plan} am {date}",
+      "switchYearly": "Jetzt auf jährlich wechseln · {price}",
+      "upgrade": "Jetzt auf {plan} upgraden · {price}",
+      "creditsTitle": "Credits für KI-Lesen",
+      "creditsText": "Lizenzen, Tauglichkeitszeugnisse und Flugbuchseiten aus einem Scan ausfüllen. Ein Credit liest ein Dokument oder eine Doppelseite; ein fehlgeschlagener Lesevorgang wird gutgeschrieben.",
+      "creditsAvailable": "{count, plural, =0 {Keine Lesungen übrig} one {# Lesung übrig} other {# Lesungen übrig}}",
+      "allowance": "Diesen Monat inklusive: {left} von {perMonth} übrig",
+      "allowanceBeta": "Monatliche Lesungen gibt es mit einem bezahlten Tarif (nicht mit der Beta).",
+      "allowanceNone": "Pilot Plus, Halter und Flotte enthalten jeden Monat Lesungen.",
+      "creditsBalance": "{count, plural, one {# Credit} other {# Credits}} (verfallen nie)",
+      "buy": "{credits} Credits kaufen · {price}",
+      "historyTitle": "Zahlungen",
+      "historyEmpty": "Noch keine Zahlungen.",
+      "history": {
+        "subscribe": "Tarif {plan}, {interval}",
+        "upgrade": "Wechsel zu {plan}, {interval} (anteilig)",
+        "renewal": "Verlängerung: {plan}, {interval}",
+        "retry": "Zahlung: {plan}, {interval}",
+        "credits": "{credits} Credits für KI-Lesen"
+      },
+      "status": {
+        "paid": "Bezahlt",
+        "failed": "Fehlgeschlagen",
+        "refunded": "Erstattet"
+      },
+      "testPayment": "Test",
+      "testTitle": "Ausprobieren",
+      "testText": "Nur im Testmodus: Sehen Sie ohne Warten, was bei einer Verlängerung oder einer fehlgeschlagenen Zahlung passiert.",
+      "failNextOn": "Nächste Zahlung fehlschlagen lassen",
+      "failNextOff": "Zahlungen wieder durchlassen",
+      "failNextSet": "Die nächste Zahlung schlägt fehl.",
+      "renewNow": "Abrechnungszeitraum jetzt beenden",
+      "done": {
+        "checkout_paid": "Zahlung erledigt. Vielen Dank!",
+        "checkout_failed": "Die Zahlung ist fehlgeschlagen. Nichts wurde geändert; versuchen Sie es erneut, wenn Sie bereit sind.",
+        "checkout_canceled": "Bezahlvorgang abgebrochen. Nichts wurde geändert.",
+        "upgraded": "Ihr neuer Tarif gilt ab sofort.",
+        "scheduled": "Erledigt: Die Änderung beginnt mit Ihrem nächsten Abrechnungszeitraum.",
+        "canceled": "Gekündigt: Ihr Tarif läuft bis zum Ende des bezahlten Zeitraums.",
+        "kept": "Sie behalten Ihren aktuellen Tarif.",
+        "renewed": "Der Abrechnungszeitraum ist zu Ende und der Tarif wurde verlängert.",
+        "ended": "Der Abrechnungszeitraum ist zu Ende: Sie sind jetzt auf Kostenlos.",
+        "payment_failed": "Die Zahlung ist fehlgeschlagen.",
+        "past_due": "Begleichen Sie zuerst die offene Zahlung.",
+        "no_subscription": "Sie haben kein Abonnement, das geändert werden kann.",
+        "fail_next_on": "Die nächste Zahlung schlägt fehl.",
+        "fail_next_off": "Zahlungen gehen wieder durch.",
+        "already_subscribed": "Sie haben bereits ein Abonnement: Ändern Sie es stattdessen unten.",
+        "not_available": "Zahlungen sind gerade nicht verfügbar.",
+        "unknown_item": "Das kann man nicht kaufen.",
+        "failed": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+      },
+      "compare": "Alle Funktionen vergleichen"
+    },
+    "checkout": {
+      "title": "Bezahlen",
+      "testMode": "Testzahlung: Keine Karte nötig, es wird nichts berechnet. Wählen Sie, was die Zahlung tut.",
+      "plan": "Tarif {plan}, {interval}",
+      "credits": "{credits} Credits für KI-Lesen",
+      "total": "Gesamt",
+      "renews": "Verlängert sich automatisch, bis Sie kündigen.",
+      "pay": "Bezahlen (Test)",
+      "fail": "Zahlung fehlschlagen lassen",
+      "cancel": "Abbrechen",
+      "closed": "Dieser Bezahlvorgang ist abgeschlossen.",
+      "back": "Zurück zu Tarif & Zahlungen"
+    },
+    "note": {
+      "left": "{count, plural, =0 {Keine KI-Lesungen übrig} one {# KI-Lesung übrig} other {# KI-Lesungen übrig}}",
+      "more": "Mehr Credits"
+    },
+    "seePlans": "Tarife ansehen",
+    "highlights": {
+      "free": {
+        "h1": "Suchen, buchen und fliegen",
+        "h2": "Ihr elektronisches Flugbuch und die Prüfung Ihrer Nachweise",
+        "h3": "1 Flugzeug veröffentlichen",
+        "h4": "5 KI-Lesungen zum Ausprobieren"
+      },
+      "pilot": {
+        "h1": "Übersicht über Fristen und Verlängerung",
+        "h2": "Flugbuch-Druck und Flugstatistik",
+        "h3": "20 gespeicherte Suchen, Ihre Buchungen im Kalender",
+        "h4": "20 KI-Lesungen pro Monat"
+      },
+      "owner": {
+        "h1": "Alles aus Pilot Plus",
+        "h2": "Bis zu 2 veröffentlichte Flugzeuge",
+        "h3": "Sofortbuchung, Statistik, 1 hervorgehobener Platz",
+        "h4": "Vollständige Nutzungshistorie und Kalender-Links"
+      },
+      "fleet": {
+        "h1": "Alles aus Halter",
+        "h2": "Bis zu 10 veröffentlichte Flugzeuge",
+        "h3": "3 hervorgehobene Plätze in der Suche",
+        "h4": "50 KI-Lesungen pro Monat"
+      }
+    },
+    "table": {
+      "caption": "Was jeder Tarif enthält",
+      "feature": "Funktion",
+      "yes": "Enthalten",
+      "no": "Nicht enthalten",
+      "full": "Vollständig",
+      "months": "{months} Monate",
+      "groups": {
+        "pilots": "Für Piloten",
+        "owners": "Für Halter",
+        "ai": "KI-Lesen"
+      },
+      "rows": {
+        "basics": "Suche, Buchung, Flugbericht, elektronisches Flugbuch, Prüfung der Nachweise, Bewertungen und Nachrichten",
+        "currencyTracker": "Fristen-Übersicht: Passagier- und Nachtflugerfahrung, Verlängerung der Klassenberechtigung",
+        "logbookExtras": "Flugbuch-Druck (EASA-Format) und Flugstatistik",
+        "savedSearches": "Gespeicherte Suchen mit Benachrichtigungen",
+        "bookingsCalendar": "Ihre Buchungen in Google Kalender oder Outlook",
+        "aircraft": "Veröffentlichte Flugzeuge",
+        "instantBooking": "Sofortbuchung",
+        "usage": "Nutzungshistorie und CSV-Exporte",
+        "statistics": "Halter-Statistik",
+        "featured": "Hervorgehobene Plätze in der Suche",
+        "calendarLink": "Kalender-Link des Flugzeugs für Google oder Outlook",
+        "aiCredits": "Enthaltene KI-Lesungen pro Monat"
+      }
+    },
+    "plus": {
+      "included": "Das gehört zu Pilot Plus und zu den Tarifen Halter und Flotte.",
+      "get": "Pilot Plus holen",
+      "compare": "Tarife vergleichen"
     }
   }
 }

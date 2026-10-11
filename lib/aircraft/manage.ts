@@ -23,9 +23,14 @@ import { deletePhotoFiles } from "./photos";
 export type AircraftValues = Partial<typeof aircraft.$inferInsert>;
 
 /** Postgres error code and detail of a failed query (drizzle wraps the driver error). */
-export function pgError(e: unknown): { code?: string; detail?: string } {
-  const err = e as { code?: string; detail?: string; cause?: { code?: string; detail?: string } };
-  return { code: err.cause?.code ?? err.code, detail: err.cause?.detail ?? err.detail };
+export function pgError(e: unknown): { code?: string; detail?: string; message?: string } {
+  type Pg = { code?: string; detail?: string; message?: string };
+  const err = e as Pg & { cause?: Pg };
+  return {
+    code: err.cause?.code ?? err.code,
+    detail: err.cause?.detail ?? err.detail,
+    message: err.cause?.message ?? err.message,
+  };
 }
 
 /** Constraint errors the owner can fix: a taken registration or an unknown home airfield. */
@@ -104,7 +109,11 @@ export async function setAircraftStatus(
     );
     return { ok: true };
   } catch (e) {
-    const { code, detail } = pgError(e);
+    const { code, detail, message } = pgError(e);
+    // Beyond the plan's listed aircraft (SUB-3): detail "aircraft:<limit>".
+    if (message === "plan_limit") {
+      return { ok: false, error: "plan_limit", limit: Number(detail?.split(":")[1] ?? 0) };
+    }
     if (code === "23514" && detail)
       return { ok: false, error: "not_ready", missing: detail.split(",") };
     if (code === "23514") return { ok: false, error: "blocked" };

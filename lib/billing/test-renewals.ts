@@ -3,7 +3,7 @@ import "server-only";
 import { and, eq, lte, or } from "drizzle-orm";
 
 import { getDb } from "@/lib/db";
-import { subscriptions, type Subscription } from "@/lib/db/schema";
+import { notifications, subscriptions, type Subscription } from "@/lib/db/schema";
 import { type PaidPlan, periodEnd, PRICES } from "./plans";
 import { saveSubscription } from "./subscriptions";
 import { charge, GRACE_MS, locked, snapshot, type Tx } from "./test-shared";
@@ -28,6 +28,7 @@ async function renew(tx: Tx, sub: Subscription, start: Date) {
   const interval = sub.scheduledInterval ?? sub.interval;
   const price = PRICES[plan][interval];
   if (!(await charge(tx, sub, price, { key: "renewal", plan, interval }))) {
+    await tx.insert(notifications).values({ userId: sub.userId, type: "payment_failed" });
     await saveSubscription(
       { ...base, status: "past_due", graceUntil: new Date(Date.now() + GRACE_MS) },
       { type: "payment.failed" },

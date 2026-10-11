@@ -5,8 +5,10 @@ import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 
 import { requireUser } from "@/lib/auth/session";
+import { getMyPlan } from "@/lib/billing/plan";
+import { PLANS } from "@/lib/billing/plans";
 import { type FormState, formValues } from "@/lib/forms";
-import { saveSearch } from "@/lib/saved/searches";
+import { MAX_SAVED_SEARCHES, saveSearch } from "@/lib/saved/searches";
 
 const schema = z.object({
   name: z.string().trim().min(1, "nameRequired").max(80, "nameMax"),
@@ -28,7 +30,14 @@ export async function saveSearchAction(_prev: FormState, formData: FormData): Pr
     return { errors: { name: [v("nameRequired")] }, values: raw };
   }
   const result = await saveSearch(user.id, parsed.data);
-  if (!result.ok) return { message: t("tooMany"), values: raw };
+  if (!result.ok) {
+    const { plan } = await getMyPlan(user.id);
+    const limit = PLANS[plan].savedSearches;
+    return {
+      message: limit < MAX_SAVED_SEARCHES ? t("tooManyPlan", { limit }) : t("tooMany"),
+      values: raw,
+    };
+  }
   revalidatePath("/saved");
   return { ok: true, message: t("savedMessage") };
 }

@@ -14,6 +14,7 @@ import { requireAdmin } from "@/lib/auth/session";
 import type { Locale } from "@/lib/i18n/config";
 import { AccessCard } from "./access-card";
 import { AccountCard } from "./account-card";
+import { BillingCard } from "./billing-card";
 import { BookingsCard, OwnerCard, PilotCard } from "./activity-cards";
 import { HistoryCard } from "./history-card";
 
@@ -85,6 +86,7 @@ export default async function AdminMemberPage({ params }: { params: Promise<{ id
       <div className="grid items-start gap-6 lg:grid-cols-2">
         <AccessCard m={m} adminId={adminId} />
         <AccountCard m={m} />
+        <BillingCard userId={m.id} />
         <PilotCard m={m} />
         <OwnerCard m={m} />
         <BookingsCard m={m} />

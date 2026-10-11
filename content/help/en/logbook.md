@@ -49,8 +49,19 @@ limit on how many pages can be read.
 
 - **Print (EASA layout)** shows each page as the two facing pages of a paper logbook, with the
   total of the page, the total from previous pages and the total time. Print it or save it as PDF
-  from your browser.
-- **Download CSV** gives every certified and struck-through entry for a spreadsheet.
+  from your browser. The print comes with Pilot Plus (and the owner plans).
+- **Download CSV** gives every certified and struck-through entry for a spreadsheet, on every
+  plan.
+
+## Currency and statistics (Pilot Plus)
+
+- **Currency** works out from your certified entries whether you may carry passengers by day and
+  by night (EASA FCL.060), what is left to revalidate your SEP class rating by experience
+  (FCL.740.A) and, with a LAPL only, its recency (FCL.140.A). Drafts don't count until you
+  certify them. You get a notification before your passenger currency runs out and when your SEP
+  rating is due. It's a guide: you remain responsible for meeting the requirements.
+- **Statistics** shows your hours and landings per month for the last year, hours per aircraft
+  type and per function, and your rentals on ownAplane.
 
 The logbook is kept so it can serve as your logbook under EASA rules; ask your authority if they
 also expect a paper logbook or particular endorsements.

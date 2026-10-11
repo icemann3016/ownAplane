@@ -22,7 +22,8 @@
       "help": "Aiuto",
       "messages": "Messaggi",
       "saved": "Salvati",
-      "logbook": "Libretto di volo"
+      "logbook": "Libretto di volo",
+      "billing": "Piano e pagamenti"
     },
     "footer": {
       "tagline": "Pensato per l'aviazione generale in Europa.",
@@ -30,7 +31,8 @@
       "privacy": "Privacy",
       "language": "Lingua",
       "help": "Aiuto",
-      "cookies": "Cookie"
+      "cookies": "Cookie",
+      "pricing": "Prezzi"
     },
     "notFound": {
       "title": "Fuori rotta",
@@ -394,7 +396,8 @@
     "tabs": {
       "label": "Sezioni dell'account",
       "general": "Generale",
-      "credentials": "Titoli del pilota"
+      "credentials": "Titoli del pilota",
+      "billing": "Piano e pagamenti"
     },
     "contact": {
       "title": "Telefono di contatto",
@@ -815,7 +818,8 @@
         "consent_required": "Accetta prima l'invio della scansione.",
         "not_this_document": "Non sembra il documento giusto. Controlla il file caricato.",
         "unreadable": "Non è stato possibile leggere la scansione. Di solito aiuta una foto più nitida e dritta; oppure compila il modulo da solo.",
-        "failed": "La lettura non è riuscita questa volta. Riprova o compila il modulo da solo."
+        "failed": "La lettura non è riuscita questa volta. Riprova o compila il modulo da solo.",
+        "no_credits": "Hai usato tutte le letture con IA. Ottieni altri crediti da Account → Piano e pagamenti, oppure compila il modulo da solo."
       },
       "filledPartly": "Compilato con ciò che mostra la scansione; i campi vuoti non vi comparivano. Controlla ogni campo prima di salvare.",
       "medicalNoDates": "La scansione non mostra le date di scadenza (punto IX, di solito nella pagina successiva del certificato), quindi non è stato possibile leggere la classe e la data. Carica una scansione che includa anche quella pagina (entrambe le pagine in un unico PDF), oppure scegli la classe e inserisci la data tu stesso."
@@ -905,7 +909,8 @@
       "users": "Membri",
       "aircraft": "Aerei",
       "audit": "Registro di controllo",
-      "api": "API"
+      "api": "API",
+      "billing": "Fatturazione"
     },
     "dashboard": {
       "title": "Panoramica admin",
@@ -1163,7 +1168,10 @@
           "suspend_user": "Sospeso",
           "unsuspend_user": "Sospensione revocata",
           "grant_admin": "Nominato admin",
-          "revoke_admin": "Diritti di admin rimossi"
+          "revoke_admin": "Diritti di admin rimossi",
+          "grant_plan": "Piano assegnato",
+          "revoke_plan": "Piano revocato",
+          "give_credits": "Crediti IA assegnati"
         }
       }
     },
@@ -1216,6 +1224,72 @@
           "medical": "Certificato medico",
           "logbook": "Libretto di volo"
         }
+      }
+    },
+    "billing": {
+      "title": "Fatturazione",
+      "description": "Piani, la beta e i proprietari fondatori.",
+      "descriptionTest": "Piani, la beta e i proprietari fondatori. I pagamenti sono in modalità di prova: non si muove denaro.",
+      "beta": {
+        "title": "Beta",
+        "text": "Finché la beta è attiva, ogni membro ha gratis le funzioni del piano Proprietario (senza le letture IA mensili). Terminarla dà ai membri 7 giorni di preavviso; da allora partono i 12 mesi gratuiti dei proprietari fondatori.",
+        "on": "La beta è attiva.",
+        "off": "La beta è terminata.",
+        "ending": "La beta termina il {date}.",
+        "end": "Termina la beta tra 7 giorni",
+        "turnOn": "Attiva la beta"
+      },
+      "founding": {
+        "title": "Proprietari fondatori",
+        "text": "I proprietari che pubblicano il primo aereo durante la beta ricevono il piano Proprietario per 12 mesi dopo di essa. Imposta una data per tenere aperta l'offerta anche dopo la beta.",
+        "cutoff": "Offerta fondatori aperta fino al",
+        "cutoffHint": "Lascia vuoto: solo durante la beta.",
+        "save": "Salva"
+      },
+      "subscriptions": "Abbonamenti",
+      "payments": "Pagamenti degli ultimi 30 giorni",
+      "none": "Ancora nessuno.",
+      "reads": "{count, plural, one {# lettura con IA} other {# letture con IA}} questo mese",
+      "paid": {
+        "plan": "{count, plural, one {# pagamento di piano} other {# pagamenti di piano}}",
+        "credits": "{count, plural, one {# pacchetto di crediti} other {# pacchetti di crediti}}"
+      },
+      "grants": {
+        "admin": "{count, plural, one {# piano assegnato dagli admin} other {# piani assegnati dagli admin}}",
+        "founding": "{count, plural, one {# proprietario fondatore} other {# proprietari fondatori}}"
+      },
+      "status": {
+        "active": "attivo",
+        "past_due": "pagamento non riuscito",
+        "ended": "terminato"
+      },
+      "memberTitle": "Piano e crediti IA",
+      "memberText": "Assegna un piano (ad es. a partner o tester) o crediti IA. Registrato nel registro di controllo.",
+      "subscription": "Abbonamento: {plan}, {interval}, {status} (il periodo termina il {date})",
+      "credits": "Letture IA disponibili: {available} (crediti: {balance})",
+      "grant": {
+        "admin": "{plan}, assegnato da un admin",
+        "founding": "{plan}, proprietario fondatore"
+      },
+      "revoke": "Revoca",
+      "plan": "Piano",
+      "endsOn": "Fino al",
+      "endsOnHint": "Lascia vuoto per nessuna scadenza.",
+      "note": "Nota (facoltativa)",
+      "grantButton": "Assegna piano",
+      "creditsAmount": "Crediti IA",
+      "creditsButton": "Assegna crediti",
+      "done": {
+        "grant": "Piano assegnato.",
+        "revoke": "Piano revocato.",
+        "credits": "Crediti assegnati.",
+        "beta_on": "La beta è attiva.",
+        "beta_end": "La beta termina tra 7 giorni.",
+        "cutoff": "Salvato."
+      },
+      "errors": {
+        "notFound": "Non trovato. Potrebbe essere cambiato; ricarica la pagina.",
+        "invalid": "Controlla i valori e riprova."
       }
     }
   },
@@ -1405,7 +1479,8 @@
         "paused": "In pausa. Per ora i piloti non lo vedono.",
         "unlisted": "Ritirato."
       },
-      "blocked": "Questo aereo non può essere offerto al momento: il nostro team l'ha ritirato. Contattaci."
+      "blocked": "Questo aereo non può essere offerto al momento: il nostro team l'ha ritirato. Contattaci.",
+      "planLimit": "Il tuo piano consente fino a {limit, plural, one {# aereo pubblicato} other {# aerei pubblicati}} alla volta. Ritira un altro aereo o passa a un piano superiore da Account → Piano e pagamenti."
     },
     "gaps": {
       "home_base": "base",
@@ -1434,7 +1509,8 @@
       "arc": "Abbiamo ritirato questo aereo perché il suo ARC è scaduto. Carica il nuovo ARC per offrirlo di nuovo.",
       "insurance": "Abbiamo ritirato questo aereo perché la sua assicurazione è scaduta. Carica il nuovo certificato per offrirlo di nuovo.",
       "admin": "Il nostro team ha ritirato questo aereo perché viola le regole. Contattaci per offrirlo di nuovo.",
-      "suspended": "Questo aereo è stato ritirato perché il tuo account è sospeso."
+      "suspended": "Questo aereo è stato ritirato perché il tuo account è sospeso.",
+      "plan_limit": "Ritirato perché il tuo piano consente meno aerei pubblicati. Passa a un piano superiore da Account → Piano e pagamenti, oppure ritira un altro aereo, poi ripubblica questo."
     },
     "delete": {
       "button": "Elimina aereo",
@@ -1553,7 +1629,8 @@
       "checkoutFirstRental": "Ogni pilota nuovo su questo aereo deve prima fare un volo di ambientamento con un istruttore",
       "checkoutFirstRentalHint": "Una volta registrato il volo di ambientamento di un pilota (sulla sua prenotazione), non gliene serve un altro.",
       "instantBooking": "Prenotazione immediata per i piloti che hanno già volato su questo aereo",
-      "instantBookingHint": "Le loro richieste vengono accettate subito se soddisfano ogni requisito e non resta nulla da verificare (come un volo di ambientamento). Tutti gli altri inviano una richiesta come al solito."
+      "instantBookingHint": "Le loro richieste vengono accettate subito se soddisfano ogni requisito e non resta nulla da verificare (come un volo di ambientamento). Tutti gli altri inviano una richiesta come al solito.",
+      "instantBookingPlan": "La prenotazione immediata funziona con il piano Proprietario o Flotta; con Gratuito le richieste aspettano la tua risposta."
     },
     "requirementsList": {
       "verified": "Licenza, abilitazione per classe e certificato medico verificati da ownAplane e validi",
@@ -1671,6 +1748,19 @@
       "title": "Disponibilità",
       "free": "Libero {when}",
       "busy": "Non disponibile {when}"
+    },
+    "featured": {
+      "title": "In evidenza nella ricerca",
+      "text": "Mostra questo aereo per primo nei risultati, con l'etichetta \"In evidenza\".",
+      "isOn": "Questo aereo è mostrato per primo nei risultati, con l'etichetta \"In evidenza\".",
+      "usage": "Posti in evidenza del tuo piano: {used} di {limit} usati",
+      "planNeeded": "I posti in evidenza arrivano con i piani Proprietario (1) e Flotta (3).",
+      "turnOn": "Metti in evidenza",
+      "turnOff": "Togli dall'evidenza",
+      "on": "In evidenza: viene mostrato per primo nella ricerca.",
+      "off": "Non più in evidenza.",
+      "limit": "Il tuo piano ha {limit, plural, =0 {nessun posto in evidenza} one {# posto in evidenza} other {# posti in evidenza}}, tutti occupati. Togli prima dall'evidenza un altro aereo, oppure passa a un piano superiore.",
+      "failed": "Non ha funzionato. Riprova."
     }
   },
   "search": {
@@ -1715,7 +1805,8 @@
     "map": {
       "label": "Mappa degli aerei trovati",
       "marker": "{code}: {count, plural, one {# aereo} other {# aerei}}"
-    }
+    },
+    "featured": "In evidenza"
   },
   "booking": {
     "statuses": {
@@ -1884,6 +1975,22 @@
       "noPhone": "Nessun numero di telefono inserito.",
       "note": "Condiviso perché la prenotazione è accettata. Usalo solo per questa prenotazione.",
       "afterAccept": "E-mail e telefono appariranno qui quando il proprietario accetta. Fino ad allora, usa i messaggi."
+    },
+    "feed": {
+      "title": "Le tue prenotazioni nel calendario",
+      "text": "Un link privato per Google Calendar, Outlook o Calendario di Apple con le tue prenotazioni come pilota e come proprietario. Si aggiorna da solo.",
+      "planNeeded": "I link di calendario arrivano con Pilot Plus e i piani per proprietari.",
+      "link": "Link di calendario",
+      "hint": "In Google Calendar: Altri calendari → Da URL. Tieni il link privato; reimpostalo se è stato condiviso.",
+      "reset": "Reimposta link",
+      "remove": "Rimuovi link",
+      "create": "Crea un link di calendario",
+      "events": {
+        "pilot": "✈ {registration} · {route}",
+        "owner": "{registration} noleggiato · {route}",
+        "requested": "(richiesta)",
+        "name": "Le mie prenotazioni · {site}"
+      }
     }
   },
   "usage": {
@@ -1954,6 +2061,17 @@
       "inFuture": "L'orario non può essere nel futuro.",
       "notAllowed": "Solo il proprietario dell'aereo può registrare letture.",
       "remove": "Rimuovi la lettura del {when}"
+    },
+    "planWindow": "Il piano Gratuito mostra qui e nell'esportazione gli ultimi {months} mesi; Proprietario e Flotta mostrano tutto lo storico.",
+    "stats": {
+      "title": "Statistiche",
+      "flights": "Noleggi volati",
+      "hours": "Ore volate (base di tempo)",
+      "earnings": "Guadagnato (importi dovuti confermati)",
+      "lastYear": "· {amount} negli ultimi 12 mesi",
+      "busiest": "Mesi più intensi",
+      "note": "Dai registri di volo confermati. I pagamenti avvengono fuori dall'app, quindi sono importi dovuti, non denaro ricevuto.",
+      "planNeeded": "Le statistiche (ore, guadagni, mesi più intensi) arrivano con i piani Proprietario e Flotta."
     }
   },
   "flightLog": {
@@ -2257,7 +2375,12 @@
       "reviews_published": "Le recensioni di {registration} sono ora pubblicate.",
       "review_replied": "{other} ha risposto alla tua recensione di {registration}.",
       "calendar_conflict": "Una prenotazione in un sistema collegato si sovrappone alla prenotazione di {registration} dal {when}. Annullane una.",
-      "saved_search": "Nuovi aerei corrispondono alla tua ricerca salvata “{search}”."
+      "saved_search": "Nuovi aerei corrispondono alla tua ricerca salvata “{search}”.",
+      "plan_ending": "Il tuo piano cambia entro una settimana e consente meno aerei pubblicati di quelli che hai. Scegli quali restano, o mantieni il tuo piano, da Piano e pagamenti.",
+      "plan_unlisted": "Alcuni tuoi aerei sono stati ritirati perché il tuo piano ne consente meno. Non è stato eliminato nulla: passa a un piano superiore da Piano e pagamenti per ripubblicarli.",
+      "payment_failed": "Un pagamento per il tuo piano non è andato a buon fine. Paga entro 7 giorni da Piano e pagamenti per mantenere il piano.",
+      "currency_ending": "La tua esperienza recente per trasportare passeggeri scade entro una settimana. Pianifica qualche decollo e atterraggio.",
+      "revalidation_due": "La tua abilitazione SEP scade entro 60 giorni e l'esperienza per il rinnovo non è ancora completa."
     }
   },
   "checkoutFlight": {
@@ -2561,7 +2684,8 @@
       "urlHint": "Il link privato dell’altro sistema. Funzionano anche i link webcal://.",
       "linkIs": "Link:",
       "submit": "Collega",
-      "connecting": "Collegamento…"
+      "connecting": "Collegamento…",
+      "exportPlan": "Con il piano Proprietario o Flotta."
     },
     "kinds": {
       "push": {
@@ -2627,7 +2751,8 @@
     "errors": {
       "too_many": "Un aereo può avere al massimo 10 sistemi collegati.",
       "not_allowed": "Non puoi modificare questo aereo.",
-      "not_found": "Collegamento non trovato."
+      "not_found": "Collegamento non trovato.",
+      "planNeeded": "Un semplice link di calendario arriva con il piano Proprietario o Flotta. Collegare un altro sistema di prenotazione funziona con ogni piano."
     },
     "feedErrors": {
       "url_invalid": "il link non è un indirizzo https valido",
@@ -2784,7 +2909,8 @@
       "lastAlert": "Avvisi attivi · ultima nuova corrispondenza {when}",
       "turnOn": "Attiva gli avvisi",
       "turnOff": "Disattiva gli avvisi",
-      "remove": "Rimuovi la ricerca salvata {name}"
+      "remove": "Rimuovi la ricerca salvata {name}",
+      "tooManyPlan": "Il tuo piano salva fino a {limit} ricerche. Rimuovine una, o prendi Pilot Plus per arrivare a 20."
     }
   },
   "logbook": {
@@ -2924,7 +3050,8 @@
       "previous": "Riporto dalle pagine precedenti",
       "toDate": "Tempo totale",
       "button": "Stampa",
-      "note": "Le righe barrate sono state corrette o rimosse; la loro sostituzione è nel libretto. Ogni riga è stata certificata dal pilota in ownAplane."
+      "note": "Le righe barrate sono state corrette o rimosse; la loro sostituzione è nel libretto. Ogni riga è stata certificata dal pilota in ownAplane.",
+      "planNeeded": "Stampa il tuo libretto di volo nel formato EASA o salvalo come PDF. L'esportazione CSV resta gratuita per tutti."
     },
     "printLink": "Stampa (formato EASA)",
     "scan": {
@@ -2957,8 +3084,273 @@
         "not_this_document": "Non sembra una pagina di libretto di volo. Controlla le foto.",
         "nothing_read": "Nessuna riga con una data leggibile. Di solito aiuta una foto più nitida e dritta.",
         "unreadable": "Non è stato possibile leggere le pagine. Di solito aiuta una foto più nitida e dritta, con buona luce.",
-        "failed": "La lettura non è riuscita questa volta. Riprova."
+        "failed": "La lettura non è riuscita questa volta. Riprova.",
+        "no_credits": "Hai usato tutte le letture con IA. Ottieni altri crediti da Account → Piano e pagamenti."
       }
+    },
+    "currency": {
+      "link": "Esperienza recente",
+      "title": "Esperienza recente",
+      "description": "Ciò che l'EASA richiede per trasportare passeggeri e mantenere l'abilitazione SEP, calcolato dalle voci certificate del tuo libretto.",
+      "drafts": "{count, plural, one {# bozza non viene contata finché non la certifichi.} other {# bozze non vengono contate finché non le certifichi.}}",
+      "currentUntil": "valida fino al {date}",
+      "notCurrent": "non valida ({count} atterraggi su {need} negli ultimi 90 giorni)",
+      "passengers": {
+        "title": "Trasporto di passeggeri (FCL.060)",
+        "text": "3 decolli e atterraggi negli ultimi 90 giorni su aerei monomotore; per passeggeri di notte, uno di questi di notte.",
+        "day": "Di giorno:",
+        "night": "Di notte:",
+        "ir": "Con un'abilitazione al volo strumentale l'atterraggio notturno non è necessario."
+      },
+      "sep": {
+        "title": "Rinnovo dell'abilitazione SEP per esperienza (FCL.740.A)",
+        "window": "Conta i voli dal {from} al {to} (i 12 mesi prima della scadenza dell'abilitazione).",
+        "noExpiry": "Conta gli ultimi 12 mesi. Aggiungi la tua abilitazione SEP (terra) con la data di scadenza in Titoli del pilota per contare i 12 mesi giusti.",
+        "expired": "L'abilitazione è scaduta il {date}: per rinnovarla servono addestramento e un controllo di professionalità.",
+        "met": "L'esperienza è completa. L'abilitazione va comunque rinnovata sulla licenza prima della scadenza.",
+        "notMet": "Non ancora completa. Puoi anche rinnovare con un controllo di professionalità."
+      },
+      "lapl": {
+        "title": "Esperienza recente LAPL(A) (FCL.140.A)",
+        "window": "Conta i voli dal {from} al {to} (gli ultimi 24 mesi).",
+        "met": "Soddisfi i requisiti di esperienza recente LAPL.",
+        "notMet": "Non soddisfatti: completa ciò che manca (o un controllo di professionalità) prima di volare come pilota in comando."
+      },
+      "disclaimer": "Un'indicazione calcolata dal tuo libretto, non una verifica legale: resti responsabile del rispetto dei requisiti. I voli su monomotore contano per la classe SEP; le sessioni al simulatore qui non contano.",
+      "req": {
+        "hours": "Tempo di volo",
+        "pic": "Come pilota in comando",
+        "landings": "Decolli e atterraggi",
+        "refresher": "Volo di aggiornamento di almeno 1 ora con un istruttore",
+        "count": "{done} su {need}",
+        "time": "{done} su {need}",
+        "done": "Fatto",
+        "notYet": "Non ancora"
+      }
+    },
+    "stats": {
+      "link": "Statistiche",
+      "title": "Statistiche di volo",
+      "description": "I tuoi voli dalle voci certificate del libretto e i tuoi noleggi su ownAplane.",
+      "months": "Gli ultimi 12 mesi",
+      "monthValue": "{time} · {landings} att.",
+      "types": "Per tipo di aereo",
+      "none": "Ancora nessun volo certificato.",
+      "functions": "Per funzione",
+      "function": {
+        "pic": "PIC",
+        "dual": "Doppio comando",
+        "instructor": "Istruttore",
+        "copilot": "Copilota"
+      },
+      "rentals": "Noleggi su ownAplane",
+      "rentalsValue": "{count, plural, one {# noleggio} other {# noleggi}} · {time} volate · {due} dovuti",
+      "noRentals": "Ancora nessun noleggio confermato.",
+      "rentalsNote": "Dai registri di volo confermati; i pagamenti avvengono fuori dall'app."
+    }
+  },
+  "billing": {
+    "plans": {
+      "free": "Gratuito",
+      "owner": "Proprietario",
+      "fleet": "Flotta",
+      "tagline": {
+        "free": "Noleggia, vola e tieni il tuo libretto di volo.",
+        "owner": "Per proprietari di uno o due aerei.",
+        "fleet": "Per aeroclub, scuole di volo e operatori.",
+        "pilot": "Per i piloti che volano spesso."
+      },
+      "pilot": "Pilot Plus"
+    },
+    "interval": {
+      "month": "Mensile",
+      "year": "Annuale",
+      "label": "Periodo di fatturazione",
+      "yearSaves": "Annuale: 2 mesi gratis"
+    },
+    "price": {
+      "perMonth": "{price} / mese",
+      "perYear": "{price} / anno",
+      "vat": "IVA inclusa",
+      "orYearly": "oppure {price}"
+    },
+    "pricing": {
+      "title": "Prezzi",
+      "description": "Piani per piloti, proprietari di aerei, aeroclub e scuole.",
+      "lead": "Noleggiare, volare e tenere il libretto di volo sono gratis per ogni pilota. Pilot Plus aggiunge strumenti per chi vola spesso, e i proprietari scelgono il piano adatto alla loro flotta. Le funzioni di sicurezza sono le stesse in ogni piano.",
+      "beta": "Durante la beta tutti hanno gratis il piano Proprietario con Pilot Plus, e chi pubblica un aereo ora lo mantiene gratis per 12 mesi dopo la beta.",
+      "testMode": "I pagamenti sono in modalità di prova: puoi provare ogni piano e non viene addebitato nulla.",
+      "choose": "Scegli {plan}",
+      "start": "Inizia gratis",
+      "current": "Il tuo piano",
+      "creditsTitle": "Crediti per la lettura con IA",
+      "creditsText": "Compila licenze, certificati medici e pagine del libretto di volo cartaceo da una scansione. Un credito legge un documento o una doppia pagina del libretto. Ogni account riceve {welcome} crediti gratuiti per provare; i crediti acquistati non scadono mai. Pilot Plus, Proprietario e Flotta includono letture ogni mese.",
+      "pack": "{credits} crediti",
+      "notesTitle": "Buono a sapersi",
+      "notes": {
+        "pilots": "Ricerca, prenotazione, registro di volo e tenuta del libretto di volo sono gratis per ogni pilota.",
+        "safety": "Sicurezza e fiducia non sono mai a pagamento: verifica dei documenti, idoneità, difetti e fermo a terra, recensioni e segnalazioni funzionano allo stesso modo in ogni piano.",
+        "vat": "Prezzi IVA inclusa.",
+        "cancel": "Disdici quando vuoi: il piano resta attivo fino alla fine del periodo pagato.",
+        "data": "Passare a un piano inferiore non elimina mai nulla: ricevi un preavviso di una settimana, poi gli aerei oltre il limite vengono ritirati finché non passi di nuovo a un piano superiore."
+      },
+      "compareTitle": "Confronta i piani"
+    },
+    "account": {
+      "title": "Piano e pagamenti",
+      "testMode": "Modalità di prova: abbonarsi, cambiare e disdire funzionano come funzioneranno, ma non viene addebitato nulla. I pagamenti sono contrassegnati come di prova.",
+      "current": "Il tuo piano",
+      "source": {
+        "free": "Piano gratuito",
+        "subscription": "Il tuo abbonamento",
+        "admin": "Offerto dal nostro team",
+        "founding": "Proprietario fondatore: gratis per 12 mesi dopo la beta",
+        "beta": "Gratis durante la beta"
+      },
+      "until": "fino al {date}",
+      "renews": "Si rinnova il {date} per {price}.",
+      "endsOn": "Termina il {date}; poi passi a Gratuito.",
+      "scheduled": "Passa a {plan} ({interval}) il {date}.",
+      "resume": "Mantieni il piano attuale",
+      "pastDue": "L'ultimo pagamento non è andato a buon fine. Il piano continua fino al {date}; paga ora per mantenerlo.",
+      "payNow": "Paga ora",
+      "usage": "Aerei pubblicati: {used} di {limit}",
+      "featuredUsage": "Aerei in evidenza: {used} di {limit}",
+      "overLimit": "Il {date} il tuo piano diventa {plan}, che consente fino a {limit} aerei pubblicati. Ritira quelli che non ti servono entro quella data; altrimenti verranno ritirati quelli pubblicati più di recente. Non viene eliminato nulla.",
+      "change": "Cambia piano",
+      "subscribe": "Scegli {plan}",
+      "payFirst": "Salda prima il pagamento in sospeso.",
+      "freeFrom": "Dal {date}",
+      "cancel": "Disdici alla fine del periodo",
+      "downgrade": "Passa a {plan} il {date}",
+      "switchYearly": "Passa all'annuale ora · {price}",
+      "upgrade": "Passa a {plan} ora · {price}",
+      "creditsTitle": "Crediti per la lettura con IA",
+      "creditsText": "Compila licenze, certificati medici e pagine del libretto di volo da una scansione. Un credito legge un documento o una doppia pagina; una lettura non riuscita viene riaccreditata.",
+      "creditsAvailable": "{count, plural, =0 {Nessuna lettura rimasta} one {# lettura rimasta} other {# letture rimaste}}",
+      "allowance": "Inclusi questo mese: ne restano {left} su {perMonth}",
+      "allowanceBeta": "Le letture mensili arrivano con un piano a pagamento (non con la beta).",
+      "allowanceNone": "Pilot Plus, Proprietario e Flotta includono letture ogni mese.",
+      "creditsBalance": "{count, plural, one {# credito} other {# crediti}} (non scadono)",
+      "buy": "Acquista {credits} crediti · {price}",
+      "historyTitle": "Pagamenti",
+      "historyEmpty": "Ancora nessun pagamento.",
+      "history": {
+        "subscribe": "Piano {plan}, {interval}",
+        "upgrade": "Passaggio a {plan}, {interval} (proporzionale)",
+        "renewal": "Rinnovo: {plan}, {interval}",
+        "retry": "Pagamento: {plan}, {interval}",
+        "credits": "{credits} crediti per la lettura con IA"
+      },
+      "status": {
+        "paid": "Pagato",
+        "failed": "Non riuscito",
+        "refunded": "Rimborsato"
+      },
+      "testPayment": "Prova",
+      "testTitle": "Prova",
+      "testText": "Solo in modalità di prova: guarda cosa succede a un rinnovo o quando un pagamento non va a buon fine, senza aspettare.",
+      "failNextOn": "Fai fallire il prossimo pagamento",
+      "failNextOff": "Lascia passare di nuovo i pagamenti",
+      "failNextSet": "Il prossimo pagamento non andrà a buon fine.",
+      "renewNow": "Chiudi il periodo ora",
+      "done": {
+        "checkout_paid": "Pagamento effettuato. Grazie!",
+        "checkout_failed": "Il pagamento non è andato a buon fine. Nulla è cambiato; riprova quando vuoi.",
+        "checkout_canceled": "Pagamento annullato. Nulla è cambiato.",
+        "upgraded": "Il nuovo piano inizia ora.",
+        "scheduled": "Fatto: il cambio inizia con il prossimo periodo.",
+        "canceled": "Disdetto: il piano resta attivo fino alla fine del periodo pagato.",
+        "kept": "Mantieni il piano attuale.",
+        "renewed": "Il periodo è terminato e il piano si è rinnovato.",
+        "ended": "Il periodo è terminato: ora sei su Gratuito.",
+        "payment_failed": "Il pagamento non è andato a buon fine.",
+        "past_due": "Salda prima il pagamento in sospeso.",
+        "no_subscription": "Non hai un abbonamento da modificare.",
+        "fail_next_on": "Il prossimo pagamento non andrà a buon fine.",
+        "fail_next_off": "I pagamenti passano di nuovo.",
+        "already_subscribed": "Hai già un abbonamento: modificalo qui sotto.",
+        "not_available": "I pagamenti non sono disponibili al momento.",
+        "unknown_item": "Questo non si può acquistare.",
+        "failed": "Qualcosa è andato storto. Riprova."
+      },
+      "compare": "Confronta tutte le funzioni"
+    },
+    "checkout": {
+      "title": "Pagamento",
+      "testMode": "Pagamento di prova: non serve una carta e non viene addebitato nulla. Scegli cosa fa il pagamento.",
+      "plan": "Piano {plan}, {interval}",
+      "credits": "{credits} crediti per la lettura con IA",
+      "total": "Totale",
+      "renews": "Si rinnova automaticamente finché non disdici.",
+      "pay": "Paga (prova)",
+      "fail": "Fai fallire il pagamento",
+      "cancel": "Annulla",
+      "closed": "Questo pagamento è chiuso.",
+      "back": "Torna a Piano e pagamenti"
+    },
+    "note": {
+      "left": "{count, plural, =0 {Nessuna lettura con IA rimasta} one {# lettura con IA rimasta} other {# letture con IA rimaste}}",
+      "more": "Altri crediti"
+    },
+    "seePlans": "Vedi i piani",
+    "highlights": {
+      "free": {
+        "h1": "Cerca, prenota e vola",
+        "h2": "Il tuo libretto elettronico e la verifica dei documenti",
+        "h3": "Pubblica 1 aereo",
+        "h4": "5 letture con IA per provare"
+      },
+      "pilot": {
+        "h1": "Controllo dell'esperienza recente e dei rinnovi",
+        "h2": "Stampa del libretto e statistiche di volo",
+        "h3": "20 ricerche salvate, le tue prenotazioni nel calendario",
+        "h4": "20 letture con IA al mese"
+      },
+      "owner": {
+        "h1": "Tutto di Pilot Plus",
+        "h2": "Fino a 2 aerei pubblicati",
+        "h3": "Prenotazione immediata, statistiche, 1 posto in evidenza",
+        "h4": "Storico di utilizzo completo e link di calendario"
+      },
+      "fleet": {
+        "h1": "Tutto di Proprietario",
+        "h2": "Fino a 10 aerei pubblicati",
+        "h3": "3 posti in evidenza nella ricerca",
+        "h4": "50 letture con IA al mese"
+      }
+    },
+    "table": {
+      "caption": "Cosa include ogni piano",
+      "feature": "Funzione",
+      "yes": "Incluso",
+      "no": "Non incluso",
+      "full": "Completo",
+      "months": "{months} mesi",
+      "groups": {
+        "pilots": "Per i piloti",
+        "owners": "Per i proprietari",
+        "ai": "Lettura con IA"
+      },
+      "rows": {
+        "basics": "Ricerca, prenotazione, registro di volo, libretto elettronico, verifica dei documenti, recensioni e messaggi",
+        "currencyTracker": "Controllo dell'esperienza: passeggeri, volo notturno, rinnovo dell'abilitazione di classe",
+        "logbookExtras": "Stampa del libretto (formato EASA) e statistiche di volo",
+        "savedSearches": "Ricerche salvate con avvisi",
+        "bookingsCalendar": "Le tue prenotazioni in Google Calendar o Outlook",
+        "aircraft": "Aerei pubblicati",
+        "instantBooking": "Prenotazione immediata",
+        "usage": "Storico di utilizzo ed esportazioni CSV",
+        "statistics": "Statistiche del proprietario",
+        "featured": "Posti in evidenza nella ricerca",
+        "calendarLink": "Link di calendario dell'aereo per Google o Outlook",
+        "aiCredits": "Letture con IA incluse ogni mese"
+      }
+    },
+    "plus": {
+      "included": "È incluso in Pilot Plus e nei piani Proprietario e Flotta.",
+      "get": "Prendi Pilot Plus",
+      "compare": "Confronta i piani"
     }
   }
 }

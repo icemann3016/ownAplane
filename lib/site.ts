@@ -6,6 +6,7 @@ export const siteConfig = {
     { href: "/owner/aircraft", key: "listAircraft" },
   ],
   footerNav: [
+    { href: "/pricing", key: "pricing" },
     { href: "/help", key: "help" },
     { href: "/terms", key: "terms" },
     { href: "/privacy", key: "privacy" },

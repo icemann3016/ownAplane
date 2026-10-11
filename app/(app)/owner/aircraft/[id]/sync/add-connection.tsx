@@ -12,7 +12,14 @@ import { CONNECTION_KINDS } from "@/lib/validation/calendar-sync";
 import { addConnection } from "./actions";
 
 /** Connect another booking system (SYN-1, SYN-4): how its bookings reach us. */
-export function AddConnection({ aircraftId }: { aircraftId: string }) {
+export function AddConnection({
+  aircraftId,
+  exportAllowed,
+}: {
+  aircraftId: string;
+  /** A calendar link only (no other system) needs a paid plan (SUB-10). */
+  exportAllowed: boolean;
+}) {
   const t = useTranslations("calendarSync");
   const [state, formAction] = useActionState(addConnection, initialFormState);
   const v = state.values ?? {};
@@ -51,11 +58,15 @@ export function AddConnection({ aircraftId }: { aircraftId: string }) {
               value={k}
               checked={kind === k}
               onChange={() => setKind(k)}
+              disabled={k === "none" && !exportAllowed}
               className="mt-1"
             />
             <span className="grid gap-0.5">
               <span className="text-sm font-medium">{t(`kinds.${k}.label`)}</span>
               <span className="text-sm text-muted-foreground">{t(`kinds.${k}.hint`)}</span>
+              {k === "none" && !exportAllowed && (
+                <span className="text-sm text-muted-foreground">{t("add.exportPlan")}</span>
+              )}
             </span>
           </label>
         ))}

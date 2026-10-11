@@ -84,7 +84,8 @@ export function myAircraftPaths() {
     "/api/v1/me/aircraft/{id}/status": {
       put: {
         tags,
-        summary: "List, pause or unlist (409 not_ready with details.missing, blocked, not_allowed)",
+        summary:
+          "List, pause or unlist (409 not_ready with details.missing, plan_limit with details.limit, blocked, not_allowed)",
         security: signedIn,
         parameters: [id],
         requestBody: jsonBody(statusBody),

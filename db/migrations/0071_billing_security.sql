@@ -1,8 +1,9 @@
 -- Plans and payments (SUB-1…10) and AI reading credits. Users read their own billing rows; only
 -- trusted code (payment events, admins, the daily job) writes them. The plan a user has is
 -- public.plan_of(): the highest of an active subscription, a plan grant and the beta switch.
--- Plan limits are enforced here (SUB-3): listed and featured aircraft; instant booking needs a
--- paid plan. Limits per plan mirror lib/billing/plans.ts (a test keeps them equal).
+-- Plan limits are enforced here (SUB-3): listed and featured aircraft, saved searches; instant
+-- booking needs an owner plan. Plans in order: free < pilot (Pilot Plus) < owner < fleet; each
+-- includes what the lower ones give. Limits mirror lib/billing/plans.ts (a test keeps them equal).
 
 GRANT SELECT ON public.subscriptions, public.plan_grants, public.billing_checkouts,
   public.billing_payments, public.ai_credit_entries, public.billing_settings TO app_user;
@@ -39,7 +40,7 @@ LANGUAGE sql
 IMMUTABLE
 SET search_path = ''
 AS $$
-  SELECT CASE p WHEN 'fleet' THEN 2 WHEN 'owner' THEN 1 ELSE 0 END
+  SELECT CASE p WHEN 'fleet' THEN 3 WHEN 'owner' THEN 2 WHEN 'pilot' THEN 1 ELSE 0 END
 $$;
 --> statement-breakpoint
 CREATE OR REPLACE FUNCTION public.plan_limit(p public.plan_name, what text)
@@ -51,6 +52,7 @@ AS $$
   SELECT CASE what
     WHEN 'aircraft' THEN CASE p WHEN 'fleet' THEN 10 WHEN 'owner' THEN 2 ELSE 1 END
     WHEN 'featured' THEN CASE p WHEN 'fleet' THEN 3 WHEN 'owner' THEN 1 ELSE 0 END
+    WHEN 'saved_searches' THEN CASE p WHEN 'free' THEN 2 ELSE 20 END
   END
 $$;
 --> statement-breakpoint
@@ -236,11 +238,15 @@ CREATE TRIGGER aircraft_founding_owner AFTER UPDATE OF status ON public.aircraft
   EXECUTE FUNCTION public.grant_founding_owner();
 --> statement-breakpoint
 
--- Owners who listed before plans existed are founding owners; their aircraft keep their order.
+-- Owners who listed before plans existed are founding owners (Fleet when more than the Owner
+-- plan's 2 aircraft are listed, so nothing gets unlisted); their aircraft keep their order.
 INSERT INTO public.plan_grants (user_id, plan, reason, note)
-SELECT DISTINCT a.owner_id, 'owner'::public.plan_name, 'founding'::public.plan_grant_reason,
-  'Founding owner'
+SELECT a.owner_id,
+  CASE WHEN count(*) FILTER (WHERE a.status = 'listed') > 2 THEN 'fleet'::public.plan_name
+       ELSE 'owner'::public.plan_name END,
+  'founding'::public.plan_grant_reason, 'Founding owner'
 FROM public.aircraft a WHERE a.status <> 'draft'
+GROUP BY a.owner_id
 ON CONFLICT (user_id) WHERE reason = 'founding' DO NOTHING;
 --> statement-breakpoint
 UPDATE public.aircraft SET listed_at = updated_at WHERE status = 'listed' AND listed_at IS NULL;
@@ -314,11 +320,11 @@ BEGIN
   -- Holds the time; a clash with another entry raises exclusion_violation (23P01).
   INSERT INTO public.calendar_entries (aircraft_id, period, kind, booking_id, created_by)
   VALUES (target, wanted, 'booking', new_id, me);
-  -- Instant booking (BKG-4): the owner allows it and has a paid plan (SUB-10), no checkout
+  -- Instant booking (BKG-4): the owner allows it and has an owner plan (SUB-10), no checkout
   -- flight is pending, and the pilot has completed a rental of it before.
   instant := EXISTS (SELECT 1 FROM public.rental_requirements r
                      WHERE r.aircraft_id = target AND r.instant_booking)
-    AND (SELECT p.plan FROM public.plan_of(plane.owner_id) p) <> 'free'
+    AND (SELECT public.plan_rank(p.plan) FROM public.plan_of(plane.owner_id) p) >= 2
     -- Blocking failures were refused above; of the conditions, a checkout flight is for the
     -- owner to arrange (a night flight is only a note to the pilot).
     AND NOT EXISTS (SELECT 1 FROM public.eligibility_failures(me, target, wanted, fields) f
@@ -334,5 +340,39 @@ BEGIN
     VALUES (new_id, me, 'requested', jsonb_build_object('estimate', estimate));
   END IF;
   RETURN new_id;
+END;
+$$;
+--> statement-breakpoint
+
+-- A limit of the signed-in user's plan (saved searches…), for the app's own triggers.
+CREATE OR REPLACE FUNCTION public.my_plan_limit(what text)
+RETURNS integer
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $$
+  SELECT public.plan_limit(p.plan, what) FROM public.plan_of(app.current_user_id()) p
+$$;
+--> statement-breakpoint
+REVOKE ALL ON FUNCTION public.my_plan_limit(text) FROM PUBLIC;
+--> statement-breakpoint
+GRANT EXECUTE ON FUNCTION public.my_plan_limit(text) TO app_user;
+--> statement-breakpoint
+
+-- Saved searches (SRC-6): as in 0061, but as many as the plan allows (Free 2, Pilot Plus and up 20).
+CREATE OR REPLACE FUNCTION public.saved_search_defaults()
+RETURNS trigger
+LANGUAGE plpgsql
+SET search_path = ''
+AS $$
+BEGIN
+  NEW.created_at := now();
+  NEW.last_alert_at := NULL;
+  IF (SELECT count(*) FROM public.saved_searches WHERE user_id = NEW.user_id)
+     >= coalesce(public.my_plan_limit('saved_searches'), 20) THEN
+    RAISE EXCEPTION 'too_many_searches';
+  END IF;
+  RETURN NEW;
 END;
 $$;
