@@ -12,7 +12,8 @@ import type { ReadResult, ReadTask, ScanFile } from "./types";
 const SYSTEM = [
   "You read scans and photos of aviation documents (pilot licences, medical certificates,",
   "pilot logbooks) and copy what is written into the given tool, exactly as written.",
-  "Never guess: use null for anything you can't read with confidence. Dates as YYYY-MM-DD.",
+  "Never guess: use null for anything you can't read with confidence. Dates as YYYY-MM-DD",
+  "(European documents write day.month.year: 24.02.2026 is 2026-02-24).",
 ].join(" ");
 
 const IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);

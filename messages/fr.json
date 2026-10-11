@@ -816,7 +816,9 @@
         "not_this_document": "Cela ne ressemble pas au bon document. Vérifiez le fichier téléversé.",
         "unreadable": "Le scan n'a pas pu être lu. Une photo plus nette et bien droite aide souvent ; sinon remplissez le formulaire vous-même.",
         "failed": "La lecture n'a pas fonctionné cette fois. Réessayez ou remplissez le formulaire vous-même."
-      }
+      },
+      "filledPartly": "Rempli avec ce que montre le scan ; les champs vides n'y figuraient pas. Vérifiez chaque champ avant d'enregistrer.",
+      "medicalNoDates": "Le scan ne montre pas les dates d'expiration (rubrique IX, généralement sur la page suivante du certificat) : la classe et la date n'ont donc pas pu être lues. Importez un scan avec cette page aussi (les deux pages dans un seul PDF), ou choisissez la classe et saisissez la date vous-même."
     }
   },
   "admin": {

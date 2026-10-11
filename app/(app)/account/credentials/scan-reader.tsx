@@ -24,7 +24,11 @@ export function ScanReader({
 }) {
   const t = useTranslations("pilot.scan");
   const [reading, startReading] = useTransition();
-  const [result, setResult] = useState<{ ok: boolean; message: string } | null>(null);
+  const [result, setResult] = useState<{
+    ok: boolean;
+    message: string;
+    partial?: boolean;
+  } | null>(null);
   const [ratings, setRatings] = useState<FoundRating[]>([]);
 
   if (!documentId) return <p className="text-xs text-muted-foreground">{t("uploadFirst")}</p>;
@@ -40,7 +44,7 @@ export function ScanReader({
       }
       onRead(answer.values);
       setRatings(answer.ratings);
-      setResult({ ok: true, message: t("filled") });
+      setResult({ ok: true, message: answer.message, partial: answer.partial });
     });
   }
 
@@ -65,10 +69,13 @@ export function ScanReader({
         {kind === "medical" ? t("readMedical") : t("read")}
       </Button>
       <p role="status" className="text-sm empty:hidden">
-        {reading ? t("reading") : result?.ok ? result.message : ""}
+        {reading ? t("reading") : result?.ok && !result.partial ? result.message : ""}
       </p>
-      {result && !result.ok && (
-        <Alert variant="destructive">
+      {result && (!result.ok || result.partial) && (
+        <Alert
+          variant={result.ok ? "default" : "destructive"}
+          role={result.ok ? "status" : "alert"}
+        >
           <AlertDescription>{result.message}</AlertDescription>
         </Alert>
       )}

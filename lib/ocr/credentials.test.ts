@@ -59,6 +59,30 @@ describe("what is read from a medical", () => {
     expect(read([{ class: "class1", validUntil: "2027-01-31" }]).class).toBe("class1");
   });
 
+  it("gives a class 1 certificate the date for private flying (class 2)", () => {
+    expect(
+      read([
+        { class: "class1", validUntil: "2027-02-24" },
+        { class: "class2", validUntil: "2031-02-24" },
+        { class: "lapl", validUntil: "2031-02-24" },
+      ]),
+    ).toEqual({ class: "class1", issuingState: "DE", validUntil: "2031-02-24" });
+    expect(read([{ class: "lapl", validUntil: "2031-01-31" }])).toMatchObject({
+      class: "lapl",
+      validUntil: "2031-01-31",
+    });
+  });
+
+  it("ignores classes read without a date (the cover names them all)", () => {
+    expect(
+      read([
+        { class: "class1", validUntil: null },
+        { class: "class2", validUntil: null },
+        { class: "lapl", validUntil: null },
+      ]),
+    ).toEqual({ class: null, issuingState: "DE", validUntil: null });
+  });
+
   it("falls back to the highest class when none is valid, and to nothing when empty", () => {
     expect(
       read([

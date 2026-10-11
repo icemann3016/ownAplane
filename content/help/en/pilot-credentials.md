@@ -32,6 +32,9 @@ validity). Ratings found on the licence are offered as well: tick the ones you w
 - The scan is sent to our AI provider (Anthropic) only to read it. For a **medical**, which is
   health data, the button says that you agree to this; you can always fill in the form yourself
   instead.
+- For a **medical**, the class and the date come from the expiry dates (item IX), which are often
+  on a different page from your name. Scan that page too, with both pages in one PDF. With a class 1
+  certificate, the date filled in is the one for private flying (class 2).
 - A sharp, straight photo in good light reads best. There is a daily limit on how many scans can be
   read.
 

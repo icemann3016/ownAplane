@@ -46,7 +46,7 @@ const medicalScan = z.object({
   issuingState: z.string().nullable().describe("ISO 3166-1 alpha-2 code of the issuing state"),
   classes: z
     .array(z.object({ class: z.enum(MEDICAL_CLASSES), validUntil: day }))
-    .describe("Each class on the certificate with its expiry date"),
+    .describe("Each class with an expiry date in item IX, with that date; none shown → empty"),
 });
 
 const LICENCE_TASK = {
@@ -71,8 +71,13 @@ const MEDICAL_TASK = {
   schema: medicalScan,
   instructions: [
     "This should be an aviation medical certificate (EASA Part-MED or national).",
-    "classes: Class 1 → class1, Class 2 → class2, LAPL → lapl, each with the expiry date",
-    "printed for it (the latest one if there are several for that class).",
+    "The class is given only by the expiry dates in item IX ('expiry date of this certificate':",
+    "Class 1, Class 2, LAPL, each with its own date; a class 1 certificate usually lists all",
+    "three). The title 'Class 1 / 2 / LAPL medical certificate' is printed on every certificate",
+    "and does not tell the class; the date of issue (item X) and the examination date are not",
+    "expiry dates. classes: each class with an expiry date in item IX (Class 1 → class1,",
+    "Class 2 → class2, LAPL → lapl), with that date (the latest one if there are several for",
+    "that class). If the scan doesn't show item IX, classes is an empty list.",
   ].join(" "),
 };
 
@@ -138,20 +143,25 @@ export function licenceSuggestion(read: z.infer<typeof licenceScan>): LicenceSug
 
 const RANK = { class1: 3, class2: 2, lapl: 1 } as const;
 
-/** The highest class still valid today (else the highest), with its date (pure, for tests). */
+/**
+ * The certificate's class: the highest one with an expiry date, preferring one still valid
+ * today. Its date is the one for private flying (what the form asks for): class 1 includes
+ * class 2, so the later of the class 1 and class 2 dates; the LAPL date only when LAPL is all
+ * that is left. Classes without a date count for nothing (the cover names every class). Pure.
+ */
 export function medicalSuggestion(
   read: z.infer<typeof medicalScan>,
   today = new Date().toISOString().slice(0, 10),
 ): MedicalSuggestion {
-  const classes = read.classes
-    .map((c) => ({ ...c, validUntil: plausible(c.validUntil) }))
+  const dated = read.classes
+    .map((c) => ({ class: c.class, validUntil: plausible(c.validUntil) ?? "" }))
+    .filter((c) => c.validUntil)
     .sort((a, b) => RANK[b.class] - RANK[a.class]);
-  const best = classes.find((c) => c.validUntil && c.validUntil >= today) ?? classes[0];
-  return {
-    class: best?.class ?? null,
-    issuingState: state(read.issuingState),
-    validUntil: best?.validUntil ?? null,
-  };
+  const best = dated.find((c) => c.validUntil >= today) ?? dated[0];
+  const partFcl = dated.filter((c) => c.class !== "lapl").map((c) => c.validUntil);
+  const validUntil =
+    !best || best.class === "lapl" ? (best?.validUntil ?? null) : partFcl.sort().at(-1)!;
+  return { class: best?.class ?? null, issuingState: state(read.issuingState), validUntil };
 }
 
 export type ScanReadError =

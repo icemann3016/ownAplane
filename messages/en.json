@@ -816,7 +816,9 @@
         "not_this_document": "This doesn't look like the right document. Check the upload.",
         "unreadable": "The scan couldn't be read. A sharper, straight photo usually helps; or fill in the form yourself.",
         "failed": "Reading the scan didn't work this time. Please try again or fill in the form yourself."
-      }
+      },
+      "filledPartly": "Filled in what the scan shows; the empty fields weren't on it. Check every field before you save.",
+      "medicalNoDates": "The scan doesn't show the expiry dates (item IX, usually on the next page of the certificate), so the class and the date couldn't be read. Upload a scan with that page too (both pages in one PDF), or choose the class and enter the date yourself."
     }
   },
   "admin": {

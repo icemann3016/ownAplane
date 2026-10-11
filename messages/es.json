@@ -816,7 +816,9 @@
         "not_this_document": "No parece el documento correcto. Revisa el archivo subido.",
         "unreadable": "No se pudo leer el escaneo. Suele ayudar una foto más nítida y recta; o rellena el formulario tú mismo.",
         "failed": "La lectura no funcionó esta vez. Inténtalo de nuevo o rellena el formulario tú mismo."
-      }
+      },
+      "filledPartly": "Se ha rellenado lo que muestra el escaneo; los campos vacíos no aparecían en él. Revisa cada campo antes de guardar.",
+      "medicalNoDates": "El escaneo no muestra las fechas de caducidad (apartado IX, normalmente en la página siguiente del certificado), así que no se han podido leer la clase ni la fecha. Sube un escaneo que incluya también esa página (ambas páginas en un solo PDF), o elige la clase e introduce la fecha tú mismo."
     }
   },
   "admin": {

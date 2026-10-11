@@ -21,7 +21,14 @@ export type FoundRating = {
 };
 
 export type ScanReadState =
-  | { ok: true; values: Record<string, string>; ratings: FoundRating[] }
+  | {
+      ok: true;
+      values: Record<string, string>;
+      ratings: FoundRating[];
+      /** What to tell the pilot; `partial` when fields the form needs weren't on the scan. */
+      message: string;
+      partial: boolean;
+    }
   | { ok: false; message: string };
 
 const readInput = z.object({
@@ -44,8 +51,14 @@ export async function readScanIntoForm(input: {
   const read = await readCredentialScan(user.id, documentId, kind, consent ? new Date() : null);
   if (!read.ok) return { ok: false, message: t(`errors.${read.error}`) };
   const str = (v: string | null) => v ?? "";
+  const done = (partial: boolean, missingDates = false) => ({
+    partial,
+    message: t(missingDates ? "medicalNoDates" : partial ? "filledPartly" : "filled"),
+  });
   if (read.kind === "medical") {
     const s = read.suggestion;
+    // Class and date come only from the expiry dates (item IX), often on another page.
+    const noDates = !s.class || !s.validUntil;
     return {
       ok: true,
       values: {
@@ -54,6 +67,7 @@ export async function readScanIntoForm(input: {
         validUntil: str(s.validUntil),
       },
       ratings: [],
+      ...done(noDates || !s.issuingState, noDates),
     };
   }
   const s = read.suggestion;
@@ -70,6 +84,7 @@ export async function readScanIntoForm(input: {
       expiresOn: str(s.expiresOn),
     },
     ratings: s.ratings.filter((r) => !have.has(`${r.kind}:${r.code}`)),
+    ...done(!s.type || !s.issuingState || !s.number || !s.issuedOn),
   };
 }
 

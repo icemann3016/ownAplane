@@ -816,7 +816,9 @@
         "not_this_document": "Das sieht nicht nach dem richtigen Dokument aus. Prüfen Sie den Upload.",
         "unreadable": "Der Scan konnte nicht gelesen werden. Ein schärferes, gerades Foto hilft meist; oder füllen Sie das Formular selbst aus.",
         "failed": "Das Lesen hat diesmal nicht geklappt. Bitte versuchen Sie es erneut oder füllen Sie das Formular selbst aus."
-      }
+      },
+      "filledPartly": "Ausgefüllt, was auf dem Scan zu sehen ist; die leeren Felder standen nicht darauf. Prüfen Sie jedes Feld, bevor Sie speichern.",
+      "medicalNoDates": "Auf dem Scan sind die Ablaufdaten nicht zu sehen (Punkt IX, meist auf der nächsten Seite des Zeugnisses), daher konnten Klasse und Datum nicht gelesen werden. Laden Sie einen Scan mit dieser Seite hoch (beide Seiten in einem PDF) oder wählen Sie die Klasse und geben Sie das Datum selbst ein."
     }
   },
   "admin": {

@@ -816,7 +816,9 @@
         "not_this_document": "Non sembra il documento giusto. Controlla il file caricato.",
         "unreadable": "Non è stato possibile leggere la scansione. Di solito aiuta una foto più nitida e dritta; oppure compila il modulo da solo.",
         "failed": "La lettura non è riuscita questa volta. Riprova o compila il modulo da solo."
-      }
+      },
+      "filledPartly": "Compilato con ciò che mostra la scansione; i campi vuoti non vi comparivano. Controlla ogni campo prima di salvare.",
+      "medicalNoDates": "La scansione non mostra le date di scadenza (punto IX, di solito nella pagina successiva del certificato), quindi non è stato possibile leggere la classe e la data. Carica una scansione che includa anche quella pagina (entrambe le pagine in un unico PDF), oppure scegli la classe e inserisci la data tu stesso."
     }
   },
   "admin": {
