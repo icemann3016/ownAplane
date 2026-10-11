@@ -30,6 +30,21 @@ block times, aircraft, landings and PIC time are filled in. Complete what the ap
 - The app points out times that don't add up (for example PIC time more than the total), but you
   decide.
 
+## Reading your paper logbook
+
+**Logbook → Read a paper logbook page.** A paper EASA logbook records each flight on one line
+that runs across two facing pages. Photograph or scan both pages (as two files, or one photo of
+the spread) and press **Read the pages**:
+
+- every line with a readable date becomes a **draft**, linked to the scanned page;
+- the app adds up the lines and compares them with the **"total this page"** row you wrote at
+  the bottom: columns that don't match are listed, so you know which page to look at again;
+- lines it couldn't read are counted, so you can add them yourself.
+
+Check the drafts against the page and certify them. The pages are sent to our AI provider
+(Anthropic) only to read them. A sharp, straight photo in good light reads best; there is a daily
+limit on how many pages can be read.
+
 ## Print and export
 
 - **Print (EASA layout)** shows each page as the two facing pages of a paper logbook, with the

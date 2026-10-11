@@ -123,4 +123,11 @@ test("a pilot keeps an EASA logbook", async ({ page, baseURL }) => {
   expect((await locked.json()).error.details.reason).toBe("not_editable");
   const list = (await (await api("/api/v1/me/logbook")).json()).data;
   expect(list.map((e: { status: string }) => e.status)).toContain("superseded");
+
+  // 7. The experience on the credentials page comes from the logbook (LOG-7)
+  await page.goto("/account/credentials");
+  await page.getByRole("button", { name: "Switch on pilot role" }).click();
+  await expect(page.getByText("From your logbook: 250.5 h total, 200 h PIC")).toBeVisible();
+  await page.getByRole("button", { name: "Use these" }).click();
+  await expect(page.getByLabel("Total hours")).toHaveValue("250.5");
 });

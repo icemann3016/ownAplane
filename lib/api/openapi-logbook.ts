@@ -2,9 +2,11 @@ import {
   certifyBody,
   logbookEntry,
   logbookEntryBody,
+  logbookSpread,
   logbookTotals,
   newLogbookEntryBody,
   pageQuery,
+  spreadBody,
   voidBody,
 } from "./logbook";
 import {
@@ -21,7 +23,11 @@ import {
 // OpenAPI paths of the pilot's logbook (lib/api/logbook.ts).
 
 export function logbookSchemas() {
-  return { LogbookEntry: output(logbookEntry), LogbookTotals: output(logbookTotals) };
+  return {
+    LogbookEntry: output(logbookEntry),
+    LogbookTotals: output(logbookTotals),
+    LogbookSpread: output(logbookSpread),
+  };
 }
 
 const tags = ["logbook"];
@@ -115,6 +121,35 @@ export function logbookPaths() {
         summary: "Totals per column to date, the last 90 days, and hours per aircraft type",
         security: signedIn,
         responses: { ...ok(ref("LogbookTotals")), ...errors(401) },
+      },
+    },
+    "/api/v1/me/logbook/scans": {
+      post: {
+        tags,
+        summary:
+          "Read a scanned two-page spread of a paper logbook into drafts, with the page totals checked",
+        security: signedIn,
+        requestBody: jsonBody(spreadBody),
+        responses: {
+          201: {
+            description: "Read",
+            content: {
+              "application/json": {
+                schema: { type: "object", properties: { data: ref("LogbookSpread") } },
+              },
+            },
+          },
+          ...errors(400, 401, 404, 409, 429),
+        },
+      },
+    },
+    "/api/v1/me/logbook/scans/{id}": {
+      get: {
+        tags,
+        summary: "A read spread: lines read, the totals check and its entries",
+        security: signedIn,
+        parameters: [pathId("id", "Spread id (uuid)")],
+        responses: { ...ok(ref("LogbookSpread")), ...errors(401, 404) },
       },
     },
     "/api/v1/me/logbook/export": {

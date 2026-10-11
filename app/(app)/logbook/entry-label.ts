@@ -78,3 +78,20 @@ export function entryFormValues(e: LogbookEntry): Record<string, string> {
   for (const d of DURATIONS) values[d] = formatDuration(e[d]);
   return values;
 }
+
+/** Label keys (logbook.columns.*) of a totals column; two keys are joined ("Landings Day"). */
+export const TOTAL_LABEL: Record<string, string[]> = {
+  seMinutes: ["singlePilot", "se"],
+  meMinutes: ["singlePilot", "me"],
+  mpMinutes: ["mp"],
+  totalMinutes: ["total"],
+  landingsDay: ["landings", "day"],
+  landingsNight: ["landings", "night"],
+  nightMinutes: ["night"],
+  ifrMinutes: ["ifr"],
+  picMinutes: ["pic"],
+  copilotMinutes: ["copilot"],
+  dualMinutes: ["dual"],
+  instructorMinutes: ["instructor"],
+  fstdMinutes: ["fstd"],
+};

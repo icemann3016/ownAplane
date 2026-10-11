@@ -13,6 +13,7 @@ import {
   documents,
   flightLogs,
   flightUplifts,
+  logbookSpreads,
   medicals,
   pilotLicences,
   pilotRatings,
@@ -105,6 +106,8 @@ const referenced = (id: typeof documents.id) => sql`(
   or exists (select 1 from ${flightLogs} where ${flightLogs.checkoutPhotoId} = ${id})
   or exists (select 1 from ${flightUplifts} where ${flightUplifts.receiptId} = ${id})
   or exists (select 1 from ${defects} where ${defects.photoId} = ${id})
+  or exists (select 1 from ${logbookSpreads} where ${logbookSpreads.leftDocumentId} = ${id}
+    or ${logbookSpreads.rightDocumentId} = ${id})
 )`;
 
 /** Delete the user's document if no credential or aircraft uses it any more (row and file). */

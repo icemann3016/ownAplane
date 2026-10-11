@@ -4,6 +4,51 @@ import { createServer } from "node:http";
 
 const port = Number(process.env.OCR_MOCK_PORT ?? 4556);
 
+const emptyLine = Object.fromEntries(
+  [
+    "date",
+    "departurePlace",
+    "departureTime",
+    "arrivalPlace",
+    "arrivalTime",
+    "aircraftType",
+    "registration",
+    "seTime",
+    "meTime",
+    "mpTime",
+    "totalTime",
+    "picName",
+    "landingsDay",
+    "landingsNight",
+    "nightTime",
+    "ifrTime",
+    "picTime",
+    "copilotTime",
+    "dualTime",
+    "instructorTime",
+    "fstdType",
+    "fstdTime",
+    "remarks",
+  ].map((k) => [k, null]),
+);
+const emptyTotals = Object.fromEntries(
+  [
+    "seTime",
+    "meTime",
+    "mpTime",
+    "totalTime",
+    "landingsDay",
+    "landingsNight",
+    "nightTime",
+    "ifrTime",
+    "picTime",
+    "copilotTime",
+    "dualTime",
+    "instructorTime",
+    "fstdTime",
+  ].map((k) => [k, null]),
+);
+
 const answers = {
   record_licence: {
     isLicence: true,
@@ -16,6 +61,55 @@ const answers = {
       { kind: "class", code: "SEP (land)", expiresOn: "2027-05-31" },
       { kind: "privilege", code: "Night", expiresOn: null },
     ],
+  },
+  // A spread with one unreadable line and a page total that doesn't match the lines (2:40 written,
+  // 2:30 read), so the check shows.
+  record_logbook_spread: {
+    isLogbook: true,
+    lines: [
+      {
+        ...emptyLine,
+        line: 1,
+        date: "2024-05-12",
+        departurePlace: "LBSF",
+        departureTime: "08:05",
+        arrivalPlace: "LBPD",
+        arrivalTime: "09:15",
+        aircraftType: "C172",
+        registration: "LZ-ABC",
+        seTime: "1:10",
+        totalTime: "1:10",
+        picName: "SELF",
+        landingsDay: 1,
+        picTime: "1:10",
+      },
+      { ...emptyLine, line: 2, date: null, departurePlace: "LBPD" },
+      {
+        ...emptyLine,
+        line: 3,
+        date: "2024-05-13",
+        departurePlace: "LBPD",
+        departureTime: "10:00",
+        arrivalPlace: "LBSF",
+        arrivalTime: "11:20",
+        aircraftType: "C172",
+        registration: "LZ-ABC",
+        seTime: "1:20",
+        totalTime: "1:20",
+        picName: "SELF",
+        landingsDay: 2,
+        picTime: "1:20",
+      },
+      { ...emptyLine, line: 4, date: "2024-05-20", fstdType: "ALSIM AL42", fstdTime: "2:00" },
+    ],
+    totalThisPage: {
+      ...emptyTotals,
+      totalTime: "2:40",
+      seTime: "2:30",
+      landingsDay: 3,
+      picTime: "2:30",
+      fstdTime: "2:00",
+    },
   },
   record_medical: {
     isMedical: true,

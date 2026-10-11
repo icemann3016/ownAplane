@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CheckCircle2Icon, DownloadIcon, PlusIcon, PrinterIcon } from "lucide-react";
+import { CheckCircle2Icon, DownloadIcon, PlusIcon, PrinterIcon, ScanLineIcon } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { requireUser } from "@/lib/auth/session";
 import { getTotals, listDrafts, listEntries } from "@/lib/logbook/entries";
 import { missingFields } from "@/lib/logbook/ops";
+import { isOcrConfigured } from "@/lib/ocr";
 import { CertifyForm } from "./certify-form";
 import { EntriesTable } from "./entries-table";
 import { entryLabel } from "./entry-label";
@@ -54,6 +55,13 @@ export default async function LogbookPage({
         <Button asChild size="sm" variant="outline">
           <Link href="/logbook/new?kind=brought_forward">{t("add.brought_forward")}</Link>
         </Button>
+        {isOcrConfigured() && (
+          <Button asChild size="sm" variant="outline">
+            <Link href="/logbook/scan">
+              <ScanLineIcon aria-hidden /> {t("scan.link")}
+            </Link>
+          </Button>
+        )}
         <Button asChild size="sm" variant="ghost">
           <Link href="/logbook/print">
             <PrinterIcon aria-hidden /> {t("printLink")}

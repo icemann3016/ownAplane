@@ -779,7 +779,11 @@
       "removeType": "{type} entfernen",
       "noTypes": "Noch keine Flugzeugmuster hinzugefügt.",
       "birthDate": "Geburtsdatum",
-      "birthDateHint": "Optional. Nur zur Prüfung eines Mindestalters des Halters; wird niemandem angezeigt."
+      "birthDateHint": "Optional. Nur zur Prüfung eines Mindestalters des Halters; wird niemandem angezeigt.",
+      "fromLogbook": "Laut Flugbuch: {total} h gesamt, {pic} h als PIC, {recent} h in den letzten 90 Tagen.",
+      "useLogbook": "Übernehmen",
+      "logbookNone": "Führen Sie Ihr Flugbuch in ownAplane, dann können Ihre Stunden daraus übernommen werden.",
+      "logbookLink": "Flugbuch öffnen"
     },
     "errors": {
       "notFound": "Dieser Eintrag existiert nicht mehr. Bitte laden Sie die Seite neu."
@@ -2920,6 +2924,39 @@
       "button": "Drucken",
       "note": "Durchgestrichene Zeilen wurden korrigiert oder entfernt; ihr Ersatz steht im Flugbuch. Jede Zeile wurde vom Piloten in ownAplane bestätigt."
     },
-    "printLink": "Drucken (EASA-Layout)"
+    "printLink": "Drucken (EASA-Layout)",
+    "scan": {
+      "link": "Seite aus dem Papierflugbuch lesen",
+      "title": "Seite aus dem Papierflugbuch lesen",
+      "description": "Fotografieren oder scannen Sie die beiden gegenüberliegenden Seiten Ihres Papierflugbuchs. Jeder Flug läuft über die linke und die rechte Seite; die App liest die Zeilen als Entwürfe und prüft sie gegen die unten notierten Summen.",
+      "left": "Linke Seite (oder ein Foto beider Seiten)",
+      "right": "Rechte Seite (optional)",
+      "rightHint": "Leer lassen, wenn das erste Foto beide Seiten zeigt.",
+      "note": "Die Seiten werden zum Lesen an unseren KI-Anbieter (Anthropic) gesendet. Nichts zählt, bevor Sie die Entwürfe prüfen und bestätigen.",
+      "read": "Seiten lesen",
+      "reading": "Wird gelesen… das kann bis zu einer Minute dauern.",
+      "leftRequired": "Laden Sie zuerst die linke Seite (oder ein Foto beider Seiten) hoch.",
+      "resultTitle": "Aus Ihrer Flugbuchseite gelesen",
+      "linesRead": "{count, plural, one {# Zeile als Entwurf gelesen.} other {# Zeilen als Entwürfe gelesen.}}",
+      "linesSkipped": "{count, plural, one {# Zeile konnte nicht gelesen werden (kein lesbares Datum): tragen Sie sie selbst ein.} other {# Zeilen konnten nicht gelesen werden (kein lesbares Datum): tragen Sie sie selbst ein.}}",
+      "totalsMatch": "Die Zeilen ergeben die auf der Seite notierten Summen.",
+      "totalsNotRead": "Die Seitensummen konnten nicht gelesen werden und wurden daher nicht geprüft.",
+      "totalsDiffer": "Diese Spalten ergeben nicht, was unten auf der Seite steht. Prüfen Sie die Zeilen:",
+      "difference": "{column}: Seite {written}, Zeilen {lines}",
+      "pages": "Gescannte Seiten",
+      "leftPage": "Linke Seite",
+      "rightPage": "Rechte Seite",
+      "another": "Weitere Seite lesen",
+      "fromSpread": "Aus einer gescannten Seite gelesen",
+      "errors": {
+        "not_configured": "Das Lesen von Scans ist gerade nicht verfügbar.",
+        "not_found": "Laden Sie die Seiten erneut hoch und versuchen Sie es noch einmal.",
+        "limit": "Sie haben heute schon viele Seiten lesen lassen. Bitte versuchen Sie es morgen.",
+        "not_this_document": "Das sieht nicht nach einer Flugbuchseite aus. Prüfen Sie die Fotos.",
+        "nothing_read": "Keine Zeilen mit lesbarem Datum gefunden. Ein schärferes, gerades Foto hilft meist.",
+        "unreadable": "Die Seiten konnten nicht gelesen werden. Ein schärferes, gerades Foto bei gutem Licht hilft meist.",
+        "failed": "Das Lesen hat diesmal nicht geklappt. Bitte versuchen Sie es erneut."
+      }
+    }
   }
 }

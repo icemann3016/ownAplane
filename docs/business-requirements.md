@@ -83,7 +83,7 @@ Owners need to know who's flying their aircraft. Verification is the trust found
 | VER-6 | M | The system warns me 30 days before any document expires and **blocks new bookings** when a licence, rating or medical needed for that aircraft has expired. |
 | VER-7 | M | **EASA licence limits** in the eligibility check: a pilot whose only valid aeroplane licence is a **LAPL(A)** can't rent an aeroplane or TMG above **2,000 kg MTOM** (owners enter the MTOM) or take more than **3 passengers** (FCL.105.A); a PPL or higher lifts the limits. |
 | VER-8 | C | ~~Import hours from a digital logbook (later).~~ Replaced by the pilot logbook (LOG-1…9). |
-| VER-9 | S | **Read the scan:** after uploading a licence or medical, the pilot can let the app read it and fill in the form: licence type, issuing state, number, dates, and the ratings with their validity; medical class, state and validity. The pilot checks everything before saving, and admins still verify against the scan (VER-5). A medical is read only after the pilot agrees that the scan is sent to the AI provider (health data, GDPR Art. 9). |
+| VER-9 | S | **Built.** **Read the scan:** after uploading a licence or medical, the pilot can let the app read it and fill in the form: licence type, issuing state, number, dates, and the ratings with their validity; medical class, state and validity. The pilot checks everything before saving, and admins still verify against the scan (VER-5). A medical is read only after the pilot agrees that the scan is sent to the AI provider (health data, GDPR Art. 9). |
 
 ### 5.3 Aircraft listings (LST) — Phase 1
 
@@ -245,21 +245,21 @@ and the other system should see ownAplane bookings.
 | SYN-7 | C | Two-way integrations with specific systems that have their own API, as needed. |
 | SYN-8 | M | Per connection, the owner **chooses the data exchanged** besides the times. Sent: type of block, booking status, route, pilot's name (marked as personal data), booking reference, the owner's notes, registration. Taken: title (shown only to the owner), maintenance type, tentative status (tentative bookings don't block), registration check (bookings for another aircraft are refused). Nothing extra by default; pilots' email and phone are never sent. |
 
-### 5.14 Pilot logbook (LOG) — next
+### 5.14 Pilot logbook (LOG) — built (M14)
 
 A pilot's own logbook in the app, kept in the EASA format (**AMC1 FCL.050**) so that it can serve
 as the pilot's electronic logbook. Decided 2026-10-11 (Zlati).
 
 | ID | Pri | Requirement |
 |----|-----|-------------|
-| LOG-1 | M | The pilot keeps their logbook in the EASA format: per flight the date, departure and arrival place and time (UTC), aircraft type and registration, single-pilot time (SE/ME), multi-pilot time, total time of flight, name of the PIC, landings (day/night), operational condition time (night, IFR), pilot function time (PIC incl. solo/SPIC/PICUS, co-pilot, dual, instructor), and remarks/endorsements; FSTD sessions with date, device type and time. Accumulated totals for every column. |
-| LOG-2 | M | **Nothing is erased.** Entries are drafts until the pilot certifies them; certified entries can't be changed or deleted. A correction is a new entry that replaces the old one, which stays visible as corrected (when, and what changed), like a struck-through line on paper. |
-| LOG-3 | M | **Totals brought forward** from previous (paper) logbooks, per column, as of a date, so the accumulated totals are right without typing in every old flight. |
-| LOG-4 | M | **ownAplane rentals fill it in:** when the owner confirms a flight log, each leg becomes a draft entry for the pilot (route, block times, type, registration, landings, PIC), to complete (e.g. night, IFR) and certify. |
-| LOG-5 | M | **Export** in the EASA layout: a printable version (each page as the two-page spread of a paper logbook, with page totals, totals from previous pages and totals to date) and CSV. |
-| LOG-6 | S | **Read a paper logbook:** the pilot scans or photographs a two-page spread (one record runs across the left and the right page): both pages as two files, or one photo of the spread. The app reads the rows, matches them across the two pages by line, and checks them against the totals written at the bottom of the page; mismatches are pointed out. The rows become draft entries to check and certify; the scans stay attached to them. |
-| LOG-7 | S | The pilot's **experience** (VER-4: total, PIC, last 90 days, hours per type) can be updated from the certified logbook with one click. |
-| LOG-8 | M | Everything in the logbook is available through the API (API-3), including reading scans. |
+| LOG-1 | M | The pilot keeps their logbook in the EASA format: per flight the date, departure and arrival place and time (UTC), aircraft type and registration, single-pilot time (SE/ME), multi-pilot time, total time of flight, name of the PIC, landings (day/night), operational condition time (night, IFR), pilot function time (PIC incl. solo/SPIC/PICUS, co-pilot, dual, instructor), and remarks/endorsements; FSTD sessions with date, device type and time. Accumulated totals for every column. **Built.** |
+| LOG-2 | M | **Nothing is erased.** Entries are drafts until the pilot certifies them; certified entries can't be changed or deleted. A correction is a new entry that replaces the old one, which stays visible as corrected (when, and what changed), like a struck-through line on paper. **Built.** |
+| LOG-3 | M | **Totals brought forward** from previous (paper) logbooks, per column, as of a date, so the accumulated totals are right without typing in every old flight. **Built.** |
+| LOG-4 | M | **ownAplane rentals fill it in:** when the owner confirms a flight log, each leg becomes a draft entry for the pilot (route, block times, type, registration, landings, PIC), to complete (e.g. night, IFR) and certify. **Built.** |
+| LOG-5 | M | **Export** in the EASA layout: a printable version (each page as the two-page spread of a paper logbook, with page totals, totals from previous pages and totals to date) and CSV. **Built: print view (14 lines a page) and CSV.** |
+| LOG-6 | S | **Read a paper logbook:** the pilot scans or photographs a two-page spread (one record runs across the left and the right page): both pages as two files, or one photo of the spread. The app reads the rows, matches them across the two pages by line, and checks them against the totals written at the bottom of the page; mismatches are pointed out. The rows become draft entries to check and certify; the scans stay attached to them. **Built.** |
+| LOG-7 | S | The pilot's **experience** (VER-4: total, PIC, last 90 days, hours per type) can be updated from the certified logbook with one click. **Built.** |
+| LOG-8 | M | Everything in the logbook is available through the API (API-3), including reading scans. **Built.** |
 | LOG-9 | C | Instructor and examiner **endorsements** signed in the app (needs an instructor role, §11). |
 
 ## 6. Key business rules (summary)

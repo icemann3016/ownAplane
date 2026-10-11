@@ -8,6 +8,7 @@ import {
   date,
   index,
   integer,
+  jsonb,
   pgEnum,
   pgTable,
   smallint,
@@ -19,6 +20,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 import { users } from "./auth";
+import { documents } from "./documents";
 import { flightLegs } from "./flight-logs";
 
 export const logbookEntryKind = pgEnum("logbook_entry_kind", ["flight", "fstd", "brought_forward"]);
@@ -30,6 +32,38 @@ export const logbookEntryStatus = pgEnum("logbook_entry_status", [
 export const logbookEntrySource = pgEnum("logbook_entry_source", ["manual", "ownaplane", "scan"]);
 
 const minutes = (name: string) => integer(name);
+
+/**
+ * A scanned two-page spread of a paper logbook (LOG-6): the left and right page (or one photo of
+ * both), what the AI read and how the lines compare with the totals written on the page.
+ */
+export const logbookSpreads = pgTable(
+  "logbook_spreads",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    pilotId: uuid("pilot_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    leftDocumentId: uuid("left_document_id").references(() => documents.id, {
+      onDelete: "set null",
+    }),
+    rightDocumentId: uuid("right_document_id").references(() => documents.id, {
+      onDelete: "set null",
+    }),
+    /** Lines read into drafts, and lines that couldn't be (no readable date…). */
+    linesRead: smallint("lines_read").notNull().default(0),
+    linesSkipped: smallint("lines_skipped").notNull().default(0),
+    /** "Total this page" as written, per column (minutes, landings); null if not read. */
+    pageTotals: jsonb("page_totals").$type<Record<string, number> | null>(),
+    /** Columns where the lines read don't add up to the written total. */
+    differences: jsonb("differences")
+      .$type<{ column: string; written: number; lines: number }[]>()
+      .notNull()
+      .default(sql`'[]'::jsonb`),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("logbook_spreads_pilot_idx").on(t.pilotId, t.createdAt)],
+).enableRLS();
 
 export const logbookEntries = pgTable(
   "logbook_entries",
@@ -74,6 +108,9 @@ export const logbookEntries = pgTable(
     flightLegId: uuid("flight_leg_id")
       .unique()
       .references(() => flightLegs.id, { onDelete: "set null" }),
+    /** Read from a scanned spread (LOG-6), on this line of it. */
+    spreadId: uuid("spread_id").references(() => logbookSpreads.id, { onDelete: "set null" }),
+    spreadLine: smallint("spread_line"),
     /** The certified entry this one corrects (LOG-2). */
     correctsId: uuid("corrects_id").references((): AnyPgColumn => logbookEntries.id, {
       onDelete: "set null",
@@ -117,4 +154,5 @@ export const logbookEntries = pgTable(
 ).enableRLS();
 
 export type LogbookEntry = typeof logbookEntries.$inferSelect;
+export type LogbookSpread = typeof logbookSpreads.$inferSelect;
 export type LogbookEntryKind = (typeof logbookEntryKind.enumValues)[number];

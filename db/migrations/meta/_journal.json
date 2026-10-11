@@ -477,6 +477,20 @@
       "when": 1791703115360,
       "tag": "0067_logbook_security",
       "breakpoints": true
+    },
+    {
+      "idx": 68,
+      "version": "7",
+      "when": 1791704848953,
+      "tag": "0068_logbook_spreads",
+      "breakpoints": true
+    },
+    {
+      "idx": 69,
+      "version": "7",
+      "when": 1791704850321,
+      "tag": "0069_logbook_spreads_security",
+      "breakpoints": true
     }
   ]
 }

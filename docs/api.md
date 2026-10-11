@@ -124,6 +124,7 @@ Calendar sync endpoints for partner systems are listed below.
 | POST | `/api/v1/me/credentials/{licences\|ratings\|medicals}` | Add one (an admin verifies it); licences and medicals need `documentId` |
 | PUT / DELETE | `/api/v1/me/credentials/{kind}/{id}` | Change (all fields; a verified item goes back to pending) / remove with its scan |
 | PUT | `/api/v1/me/credentials/experience` | `{ totalHours, picHours, last90DaysHours, birthDate? }` |
+| POST | `/api/v1/me/credentials/experience/from-logbook` | Take total, PIC, last-90-days and per-type hours from the certified logbook (409 `no_logbook`) |
 | PUT / DELETE | `/api/v1/me/credentials/type-hours/{aircraftType}` | `{ hours }` on an ICAO type (C172) / remove |
 
 Changes to credentials answer with all of them as they are now.
@@ -142,6 +143,8 @@ flight log.
 | POST | `/api/v1/me/logbook/{id}/void` | `{ reason }`: strike a certified entry through |
 | GET | `/api/v1/me/logbook/totals` | Totals per column to date, the last 90 days, hours per type |
 | GET | `/api/v1/me/logbook/export` | CSV in the EASA column order |
+| POST | `/api/v1/me/logbook/scans` | `{ leftDocumentId, rightDocumentId? }`: read a scanned two-page spread of a paper logbook (LOG-6); every line with a readable date becomes a draft (`source: scan`); answers with `linesRead`, `linesSkipped`, the written `pageTotals` and the `differences` from the lines |
+| GET | `/api/v1/me/logbook/scans/{id}` | A read spread with its entries |
 
 **Your aircraft (owners, LST-1…8).** Quantities in SI units (`fuelBurnLph`, `usefulLoadKg`,
 `mtomKg`); every change answers with the whole aircraft as it is now, including `gaps` (what still

@@ -17,6 +17,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { requireProfile } from "@/lib/auth/session";
 import type { VerificationStatus } from "@/lib/db/schema";
 import { intlLocale } from "@/lib/i18n/config";
+import { getLogbookExperience } from "@/lib/logbook/experience";
 import { isOcrConfigured } from "@/lib/ocr";
 import { countryName, ISSUING_STATES } from "@/lib/pilot/catalog";
 import { credentialItems, getPilotCredentials } from "@/lib/pilot/credentials";
@@ -27,6 +28,7 @@ import { setRole } from "../actions";
 import { type Country, CredentialDialog } from "./credential-dialog";
 import { DeleteCredential } from "./delete-credential";
 import { ExperienceForm, TypeHours } from "./experience-form";
+import { LogbookExperience } from "./logbook-experience";
 
 // Reading a scan with the AI (scan-actions.ts) can take a while.
 export const maxDuration = 60;
@@ -79,6 +81,7 @@ export default async function PilotPage() {
 
   const creds = await getPilotCredentials(userId);
   const canRead = isOcrConfigured();
+  const fromLogbook = await getLogbookExperience(userId);
   const summary = pilotSummary(credentialItems(creds));
   const dateFormat = new Intl.DateTimeFormat(intlLocale(locale), {
     day: "numeric",
@@ -236,6 +239,7 @@ export default async function PilotPage() {
           <CardDescription>{t("experience.description")}</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-6">
+          <LogbookExperience experience={fromLogbook} />
           <ExperienceForm
             totalHours={String(creds.experience?.totalHours ?? "")}
             picHours={String(creds.experience?.picHours ?? "")}

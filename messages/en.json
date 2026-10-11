@@ -779,7 +779,11 @@
       "removeType": "Remove {type}",
       "noTypes": "No aircraft types added yet.",
       "birthDate": "Date of birth",
-      "birthDateHint": "Optional. Only used to check an owner's minimum age; never shown to anyone."
+      "birthDateHint": "Optional. Only used to check an owner's minimum age; never shown to anyone.",
+      "fromLogbook": "From your logbook: {total} h total, {pic} h PIC, {recent} h in the last 90 days.",
+      "useLogbook": "Use these",
+      "logbookNone": "Keep your logbook in ownAplane and your hours can be filled in from it.",
+      "logbookLink": "Open the logbook"
     },
     "errors": {
       "notFound": "This item no longer exists. Please reload the page."
@@ -2920,6 +2924,39 @@
       "button": "Print",
       "note": "Struck-through lines were corrected or removed; their replacement is in the logbook. Each line was certified by the pilot in ownAplane."
     },
-    "printLink": "Print (EASA layout)"
+    "printLink": "Print (EASA layout)",
+    "scan": {
+      "link": "Read a paper logbook page",
+      "title": "Read a paper logbook page",
+      "description": "Photograph or scan the two facing pages of your paper logbook. Each flight runs across the left and the right page; the app reads the lines into drafts and checks them against the totals written at the bottom.",
+      "left": "Left page (or one photo of both pages)",
+      "right": "Right page (optional)",
+      "rightHint": "Leave empty if the first photo shows both pages.",
+      "note": "The pages are sent to our AI provider (Anthropic) to read them. Nothing counts until you check and certify the drafts.",
+      "read": "Read the pages",
+      "reading": "Reading… this can take up to a minute.",
+      "leftRequired": "Upload the left page (or a photo of both pages) first.",
+      "resultTitle": "Read from your logbook page",
+      "linesRead": "{count, plural, one {# line read into a draft.} other {# lines read into drafts.}}",
+      "linesSkipped": "{count, plural, one {# line couldn't be read (no readable date): add it yourself.} other {# lines couldn't be read (no readable date): add them yourself.}}",
+      "totalsMatch": "The lines add up to the totals written on the page.",
+      "totalsNotRead": "The page totals couldn't be read, so they weren't checked.",
+      "totalsDiffer": "These columns don't add up to what's written at the bottom of the page. Check the lines:",
+      "difference": "{column}: page {written}, lines {lines}",
+      "pages": "Scanned pages",
+      "leftPage": "Left page",
+      "rightPage": "Right page",
+      "another": "Read another page",
+      "fromSpread": "Read from a scanned page",
+      "errors": {
+        "not_configured": "Reading scans isn't available right now.",
+        "not_found": "Upload the pages again, then try once more.",
+        "limit": "You've had many pages read today. Please try again tomorrow.",
+        "not_this_document": "This doesn't look like a logbook page. Check the photos.",
+        "nothing_read": "No lines with a readable date were found. A sharper, straight photo usually helps.",
+        "unreadable": "The pages couldn't be read. A sharper, straight photo in good light usually helps.",
+        "failed": "Reading didn't work this time. Please try again."
+      }
+    }
   }
 }

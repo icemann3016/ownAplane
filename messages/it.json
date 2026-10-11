@@ -779,7 +779,11 @@
       "removeType": "Rimuovi {type}",
       "noTypes": "Nessun tipo di aereo aggiunto.",
       "birthDate": "Data di nascita",
-      "birthDateHint": "Facoltativa. Usata solo per verificare l'età minima richiesta da un proprietario; mai mostrata a nessuno."
+      "birthDateHint": "Facoltativa. Usata solo per verificare l'età minima richiesta da un proprietario; mai mostrata a nessuno.",
+      "fromLogbook": "Dal tuo libretto: {total} h totali, {pic} h come PIC, {recent} h negli ultimi 90 giorni.",
+      "useLogbook": "Usa questi valori",
+      "logbookNone": "Tieni il tuo libretto di volo in ownAplane e le tue ore potranno essere riprese da lì.",
+      "logbookLink": "Apri il libretto"
     },
     "errors": {
       "notFound": "Questo elemento non esiste più. Ricarica la pagina."
@@ -2920,6 +2924,39 @@
       "button": "Stampa",
       "note": "Le righe barrate sono state corrette o rimosse; la loro sostituzione è nel libretto. Ogni riga è stata certificata dal pilota in ownAplane."
     },
-    "printLink": "Stampa (formato EASA)"
+    "printLink": "Stampa (formato EASA)",
+    "scan": {
+      "link": "Leggi una pagina del libretto cartaceo",
+      "title": "Leggi una pagina del libretto cartaceo",
+      "description": "Fotografa o scansiona le due pagine affiancate del tuo libretto cartaceo. Ogni volo occupa la pagina sinistra e quella destra; l'app legge le righe come bozze e le confronta con i totali scritti in fondo.",
+      "left": "Pagina sinistra (o una foto di entrambe le pagine)",
+      "right": "Pagina destra (facoltativa)",
+      "rightHint": "Lascia vuoto se la prima foto mostra entrambe le pagine.",
+      "note": "Le pagine vengono inviate al nostro fornitore di IA (Anthropic) per leggerle. Nulla conta finché non controlli e certifichi le bozze.",
+      "read": "Leggi le pagine",
+      "reading": "Lettura… può richiedere fino a un minuto.",
+      "leftRequired": "Carica prima la pagina sinistra (o una foto di entrambe le pagine).",
+      "resultTitle": "Letto dalla pagina del tuo libretto",
+      "linesRead": "{count, plural, one {# riga letta come bozza.} other {# righe lette come bozze.}}",
+      "linesSkipped": "{count, plural, one {# riga non è stata letta (data illeggibile): aggiungila tu.} other {# righe non sono state lette (data illeggibile): aggiungile tu.}}",
+      "totalsMatch": "Le righe corrispondono ai totali scritti sulla pagina.",
+      "totalsNotRead": "Non è stato possibile leggere i totali della pagina, quindi non sono stati controllati.",
+      "totalsDiffer": "Queste colonne non corrispondono a quanto scritto in fondo alla pagina. Controlla le righe:",
+      "difference": "{column}: pagina {written}, righe {lines}",
+      "pages": "Pagine scansionate",
+      "leftPage": "Pagina sinistra",
+      "rightPage": "Pagina destra",
+      "another": "Leggi un'altra pagina",
+      "fromSpread": "Letta da una pagina scansionata",
+      "errors": {
+        "not_configured": "La lettura delle scansioni non è disponibile al momento.",
+        "not_found": "Carica di nuovo le pagine e riprova.",
+        "limit": "Oggi hai già fatto leggere molte pagine. Riprova domani.",
+        "not_this_document": "Non sembra una pagina di libretto di volo. Controlla le foto.",
+        "nothing_read": "Nessuna riga con una data leggibile. Di solito aiuta una foto più nitida e dritta.",
+        "unreadable": "Non è stato possibile leggere le pagine. Di solito aiuta una foto più nitida e dritta, con buona luce.",
+        "failed": "La lettura non è riuscita questa volta. Riprova."
+      }
+    }
   }
 }

@@ -7,6 +7,7 @@ import { z } from "zod";
 import { requireUser } from "@/lib/auth/session";
 import { type FormState, formValues } from "@/lib/forms";
 import { localizedFieldErrors } from "@/lib/i18n/server";
+import { applyLogbookExperience } from "@/lib/logbook/experience";
 import {
   deleteCredential as removeCredential,
   deleteTypeHours as removeTypeHours,
@@ -109,5 +110,12 @@ export async function deleteTypeHours(formData: FormData) {
     .regex(/^[A-Z0-9]{2,6}$/)
     .parse(formData.get("aircraftType"));
   await removeTypeHours(user.id, aircraftType);
+  revalidatePath(PATH);
+}
+
+/** Take total, PIC, last-90-days and per-type hours from the certified logbook (LOG-7). */
+export async function takeExperienceFromLogbook() {
+  const user = await requireUser(PATH);
+  await applyLogbookExperience(user.id);
   revalidatePath(PATH);
 }

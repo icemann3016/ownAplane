@@ -154,6 +154,14 @@ export function documentAndCredentialPaths() {
         responses: { ...all(), ...errors(400, 401) },
       },
     },
+    "/api/v1/me/credentials/experience/from-logbook": {
+      post: {
+        tags: ["credentials"],
+        summary: "Take total, PIC, last-90-days and per-type hours from the certified logbook",
+        security: signedIn,
+        responses: { ...all(), ...errors(401, 409) },
+      },
+    },
     "/api/v1/me/credentials/type-hours/{aircraftType}": {
       put: {
         tags: ["credentials"],

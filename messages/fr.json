@@ -779,7 +779,11 @@
       "removeType": "Retirer {type}",
       "noTypes": "Aucun type d'avion ajouté.",
       "birthDate": "Date de naissance",
-      "birthDateHint": "Facultatif. Sert uniquement à vérifier l'âge minimum fixé par un propriétaire ; jamais affiché."
+      "birthDateHint": "Facultatif. Sert uniquement à vérifier l'âge minimum fixé par un propriétaire ; jamais affiché.",
+      "fromLogbook": "D'après votre carnet : {total} h au total, {pic} h CdB, {recent} h ces 90 derniers jours.",
+      "useLogbook": "Utiliser ces valeurs",
+      "logbookNone": "Tenez votre carnet de vol dans ownAplane et vos heures pourront en être reprises.",
+      "logbookLink": "Ouvrir le carnet"
     },
     "errors": {
       "notFound": "Cet élément n'existe plus. Veuillez recharger la page."
@@ -2920,6 +2924,39 @@
       "button": "Imprimer",
       "note": "Les lignes barrées ont été corrigées ou retirées ; leur remplacement figure dans le carnet. Chaque ligne a été certifiée par le pilote dans ownAplane."
     },
-    "printLink": "Imprimer (format EASA)"
+    "printLink": "Imprimer (format EASA)",
+    "scan": {
+      "link": "Lire une page du carnet papier",
+      "title": "Lire une page du carnet papier",
+      "description": "Photographiez ou scannez les deux pages en vis-à-vis de votre carnet papier. Chaque vol s'étend sur la page de gauche et celle de droite ; l'application lit les lignes en brouillons et les compare aux totaux notés en bas.",
+      "left": "Page de gauche (ou une photo des deux pages)",
+      "right": "Page de droite (facultatif)",
+      "rightHint": "Laissez vide si la première photo montre les deux pages.",
+      "note": "Les pages sont envoyées à notre fournisseur d'IA (Anthropic) pour être lues. Rien ne compte avant que vous vérifiiez et certifiiez les brouillons.",
+      "read": "Lire les pages",
+      "reading": "Lecture… cela peut prendre jusqu'à une minute.",
+      "leftRequired": "Téléversez d'abord la page de gauche (ou une photo des deux pages).",
+      "resultTitle": "Lu sur votre page de carnet",
+      "linesRead": "{count, plural, one {# ligne lue en brouillon.} other {# lignes lues en brouillons.}}",
+      "linesSkipped": "{count, plural, one {# ligne n'a pas pu être lue (date illisible) : ajoutez-la vous-même.} other {# lignes n'ont pas pu être lues (date illisible) : ajoutez-les vous-même.}}",
+      "totalsMatch": "Les lignes correspondent aux totaux notés sur la page.",
+      "totalsNotRead": "Les totaux de la page n'ont pas pu être lus, ils n'ont donc pas été vérifiés.",
+      "totalsDiffer": "Ces colonnes ne correspondent pas à ce qui est noté en bas de la page. Vérifiez les lignes :",
+      "difference": "{column} : page {written}, lignes {lines}",
+      "pages": "Pages scannées",
+      "leftPage": "Page de gauche",
+      "rightPage": "Page de droite",
+      "another": "Lire une autre page",
+      "fromSpread": "Lu sur une page scannée",
+      "errors": {
+        "not_configured": "La lecture des scans n'est pas disponible pour le moment.",
+        "not_found": "Téléversez à nouveau les pages, puis réessayez.",
+        "limit": "Vous avez déjà fait lire beaucoup de pages aujourd'hui. Réessayez demain.",
+        "not_this_document": "Cela ne ressemble pas à une page de carnet de vol. Vérifiez les photos.",
+        "nothing_read": "Aucune ligne avec une date lisible n'a été trouvée. Une photo plus nette et droite aide souvent.",
+        "unreadable": "Les pages n'ont pas pu être lues. Une photo plus nette et droite, bien éclairée, aide souvent.",
+        "failed": "La lecture n'a pas fonctionné cette fois. Réessayez."
+      }
+    }
   }
 }

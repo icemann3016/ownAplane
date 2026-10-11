@@ -779,7 +779,11 @@
       "removeType": "Quitar {type}",
       "noTypes": "Aún no has añadido tipos de avión.",
       "birthDate": "Fecha de nacimiento",
-      "birthDateHint": "Opcional. Solo se usa para comprobar la edad mínima que pida un propietario; nunca se muestra."
+      "birthDateHint": "Opcional. Solo se usa para comprobar la edad mínima que pida un propietario; nunca se muestra.",
+      "fromLogbook": "Según tu libro: {total} h en total, {pic} h como PIC, {recent} h en los últimos 90 días.",
+      "useLogbook": "Usar estos valores",
+      "logbookNone": "Lleva tu libro de vuelo en ownAplane y tus horas podrán tomarse de él.",
+      "logbookLink": "Abrir el libro"
     },
     "errors": {
       "notFound": "Este elemento ya no existe. Recarga la página."
@@ -2920,6 +2924,39 @@
       "button": "Imprimir",
       "note": "Las líneas tachadas se corrigieron o retiraron; su sustitución está en el libro. Cada línea fue certificada por el piloto en ownAplane."
     },
-    "printLink": "Imprimir (formato EASA)"
+    "printLink": "Imprimir (formato EASA)",
+    "scan": {
+      "link": "Leer una página del libro en papel",
+      "title": "Leer una página del libro en papel",
+      "description": "Fotografía o escanea las dos páginas enfrentadas de tu libro de vuelo en papel. Cada vuelo ocupa la página izquierda y la derecha; la app lee las líneas como borradores y las compara con los totales escritos abajo.",
+      "left": "Página izquierda (o una foto de las dos páginas)",
+      "right": "Página derecha (opcional)",
+      "rightHint": "Déjalo vacío si la primera foto muestra las dos páginas.",
+      "note": "Las páginas se envían a nuestro proveedor de IA (Anthropic) para leerlas. Nada cuenta hasta que revises y certifiques los borradores.",
+      "read": "Leer las páginas",
+      "reading": "Leyendo… puede tardar hasta un minuto.",
+      "leftRequired": "Sube primero la página izquierda (o una foto de las dos páginas).",
+      "resultTitle": "Leído de tu página del libro",
+      "linesRead": "{count, plural, one {# línea leída como borrador.} other {# líneas leídas como borradores.}}",
+      "linesSkipped": "{count, plural, one {# línea no se pudo leer (fecha ilegible): añádela tú.} other {# líneas no se pudieron leer (fecha ilegible): añádelas tú.}}",
+      "totalsMatch": "Las líneas suman los totales escritos en la página.",
+      "totalsNotRead": "No se pudieron leer los totales de la página, así que no se comprobaron.",
+      "totalsDiffer": "Estas columnas no suman lo escrito al pie de la página. Revisa las líneas:",
+      "difference": "{column}: página {written}, líneas {lines}",
+      "pages": "Páginas escaneadas",
+      "leftPage": "Página izquierda",
+      "rightPage": "Página derecha",
+      "another": "Leer otra página",
+      "fromSpread": "Leída de una página escaneada",
+      "errors": {
+        "not_configured": "La lectura de escaneos no está disponible ahora.",
+        "not_found": "Vuelve a subir las páginas e inténtalo de nuevo.",
+        "limit": "Hoy ya has hecho leer muchas páginas. Inténtalo mañana.",
+        "not_this_document": "No parece una página de libro de vuelo. Revisa las fotos.",
+        "nothing_read": "No se encontraron líneas con una fecha legible. Suele ayudar una foto más nítida y recta.",
+        "unreadable": "No se pudieron leer las páginas. Suele ayudar una foto más nítida y recta, con buena luz.",
+        "failed": "La lectura no funcionó esta vez. Inténtalo de nuevo."
+      }
+    }
   }
 }

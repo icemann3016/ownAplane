@@ -53,7 +53,15 @@ export default async function EntryPage({ params }: { params: Promise<{ id: stri
             </Badge>
           </div>
           {entry.source !== "manual" && (
-            <CardDescription>{t(`source.${entry.source}`)}</CardDescription>
+            <CardDescription>
+              {entry.spreadId ? (
+                <Link href={`/logbook/scan/${entry.spreadId}`} className="underline">
+                  {t("scan.fromSpread")}
+                </Link>
+              ) : (
+                t(`source.${entry.source}`)
+              )}
+            </CardDescription>
           )}
           {entry.certifiedAt && (
             <CardDescription>

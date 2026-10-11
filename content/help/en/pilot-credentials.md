@@ -14,6 +14,12 @@ hours…), and the app checks yours against them. Only **verified and valid** cr
 
 Documents are PDF, JPG or PNG up to 4 MB. Big photos are shrunk in your browser before upload.
 
+## Hours from your logbook
+
+If you keep your [logbook](/help/logbook) in ownAplane, the Experience section shows the hours
+from your certified entries; **Use these** fills in total, PIC and last-90-days hours and your hours
+per aircraft type (ICAO type designators such as C172).
+
 ## Fill in from the scan
 
 Upload the scan of your licence or medical first, then press **Fill in from the scan**: the app

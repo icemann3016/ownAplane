@@ -2,7 +2,7 @@ import "server-only";
 
 import { z } from "zod";
 
-import type { LogbookEntry } from "@/lib/db/schema";
+import type { LogbookEntry, LogbookSpread } from "@/lib/db/schema";
 import type { Done } from "@/lib/bookings/outcome";
 import type { LogbookTotals } from "@/lib/logbook/entries";
 import { entryHints } from "@/lib/logbook/checks";
@@ -137,4 +137,44 @@ export function logbookError(fail: Extract<Done, { ok: false }> & { incomplete?:
     );
   }
   return new ApiError("conflict", fail.error, undefined, details);
+}
+
+// --- Scanned spreads (LOG-6) ---
+
+export const spreadBody = z.object({
+  leftDocumentId: z
+    .uuid()
+    .describe("Left page, or one photo of both pages (POST /api/v1/documents)"),
+  rightDocumentId: z.uuid().nullable().default(null).describe("Right page, if a separate file"),
+});
+
+export const logbookSpread = z.object({
+  id: z.uuid(),
+  leftDocumentId: z.uuid().nullable(),
+  rightDocumentId: z.uuid().nullable(),
+  linesRead: z.number().int(),
+  linesSkipped: z.number().int().describe("Lines without a readable date"),
+  pageTotals: z.record(z.string(), z.number()).nullable().describe('"Total this page" as written'),
+  differences: z
+    .array(z.object({ column: z.string(), written: z.number(), lines: z.number() }))
+    .describe("Columns where the lines read don't add up to the written total"),
+  createdAt: z.iso.datetime(),
+  entries: z.array(logbookEntry),
+});
+
+export function logbookSpreadDto(
+  spread: LogbookSpread,
+  entries: LogbookEntry[],
+): z.infer<typeof logbookSpread> {
+  return {
+    id: spread.id,
+    leftDocumentId: spread.leftDocumentId,
+    rightDocumentId: spread.rightDocumentId,
+    linesRead: spread.linesRead,
+    linesSkipped: spread.linesSkipped,
+    pageTotals: spread.pageTotals ?? null,
+    differences: spread.differences,
+    createdAt: spread.createdAt.toISOString(),
+    entries: entries.map(logbookEntryDto),
+  };
 }
