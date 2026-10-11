@@ -55,7 +55,13 @@ export async function PlanTable() {
     return v;
   };
   return (
-    <div className="overflow-x-auto rounded-lg border">
+    // Focusable so keyboard users can scroll it sideways on small screens.
+    <div
+      className="overflow-x-auto rounded-lg border focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+      role="region"
+      aria-label={t("table.caption")}
+      tabIndex={0}
+    >
       <table className="w-full min-w-[36rem] text-sm">
         <caption className="sr-only">{t("table.caption")}</caption>
         <thead>
