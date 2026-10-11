@@ -22,6 +22,7 @@ export function DocumentField({
   required,
   errors,
   initial,
+  onChange,
 }: {
   name: string;
   label: string;
@@ -29,6 +30,8 @@ export function DocumentField({
   required?: boolean;
   errors?: string[];
   initial?: UploadedDocument | null;
+  /** Called with the new upload (e.g. to offer reading it). */
+  onChange?: (doc: UploadedDocument) => void;
 }) {
   const t = useTranslations("documents");
   const id = useId();
@@ -66,6 +69,7 @@ export function DocumentField({
       return;
     }
     setDoc({ id: json.id, filename: json.filename });
+    onChange?.({ id: json.id, filename: json.filename });
     setAnsweredErrors(errors);
   }
 

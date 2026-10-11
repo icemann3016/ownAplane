@@ -785,6 +785,29 @@
       "MEP_LAND": "MEP (terrestre)",
       "MEP_SEA": "MEP (hydravion)",
       "TMG": "TMG"
+    },
+    "scan": {
+      "uploadFirst": "Téléversez d'abord le scan : l'application pourra ensuite remplir le formulaire pour vous.",
+      "read": "Remplir à partir du scan",
+      "readMedical": "Accepter et remplir à partir du scan",
+      "licenceNote": "Le scan est envoyé à notre fournisseur d'IA (Anthropic) pour être lu. Rien n'est enregistré avant que vous cliquiez sur Enregistrer.",
+      "medicalConsent": "Votre certificat médical contient des données de santé. Pour le lire, le scan est envoyé à notre fournisseur d'IA (Anthropic), uniquement à cette fin. Rien n'est enregistré avant que vous cliquiez sur Enregistrer. Vous pouvez aussi remplir le formulaire vous-même.",
+      "reading": "Lecture du scan… cela peut prendre jusqu'à une demi-minute.",
+      "filled": "Rempli à partir du scan. Vérifiez chaque champ avant d'enregistrer.",
+      "ratingsFound": "Également sur la licence",
+      "ratingsAdd": "Ajouter les qualifications sélectionnées",
+      "ratingsAdded": "{count, plural, =0 {Aucune qualification ajoutée.} one {# qualification ajoutée ; un admin la vérifie d'après le scan.} other {# qualifications ajoutées ; un admin les vérifie d'après le scan.}}",
+      "validUntil": "valable jusqu'au {date}",
+      "noDate": "aucune date lue",
+      "errors": {
+        "not_configured": "La lecture des scans n'est pas disponible pour le moment. Veuillez remplir le formulaire vous-même.",
+        "not_found": "Téléversez à nouveau le scan, puis réessayez.",
+        "limit": "Vous avez déjà fait lire beaucoup de scans aujourd'hui. Remplissez le formulaire vous-même ou réessayez demain.",
+        "consent_required": "Acceptez d'abord l'envoi du scan.",
+        "not_this_document": "Cela ne ressemble pas au bon document. Vérifiez le fichier téléversé.",
+        "unreadable": "Le scan n'a pas pu être lu. Une photo plus nette et bien droite aide souvent ; sinon remplissez le formulaire vous-même.",
+        "failed": "La lecture n'a pas fonctionné cette fois. Réessayez ou remplissez le formulaire vous-même."
+      }
     }
   },
   "admin": {
@@ -1168,6 +1191,20 @@
         "user": "Utilisateur d'application",
         "connection": "Système connecté",
         "deleted": "Supprimé"
+      },
+      "reads": {
+        "title": "Scans lus par l'IA (7 derniers jours)",
+        "limit": "Chaque page est un appel payant au fournisseur d'IA. Limite : {count} pages par membre sur 24 heures.",
+        "none": "Aucun scan lu ces 7 derniers jours.",
+        "day": "Jour (UTC)",
+        "kind": "Document",
+        "reads": "Lectures",
+        "pages": "Pages",
+        "kinds": {
+          "licence": "Licence",
+          "medical": "Certificat médical",
+          "logbook": "Carnet de vol"
+        }
       }
     }
   },

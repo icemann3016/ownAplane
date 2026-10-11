@@ -163,7 +163,7 @@ Target structure for the rest of the app is in the plan, §6. When new top-level
 - Medical certificate data is GDPR special-category data: only the pilot and admins see it. Public profiles show only verified licence types and ratings (`public.pilot_badges`), never numbers, documents or medical data. For bookings, owners will only get a yes/no "meets requirements".
 - Private documents live in private storage and are only served by `app/api/documents/[id]` (owner or admin, else 404). Admin views and decisions are written to `admin_actions`.
 - Credentials count only when **verified and not expired** (`isUsable()` in `lib/pilot/validity.ts`). Editing a verified item sends it back to "pending" (database trigger).
-- The app never replaces official records (CRS, logbooks), ATC clearance or customs procedures. Say so in the UI where relevant.
+- The app never replaces official records (CRS, journey and technical logs), ATC clearance or customs procedures. Say so in the UI where relevant. **Exception:** the pilot logbook (LOG) is kept in the EASA format (AMC1 FCL.050) to serve as the pilot's electronic logbook: certified entries are never changed or erased, corrections are new entries.
 
 ## Conventions
 
@@ -205,6 +205,8 @@ _TODO: split areas so we don't edit the same files at the same time._
 ## Decisions log
 
 Add one line per decision, newest first.
+
+- 2026-10-11: **Document reading + EASA e-logbook** (Zlati; VER-9, LOG-1…9, M14): scans are read by a vision AI model (Zlati's choice over in-browser OCR and EU cloud OCR, for accuracy and handwriting) behind `lib/ocr` (plain `fetch`, no SDK; off until `ANTHROPIC_API_KEY` and `OCR_MODEL` are set); reading only pre-fills, the pilot checks and admins still verify; medicals only with explicit consent. The logbook aims to be the pilot's **official** EASA e-logbook (Zlati), not just a personal record: certified entries are locked, corrections are new entries, totals brought forward, EASA print/CSV. Paper logbooks record one flight across two facing pages: scans are read as spreads (left + right page, or one photo).
 
 - 2026-10-11: **API-3 complete**: documents (`POST/GET /api/v1/documents`, the token instead of the cookie; ids go with credentials, check-out photo, receipts, defects), pilot credentials (`/api/v1/me/credentials`), owners' aircraft (`/api/v1/me/aircraft`: drafts, fields in SI units, status, requirements, photos, documents, calendar blocks, grounding, defects, known items, meter readings) and defect reports on bookings. Website forms moved onto the same `lib/` code (`lib/pilot/credential-ops.ts`, `lib/aircraft/manage.ts`, `manage-parts.ts`, `owner-ops.ts`). Still website-only: calendar sync settings, usage exports, account settings, admin.
 

@@ -785,6 +785,29 @@
       "MEP_LAND": "MEP (land)",
       "MEP_SEA": "MEP (sea)",
       "TMG": "TMG"
+    },
+    "scan": {
+      "uploadFirst": "Upload the scan first: the app can then fill in the form for you.",
+      "read": "Fill in from the scan",
+      "readMedical": "Agree and fill in from the scan",
+      "licenceNote": "The scan is sent to our AI provider (Anthropic) to read it. Nothing is saved until you press Save.",
+      "medicalConsent": "Your medical certificate is health data. To read it, the scan is sent to our AI provider (Anthropic), only for this. Nothing is saved until you press Save. You can also fill in the form yourself.",
+      "reading": "Reading the scan… this can take up to half a minute.",
+      "filled": "Filled in from the scan. Check every field before you save.",
+      "ratingsFound": "Also on the licence",
+      "ratingsAdd": "Add the selected ratings",
+      "ratingsAdded": "{count, plural, =0 {No ratings added.} one {# rating added; an admin checks it against the scan.} other {# ratings added; an admin checks them against the scan.}}",
+      "validUntil": "valid until {date}",
+      "noDate": "no date read",
+      "errors": {
+        "not_configured": "Reading scans isn't available right now. Please fill in the form yourself.",
+        "not_found": "Upload the scan again, then try once more.",
+        "limit": "You've had many scans read today. Please fill in the form yourself or try again tomorrow.",
+        "consent_required": "Agree to sending the scan first.",
+        "not_this_document": "This doesn't look like the right document. Check the upload.",
+        "unreadable": "The scan couldn't be read. A sharper, straight photo usually helps; or fill in the form yourself.",
+        "failed": "Reading the scan didn't work this time. Please try again or fill in the form yourself."
+      }
     }
   },
   "admin": {
@@ -1168,6 +1191,20 @@
         "user": "App user",
         "connection": "Connected system",
         "deleted": "Deleted"
+      },
+      "reads": {
+        "title": "Scans read with AI (last 7 days)",
+        "limit": "Each page is a paid call to the AI provider. Limit: {count} pages per member per 24 hours.",
+        "none": "No scans read in the last 7 days.",
+        "day": "Day (UTC)",
+        "kind": "Document",
+        "reads": "Reads",
+        "pages": "Pages",
+        "kinds": {
+          "licence": "Licence",
+          "medical": "Medical",
+          "logbook": "Logbook"
+        }
       }
     }
   },

@@ -82,7 +82,8 @@ Owners need to know who's flying their aircraft. Verification is the trust found
 | VER-5 | M | An admin reviews uploaded documents and marks each as **verified / rejected**. The pilot sees the status and reason. |
 | VER-6 | M | The system warns me 30 days before any document expires and **blocks new bookings** when a licence, rating or medical needed for that aircraft has expired. |
 | VER-7 | M | **EASA licence limits** in the eligibility check: a pilot whose only valid aeroplane licence is a **LAPL(A)** can't rent an aeroplane or TMG above **2,000 kg MTOM** (owners enter the MTOM) or take more than **3 passengers** (FCL.105.A); a PPL or higher lifts the limits. |
-| VER-7 | C | Import hours from a digital logbook (later). |
+| VER-8 | C | ~~Import hours from a digital logbook (later).~~ Replaced by the pilot logbook (LOG-1…9). |
+| VER-9 | S | **Read the scan:** after uploading a licence or medical, the pilot can let the app read it and fill in the form: licence type, issuing state, number, dates, and the ratings with their validity; medical class, state and validity. The pilot checks everything before saving, and admins still verify against the scan (VER-5). A medical is read only after the pilot agrees that the scan is sent to the AI provider (health data, GDPR Art. 9). |
 
 ### 5.3 Aircraft listings (LST) — Phase 1
 
@@ -244,6 +245,23 @@ and the other system should see ownAplane bookings.
 | SYN-7 | C | Two-way integrations with specific systems that have their own API, as needed. |
 | SYN-8 | M | Per connection, the owner **chooses the data exchanged** besides the times. Sent: type of block, booking status, route, pilot's name (marked as personal data), booking reference, the owner's notes, registration. Taken: title (shown only to the owner), maintenance type, tentative status (tentative bookings don't block), registration check (bookings for another aircraft are refused). Nothing extra by default; pilots' email and phone are never sent. |
 
+### 5.14 Pilot logbook (LOG) — next
+
+A pilot's own logbook in the app, kept in the EASA format (**AMC1 FCL.050**) so that it can serve
+as the pilot's electronic logbook. Decided 2026-10-11 (Zlati).
+
+| ID | Pri | Requirement |
+|----|-----|-------------|
+| LOG-1 | M | The pilot keeps their logbook in the EASA format: per flight the date, departure and arrival place and time (UTC), aircraft type and registration, single-pilot time (SE/ME), multi-pilot time, total time of flight, name of the PIC, landings (day/night), operational condition time (night, IFR), pilot function time (PIC incl. solo/SPIC/PICUS, co-pilot, dual, instructor), and remarks/endorsements; FSTD sessions with date, device type and time. Accumulated totals for every column. |
+| LOG-2 | M | **Nothing is erased.** Entries are drafts until the pilot certifies them; certified entries can't be changed or deleted. A correction is a new entry that replaces the old one, which stays visible as corrected (when, and what changed), like a struck-through line on paper. |
+| LOG-3 | M | **Totals brought forward** from previous (paper) logbooks, per column, as of a date, so the accumulated totals are right without typing in every old flight. |
+| LOG-4 | M | **ownAplane rentals fill it in:** when the owner confirms a flight log, each leg becomes a draft entry for the pilot (route, block times, type, registration, landings, PIC), to complete (e.g. night, IFR) and certify. |
+| LOG-5 | M | **Export** in the EASA layout: a printable version (each page as the two-page spread of a paper logbook, with page totals, totals from previous pages and totals to date) and CSV. |
+| LOG-6 | S | **Read a paper logbook:** the pilot scans or photographs a two-page spread (one record runs across the left and the right page): both pages as two files, or one photo of the spread. The app reads the rows, matches them across the two pages by line, and checks them against the totals written at the bottom of the page; mismatches are pointed out. The rows become draft entries to check and certify; the scans stay attached to them. |
+| LOG-7 | S | The pilot's **experience** (VER-4: total, PIC, last 90 days, hours per type) can be updated from the certified logbook with one click. |
+| LOG-8 | M | Everything in the logbook is available through the API (API-3), including reading scans. |
+| LOG-9 | C | Instructor and examiner **endorsements** signed in the app (needs an instructor role, §11). |
+
 ## 6. Key business rules (summary)
 
 1. One account, many roles.
@@ -309,6 +327,8 @@ _Not legal advice. Verify each point with an aviation lawyer and the national CA
 - **Maintenance privileges:** Which tasks a technician may certify depends on their licence/approval and the aircraft. The platform shows credentials but doesn't decide who may certify what.
 - **Cost-sharing flights** are regulated differently from rentals, so they are out of scope for now (see §11).
 - **Terms of service, privacy policy, cookie policy** — needed before launch.
+- **Electronic logbook (LOG):** FCL.050 asks for a reliable record in the form the competent authority establishes; AMC1 FCL.050 gives the content and allows other formats. Confirm with DG CAA that a logbook kept in ownAplane (certified entries, corrections kept, EASA export) is accepted as the pilot's logbook, and what is expected for instructor/examiner endorsements.
+- **AI reading of documents (VER-9, LOG-6):** the scans go to an AI provider (a processor under a DPA, possibly outside the EU). Medicals are health data: read only with the pilot's explicit consent; the privacy policy lists the provider.
 
 ## 10. Key entities (for the data model)
 
@@ -318,7 +338,8 @@ _Not legal advice. Verify each point with an aviation lawyer and the national CA
 
 - **Flight instructor role:** checkout flights, rental with an instructor, a natural fit with BKG-10.
 - **Flying clubs & schools:** organisation accounts with member-only aircraft and internal pricing.
-- Digital **pilot logbook**, auto-filled from flight-log legs (BKG-12).
+- ~~Digital **pilot logbook**, auto-filled from flight-log legs (BKG-12).~~ Now LOG-1…9.
+- Reading aircraft documents (ARC, insurance expiry) with the same AI reading as VER-9.
 - Full aircraft **tech log** (deferred defects, CRS sign-off) and maintenance tracking, building on the flight log and defects (BKG-7…16).
 - **Weather, NOTAM** and route planning integrations.
 - **Cost-sharing** flights (regulated separately, needs research).
@@ -333,7 +354,7 @@ _Not legal advice. Verify each point with an aviation lawyer and the national CA
 | Q1 | ~~App name~~ **Decided: ownAplane** (2026-09-26). Logo and brand look still open. | Zlati + friend |
 | Q2 | Launch country: Bulgaria only first, or a wider EU area? | |
 | Q3 | Phase 1 revenue: free, subscription, or featured listings? **Proposed (2026-10-02):** free at launch, later owner subscriptions (Free / Owner / Fleet, §8, SUB). Open: final prices and limits, payment provider (Paddle vs Stripe). | Zlati |
-| Q4 | Do we verify flight hours (logbook upload) or keep them self-declared with a label? | |
+| Q4 | Do we verify flight hours (logbook upload) or keep them self-declared with a label? **Partly answered (2026-10-11):** pilots can keep their EASA logbook in the app and fill their experience from it (LOG-7); hours stay self-declared until we decide how far admins check logbooks. | |
 | Q5 | Which ultralight/microlight categories do we support? These are often nationally regulated, not EASA. | |
 | Q6 | Who handles disputes (damage, no-shows) when no money passes through us? | |
 | Q7 | Do we need a legal entity and insurance for the platform itself before launch? | |

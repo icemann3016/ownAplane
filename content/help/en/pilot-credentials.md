@@ -14,6 +14,21 @@ hours…), and the app checks yours against them. Only **verified and valid** cr
 
 Documents are PDF, JPG or PNG up to 4 MB. Big photos are shrunk in your browser before upload.
 
+## Fill in from the scan
+
+Upload the scan of your licence or medical first, then press **Fill in from the scan**: the app
+reads it with AI and fills in the form (licence type, state, number, dates; medical class and
+validity). Ratings found on the licence are offered as well: tick the ones you want and press
+**Add the selected ratings**.
+
+- **Check every field before you save.** Nothing is saved until you press Save, and our team still
+  checks every item against the scan.
+- The scan is sent to our AI provider (Anthropic) only to read it. For a **medical**, which is
+  health data, the button says that you agree to this; you can always fill in the form yourself
+  instead.
+- A sharp, straight photo in good light reads best. There is a daily limit on how many scans can be
+  read.
+
 ## Verification
 
 - Each item starts as **Pending review**. Our team checks the document and marks it **Verified** or

@@ -17,6 +17,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { requireProfile } from "@/lib/auth/session";
 import type { VerificationStatus } from "@/lib/db/schema";
 import { intlLocale } from "@/lib/i18n/config";
+import { isOcrConfigured } from "@/lib/ocr";
 import { countryName, ISSUING_STATES } from "@/lib/pilot/catalog";
 import { credentialItems, getPilotCredentials } from "@/lib/pilot/credentials";
 import { type CredentialKind, credentialLabel, type PilotTranslate } from "@/lib/pilot/labels";
@@ -26,6 +27,9 @@ import { setRole } from "../actions";
 import { type Country, CredentialDialog } from "./credential-dialog";
 import { DeleteCredential } from "./delete-credential";
 import { ExperienceForm, TypeHours } from "./experience-form";
+
+// Reading a scan with the AI (scan-actions.ts) can take a while.
+export const maxDuration = 60;
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("pilot");
@@ -74,6 +78,7 @@ export default async function PilotPage() {
   }
 
   const creds = await getPilotCredentials(userId);
+  const canRead = isOcrConfigured();
   const summary = pilotSummary(credentialItems(creds));
   const dateFormat = new Intl.DateTimeFormat(intlLocale(locale), {
     day: "numeric",
@@ -167,7 +172,7 @@ export default async function PilotPage() {
               <CardTitle as="h2">{t(`${key}.title`)}</CardTitle>
               <CardDescription>{t(`${key}.description`)}</CardDescription>
             </div>
-            <CredentialDialog kind={kind} countries={countries} />
+            <CredentialDialog kind={kind} countries={countries} canRead={canRead} />
           </CardHeader>
           <CardContent>
             {rows.length === 0 ? (
@@ -212,6 +217,7 @@ export default async function PilotPage() {
                           countries={countries}
                           wasVerified={row.status === "verified"}
                           label={t("editLabel", { name: row.name })}
+                          canRead={canRead}
                         />
                         <DeleteCredential kind={row.kind} id={row.id} name={row.name} />
                       </div>

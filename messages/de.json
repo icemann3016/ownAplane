@@ -785,6 +785,29 @@
       "MEP_LAND": "MEP (Land)",
       "MEP_SEA": "MEP (Wasser)",
       "TMG": "TMG"
+    },
+    "scan": {
+      "uploadFirst": "Laden Sie zuerst den Scan hoch: Dann kann die App das Formular für Sie ausfüllen.",
+      "read": "Aus dem Scan ausfüllen",
+      "readMedical": "Zustimmen und aus dem Scan ausfüllen",
+      "licenceNote": "Der Scan wird zum Lesen an unseren KI-Anbieter (Anthropic) gesendet. Gespeichert wird erst, wenn Sie auf Speichern klicken.",
+      "medicalConsent": "Ihr Tauglichkeitszeugnis enthält Gesundheitsdaten. Zum Lesen wird der Scan an unseren KI-Anbieter (Anthropic) gesendet, nur zu diesem Zweck. Gespeichert wird erst, wenn Sie auf Speichern klicken. Sie können das Formular auch selbst ausfüllen.",
+      "reading": "Der Scan wird gelesen… das kann bis zu einer halben Minute dauern.",
+      "filled": "Aus dem Scan ausgefüllt. Prüfen Sie jedes Feld vor dem Speichern.",
+      "ratingsFound": "Ebenfalls in der Lizenz",
+      "ratingsAdd": "Ausgewählte Berechtigungen hinzufügen",
+      "ratingsAdded": "{count, plural, =0 {Keine Berechtigungen hinzugefügt.} one {# Berechtigung hinzugefügt; ein Admin prüft sie anhand des Scans.} other {# Berechtigungen hinzugefügt; ein Admin prüft sie anhand des Scans.}}",
+      "validUntil": "gültig bis {date}",
+      "noDate": "kein Datum gelesen",
+      "errors": {
+        "not_configured": "Das Lesen von Scans ist gerade nicht verfügbar. Bitte füllen Sie das Formular selbst aus.",
+        "not_found": "Laden Sie den Scan erneut hoch und versuchen Sie es noch einmal.",
+        "limit": "Sie haben heute schon viele Scans lesen lassen. Bitte füllen Sie das Formular selbst aus oder versuchen Sie es morgen.",
+        "consent_required": "Stimmen Sie zuerst dem Senden des Scans zu.",
+        "not_this_document": "Das sieht nicht nach dem richtigen Dokument aus. Prüfen Sie den Upload.",
+        "unreadable": "Der Scan konnte nicht gelesen werden. Ein schärferes, gerades Foto hilft meist; oder füllen Sie das Formular selbst aus.",
+        "failed": "Das Lesen hat diesmal nicht geklappt. Bitte versuchen Sie es erneut oder füllen Sie das Formular selbst aus."
+      }
     }
   },
   "admin": {
@@ -1168,6 +1191,20 @@
         "user": "App-Nutzer",
         "connection": "Verbundenes System",
         "deleted": "Gelöscht"
+      },
+      "reads": {
+        "title": "Mit KI gelesene Scans (letzte 7 Tage)",
+        "limit": "Jede Seite ist ein kostenpflichtiger Aufruf beim KI-Anbieter. Limit: {count} Seiten pro Mitglied in 24 Stunden.",
+        "none": "In den letzten 7 Tagen wurden keine Scans gelesen.",
+        "day": "Tag (UTC)",
+        "kind": "Dokument",
+        "reads": "Lesevorgänge",
+        "pages": "Seiten",
+        "kinds": {
+          "licence": "Lizenz",
+          "medical": "Tauglichkeitszeugnis",
+          "logbook": "Flugbuch"
+        }
       }
     }
   },

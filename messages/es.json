@@ -785,6 +785,29 @@
       "MEP_LAND": "MEP (tierra)",
       "MEP_SEA": "MEP (mar)",
       "TMG": "TMG"
+    },
+    "scan": {
+      "uploadFirst": "Sube primero el escaneo: luego la app puede rellenar el formulario por ti.",
+      "read": "Rellenar desde el escaneo",
+      "readMedical": "Acepto, rellenar desde el escaneo",
+      "licenceNote": "El escaneo se envía a nuestro proveedor de IA (Anthropic) para leerlo. No se guarda nada hasta que pulses Guardar.",
+      "medicalConsent": "Tu certificado médico contiene datos de salud. Para leerlo, el escaneo se envía a nuestro proveedor de IA (Anthropic), solo con este fin. No se guarda nada hasta que pulses Guardar. También puedes rellenar el formulario tú mismo.",
+      "reading": "Leyendo el escaneo… puede tardar hasta medio minuto.",
+      "filled": "Rellenado desde el escaneo. Revisa cada campo antes de guardar.",
+      "ratingsFound": "También en la licencia",
+      "ratingsAdd": "Añadir las habilitaciones seleccionadas",
+      "ratingsAdded": "{count, plural, =0 {No se añadió ninguna habilitación.} one {# habilitación añadida; un admin la comprueba con el escaneo.} other {# habilitaciones añadidas; un admin las comprueba con el escaneo.}}",
+      "validUntil": "válida hasta el {date}",
+      "noDate": "no se leyó la fecha",
+      "errors": {
+        "not_configured": "La lectura de escaneos no está disponible ahora. Rellena el formulario tú mismo.",
+        "not_found": "Vuelve a subir el escaneo e inténtalo de nuevo.",
+        "limit": "Hoy ya has hecho leer muchos escaneos. Rellena el formulario tú mismo o inténtalo mañana.",
+        "consent_required": "Acepta primero el envío del escaneo.",
+        "not_this_document": "No parece el documento correcto. Revisa el archivo subido.",
+        "unreadable": "No se pudo leer el escaneo. Suele ayudar una foto más nítida y recta; o rellena el formulario tú mismo.",
+        "failed": "La lectura no funcionó esta vez. Inténtalo de nuevo o rellena el formulario tú mismo."
+      }
     }
   },
   "admin": {
@@ -1168,6 +1191,20 @@
         "user": "Usuario de la app",
         "connection": "Sistema conectado",
         "deleted": "Eliminado"
+      },
+      "reads": {
+        "title": "Escaneos leídos con IA (últimos 7 días)",
+        "limit": "Cada página es una llamada de pago al proveedor de IA. Límite: {count} páginas por miembro en 24 horas.",
+        "none": "No se leyó ningún escaneo en los últimos 7 días.",
+        "day": "Día (UTC)",
+        "kind": "Documento",
+        "reads": "Lecturas",
+        "pages": "Páginas",
+        "kinds": {
+          "licence": "Licencia",
+          "medical": "Certificado médico",
+          "logbook": "Libro de vuelo"
+        }
       }
     }
   },

@@ -6,6 +6,8 @@ import {
   licenceBody,
   medicalBody,
   ratingBody,
+  readScanBody,
+  scanSuggestion,
   typeHoursBody,
 } from "./credentials";
 import { errors, jsonBody, ok, output, pathId, ref, signedIn } from "./openapi-helpers";
@@ -13,7 +15,7 @@ import { errors, jsonBody, ok, output, pathId, ref, signedIn } from "./openapi-h
 // OpenAPI paths of private documents and pilot credentials (lib/api/credentials.ts).
 
 export function credentialSchemas() {
-  return { Credentials: output(credentials) };
+  return { Credentials: output(credentials), ScanSuggestion: output(scanSuggestion) };
 }
 
 const all = (status = 200) => ({
@@ -116,6 +118,17 @@ export function documentAndCredentialPaths() {
           200: { description: "The file with its content type" },
           ...errors(401, 404),
         },
+      },
+    },
+    "/api/v1/documents/{id}/read": {
+      post: {
+        tags: ["documents"],
+        summary:
+          "Read your licence or medical scan with the AI: fields to fill in, nothing saved (medicals need consent: true)",
+        security: signedIn,
+        parameters: [pathId("id", "Document id (uuid)")],
+        requestBody: jsonBody(readScanBody),
+        responses: { ...ok(ref("ScanSuggestion")), ...errors(400, 401, 404, 409, 429) },
       },
     },
     "/api/v1/me/credentials": {

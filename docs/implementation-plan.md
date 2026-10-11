@@ -157,6 +157,29 @@ Aircraft home bases are airports with latitude/longitude. The search (`lib/aircr
   extras are filtered in `incoming.ts` before storing (title → the entry's note, owner-only;
   maintenance → kind `maintenance`; tentative and wrong registrations skipped).
 
+### 4.11 Reading documents and the pilot logbook (VER-9, LOG-1…9)
+- **Reading:** `lib/ocr` sends a stored scan to a vision AI model and gets back fields that match a
+  Zod schema (the model answers through a forced tool call whose input schema is generated from
+  Zod, then the answer is validated again). One driver today (Anthropic's Messages API over plain
+  `fetch`, no SDK; `ANTHROPIC_API_KEY`, `OCR_MODEL`), so it can move to another provider like
+  storage and email. Off until both are set; `OCR_API_URL` points tests at a local stand-in.
+- Reading only **pre-fills**: nothing read is trusted until the pilot saves it, and admins still
+  verify credentials against the scan. Each read is logged in `document_reads` (who, which
+  document, kind, outcome, consent time; no content), which also enforces a daily limit per user.
+- Medical scans are read only after the pilot's explicit consent (a stated notice next to the
+  button; the consent time is logged with the read).
+- **Logbook:** `logbook_entries` per pilot with the AMC1 FCL.050 columns; durations in minutes,
+  times UTC, places as text (codes outside our airport list are allowed). Kinds: `flight`, `fstd`,
+  `brought_forward` (totals per column as of a date). Status `draft` → `certified`; a trigger
+  refuses changes and deletion of certified entries; a correction is a new draft that `corrects`
+  the old entry and, once certified, marks it `superseded` (still listed and printed, struck
+  through). Totals are sums over certified (not superseded) entries.
+- ownAplane rentals: a trigger on the flight log's confirmation inserts one draft per leg for the
+  pilot (idempotent by leg).
+- Scans: a spread is one or two documents (left/right page); the model returns the rows of both
+  pages joined by line number plus the page totals written on the page; the app checks the sums
+  and flags differences. Rows become drafts linked to the spread (`logbook_spreads`).
+
 ## 5. Data model (Phase 1)
 
 | Table | Key columns | Notes |
@@ -257,6 +280,7 @@ Sizes: **S** ≈ a few hours · **M** ≈ 1–2 sessions · **L** ≈ 3+ session
 | M11 | API foundation | API-1, 2, 4, 5 | An app signs in with a token and reads its profile, airports, aircraft search and bookings through `/api/v1`; OpenAPI published | 1–2 wk |
 | M12 | Calendar sync | SYN-1…5, SYN-8 | An aircraft linked to a Google Calendar can't be booked over its events; the other system subscribes to ownAplane's iCal link; a partner pushes a booking, gets 409 on overlap | 2 wk |
 | M13 | Full API | API-3, 6, 7, SYN-6 | Everything on the website is possible through the API (booking flow, flight log, messages); push notifications | 3–4 wk |
+| M14 | Document reading & e-logbook | VER-9, LOG-1…8 | A pilot uploads a licence and the form fills itself; keeps an EASA logbook with certified entries, corrections and totals; rentals appear in it; a scanned paper spread becomes draft entries with its page totals checked | 3 wk |
 
 ## 9. How we build each task (with Claude)
 

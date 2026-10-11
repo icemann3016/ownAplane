@@ -785,6 +785,29 @@
       "MEP_LAND": "MEP (terra)",
       "MEP_SEA": "MEP (mare)",
       "TMG": "TMG"
+    },
+    "scan": {
+      "uploadFirst": "Carica prima la scansione: poi l'app può compilare il modulo per te.",
+      "read": "Compila dalla scansione",
+      "readMedical": "Accetto, compila dalla scansione",
+      "licenceNote": "La scansione viene inviata al nostro fornitore di IA (Anthropic) per leggerla. Nulla viene salvato finché non premi Salva.",
+      "medicalConsent": "Il tuo certificato medico contiene dati sanitari. Per leggerlo, la scansione viene inviata al nostro fornitore di IA (Anthropic), solo a questo scopo. Nulla viene salvato finché non premi Salva. Puoi anche compilare il modulo da solo.",
+      "reading": "Lettura della scansione… può richiedere fino a mezzo minuto.",
+      "filled": "Compilato dalla scansione. Controlla ogni campo prima di salvare.",
+      "ratingsFound": "Anche sulla licenza",
+      "ratingsAdd": "Aggiungi le abilitazioni selezionate",
+      "ratingsAdded": "{count, plural, =0 {Nessuna abilitazione aggiunta.} one {# abilitazione aggiunta; un admin la verifica sulla scansione.} other {# abilitazioni aggiunte; un admin le verifica sulla scansione.}}",
+      "validUntil": "valida fino al {date}",
+      "noDate": "nessuna data letta",
+      "errors": {
+        "not_configured": "La lettura delle scansioni non è disponibile al momento. Compila il modulo da solo.",
+        "not_found": "Carica di nuovo la scansione e riprova.",
+        "limit": "Oggi hai già fatto leggere molte scansioni. Compila il modulo da solo o riprova domani.",
+        "consent_required": "Accetta prima l'invio della scansione.",
+        "not_this_document": "Non sembra il documento giusto. Controlla il file caricato.",
+        "unreadable": "Non è stato possibile leggere la scansione. Di solito aiuta una foto più nitida e dritta; oppure compila il modulo da solo.",
+        "failed": "La lettura non è riuscita questa volta. Riprova o compila il modulo da solo."
+      }
     }
   },
   "admin": {
@@ -1168,6 +1191,20 @@
         "user": "Utente dell'app",
         "connection": "Sistema collegato",
         "deleted": "Eliminato"
+      },
+      "reads": {
+        "title": "Scansioni lette con l'IA (ultimi 7 giorni)",
+        "limit": "Ogni pagina è una chiamata a pagamento al fornitore di IA. Limite: {count} pagine per membro in 24 ore.",
+        "none": "Nessuna scansione letta negli ultimi 7 giorni.",
+        "day": "Giorno (UTC)",
+        "kind": "Documento",
+        "reads": "Letture",
+        "pages": "Pagine",
+        "kinds": {
+          "licence": "Licenza",
+          "medical": "Certificato medico",
+          "logbook": "Libretto di volo"
+        }
       }
     }
   },

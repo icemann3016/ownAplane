@@ -7,7 +7,6 @@ import { useTranslations } from "next-intl";
 import { DocumentField, type UploadedDocument } from "@/components/document-field";
 import { FormMessage } from "@/components/forms/form-message";
 import { SubmitButton } from "@/components/forms/submit-button";
-import { SelectField, TextField } from "@/components/forms/text-field";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
@@ -21,16 +20,10 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { type FormState, initialFormState } from "@/lib/forms";
-import {
-  CLASS_RATINGS,
-  LICENCE_LABELS,
-  LICENCE_TYPES,
-  MEDICAL_CLASSES,
-  PRIVILEGES,
-  RATING_KINDS,
-} from "@/lib/pilot/catalog";
 import type { CredentialKind } from "@/lib/pilot/labels";
 import { saveLicence, saveMedical, saveRating } from "./actions";
+import { LicenceFields, MedicalFields, RatingFields } from "./credential-fields";
+import { ScanReader } from "./scan-reader";
 
 export type Country = { code: string; name: string };
 
@@ -45,6 +38,7 @@ export function CredentialDialog({
   countries,
   wasVerified,
   label,
+  canRead = false,
 }: {
   kind: CredentialKind;
   /** Current values when editing (dates as YYYY-MM-DD). */
@@ -54,6 +48,8 @@ export function CredentialDialog({
   wasVerified?: boolean;
   /** Accessible name of the edit button, e.g. "Edit PPL(A)". */
   label?: string;
+  /** Scans can be read to fill in the form (VER-9). */
+  canRead?: boolean;
 }) {
   const t = useTranslations(`pilot.${section[kind]}`);
   const tp = useTranslations("pilot");
@@ -84,6 +80,7 @@ export function CredentialDialog({
           document={document}
           countries={countries}
           wasVerified={wasVerified}
+          canRead={canRead}
           onSaved={() => setOpen(false)}
         />
       </DialogContent>
@@ -97,6 +94,7 @@ function CredentialForm({
   document,
   countries,
   wasVerified,
+  canRead,
   onSaved,
 }: {
   kind: CredentialKind;
@@ -104,6 +102,7 @@ function CredentialForm({
   document?: UploadedDocument | null;
   countries: Country[];
   wasVerified?: boolean;
+  canRead: boolean;
   onSaved: () => void;
 }) {
   const t = useTranslations("pilot");
@@ -112,9 +111,17 @@ function CredentialForm({
     if (result.ok) onSaved();
     return result;
   }, initialFormState);
-  const v = { ...initial, ...state.values };
+  // What was read from the scan; the fields are drawn again (key) to show it.
+  const [read, setRead] = useState<{ values: Record<string, string>; version: number }>({
+    values: {},
+    version: 0,
+  });
+  const [documentId, setDocumentId] = useState(document?.id ?? null);
+  const filled = Object.fromEntries(Object.entries(read.values).filter(([, value]) => value));
+  const v = { ...initial, ...filled, ...state.values };
   const e = state.errors ?? {};
   const countryOptions = countries.map((c) => ({ value: c.code, label: c.name }));
+  const scanned = kind === "licence" || kind === "medical";
 
   return (
     <form action={formAction} className="grid gap-4">
@@ -127,109 +134,31 @@ function CredentialForm({
       )}
       {v.id && <input type="hidden" name="id" value={v.id} />}
 
-      {kind === "licence" && (
+      {scanned && (
         <>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <SelectField
-              name="type"
-              label={t("licences.type")}
-              defaultValue={v.type ?? "ppl_a"}
-              errors={e.type}
-              options={LICENCE_TYPES.map((code) => ({
-                value: code,
-                label: LICENCE_LABELS[code] ?? t("licences.other"),
-              }))}
-            />
-            <SelectField
-              name="issuingState"
-              label={t("fields.issuingState")}
-              defaultValue={v.issuingState ?? ""}
-              errors={e.issuingState}
-              required
-              options={[{ value: "", label: t("fields.chooseCountry") }, ...countryOptions]}
-            />
-          </div>
-          <TextField
-            name="number"
-            label={t("licences.number")}
-            hint={t("licences.numberHint")}
-            defaultValue={v.number}
-            errors={e.number}
-            maxLength={50}
-            autoComplete="off"
-            required
-          />
-          <div className="grid gap-4 sm:grid-cols-2">
-            <TextField
-              name="issuedOn"
-              type="date"
-              label={t("licences.issuedOn")}
-              defaultValue={v.issuedOn}
-              errors={e.issuedOn}
-            />
-            <TextField
-              name="expiresOn"
-              type="date"
-              label={t("licences.expiresOn")}
-              hint={t("licences.expiresOnHint")}
-              defaultValue={v.expiresOn}
-              errors={e.expiresOn}
-            />
-          </div>
           <DocumentField
             name="documentId"
             label={t("fields.document")}
-            hint={t("licences.documentHint")}
+            hint={t(kind === "licence" ? "licences.documentHint" : "medical.documentHint")}
             required
             initial={document}
             errors={e.documentId}
+            onChange={(doc) => setDocumentId(doc.id)}
           />
+          {canRead && (
+            <ScanReader
+              kind={kind}
+              documentId={documentId}
+              onRead={(values) => setRead((r) => ({ values, version: r.version + 1 }))}
+            />
+          )}
         </>
       )}
-
-      {kind === "rating" && <RatingFields values={v} errors={e} document={document} />}
-
-      {kind === "medical" && (
-        <>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <SelectField
-              name="class"
-              label={t("medical.class")}
-              defaultValue={v.class ?? "class2"}
-              errors={e.class}
-              options={MEDICAL_CLASSES.map((c) => ({
-                value: c,
-                label: t(`medical.classes.${c}`),
-              }))}
-            />
-            <SelectField
-              name="issuingState"
-              label={t("fields.issuingState")}
-              defaultValue={v.issuingState ?? ""}
-              errors={e.issuingState}
-              required
-              options={[{ value: "", label: t("fields.chooseCountry") }, ...countryOptions]}
-            />
-          </div>
-          <TextField
-            name="validUntil"
-            type="date"
-            label={t("medical.validUntil")}
-            hint={t("medical.validUntilHint")}
-            defaultValue={v.validUntil}
-            errors={e.validUntil}
-            required
-          />
-          <DocumentField
-            name="documentId"
-            label={t("fields.document")}
-            hint={t("medical.documentHint")}
-            required
-            initial={document}
-            errors={e.documentId}
-          />
-        </>
-      )}
+      <div key={read.version} className="grid gap-4">
+        {kind === "licence" && <LicenceFields values={v} errors={e} countries={countryOptions} />}
+        {kind === "medical" && <MedicalFields values={v} errors={e} countries={countryOptions} />}
+        {kind === "rating" && <RatingFields values={v} errors={e} document={document} />}
+      </div>
 
       <DialogFooter>
         <DialogClose asChild>
@@ -240,84 +169,5 @@ function CredentialForm({
         <SubmitButton pendingText={t("saving")}>{t("save")}</SubmitButton>
       </DialogFooter>
     </form>
-  );
-}
-
-function RatingFields({
-  values: v,
-  errors: e,
-  document,
-}: {
-  values: Record<string, string | undefined>;
-  errors: Record<string, string[] | undefined>;
-  document?: UploadedDocument | null;
-}) {
-  const t = useTranslations("pilot");
-  const [kind, setKind] = useState(v.kind ?? "class");
-  // Keep the chosen code only while it fits the chosen kind.
-  const code = v.kind === kind ? v.code : undefined;
-
-  return (
-    <>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <SelectField
-          name="kind"
-          label={t("ratings.kind")}
-          value={kind}
-          onChange={(ev) => setKind(ev.target.value)}
-          errors={e.kind}
-          options={RATING_KINDS.map((k) => ({ value: k, label: t(`ratings.kinds.${k}`) }))}
-        />
-        {kind === "class" && (
-          <SelectField
-            key="class"
-            name="code"
-            label={t("ratings.code")}
-            defaultValue={code ?? "SEP_LAND"}
-            errors={e.code}
-            options={CLASS_RATINGS.map((c) => ({ value: c, label: t(`classRatings.${c}`) }))}
-          />
-        )}
-        {kind === "privilege" && (
-          <SelectField
-            key="privilege"
-            name="code"
-            label={t("ratings.code")}
-            defaultValue={code ?? "NIGHT"}
-            errors={e.code}
-            options={PRIVILEGES.map((p) => ({ value: p, label: t(`privileges.${p}`) }))}
-          />
-        )}
-        {kind === "type" && (
-          <TextField
-            key="type"
-            name="code"
-            label={t("ratings.typeCode")}
-            hint={t("ratings.typeCodeHint")}
-            defaultValue={code}
-            errors={e.code}
-            maxLength={8}
-            autoCapitalize="characters"
-            autoComplete="off"
-            required
-          />
-        )}
-      </div>
-      <TextField
-        name="expiresOn"
-        type="date"
-        label={t("ratings.expiresOn")}
-        hint={t("ratings.expiresOnHint")}
-        defaultValue={v.expiresOn}
-        errors={e.expiresOn}
-      />
-      <DocumentField
-        name="documentId"
-        label={t("fields.documentOptional")}
-        hint={t("ratings.documentHint")}
-        initial={document}
-        errors={e.documentId}
-      />
-    </>
   );
 }

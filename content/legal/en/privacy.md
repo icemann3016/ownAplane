@@ -12,6 +12,7 @@ The controller is [company name, registered address, company number]. Contact fo
 - **Profile** (public): display name, photo or avatar, home airfield, bio, roles, ratings and reviews. *Why*: so others know who they fly with (contract).
 - **Settings** (private): language, units, contact phone. Your phone and email are shown only to the other side of an **accepted** booking (contract).
 - **Pilot credentials**: licences, ratings, experience, date of birth (optional) and uploaded documents. **Medical certificates are special-category health data**: only you and our admins see them, and we process them only with your explicit consent, which you give by adding them (Art. 9(2)(a)). Public profiles show only verified licence types and ratings, never numbers, documents or medical data. Owners only get a yes/no "meets the requirements".
+- **Reading scans with AI** (only when you press "Fill in from the scan"): the scan is sent to our AI provider to read the fields you then check; we keep only a record that a scan was read (when, what kind, the outcome), not what it says. For a medical certificate we ask for your explicit consent first (Art. 9(2)(a)); without it, it isn't read. *Why*: to save you typing (consent; contract).
 - **Aircraft**: listing details, photos (public), CofA/ARC/insurance documents (you and admins only).
 - **Bookings and flight logs**: times, airfields, meter readings, fuel and oil, receipts, remarks, defects, amounts due, history of changes. Shared between the pilot and the owner of that booking (contract; legal claims).
 - **Calendar sync**: an aircraft's owner can connect another booking system (for example a club's). That system receives the times the aircraft is booked and, only if the owner chooses, each booking's status, route and the pilot's name; never pilots' email addresses, phone numbers, credentials or flight logs. What it sends back (times, and titles if the owner chooses) is shown only to the owner (legitimate interest of the owner and pilots in avoiding double bookings).
@@ -22,7 +23,7 @@ The controller is [company name, registered address, company number]. Contact fo
 
 ## Who receives data
 
-Only processors that help us run the service, under data processing agreements: hosting (Vercel, EU region Frankfurt), database and file storage (Supabase, EU), email delivery, and, if you choose them, Google, Apple or Facebook (Meta) for sign-in. Booking systems that an aircraft's owner connects receive only what is described under Calendar sync. The map on the search page loads tiles from OpenFreeMap, which receives your IP address. We never sell data.
+Only processors that help us run the service, under data processing agreements: hosting (Vercel, EU region Frankfurt), database and file storage (Supabase, EU), email delivery, AI reading of scans when you ask for it (Anthropic; it may process data outside the EU under the safeguards the GDPR requires) [to be confirmed in the lawyer review], and, if you choose them, Google, Apple or Facebook (Meta) for sign-in. Booking systems that an aircraft's owner connects receive only what is described under Calendar sync. The map on the search page loads tiles from OpenFreeMap, which receives your IP address. We never sell data.
 
 ## How long we keep it
 

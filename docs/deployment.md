@@ -111,6 +111,17 @@ All three work the same way: the button appears once the keys are set, new accou
 - `EMAIL_DRIVER=smtp` + `SMTP_*` + `EMAIL_FROM`. Every major provider offers SMTP.
 - Once real email works, set `AUTH_REQUIRE_EMAIL_VERIFICATION=true`.
 
+### Reading scans with AI (optional)
+- `ANTHROPIC_API_KEY` (console.anthropic.com → API keys) and `OCR_MODEL` (a vision-capable
+  Claude model id from Anthropic's model list). Both set → pilots see **Fill in from the scan**
+  on licences and medicals, and logbook pages can be read; without them the buttons are hidden.
+- No SDK: `lib/ocr` calls the Messages API with `fetch`. Another provider means another driver
+  there; nothing else changes.
+- `OCR_DAILY_LIMIT` (default 40) caps pages read per user per 24 hours; Admin → API shows the
+  reads per day. Each read is a paid API call (a few cents at most per page).
+- Before launch: a data processing agreement with the provider, and the privacy policy's entry
+  checked by the lawyer (medicals are read only with explicit consent).
+
 ### Monitoring (optional)
 - **Errors**: `SENTRY_DSN` of any Sentry-compatible service (Sentry with EU data region, or a
   self-hosted GlitchTip). Server errors (pages, routes, Server Actions via `instrumentation.ts`)

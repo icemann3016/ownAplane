@@ -35,4 +35,28 @@ export const adminActions = pgTable(
   (t) => [index("admin_actions_target_idx").on(t.targetType, t.targetId)],
 ).enableRLS();
 
+/**
+ * Documents read by the AI (VER-9, LOG-6): who, what and the outcome, never the content. Used for
+ * the daily limit per user and for admins. Trusted code only (no access for app_user).
+ */
+export const documentReads = pgTable(
+  "document_reads",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    documentId: uuid("document_id").references(() => documents.id, { onDelete: "set null" }),
+    /** licence, medical or logbook. */
+    kind: text("kind").notNull(),
+    /** ok, unreadable or failed. */
+    outcome: text("outcome").notNull(),
+    pages: integer("pages").notNull().default(1),
+    /** When the user agreed to send it to the AI provider (medicals). */
+    consentAt: timestamp("consent_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index("document_reads_user_idx").on(t.userId, t.createdAt)],
+).enableRLS();
+
 export type Document = typeof documents.$inferSelect;

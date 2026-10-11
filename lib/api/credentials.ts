@@ -252,3 +252,36 @@ export function checkSaved(result: CredentialSaved) {
   }
   throw new ApiError("not_found", "No such credential.");
 }
+
+// --- Reading a scan (VER-9) ---
+
+export const readScanBody = z.object({
+  as: z.enum(["licence", "medical"]).describe("What the document is"),
+  consent: z
+    .boolean()
+    .default(false)
+    .describe("Medicals: the pilot agreed that the scan is sent to the AI provider"),
+});
+
+export const scanSuggestion = z.object({
+  as: z.enum(["licence", "medical"]),
+  licence: z
+    .object({
+      type: z.enum(LICENCE_TYPES).nullable(),
+      issuingState: z.string().nullable(),
+      number: z.string().nullable(),
+      issuedOn: day.nullable(),
+      expiresOn: day.nullable(),
+      ratings: z.array(
+        z.object({ kind: z.enum(RATING_KINDS), code: z.string(), expiresOn: day.nullable() }),
+      ),
+    })
+    .nullable(),
+  medical: z
+    .object({
+      class: z.enum(MEDICAL_CLASSES).nullable(),
+      issuingState: z.string().nullable(),
+      validUntil: day.nullable(),
+    })
+    .nullable(),
+});

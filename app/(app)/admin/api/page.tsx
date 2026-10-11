@@ -5,9 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { apiUsage, limitedCallers } from "@/lib/admin/api-usage";
 import { LIMITS } from "@/lib/api/rate-limit";
 import { requireAdmin } from "@/lib/auth/session";
+import { dailyReadLimit, readsLastWeek } from "@/lib/ocr/usage";
 import type { Locale } from "@/lib/i18n/config";
 import { AdminHeader } from "../page-header";
 import { LimitedTable } from "./limited-table";
+import { ReadsTable } from "./reads-table";
 import { UsageTable } from "./usage-table";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -20,7 +22,11 @@ export default async function ApiUsagePage() {
   await requireAdmin("/admin/api");
   const t = await getTranslations("admin.api");
   const locale = (await getLocale()) as Locale;
-  const [usage, limited] = await Promise.all([apiUsage(), limitedCallers()]);
+  const [usage, limited, reads] = await Promise.all([
+    apiUsage(),
+    limitedCallers(),
+    readsLastWeek(),
+  ]);
   const n = (value: number) => value.toLocaleString(locale);
 
   return (
@@ -53,6 +59,14 @@ export default async function ApiUsagePage() {
         </CardHeader>
         <CardContent className="overflow-x-auto">
           <UsageTable rows={usage} locale={locale} />
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle as="h2">{t("reads.title")}</CardTitle>
+        </CardHeader>
+        <CardContent className="overflow-x-auto">
+          <ReadsTable rows={reads} limit={dailyReadLimit()} />
         </CardContent>
       </Card>
     </div>
