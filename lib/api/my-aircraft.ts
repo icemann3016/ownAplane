@@ -193,6 +193,9 @@ const MESSAGES: Record<string, string> = {
   add_renewal: "Add the renewal as a new document instead: the aircraft would lose its listing.",
   cant_delete_listed: "The listed aircraft needs it; add its renewal first.",
   last_photo: "A listed aircraft keeps at least one photo.",
+  overlaps: "Overlaps a booking, a block or a busy time from a connected system.",
+  already_resolved: "Already marked as fixed.",
+  bad_state: "Only aircraft remarks can become known items.",
 };
 
 /** A refused aircraft change as an API error; `details.reason` is the stable code. */

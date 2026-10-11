@@ -69,8 +69,9 @@ app/
                       #   welcome (setup guide), admin (dashboard, verifications,
                       #   reports, users, aircraft, audit, api usage)
   api/auth/           # Better Auth endpoints (email links, OAuth callbacks; apps sign in here for a token)
-  api/v1/             # REST API for apps and partners (docs/api.md): me, airports, aircraft, bookings,
-                      #   openapi.json; thin handlers around lib/ (apiRoute + requireApiUser + DTOs);
+  api/v1/             # REST API for apps and partners (docs/api.md): me (+ credentials, aircraft), airports,
+                      #   aircraft, bookings, documents, conversations, notifications, favourites, saved-searches,
+                      #   reviews, openapi.json; thin handlers around lib/ (apiRoute + requireApiUser + DTOs);
                       #   sync/ (partner systems, API key) and calendars/[token].ics (iCal export)
   api/cron/sync/      # reads linked calendars every 15 min (GitHub Actions schedule, CRON_SECRET)
   api/account/avatar/ # photo upload
@@ -96,7 +97,9 @@ lib/
   api/                # REST API core: http.ts (apiRoute, ApiError, parse), auth.ts (Bearer tokens only),
                       #   schemas.ts (inputs), responses.ts (output shapes), dto.ts, openapi.ts (+ helpers);
                       #   areas in their own file with inputs, shapes, DTOs and paths: social.ts (+ openapi-social),
-                      #   reviews.ts; flight-log.ts, booking-errors.ts (lib outcomes → API errors)
+                      #   reviews.ts, credentials.ts, my-aircraft.ts (+ -dto, -route), aircraft-ops.ts (each with
+                      #   an openapi-*.ts); flight-log.ts, booking-errors.ts (lib outcomes → API errors);
+                      #   rate-limit.ts (API-6)
   account/            # profile.ts (profile, roles, settings), delete-files.ts
   calendar-sync/      # other booking systems (SYN): events, apply (store busy times, conflicts),
                       #   feeds (safe fetch, iCal via ical.js, JSON), sync, busy, ics (export), keys, owner,
@@ -110,8 +113,9 @@ lib/
   reports/            # createReport()
   monitoring/         # reportError() → any Sentry-compatible service (SENTRY_DSN), no SDK
   legal.ts            # terms/privacy/cookie pages from content/legal
-  pilot/              # catalog (licence types, ratings), labels, validity/summary, credentials, reminders
-  aircraft/           # catalog, queries, photos, documents, requirements, expiry (daily job), public page data,
+  pilot/              # catalog (licence types, ratings), labels, validity/summary, credentials (+ -ops), reminders
+  aircraft/           # catalog, queries, manage (+ -parts), owner-ops, photos, documents, requirements,
+                      #   expiry (daily job), public page data,
                       #   calendar, eligibility (+ eligibility-text), search
   weather/            # METAR/TAF from aviationweather.gov, parsing, booking warnings
   domain/             # pure logic: units (L/US gal, kg/lb), time (airport-local ↔ UTC, calendar days)
@@ -166,7 +170,7 @@ Target structure for the rest of the app is in the plan, §6. When new top-level
 - **Auth:** protect pages, Server Actions and route handlers with `requireUser()` / `requireProfile()` (or `getUser()`) from `lib/auth/session.ts`. They redirect to `/login?next=…`. Admin pages and actions use `requireAdmin()` (404 for everyone else). Call Better Auth on the server via `getAuth().api.*`; read its error codes with `authErrorCode()`.
 - **Forms:** a Server Action `(prev: FormState, formData) => Promise<FormState>` validates with a Zod schema from `lib/validation/`, and a client form uses `useActionState` + `TextField` + `SubmitButton` + `FormMessage`. Return `values` (never passwords) so fields refill after errors.
 - **Text & translations:** never hard-code user-facing text. Add keys to **every** `messages/*.json` (en is the source; a unit test checks all have the same keys, placeholders and tags). Server Components: `await getTranslations("ns")`; Client Components: `useTranslations("ns")`; page titles via `generateMetadata`. Zod messages are keys from the `validation` namespace, translated with `localizedFieldErrors()`. Format dates/numbers with the user's locale (`intlLocale()`).
-- **API (API-1…5):** anything an app or partner needs gets an endpoint in `app/api/v1` that calls the same `lib/` function as the website (never duplicate logic in a route), with an input schema in `lib/api/schemas.ts`, a response shape in `lib/api/responses.ts`, a DTO in `lib/api/dto.ts`, an entry in `lib/api/openapi.ts` and a case in `tests/e2e/api.spec.ts`. Keep `docs/api.md` current.
+- **API (API-1…5):** anything an app or partner needs gets an endpoint in `app/api/v1` that calls the same `lib/` function as the website (never duplicate logic in a route), with an input schema in `lib/api/schemas.ts`, a response shape in `lib/api/responses.ts`, a DTO in `lib/api/dto.ts` (or all three in the area's own file), an entry in `lib/api/openapi.ts` (or the area's `openapi-*.ts`) and a case in `tests/e2e/api*.spec.ts`. Keep `docs/api.md` current.
 - **Headings:** every page has one `h1`. `CardTitle` takes `as="h1" | "h2" | "h3"` when it's a page or section title.
 
 - TypeScript everywhere. No `any` unless there's a comment explaining why.
@@ -202,9 +206,11 @@ _TODO: split areas so we don't edit the same files at the same time._
 
 Add one line per decision, newest first.
 
+- 2026-10-11: **API-3 complete**: documents (`POST/GET /api/v1/documents`, the token instead of the cookie; ids go with credentials, check-out photo, receipts, defects), pilot credentials (`/api/v1/me/credentials`), owners' aircraft (`/api/v1/me/aircraft`: drafts, fields in SI units, status, requirements, photos, documents, calendar blocks, grounding, defects, known items, meter readings) and defect reports on bookings. Website forms moved onto the same `lib/` code (`lib/pilot/credential-ops.ts`, `lib/aircraft/manage.ts`, `manage-parts.ts`, `owner-ops.ts`). Still website-only: calendar sync settings, usage exports, account settings, admin.
+
 - 2026-10-11: **API limits** (API-6): requests per calendar minute counted in Postgres (`api_rate_buckets`, no app access; the cron jobs remove rows older than an hour), so every server shares them, no extra service: 240 per app token (keyed by the session part of the token), 600 per partner `oap_` key, 120 per address without a token; 30 refused tokens per address a minute pause that address's token requests (made-up tokens can't dodge the limit). `apiRoute` adds `x-ratelimit-*` headers, 429 `rate_limited` with `retry-after`. Usage per user/connection per UTC day (`api_usage_daily`, kept 90 days) after the response; Admin → API shows it and who went over a limit in the last hour (`lib/admin/api-usage.ts`).
 
-- 2026-10-10: **M13 API** (API-3): apps can do what pilots and owners do on the website for bookings (request, accept/decline/propose, cancel, availability, eligibility with reasons in the user's language), the flight log (check-out to confirmation), messages, notifications, favourites, saved searches and reviews. Website logic that lived in form handlers moved to `lib/` (`lib/bookings/flight-log-ops.ts`, `log-entries.ts`, outcomes in `outcome.ts`), so forms and API share it. Errors carry `details.reason` with the website's codes. Still website-only: credentials and aircraft management (uploads), account settings, admin. Push notifications (API-7) wait for app store keys.
+- 2026-10-10: **M13 API** (API-3): apps can do what pilots and owners do on the website for bookings (request, accept/decline/propose, cancel, availability, eligibility with reasons in the user's language), the flight log (check-out to confirmation), messages, notifications, favourites, saved searches and reviews. Website logic that lived in form handlers moved to `lib/` (`lib/bookings/flight-log-ops.ts`, `log-entries.ts`, outcomes in `outcome.ts`), so forms and API share it. Errors carry `details.reason` with the website's codes. Push notifications (API-7) wait for app store keys.
 
 - 2026-10-10: **Webhooks to connected systems** (SYN-6): per connection `webhook_url` + `webhook_secret` (owner in Calendar sync, or the partner with its key via `/api/v1/sync/webhook`). Triggers queue `webhook_events` (no app access) for every visible change of a calendar entry or booking status, never to the system the busy time came from; `deliverWebhooks()` sends the busy time's current state (`busy.updated` / `busy.deleted`, same shape as GET /sync/busy incl. the new `id`, export fields respected) signed `ownaplane-signature: t=…,v1=HMAC-SHA256("t.body")`, public https only, no redirects, 8 s; retries 1 m…24 h (8 tries). Sent right after actions and by both cron jobs. OpenAPI `webhooks.busyChanged`.
 

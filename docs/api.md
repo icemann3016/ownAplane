@@ -144,7 +144,23 @@ stops the listing: `home_base`, `price`, `photo`, `arc`, `insurance`). Refusals 
 | POST | `…/{id}/documents` | `{ kind, title?, expiresOn?, documentId }`: CofA/ARC/insurance (an admin checks them; ARC and insurance need `expiresOn`) or POH/checklist/W&B for renters |
 | PUT / DELETE | `…/{id}/documents/{documentId}` | Change title, expiry or file (same kind; 409 `add_renewal`) / remove (409 `cant_delete_listed`): add renewals as new documents |
 
-Still website-only: account settings and admin tools.
+Running the aircraft (BKG-7, BKG-8, BKG-15, SRC-5):
+
+| Method | Path | What |
+|--------|------|------|
+| GET / POST | `…/{id}/calendar` | Bookings, your blocks and busy times from connected systems (`?from&to`, default 60 days) / block time `{ kind: owner_use \| maintenance \| unavailable, from, to, note }` (409 `overlaps`) |
+| DELETE | `…/{id}/calendar/{entryId}` | Remove a block |
+| POST | `…/{id}/ground` | Ground it; listing it again (`…/status`) checks everything again |
+| GET / POST | `…/{id}/defects` | Reported defects / record one yourself `{ severity, description, photoId }` |
+| POST | `…/{id}/defects/{defectId}/resolve` | `{ note }`: fixed |
+| POST | `/api/v1/bookings/{id}/defects` | The pilot (or owner) reports a defect on a booking; the owner is emailed at once |
+| GET | `…/{id}/remarks` | Pilots' remarks from flight logs |
+| PUT | `…/{id}/remarks/{remarkId}` | `{ state: known \| resolved }`: a known item is shown to pilots of upcoming bookings |
+| GET / POST | `…/{id}/meter-readings` | Hobbs/tach you recorded / `{ readAt, hobbs, tach, note }` (the next check-out is compared with it) |
+| DELETE | `…/{id}/meter-readings/{readingId}` | Remove one recorded by mistake |
+
+Still website-only: calendar sync settings (connections, webhooks), usage exports, account
+settings and admin tools.
 
 ## Calendar sync for other booking systems (SYN-1…6, SYN-8)
 

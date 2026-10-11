@@ -3,7 +3,16 @@ import path from "node:path";
 
 import { expect, test } from "@playwright/test";
 
-import { apiSignIn, signUp, unique, userId, withDb } from "./helpers";
+import {
+  apiSignIn,
+  seedAcceptedBooking,
+  seedListedAircraft,
+  seedVerifiedPilot,
+  signUp,
+  unique,
+  userId,
+  withDb,
+} from "./helpers";
 
 // An owner lists an aircraft through the API (API-3, LST-1…8): draft, details, photos,
 // documents, requirements, listing, and the checks that keep a listing valid.
@@ -171,4 +180,121 @@ test("an owner lists an aircraft through the API", async ({ browser, baseURL }) 
   expect((await unlisted.json()).data.status).toBe("unlisted");
   expect((await call(plane, { method: "DELETE" })).status).toBe(200);
   expect((await call(plane)).status).toBe(404);
+});
+
+test("an owner keeps the aircraft's calendar, defects, known items and meters through the API", async ({
+  browser,
+  baseURL,
+}) => {
+  test.setTimeout(90_000);
+  const id = unique();
+  const letters = id
+    .replace(/[^a-z]/g, "")
+    .slice(0, 3)
+    .toUpperCase()
+    .padEnd(3, "X");
+  const ownerEmail = `api-ops-${id}@example.com`;
+  const pilotEmail = `api-ops-pilot-${id}@example.com`;
+  for (const [name, email] of [
+    [`Owner ${id}`, ownerEmail],
+    [`Pilot ${id}`, pilotEmail],
+  ] as const) {
+    const context = await browser.newContext();
+    await signUp(await context.newPage(), name, email);
+    await context.close();
+  }
+  const aircraftId = await seedListedAircraft(ownerEmail, `LZ-O${letters}`);
+  await seedVerifiedPilot(pilotEmail);
+  const bookingId = await seedAcceptedBooking(aircraftId, pilotEmail, 30);
+  const owner = `Bearer ${await apiSignIn(baseURL, ownerEmail)}`;
+  const pilot = `Bearer ${await apiSignIn(baseURL, pilotEmail)}`;
+  const call = (route: string, init: { method?: string; body?: unknown; auth?: string } = {}) =>
+    fetch(new URL(route, baseURL), {
+      method: init.method ?? (init.body ? "POST" : "GET"),
+      headers: {
+        authorization: init.auth ?? owner,
+        ...(init.body ? { "content-type": "application/json" } : {}),
+      },
+      body: init.body ? JSON.stringify(init.body) : undefined,
+    });
+  const plane = `/api/v1/me/aircraft/${aircraftId}`;
+  const now = new Date();
+  const day = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 21);
+  const at = (hour: number) => new Date(day + hour * 3_600_000).toISOString();
+
+  // 1. Calendar: the booking is there; blocks can't overlap; only the owner sees it
+  const calendar = (await (await call(`${plane}/calendar`)).json()).data;
+  expect(calendar.find((e: { bookingId: string }) => e.bookingId === bookingId)).toMatchObject({
+    kind: "booking",
+    pilotName: `Pilot ${id}`,
+  });
+  expect((await call(`${plane}/calendar`, { auth: pilot })).status).toBe(404);
+  const block = await call(`${plane}/calendar`, {
+    body: { kind: "maintenance", from: at(8), to: at(12), note: "50 h check" },
+  });
+  expect(block.status).toBe(201);
+  const entry = (await block.json()).data;
+  expect(entry).toMatchObject({ kind: "maintenance", from: at(8), note: "50 h check" });
+  const overlap = await call(`${plane}/calendar`, {
+    body: { kind: "owner_use", from: at(11), to: at(13) },
+  });
+  expect((await overlap.json()).error.details.reason).toBe("overlaps");
+  expect((await call(`${plane}/calendar/${entry.id}`, { method: "DELETE" })).status).toBe(200);
+  expect((await call(`${plane}/calendar/${entry.id}`, { method: "DELETE" })).status).toBe(404);
+
+  // 2. The pilot reports a defect on the booking; the owner fixes it
+  const reported = await call(`/api/v1/bookings/${bookingId}/defects`, {
+    auth: pilot,
+    body: { severity: "major", description: "Left brake soft" },
+  });
+  expect(reported.status).toBe(201);
+  const defectId = (await reported.json()).data.id;
+  const defects = (await (await call(`${plane}/defects`)).json()).data;
+  expect(defects[0]).toMatchObject({
+    id: defectId,
+    bookingId,
+    severity: "major",
+    reportedBy: `Pilot ${id}`,
+    resolvedAt: null,
+  });
+  const fixed = await call(`${plane}/defects/${defectId}/resolve`, {
+    body: { note: "Pads replaced" },
+  });
+  expect((await fixed.json()).data).toMatchObject({ resolution: "Pads replaced" });
+  const again = await call(`${plane}/defects/${defectId}/resolve`, { body: {} });
+  expect((await again.json()).error.details.reason).toBe("already_resolved");
+
+  // 3. A remark from the flight log becomes a known item
+  const log = `/api/v1/bookings/${bookingId}/log`;
+  expect((await call(log, { auth: pilot, method: "POST" })).status).toBe(201);
+  await call(`${log}/remarks`, { auth: pilot, body: { kind: "aircraft", body: "COM2 scratchy" } });
+  const [remark] = (await (await call(`${plane}/remarks`)).json()).data;
+  expect(remark).toMatchObject({ body: "COM2 scratchy", bookingId, knownSince: null });
+  const known = await call(`${plane}/remarks/${remark.id}`, {
+    method: "PUT",
+    body: { state: "known" },
+  });
+  expect((await known.json()).data.knownSince).not.toBeNull();
+
+  // 4. Meter readings between rentals
+  const future = await call(`${plane}/meter-readings`, {
+    body: { readAt: new Date(Date.now() + 86_400_000).toISOString(), hobbs: 1234.5 },
+  });
+  expect((await future.json()).error.fields).toHaveProperty("readAt");
+  const reading = await call(`${plane}/meter-readings`, {
+    body: { readAt: new Date(Date.now() - 3_600_000).toISOString(), hobbs: 1234.5, tach: 1001 },
+  });
+  expect(reading.status).toBe(201);
+  const readingId = (await reading.json()).data.id;
+  const readings = (await (await call(`${plane}/meter-readings`)).json()).data;
+  expect(readings[0]).toMatchObject({ id: readingId, hobbs: 1234.5, tach: 1001 });
+  expect((await call(`${plane}/meter-readings/${readingId}`, { method: "DELETE" })).status).toBe(
+    200,
+  );
+
+  // 5. Grounded until listed again, and listing checks everything again (this one has no photo)
+  const grounded = await call(`${plane}/ground`, { body: {} });
+  expect((await grounded.json()).data.status).toBe("grounded");
+  const relisted = await call(`${plane}/status`, { method: "PUT", body: { status: "listed" } });
+  expect((await relisted.json()).error.details).toMatchObject({ reason: "not_ready" });
 });

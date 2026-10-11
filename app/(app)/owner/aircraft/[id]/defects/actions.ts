@@ -1,12 +1,10 @@
 "use server";
 
-import { and, eq, inArray, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
+import { groundAircraft as ground, resolveDefect as resolve } from "@/lib/aircraft/owner-ops";
 import { requireUser } from "@/lib/auth/session";
-import { asUser } from "@/lib/db/rls";
-import { aircraft } from "@/lib/db/schema";
 
 /** The owner marks a defect as fixed, with an optional note (BKG-8). */
 export async function resolveDefect(formData: FormData) {
@@ -14,9 +12,7 @@ export async function resolveDefect(formData: FormData) {
   const defectId = z.uuid().parse(formData.get("defectId"));
   const aircraftId = z.uuid().parse(formData.get("aircraftId"));
   const note = String(formData.get("note") ?? "");
-  await asUser(user.id, (tx) =>
-    tx.execute(sql`select public.resolve_defect(${defectId}::uuid, ${note})`),
-  );
+  await resolve(user.id, defectId, note);
   revalidatePath(`/owner/aircraft/${aircraftId}`, "layout");
 }
 
@@ -24,18 +20,7 @@ export async function resolveDefect(formData: FormData) {
 export async function groundAircraft(formData: FormData) {
   const user = await requireUser("/owner/aircraft");
   const aircraftId = z.uuid().parse(formData.get("aircraftId"));
-  await asUser(user.id, (tx) =>
-    tx
-      .update(aircraft)
-      .set({ status: "grounded" })
-      .where(
-        and(
-          eq(aircraft.id, aircraftId),
-          eq(aircraft.ownerId, user.id),
-          inArray(aircraft.status, ["listed", "paused", "unlisted"]),
-        ),
-      ),
-  );
+  await ground(user.id, aircraftId);
   revalidatePath("/owner/aircraft", "layout");
   revalidatePath("/bookings", "layout");
 }
