@@ -127,7 +127,24 @@ Calendar sync endpoints for partner systems are listed below.
 
 Changes to credentials answer with all of them as they are now.
 
-Still website-only: aircraft management, account settings and admin tools.
+**Your aircraft (owners, LST-1…8).** Quantities in SI units (`fuelBurnLph`, `usefulLoadKg`,
+`mtomKg`); every change answers with the whole aircraft as it is now, including `gaps` (what still
+stops the listing: `home_base`, `price`, `photo`, `arc`, `insurance`). Refusals carry
+`details.reason`.
+
+| Method | Path | What |
+|--------|------|------|
+| GET / POST | `/api/v1/me/aircraft` | Your aircraft / a new draft (`registration`, `manufacturer`, `model`, `typeDesignator`, `seats`, `fuelType` + any other field); 403 `owner_role_needed` |
+| GET / PATCH / DELETE | `/api/v1/me/aircraft/{id}` | Everything about it / change any fields (`homeAirport`, `pricePerHour`, `nightVfr`…; 400 `registration_taken`, `unknown_airfield`) / delete (409 `has_bookings`) |
+| PUT | `…/{id}/status` | `{ status: listed \| paused \| unlisted }`; 409 `not_ready` with `details.missing`, `blocked` (an admin unlisted it), `not_allowed` |
+| PUT | `…/{id}/requirements` | Who may rent it: `licenceTypes`, `requiredRatings`, minimum hours/age/rating, `allowUnrated`, `checkoutFirstRental`, `instantBooking` |
+| POST | `…/{id}/photos` | Add a photo (multipart `file`, JPEG/PNG/WebP ≤ 4 MB, at most 20) |
+| PUT | `…/{id}/photos/order` | `{ order: [photoId…] }`, cover first |
+| DELETE | `…/{id}/photos/{photoId}` | Remove (409 `last_photo` while listed) |
+| POST | `…/{id}/documents` | `{ kind, title?, expiresOn?, documentId }`: CofA/ARC/insurance (an admin checks them; ARC and insurance need `expiresOn`) or POH/checklist/W&B for renters |
+| PUT / DELETE | `…/{id}/documents/{documentId}` | Change title, expiry or file (same kind; 409 `add_renewal`) / remove (409 `cant_delete_listed`): add renewals as new documents |
+
+Still website-only: account settings and admin tools.
 
 ## Calendar sync for other booking systems (SYN-1…6, SYN-8)
 

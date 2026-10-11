@@ -5,7 +5,14 @@ import type { LegTimeIssue } from "@/lib/domain/leg-times";
 // Outcomes of operations shared by the website's forms and the API: ok, or a stable error code
 // (and a field) the caller turns into its own message or HTTP error.
 
-export type Fail = { ok: false; error: string; field?: string; issues?: LegTimeIssue[] };
+export type Fail = {
+  ok: false;
+  error: string;
+  field?: string;
+  issues?: LegTimeIssue[];
+  /** What is still missing, e.g. listing gaps. */
+  missing?: string[];
+};
 export type Done<T = object> = ({ ok: true } & T) | Fail;
 
 /** Database refusals as outcomes: raised codes, RLS (not editable), checks, missing rows. */

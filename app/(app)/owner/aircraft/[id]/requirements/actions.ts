@@ -1,13 +1,11 @@
 "use server";
 
-import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
+import { saveRequirements as storeRequirements } from "@/lib/aircraft/manage-parts";
 import { requireUser } from "@/lib/auth/session";
-import { asUser } from "@/lib/db/rls";
-import { aircraft, rentalRequirements } from "@/lib/db/schema";
 import { type FormState, formValues } from "@/lib/forms";
 import { localizedFieldErrors } from "@/lib/i18n/server";
 import { requirementsSchema } from "@/lib/validation/aircraft";
@@ -30,18 +28,8 @@ export async function saveRequirements(_prev: FormState, formData: FormData): Pr
   if (!parsed.success) return { errors: await localizedFieldErrors(parsed.error), values };
   const { aircraftId, ...data } = parsed.data;
 
-  const status = await asUser(user.id, async (tx) => {
-    const [own] = await tx
-      .select({ status: aircraft.status })
-      .from(aircraft)
-      .where(and(eq(aircraft.id, aircraftId), eq(aircraft.ownerId, user.id)));
-    if (!own) return null;
-    await tx
-      .insert(rentalRequirements)
-      .values({ aircraftId, ...data })
-      .onConflictDoUpdate({ target: rentalRequirements.aircraftId, set: data });
-    return own.status;
-  });
+  const saved = await storeRequirements(user.id, aircraftId, data);
+  const status = saved.ok ? saved.status : null;
   if (!status) return { message: t("notFound"), values };
 
   revalidatePath(`/owner/aircraft/${aircraftId}`, "layout");

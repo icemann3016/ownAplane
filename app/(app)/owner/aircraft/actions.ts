@@ -1,18 +1,21 @@
 "use server";
 
-import { and, eq, inArray } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 
-import { type ListingGap, nextSection, type Section, STATUS_ACTIONS } from "@/lib/aircraft/catalog";
-import { deletePhotoFiles } from "@/lib/aircraft/photos";
+import { type ListingGap, nextSection, type Section } from "@/lib/aircraft/catalog";
+import {
+  type AircraftValues,
+  createAircraft as insertAircraft,
+  deleteAircraft as removeAircraft,
+  setAircraftStatus as changeStatus,
+  updateAircraft,
+} from "@/lib/aircraft/manage";
 import { getUnits } from "@/lib/aircraft/queries";
 import { requireProfile, requireUser } from "@/lib/auth/session";
-import { asUser } from "@/lib/db/rls";
-import { aircraft, aircraftDocuments, aircraftPhotos, bookings } from "@/lib/db/schema";
-import { deleteDocumentIfUnused } from "@/lib/documents";
+import type { Fail } from "@/lib/bookings/outcome";
 import { type FormState, formValues } from "@/lib/forms";
 import { localizedFieldErrors } from "@/lib/i18n/server";
 import {
@@ -25,19 +28,11 @@ import {
 const BASE = "/owner/aircraft";
 const idSchema = z.uuid();
 
-/** Postgres error code and detail of a failed query (drizzle wraps the driver error). */
-function pgError(e: unknown): { code?: string; detail?: string } {
-  const err = e as { code?: string; detail?: string; cause?: { code?: string; detail?: string } };
-  return { code: err.cause?.code ?? err.code, detail: err.cause?.detail ?? err.detail };
-}
-
 /** Friendly errors for database constraints the forms can run into. */
-async function constraintErrors(e: unknown): Promise<FormState["errors"] | null> {
-  const { code } = pgError(e);
+async function constraintErrors(fail: Fail): Promise<FormState["errors"]> {
   const v = await getTranslations("validation");
-  if (code === "23505") return { registration: [v("registrationTaken")] };
-  if (code === "23503") return { homeAirport: [v("airportUnknown")] };
-  return null;
+  if (fail.error === "registration_taken") return { registration: [v("registrationTaken")] };
+  return { homeAirport: [v("airportUnknown")] };
 }
 
 function refresh(id: string) {
@@ -55,17 +50,16 @@ export async function createAircraft(_prev: FormState, formData: FormData): Prom
   const parsed = detailsSchema(await getUnits(userId)).safeParse(raw);
   if (!parsed.success) return { errors: await localizedFieldErrors(parsed.error), values: raw };
 
-  const [row] = await asUser(userId, (tx) =>
-    tx
-      .insert(aircraft)
-      .values({ ...parsed.data, ownerId: userId })
-      .returning({ id: aircraft.id }),
-  );
+  const created = await insertAircraft(userId, parsed.data);
+  if (!created.ok) {
+    if (created.error === "owner_role_needed") return { message: t("ownerRoleNeeded") };
+    return { errors: await constraintErrors(created), values: raw };
+  }
   revalidatePath(BASE);
-  redirect(`${BASE}/${row!.id}/${nextSection("details")}`);
+  redirect(`${BASE}/${created.id}/${nextSection("details")}`);
 }
 
-type Values = Partial<typeof aircraft.$inferInsert>;
+type Values = AircraftValues;
 
 /**
  * Save one section of the user's aircraft. Drafts continue with the next setup step; saved
@@ -84,22 +78,12 @@ async function saveSection(
   const parsed = await parse(raw, user.id);
   if (!parsed.success) return { errors: await localizedFieldErrors(parsed.error), values: raw };
 
-  let status: string | undefined;
-  try {
-    const rows = await asUser(user.id, (tx) =>
-      tx
-        .update(aircraft)
-        .set(parsed.data)
-        .where(and(eq(aircraft.id, id.data), eq(aircraft.ownerId, user.id)))
-        .returning({ status: aircraft.status }),
-    );
-    status = rows[0]?.status;
-  } catch (e) {
-    const errors = await constraintErrors(e);
-    if (errors) return { errors, values: raw };
-    throw e;
+  const saved = await updateAircraft(user.id, id.data, parsed.data);
+  if (!saved.ok) {
+    if (saved.error === "not_found") return { message: t("notFound") };
+    return { errors: await constraintErrors(saved), values: raw };
   }
-  if (!status) return { message: t("notFound") };
+  const { status } = saved;
   refresh(id.data);
   const next = nextSection(section);
   if (status === "draft" && next) redirect(`${BASE}/${id.data}/${next}`);
@@ -137,32 +121,16 @@ export async function setAircraftStatus(_prev: FormState, formData: FormData): P
   if (!parsed.success) return { message: t("failed") };
   const { id, status } = parsed.data;
 
-  const current = await asUser(user.id, async (tx) => {
-    const [row] = await tx
-      .select({ status: aircraft.status })
-      .from(aircraft)
-      .where(and(eq(aircraft.id, id), eq(aircraft.ownerId, user.id)));
-    return row?.status;
-  });
-  if (!current || !STATUS_ACTIONS[current].includes(status)) return { message: t("failed") };
-
-  try {
-    await asUser(user.id, (tx) =>
-      tx
-        .update(aircraft)
-        .set({ status })
-        .where(and(eq(aircraft.id, id), eq(aircraft.ownerId, user.id))),
-    );
-  } catch (e) {
-    const { code, detail } = pgError(e);
-    if (code === "23514" && detail) {
+  const outcome = await changeStatus(user.id, id, status);
+  if (!outcome.ok) {
+    if (outcome.error === "not_ready") {
       const gaps = await getTranslations("aircraft.gaps");
-      const missing = detail.split(",").map((g) => gaps(g as ListingGap));
+      const missing = (outcome.missing ?? []).map((g) => gaps(g as ListingGap));
       return { message: t("notReady", { missing: missing.join(", ") }) };
     }
-    if (code === "23514" && !detail) return { message: t("blocked") };
-    if (code === "23505") return { message: t("registrationTaken") };
-    throw e;
+    if (outcome.error === "blocked") return { message: t("blocked") };
+    if (outcome.error === "registration_taken") return { message: t("registrationTaken") };
+    return { message: t("failed") };
   }
   refresh(id);
   return { ok: true, message: t(`done.${status}`) };
@@ -172,42 +140,11 @@ export async function setAircraftStatus(_prev: FormState, formData: FormData): P
 export async function deleteAircraft(_prev: FormState, formData: FormData): Promise<FormState> {
   const user = await requireUser(BASE);
   const id = idSchema.parse(formData.get("id"));
-  // Pilots rely on upcoming bookings: those have to be cancelled first.
-  const upcoming = await asUser(user.id, (tx) =>
-    tx
-      .select({ id: bookings.id })
-      .from(bookings)
-      .where(
-        and(
-          eq(bookings.aircraftId, id),
-          inArray(bookings.status, ["requested", "accepted", "in_progress"]),
-        ),
-      )
-      .limit(1),
-  );
-  if (upcoming.length) {
+  const outcome = await removeAircraft(user.id, id);
+  if (!outcome.ok && outcome.error === "has_bookings") {
     const t = await getTranslations("aircraft.delete");
     return { message: t("hasBookings") };
   }
-  const { photos, documentIds } = await asUser(user.id, async (tx) => {
-    const photos = await tx
-      .select({ key: aircraftPhotos.storageKey })
-      .from(aircraftPhotos)
-      .where(eq(aircraftPhotos.aircraftId, id));
-    const docs = await tx
-      .select({ documentId: aircraftDocuments.documentId })
-      .from(aircraftDocuments)
-      .where(eq(aircraftDocuments.aircraftId, id));
-    const deleted = await tx
-      .delete(aircraft)
-      .where(and(eq(aircraft.id, id), eq(aircraft.ownerId, user.id)))
-      .returning({ id: aircraft.id });
-    return deleted.length
-      ? { photos: photos.map((p) => p.key), documentIds: docs.map((d) => d.documentId) }
-      : { photos: [], documentIds: [] };
-  });
-  await deletePhotoFiles(photos);
-  for (const documentId of new Set(documentIds)) await deleteDocumentIfUnused(user.id, documentId);
   revalidatePath(BASE);
   redirect(BASE);
 }

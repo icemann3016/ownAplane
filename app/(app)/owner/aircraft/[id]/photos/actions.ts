@@ -1,13 +1,13 @@
 "use server";
 
-import { and, eq, inArray, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-import { deletePhotoFiles } from "@/lib/aircraft/photos";
+import {
+  deletePhoto as removePhoto,
+  reorderPhotos as storeOrder,
+} from "@/lib/aircraft/manage-parts";
 import { requireUser } from "@/lib/auth/session";
-import { asUser } from "@/lib/db/rls";
-import { aircraft, aircraftPhotos } from "@/lib/db/schema";
 
 function refresh(aircraftId: string) {
   revalidatePath(`/owner/aircraft/${aircraftId}`, "layout");
@@ -24,21 +24,7 @@ const orderSchema = z.object({
 export async function reorderPhotos(aircraftId: string, order: string[]) {
   const user = await requireUser();
   const parsed = orderSchema.parse({ aircraftId, order });
-  await asUser(user.id, async (tx) => {
-    const cases = sql.join(
-      parsed.order.map((id, i) => sql`when ${id}::uuid then ${i}::int`),
-      sql` `,
-    );
-    await tx
-      .update(aircraftPhotos)
-      .set({ sortOrder: sql`case ${aircraftPhotos.id} ${cases} end` })
-      .where(
-        and(
-          eq(aircraftPhotos.aircraftId, parsed.aircraftId),
-          inArray(aircraftPhotos.id, parsed.order),
-        ),
-      );
-  });
+  await storeOrder(user.id, parsed.aircraftId, parsed.order);
   refresh(parsed.aircraftId);
 }
 
@@ -54,31 +40,8 @@ export async function deletePhoto(
 ): Promise<{ ok: boolean; error?: "lastPhoto" }> {
   const user = await requireUser();
   const parsed = deleteSchema.parse({ aircraftId, photoId });
-  const deleted = await asUser(user.id, async (tx) => {
-    const [own] = await tx
-      .select({ status: aircraft.status })
-      .from(aircraft)
-      .where(and(eq(aircraft.id, parsed.aircraftId), eq(aircraft.ownerId, user.id)));
-    if (!own) return [];
-    if (own.status === "listed") {
-      const [row] = await tx
-        .select({ n: sql<number>`count(*)::int` })
-        .from(aircraftPhotos)
-        .where(eq(aircraftPhotos.aircraftId, parsed.aircraftId));
-      if ((row?.n ?? 0) <= 1) return null;
-    }
-    return tx
-      .delete(aircraftPhotos)
-      .where(
-        and(
-          eq(aircraftPhotos.id, parsed.photoId),
-          eq(aircraftPhotos.aircraftId, parsed.aircraftId),
-        ),
-      )
-      .returning({ storageKey: aircraftPhotos.storageKey });
-  });
-  if (deleted === null) return { ok: false, error: "lastPhoto" };
-  await deletePhotoFiles(deleted.map((d) => d.storageKey));
+  const outcome = await removePhoto(user.id, parsed.aircraftId, parsed.photoId);
+  if (!outcome.ok && outcome.error === "last_photo") return { ok: false, error: "lastPhoto" };
   refresh(parsed.aircraftId);
   return { ok: true };
 }

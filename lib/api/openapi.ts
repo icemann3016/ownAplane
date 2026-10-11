@@ -43,6 +43,7 @@ import {
   signedIn,
 } from "./openapi-helpers";
 import { credentialSchemas, documentAndCredentialPaths } from "./openapi-credentials";
+import { myAircraftPaths, myAircraftSchemas } from "./openapi-my-aircraft";
 import { socialPaths, socialSchemas } from "./openapi-social";
 import { reviewPaths, reviewSchemas } from "./reviews";
 const takenExtras =
@@ -120,6 +121,7 @@ export function openApiDocument() {
         ...socialSchemas(),
         ...reviewSchemas(),
         ...credentialSchemas(),
+        ...myAircraftSchemas(),
         WebhookEvent: output(R.webhookEvent),
         WebhookSettings: output(R.webhookSettings),
         WebhookSaved: output(R.webhookSaved),
@@ -374,6 +376,7 @@ export function openApiDocument() {
       ...socialPaths(),
       ...reviewPaths(),
       ...documentAndCredentialPaths(),
+      ...myAircraftPaths(),
       "/api/v1/sync": {
         get: {
           tags: ["calendar sync"],
