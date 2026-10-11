@@ -115,6 +115,9 @@ All three work the same way: the button appears once the keys are set, new accou
 - `ANTHROPIC_API_KEY` (console.anthropic.com → API keys) and `OCR_MODEL` (a vision-capable
   Claude model id from Anthropic's model list). Both set → pilots see **Fill in from the scan**
   on licences and medicals, and logbook pages can be read; without them the buttons are hidden.
+- Set them in Vercel → Settings → Environment Variables (Production). New or changed variables
+  only reach new deployments: redeploy (Deployments → ⋯ → Redeploy) or push a commit to `main`.
+  The Anthropic account needs credits (Billing), or every read fails.
 - No SDK: `lib/ocr` calls the Messages API with `fetch`. Another provider means another driver
   there; nothing else changes.
 - `OCR_DAILY_LIMIT` (default 40) caps pages read per user per 24 hours; Admin → API shows the
