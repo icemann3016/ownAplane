@@ -39,6 +39,23 @@ Authorization: Bearer <token>
 - Invalid query parameters are errors (400), not ignored.
 - Responses are never cached (`cache-control: no-store`), except the OpenAPI description.
 
+## Limits (API-6)
+
+Requests per minute (a calendar minute, UTC), counted in the database so all servers share them:
+
+| Caller | Limit |
+|--------|-------|
+| App user (per token) | 240 |
+| Connected system (per `oap_` API key) | 600 |
+| Without a token (per address) | 120 |
+| Refused tokens or keys (per address) | 30, then requests with a token from that address get 429 until the minute ends |
+
+Every answer carries `x-ratelimit-limit`, `x-ratelimit-remaining` and `x-ratelimit-reset`
+(seconds until the minute ends). Over the limit: 429 `rate_limited` with `retry-after` (seconds)
+and `details: { limit, retryAfter }`; wait, then try again. Sending messages and reports has its
+own, stricter limits (429 too). Sign-in has Better Auth's limits (see above). Admins see requests
+per user and connection (7 days) and who went over a limit (last hour) under Admin → API.
+
 ## Endpoints
 
 | Method | Path | Sign-in | What |

@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 
 import { expect, test } from "@playwright/test";
 
+import { expectAccessible } from "./a11y";
 import { PASSWORD, seedListedAircraft, signUp, unique } from "./helpers";
 
 // A member reports a listing; an admin unlists it and suspends the owner, who can no longer
@@ -60,6 +61,15 @@ test("an admin handles a report: unlist, suspend, audit log", async ({ page, bro
 
   await admin.goto("/admin/audit?q=aircraft");
   await expect(admin.getByText("Misleading photos").first()).toBeVisible();
+
+  // API usage (API-6): the limits, who went over them, requests per user and system.
+  await admin.getByRole("link", { name: "API", exact: true }).click();
+  await expect(admin.getByRole("heading", { name: "API usage", level: 1 })).toBeVisible();
+  await expect(
+    admin.getByText("App user (per token): 240 requests", { exact: false }),
+  ).toBeVisible();
+  await expect(admin.getByRole("heading", { name: "Requests in the last 7 days" })).toBeVisible();
+  await expectAccessible(admin);
   await adminContext.close();
 
   // The owner is logged out and can't log in again; the listing is gone.

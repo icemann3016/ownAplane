@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto";
+
 import { expect, test } from "@playwright/test";
 
 import * as R from "../../lib/api/responses";
@@ -122,6 +124,28 @@ test.describe("with accounts", () => {
     // 6. Signing out revokes the token
     expect((await app("/api/auth/sign-out", { body: {}, token: bearer })).status).toBe(200);
     expect((await get("/api/v1/me")).status).toBe(401);
+
+    // 7. Limits (API-6): every answer says what is left; over the limit, 429 with retry-after
+    const fresh = `Bearer ${await apiSignIn(baseURL, pilotEmail)}`;
+    const counted = await get("/api/v1/me", fresh);
+    expect(counted.headers.get("x-ratelimit-limit")).toBe("240");
+    expect(Number(counted.headers.get("x-ratelimit-remaining"))).toBeLessThan(240);
+    const session = fresh.slice("Bearer ".length).split(".")[0]!;
+    const bucket = `tok:${createHash("sha256").update(session).digest("hex").slice(0, 32)}`;
+    await withDb(
+      (sql) => sql`
+        insert into api_rate_buckets (key, minute, count)
+        select ${bucket}, date_trunc('minute', now()) + m * interval '1 minute', 240
+        from generate_series(0, 1) m
+        on conflict (key, minute) do update set count = 240`,
+    );
+    const limited = await get("/api/v1/me", fresh);
+    expect(limited.status).toBe(429);
+    expect(Number(limited.headers.get("retry-after"))).toBeGreaterThan(0);
+    expect((await limited.json()).error).toMatchObject({
+      code: "rate_limited",
+      details: { limit: 240 },
+    });
   });
 
   test("a pilot books and the owner answers through the API", async ({ browser, baseURL }) => {

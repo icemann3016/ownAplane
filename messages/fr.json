@@ -870,7 +870,8 @@
       "reports": "Signalements",
       "users": "Membres",
       "aircraft": "Avions",
-      "audit": "Journal d'audit"
+      "audit": "Journal d'audit",
+      "api": "API"
     },
     "dashboard": {
       "title": "Tableau de bord admin",
@@ -1130,6 +1131,43 @@
           "grant_admin": "Nommé admin",
           "revoke_admin": "Droits d'admin retirés"
         }
+      }
+    },
+    "api": {
+      "title": "Utilisation de l'API",
+      "description": "Requêtes des applications et des systèmes connectés sur les 7 derniers jours (UTC), et appelants ayant dépassé une limite au cours de la dernière heure.",
+      "limits": {
+        "title": "Limites par minute",
+        "user": "Utilisateur d'application connecté (par jeton) : {count} requêtes",
+        "partner": "Système connecté (par clé API) : {count} requêtes",
+        "anonymous": "Sans connexion (par adresse) : {count} requêtes",
+        "badTokens": "Jetons ou clés refusés (par adresse) : après {count}, les requêtes avec jeton depuis cette adresse attendent la fin de la minute"
+      },
+      "limited": {
+        "title": "Au-delà d'une limite au cours de la dernière heure",
+        "none": "Personne n'a dépassé de limite au cours de la dernière heure.",
+        "caller": "Appelant",
+        "minutes": "Minutes au-delà",
+        "peak": "Maximum en une minute",
+        "last": "Dernière fois (UTC)",
+        "unknown": "Inconnu (déconnecté ou clé remplacée)",
+        "kinds": {
+          "token": "Jeton d'application",
+          "partner": "Système connecté",
+          "address": "Sans connexion",
+          "badTokens": "Jetons refusés"
+        }
+      },
+      "usage": {
+        "title": "Requêtes des 7 derniers jours",
+        "none": "Aucune requête API au cours des 7 derniers jours.",
+        "caller": "Utilisateur ou système",
+        "type": "Type",
+        "today": "Aujourd'hui",
+        "week": "7 jours",
+        "user": "Utilisateur d'application",
+        "connection": "Système connecté",
+        "deleted": "Supprimé"
       }
     }
   },

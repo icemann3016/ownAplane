@@ -2,7 +2,9 @@ import "server-only";
 
 import { z } from "zod";
 
+import { isDatabaseConfigured } from "@/lib/db";
 import { reportError } from "@/lib/monitoring";
+import { callerOf, countBadToken, LIMITS, takeRequest } from "./rate-limit";
 
 // Conventions of the REST API (plan §4.9): JSON in and out, errors as
 // { "error": { "code", "message", "fields"? } } with the HTTP status, never cached.
@@ -36,6 +38,8 @@ export class ApiError extends Error {
     readonly fields?: Record<string, string[]>,
     /** Extra machine-readable facts, e.g. what was recorded despite a conflict. */
     readonly details?: Record<string, unknown>,
+    /** Extra response headers, e.g. Retry-After. */
+    readonly headers?: Record<string, string>,
   ) {
     super(message);
   }
@@ -48,8 +52,10 @@ export function json(data: unknown, init: ResponseInit = {}) {
 }
 
 export function errorResponse(e: ApiError) {
-  const headers: Record<string, string> =
-    e.code === "unauthorized" ? { "www-authenticate": 'Bearer realm="api"' } : {};
+  const headers: Record<string, string> = {
+    ...(e.code === "unauthorized" ? { "www-authenticate": 'Bearer realm="api"' } : {}),
+    ...e.headers,
+  };
   return json(
     {
       error: {
@@ -105,16 +111,46 @@ export async function bodyOf(request: Request, whenEmpty?: unknown): Promise<unk
   }
 }
 
+/** Counts the request (API-6): its rate-limit headers, or 429 when the caller is over the limit. */
+async function limitRequest(request: Request) {
+  if (!isDatabaseConfigured()) return null;
+  const caller = callerOf(request);
+  const { count, badTokens, resetIn } = await takeRequest(caller);
+  const headers = {
+    "x-ratelimit-limit": String(caller.limit),
+    "x-ratelimit-remaining": String(Math.max(0, caller.limit - count)),
+    "x-ratelimit-reset": String(resetIn),
+  };
+  const tokenSent = !caller.key.startsWith("ip:");
+  if (count > caller.limit || (tokenSent && badTokens >= LIMITS.badTokens)) {
+    throw new ApiError(
+      "rate_limited",
+      `Too many requests: at most ${caller.limit} a minute. Try again in ${resetIn} s.`,
+      undefined,
+      { limit: caller.limit, retryAfter: resetIn },
+      { ...headers, "retry-after": String(resetIn) },
+    );
+  }
+  return { headers, badKey: tokenSent ? caller.badKey : null };
+}
+
 /**
- * Wraps a route handler: ApiErrors become their JSON answer, anything else is reported and
- * answered with a generic 500 (no internals leak).
+ * Wraps a route handler: counts the request against the caller's limit (API-6), ApiErrors
+ * become their JSON answer, anything else is reported and answered with a generic 500 (no
+ * internals leak).
  */
 export function apiRoute<C>(handler: (request: Request, context: C) => Promise<Response>) {
   return async (request: Request, context: C): Promise<Response> => {
+    let limit: Awaited<ReturnType<typeof limitRequest>> = null;
     try {
-      return await handler(request, context);
+      limit = await limitRequest(request);
+      return withHeaders(await handler(request, context), limit?.headers);
     } catch (e) {
-      if (e instanceof ApiError) return errorResponse(e);
+      if (e instanceof ApiError) {
+        // A refused token counts against the address, so made-up tokens don't escape the limit.
+        if (e.code === "unauthorized" && limit?.badKey) await countBadToken(limit.badKey);
+        return withHeaders(errorResponse(e), limit?.headers);
+      }
       await reportError(e, {
         where: "api",
         method: request.method,
@@ -123,4 +159,9 @@ export function apiRoute<C>(handler: (request: Request, context: C) => Promise<R
       return errorResponse(new ApiError("internal", "Something went wrong."));
     }
   };
+}
+
+function withHeaders(response: Response, headers: Record<string, string> | undefined) {
+  for (const [name, value] of Object.entries(headers ?? {})) response.headers.set(name, value);
+  return response;
 }

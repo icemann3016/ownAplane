@@ -3,6 +3,7 @@ import "server-only";
 import { getAuth } from "@/lib/auth/auth";
 import { isDatabaseConfigured } from "@/lib/db";
 import { ApiError } from "./http";
+import { recordUsage } from "./rate-limit";
 
 // API sign-in (API-2): only `Authorization: Bearer <token>`, never cookies, so a website visitor's
 // browser can't be tricked into calling the API (no CSRF). Tokens come from the Better Auth
@@ -25,6 +26,7 @@ export async function optionalApiUser(request: Request): Promise<ApiUser | null>
   const session = await getAuth().api.getSession({ headers: new Headers({ authorization }) });
   if (!session) throw new ApiError("unauthorized", "The token is invalid or has expired.");
   const { id, email, emailVerified } = session.user;
+  recordUsage("user", id);
   return { id, email, emailVerified };
 }
 

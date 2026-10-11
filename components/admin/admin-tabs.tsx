@@ -13,6 +13,7 @@ const TABS = [
   { href: "/admin/users", key: "users" },
   { href: "/admin/aircraft", key: "aircraft" },
   { href: "/admin/audit", key: "audit" },
+  { href: "/admin/api", key: "api" },
 ] as const;
 
 /** Tabs of the admin area (ADM-1…4). */

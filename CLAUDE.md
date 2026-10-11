@@ -67,7 +67,7 @@ app/
                       #   defects, remarks, usage, sync), bookings/[id] (+ log, reviews, contact), notifications,
                       #   messages (+ [id], new), reports (actions), saved (favourites, searches),
                       #   welcome (setup guide), admin (dashboard, verifications,
-                      #   reports, users, aircraft, audit)
+                      #   reports, users, aircraft, audit, api usage)
   api/auth/           # Better Auth endpoints (email links, OAuth callbacks; apps sign in here for a token)
   api/v1/             # REST API for apps and partners (docs/api.md): me, airports, aircraft, bookings,
                       #   openapi.json; thin handlers around lib/ (apiRoute + requireApiUser + DTOs);
@@ -201,6 +201,8 @@ _TODO: split areas so we don't edit the same files at the same time._
 ## Decisions log
 
 Add one line per decision, newest first.
+
+- 2026-10-11: **API limits** (API-6): requests per calendar minute counted in Postgres (`api_rate_buckets`, no app access; the cron jobs remove rows older than an hour), so every server shares them, no extra service: 240 per app token (keyed by the session part of the token), 600 per partner `oap_` key, 120 per address without a token; 30 refused tokens per address a minute pause that address's token requests (made-up tokens can't dodge the limit). `apiRoute` adds `x-ratelimit-*` headers, 429 `rate_limited` with `retry-after`. Usage per user/connection per UTC day (`api_usage_daily`, kept 90 days) after the response; Admin → API shows it and who went over a limit in the last hour (`lib/admin/api-usage.ts`).
 
 - 2026-10-10: **M13 API** (API-3): apps can do what pilots and owners do on the website for bookings (request, accept/decline/propose, cancel, availability, eligibility with reasons in the user's language), the flight log (check-out to confirmation), messages, notifications, favourites, saved searches and reviews. Website logic that lived in form handlers moved to `lib/` (`lib/bookings/flight-log-ops.ts`, `log-entries.ts`, outcomes in `outcome.ts`), so forms and API share it. Errors carry `details.reason` with the website's codes. Still website-only: credentials and aircraft management (uploads), account settings, admin. Push notifications (API-7) wait for app store keys.
 

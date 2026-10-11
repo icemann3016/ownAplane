@@ -870,7 +870,8 @@
       "reports": "Reports",
       "users": "Members",
       "aircraft": "Aircraft",
-      "audit": "Audit log"
+      "audit": "Audit log",
+      "api": "API"
     },
     "dashboard": {
       "title": "Admin dashboard",
@@ -1130,6 +1131,43 @@
           "grant_admin": "Made admin",
           "revoke_admin": "Admin rights removed"
         }
+      }
+    },
+    "api": {
+      "title": "API usage",
+      "description": "Requests from apps and connected systems over the last 7 days (UTC), and callers that went over a limit in the last hour.",
+      "limits": {
+        "title": "Limits per minute",
+        "user": "Signed-in app user (per token): {count} requests",
+        "partner": "Connected system (per API key): {count} requests",
+        "anonymous": "Without sign-in (per address): {count} requests",
+        "badTokens": "Refused tokens or keys (per address): after {count}, requests with a token from that address wait until the minute ends"
+      },
+      "limited": {
+        "title": "Over a limit in the last hour",
+        "none": "No one went over a limit in the last hour.",
+        "caller": "Caller",
+        "minutes": "Minutes over",
+        "peak": "Most in a minute",
+        "last": "Last (UTC)",
+        "unknown": "Unknown (signed out or key replaced)",
+        "kinds": {
+          "token": "App token",
+          "partner": "Connected system",
+          "address": "Without sign-in",
+          "badTokens": "Refused tokens"
+        }
+      },
+      "usage": {
+        "title": "Requests in the last 7 days",
+        "none": "No API requests in the last 7 days.",
+        "caller": "User or system",
+        "type": "Type",
+        "today": "Today",
+        "week": "7 days",
+        "user": "App user",
+        "connection": "Connected system",
+        "deleted": "Deleted"
       }
     }
   },

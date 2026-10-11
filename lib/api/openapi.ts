@@ -4,6 +4,7 @@ import { z } from "zod";
 
 import { siteConfig } from "@/lib/site";
 import { appUrl } from "@/lib/site-url";
+import { LIMITS } from "./rate-limit";
 import * as R from "./responses";
 import {
   aircraftSearchQuery,
@@ -82,6 +83,11 @@ export function openApiDocument() {
         "",
         "Times are ISO 8601 in UTC; quantities in SI units (litres, kg, minutes).",
         'Errors: `{ "error": { "code", "message", "fields"? } }` with the HTTP status.',
+        "",
+        `**Limits** per minute: ${LIMITS.user} per app token, ${LIMITS.partner} per partner API key,`,
+        `${LIMITS.anonymous} per address without a token. Answers carry \`x-ratelimit-limit\`,`,
+        "`x-ratelimit-remaining` and `x-ratelimit-reset`;",
+        "over the limit: 429 `rate_limited` with `retry-after` (seconds).",
       ].join("\n"),
     },
     servers: [{ url: appUrl() }],

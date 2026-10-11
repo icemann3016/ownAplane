@@ -223,7 +223,7 @@ partners use the REST API.
 | API-3 | M | Everything a pilot or owner does on the website becomes available in the API, in this order: account and roles; airports; search, aircraft and availability with "can I rent this"; bookings (request, answer, cancel); flight log; messages; notifications; reviews; pilot credentials; aircraft management. |
 | API-4 | M | Consistent conventions: errors as JSON with a stable `code` and the HTTP status; paged lists; times in ISO 8601 UTC; quantities in SI units (litres, kilograms, minutes), as stored. |
 | API-5 | M | A machine-readable description (**OpenAPI**) at `/api/v1/openapi.json`, generated from the same validation schemas as the code so it can't drift. |
-| API-6 | S | Limits per token (requests per minute) and API usage visible to admins. |
+| API-6 | S | Limits per token (requests per minute) and API usage visible to admins. **Built:** per minute 240 per app token, 600 per partner key, 120 per address without a token (refused tokens count against the address); Admin → API shows requests per user and connection (7 days) and who went over a limit (last hour). |
 | API-7 | S | Push notifications to the app (the "push" channel of MSG-3). |
 | API-8 | C | The API can run as its own service (separate deployment) without code changes, when traffic or the team needs it. |
 

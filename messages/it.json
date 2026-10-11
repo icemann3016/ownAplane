@@ -870,7 +870,8 @@
       "reports": "Segnalazioni",
       "users": "Membri",
       "aircraft": "Aerei",
-      "audit": "Registro di controllo"
+      "audit": "Registro di controllo",
+      "api": "API"
     },
     "dashboard": {
       "title": "Panoramica admin",
@@ -1130,6 +1131,43 @@
           "grant_admin": "Nominato admin",
           "revoke_admin": "Diritti di admin rimossi"
         }
+      }
+    },
+    "api": {
+      "title": "Utilizzo dell'API",
+      "description": "Richieste da app e sistemi collegati negli ultimi 7 giorni (UTC) e chi ha superato un limite nell'ultima ora.",
+      "limits": {
+        "title": "Limiti al minuto",
+        "user": "Utente dell'app connesso (per token): {count} richieste",
+        "partner": "Sistema collegato (per chiave API): {count} richieste",
+        "anonymous": "Senza accesso (per indirizzo): {count} richieste",
+        "badTokens": "Token o chiavi rifiutati (per indirizzo): dopo {count}, le richieste con token da quell'indirizzo attendono la fine del minuto"
+      },
+      "limited": {
+        "title": "Oltre un limite nell'ultima ora",
+        "none": "Nessuno ha superato un limite nell'ultima ora.",
+        "caller": "Chiamante",
+        "minutes": "Minuti oltre",
+        "peak": "Massimo in un minuto",
+        "last": "Ultima volta (UTC)",
+        "unknown": "Sconosciuto (disconnesso o chiave sostituita)",
+        "kinds": {
+          "token": "Token dell'app",
+          "partner": "Sistema collegato",
+          "address": "Senza accesso",
+          "badTokens": "Token rifiutati"
+        }
+      },
+      "usage": {
+        "title": "Richieste negli ultimi 7 giorni",
+        "none": "Nessuna richiesta API negli ultimi 7 giorni.",
+        "caller": "Utente o sistema",
+        "type": "Tipo",
+        "today": "Oggi",
+        "week": "7 giorni",
+        "user": "Utente dell'app",
+        "connection": "Sistema collegato",
+        "deleted": "Eliminato"
       }
     }
   },

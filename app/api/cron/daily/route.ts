@@ -1,4 +1,5 @@
 import { sendAircraftExpiryReminders, unlistExpiredAircraft } from "@/lib/aircraft/expiry";
+import { pruneApiUsage } from "@/lib/api/rate-limit";
 import { expireBookingRequests } from "@/lib/bookings/queries";
 import { syncDueCalendars } from "@/lib/calendar-sync/sync";
 import { deliverWebhooks } from "@/lib/calendar-sync/webhooks";
@@ -25,6 +26,7 @@ import { runSavedSearchAlerts } from "@/lib/saved/alerts";
  * - reads linked calendars not read for an hour (SYN-2; /api/cron/sync does it every 15 min)
  * - tells users about aircraft that newly match their saved searches (SRC-6)
  * - sends (or retries) webhooks to connected systems (SYN-6)
+ * - forgets API request counts older than an hour (API-6)
  */
 export const maxDuration = 60;
 
@@ -44,6 +46,7 @@ export async function GET(request: Request) {
   const messageEmails = await deliverMessageEmails(500);
   const linkedCalendars = await syncDueCalendars(60 * 60_000, 200);
   const webhooks = await deliverWebhooks(500);
+  await pruneApiUsage();
   const result = {
     expiredRequests,
     reminders,

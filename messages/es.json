@@ -870,7 +870,8 @@
       "reports": "Denuncias",
       "users": "Miembros",
       "aircraft": "Aviones",
-      "audit": "Registro de auditoría"
+      "audit": "Registro de auditoría",
+      "api": "API"
     },
     "dashboard": {
       "title": "Panel de admin",
@@ -1130,6 +1131,43 @@
           "grant_admin": "Nombrado admin",
           "revoke_admin": "Derechos de admin retirados"
         }
+      }
+    },
+    "api": {
+      "title": "Uso de la API",
+      "description": "Solicitudes de apps y sistemas conectados en los últimos 7 días (UTC), y quién superó un límite en la última hora.",
+      "limits": {
+        "title": "Límites por minuto",
+        "user": "Usuario de la app con sesión iniciada (por token): {count} solicitudes",
+        "partner": "Sistema conectado (por clave API): {count} solicitudes",
+        "anonymous": "Sin iniciar sesión (por dirección): {count} solicitudes",
+        "badTokens": "Tokens o claves rechazados (por dirección): tras {count}, las solicitudes con token desde esa dirección esperan hasta que acabe el minuto"
+      },
+      "limited": {
+        "title": "Por encima de un límite en la última hora",
+        "none": "Nadie superó un límite en la última hora.",
+        "caller": "Quién",
+        "minutes": "Minutos por encima",
+        "peak": "Máximo en un minuto",
+        "last": "Última vez (UTC)",
+        "unknown": "Desconocido (sesión cerrada o clave sustituida)",
+        "kinds": {
+          "token": "Token de la app",
+          "partner": "Sistema conectado",
+          "address": "Sin iniciar sesión",
+          "badTokens": "Tokens rechazados"
+        }
+      },
+      "usage": {
+        "title": "Solicitudes en los últimos 7 días",
+        "none": "No hubo solicitudes a la API en los últimos 7 días.",
+        "caller": "Usuario o sistema",
+        "type": "Tipo",
+        "today": "Hoy",
+        "week": "7 días",
+        "user": "Usuario de la app",
+        "connection": "Sistema conectado",
+        "deleted": "Eliminado"
       }
     }
   },

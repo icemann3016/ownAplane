@@ -870,7 +870,8 @@
       "reports": "Meldungen",
       "users": "Mitglieder",
       "aircraft": "Flugzeuge",
-      "audit": "Prüfprotokoll"
+      "audit": "Prüfprotokoll",
+      "api": "API"
     },
     "dashboard": {
       "title": "Admin-Übersicht",
@@ -1130,6 +1131,43 @@
           "grant_admin": "Zum Admin gemacht",
           "revoke_admin": "Admin-Rechte entfernt"
         }
+      }
+    },
+    "api": {
+      "title": "API-Nutzung",
+      "description": "Anfragen von Apps und verbundenen Systemen in den letzten 7 Tagen (UTC) und wer in der letzten Stunde ein Limit überschritten hat.",
+      "limits": {
+        "title": "Limits pro Minute",
+        "user": "Angemeldeter App-Nutzer (pro Token): {count} Anfragen",
+        "partner": "Verbundenes System (pro API-Schlüssel): {count} Anfragen",
+        "anonymous": "Ohne Anmeldung (pro Adresse): {count} Anfragen",
+        "badTokens": "Abgelehnte Tokens oder Schlüssel (pro Adresse): nach {count} warten Anfragen mit Token von dieser Adresse bis zum Ende der Minute"
+      },
+      "limited": {
+        "title": "Über einem Limit in der letzten Stunde",
+        "none": "In der letzten Stunde hat niemand ein Limit überschritten.",
+        "caller": "Aufrufer",
+        "minutes": "Minuten darüber",
+        "peak": "Höchstens pro Minute",
+        "last": "Zuletzt (UTC)",
+        "unknown": "Unbekannt (abgemeldet oder Schlüssel ersetzt)",
+        "kinds": {
+          "token": "App-Token",
+          "partner": "Verbundenes System",
+          "address": "Ohne Anmeldung",
+          "badTokens": "Abgelehnte Tokens"
+        }
+      },
+      "usage": {
+        "title": "Anfragen in den letzten 7 Tagen",
+        "none": "Keine API-Anfragen in den letzten 7 Tagen.",
+        "caller": "Nutzer oder System",
+        "type": "Art",
+        "today": "Heute",
+        "week": "7 Tage",
+        "user": "App-Nutzer",
+        "connection": "Verbundenes System",
+        "deleted": "Gelöscht"
       }
     }
   },
