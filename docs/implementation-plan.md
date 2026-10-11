@@ -159,8 +159,9 @@ Aircraft home bases are airports with latitude/longitude. The search (`lib/aircr
 
 ### 4.11 Reading documents and the pilot logbook (VER-9, LOG-1…9)
 - **Reading:** `lib/ocr` sends a stored scan to a vision AI model and gets back fields that match a
-  Zod schema (the model answers through a forced tool call whose input schema is generated from
-  Zod, then the answer is validated again). One driver today (Anthropic's Messages API over plain
+  Zod schema (the model is asked to answer by calling a tool whose input schema is generated from
+  Zod; newer models refuse a forced tool call, so it is asked for in the prompt and a JSON text
+  answer is taken too; the answer is validated again, effort `low` by default via `OCR_EFFORT`). One driver today (Anthropic's Messages API over plain
   `fetch`, no SDK; `ANTHROPIC_API_KEY`, `OCR_MODEL`), so it can move to another provider like
   storage and email. Off until both are set; `OCR_API_URL` points tests at a local stand-in.
 - Reading only **pre-fills**: nothing read is trusted until the pilot saves it, and admins still

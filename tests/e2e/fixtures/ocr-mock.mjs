@@ -1,5 +1,6 @@
 // A stand-in for the AI reading API during browser tests (started by playwright.config.ts): it
-// answers every forced tool call with a fixed reading, like Anthropic's Messages API would.
+// answers with a fixed reading as a call of the request's tool (after a thinking block), like
+// Anthropic's Messages API would, and refuses a forced tool call like the newer models do.
 import { createServer } from "node:http";
 
 const port = Number(process.env.OCR_MOCK_PORT ?? 4556);
@@ -133,14 +134,26 @@ createServer((req, res) => {
       return send(401, { type: "error", error: { type: "authentication_error" } });
     }
     const body = JSON.parse(raw || "{}");
-    const tool = body.tool_choice?.name;
+    if (["tool", "any"].includes(body.tool_choice?.type)) {
+      return send(400, {
+        type: "error",
+        error: {
+          type: "invalid_request_error",
+          message: 'tool_choice: type "tool" and "any" are not supported for this model.',
+        },
+      });
+    }
+    const tool = body.tools?.[0]?.name;
     const input = typeof answers[tool] === "function" ? answers[tool](body) : answers[tool];
     if (!input) return send(400, { type: "error", error: { type: "invalid_request_error" } });
     send(200, {
       id: "msg_test",
       type: "message",
       role: "assistant",
-      content: [{ type: "tool_use", id: "toolu_test", name: tool, input }],
+      content: [
+        { type: "thinking", thinking: "", signature: "test" },
+        { type: "tool_use", id: "toolu_test", name: tool, input },
+      ],
       stop_reason: "tool_use",
       usage: { input_tokens: 1000, output_tokens: 100 },
     });

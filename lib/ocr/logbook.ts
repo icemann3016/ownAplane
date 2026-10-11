@@ -71,7 +71,7 @@ export const SPREAD_TASK = {
   tool: "record_logbook_spread",
   description: "Record the lines and the page totals of a pilot logbook spread.",
   schema: spreadScan,
-  maxTokens: 8192,
+  maxTokens: 16000,
   instructions: [
     "These are the two facing pages of a paper pilot logbook in the EASA format (AMC1 FCL.050),",
     "as two images (left page, right page) or one photo of both. Each flight is ONE line that runs",

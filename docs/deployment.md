@@ -122,6 +122,13 @@ All three work the same way: the button appears once the keys are set, new accou
   there; nothing else changes.
 - `OCR_DAILY_LIMIT` (default 40) caps pages read per user per 24 hours; Admin → API shows the
   reads per day. Each read is a paid API call (a few cents at most per page).
+- `OCR_EFFORT` (default `low`): how much the model thinks before answering (`low`, `medium`,
+  `high`, `xhigh`, `max`). Low keeps a read well inside the page's one-minute limit; `off` sends
+  nothing, for older models without the setting.
+- A failed read is reported to error monitoring (and the Vercel logs) as "document reading
+  refused: <status> <error>" or "…gave no usable answer: <why>", never with what was read. A
+  `401` means a wrong key, `400 … credit balance` no credits, `404 not_found_error` a wrong
+  `OCR_MODEL`.
 - Before launch: a data processing agreement with the provider, and the privacy policy's entry
   checked by the lawyer (medicals are read only with explicit consent).
 

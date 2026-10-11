@@ -5,7 +5,7 @@ import type { z } from "zod";
 /** One page: an image (JPEG, PNG, WebP) or a PDF. */
 export type ScanFile = { contentType: string; body: Uint8Array };
 
-/** What to read: the answer must match `schema`, given through a forced tool call. */
+/** What to read: the answer must match `schema`, given as the input of the task's tool. */
 export type ReadTask<T> = {
   /** Tool name, e.g. record_licence. */
   tool: string;
