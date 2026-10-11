@@ -25,7 +25,7 @@ export async function SiteHeader() {
     : null;
 
   return (
-    <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60 print:hidden">
       <div className="mx-auto flex h-14 max-w-6xl items-center gap-6 px-4">
         <Logo />
         <nav aria-label={t("main")} className="hidden items-center gap-1 md:flex">

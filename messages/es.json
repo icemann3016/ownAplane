@@ -21,7 +21,8 @@
       "bookings": "Reservas",
       "help": "Ayuda",
       "messages": "Mensajes",
-      "saved": "Guardados"
+      "saved": "Guardados",
+      "logbook": "Libro de vuelo"
     },
     "footer": {
       "tagline": "Hecho para la aviación general en Europa.",
@@ -232,7 +233,11 @@
     "oilRose": "El aceite después no puede ser mayor que antes. Registra el aceite añadido con «Añadir combustible o aceite».",
     "connectionNameRequired": "Pon un nombre a la conexión.",
     "feedUrlInvalid": "Introduce el enlace completo con https://.",
-    "meterRequired": "Introduce la lectura del Hobbs o del tacómetro."
+    "meterRequired": "Introduce la lectura del Hobbs o del tacómetro.",
+    "durationInvalid": "Introduce horas:minutos, p. ej. 1:25.",
+    "fieldRequired": "Campo obligatorio.",
+    "moreThanTotal": "No puede superar el tiempo total de vuelo.",
+    "dateInFuture": "No puede ser futura."
   },
   "dashboard": {
     "title": "Hola, {name}",
@@ -2775,5 +2780,146 @@
       "turnOff": "Desactivar alertas",
       "remove": "Eliminar la búsqueda guardada {name}"
     }
+  },
+  "logbook": {
+    "title": "Libro de vuelo",
+    "description": "Tu libro de vuelo en el formato EASA (AMC1 FCL.050). Las anotaciones certificadas nunca cambian: una corrección es una anotación nueva y la antigua queda, tachada.",
+    "add": {
+      "flight": "Añadir vuelo",
+      "fstd": "Añadir sesión de simulador",
+      "brought_forward": "Totales arrastrados"
+    },
+    "csv": "Descargar CSV",
+    "totals": {
+      "title": "Totales",
+      "toDate": "Hasta hoy",
+      "last90": "Últimos 90 días",
+      "byType": "Horas por tipo de aeronave",
+      "none": "Aún no hay anotaciones certificadas.",
+      "flightTime": "Tiempo de vuelo",
+      "landings": "Aterrizajes"
+    },
+    "columns": {
+      "date": "Fecha",
+      "departure": "Salida",
+      "arrival": "Llegada",
+      "place": "Lugar",
+      "time": "Hora (UTC)",
+      "aircraft": "Aeronave",
+      "type": "Tipo",
+      "registration": "Matrícula",
+      "singlePilot": "Tiempo de un solo piloto",
+      "se": "SE",
+      "me": "ME",
+      "mp": "Tiempo multipiloto",
+      "total": "Tiempo total de vuelo",
+      "picName": "Nombre del PIC",
+      "landings": "Aterrizajes",
+      "day": "Día",
+      "night": "Noche",
+      "conditionTime": "Condiciones de operación",
+      "ifr": "IFR",
+      "functionTime": "Función del piloto",
+      "pic": "PIC",
+      "copilot": "Copiloto",
+      "dual": "Doble mando",
+      "instructor": "Instructor",
+      "fstd": "Sesión FSTD",
+      "fstdType": "Tipo de dispositivo",
+      "fstdTime": "Duración de la sesión",
+      "remarks": "Observaciones y anotaciones",
+      "status": "Estado"
+    },
+    "status": {
+      "draft": "Borrador",
+      "certified": "Certificada",
+      "superseded": "Corregida",
+      "voided": "Tachada"
+    },
+    "kinds": {
+      "flight": "Vuelo",
+      "fstd": "Simulador",
+      "brought_forward": "Arrastre"
+    },
+    "source": {
+      "ownaplane": "De tu alquiler en ownAplane",
+      "scan": "Leída de un escaneo"
+    },
+    "drafts": {
+      "title": "Borradores por revisar",
+      "description": "Revisa y completa cada borrador y luego certifícalo. Las anotaciones certificadas ya no se pueden cambiar.",
+      "certify": "Certificar los seleccionados",
+      "certified": "{count, plural, one {# anotación certificada.} other {# anotaciones certificadas.}}",
+      "noneSelected": "Marca primero los borradores que quieres certificar.",
+      "missing": "Falta: {fields}",
+      "select": "Certificar {name}"
+    },
+    "errors": {
+      "incomplete": "A algunos borradores seleccionados les falta algo. Ábrelos y complétalos primero.",
+      "date_in_future": "Una anotación tiene fecha futura.",
+      "already_corrected": "Esa anotación ya se ha corregido.",
+      "not_editable": "Las anotaciones certificadas no se pueden cambiar. Corrígela en su lugar.",
+      "bad_correction": "Solo puedes corregir tus propias anotaciones certificadas.",
+      "reason_required": "Indica el motivo.",
+      "not_found": "Esta anotación no existe (ya).",
+      "failed": "No ha funcionado. Inténtalo de nuevo."
+    },
+    "entry": {
+      "newTitle": {
+        "flight": "Añadir un vuelo",
+        "fstd": "Añadir una sesión de simulador",
+        "brought_forward": "Totales arrastrados"
+      },
+      "editTitle": "Editar borrador",
+      "correctTitle": "Corregir una anotación",
+      "correctNote": "Cuando certifiques esta corrección, el original queda en el libro, tachado.",
+      "broughtForwardNote": "Los totales de tus libros anteriores por columna, a la fecha de la última anotación. Rellena solo las columnas que tengas.",
+      "durationHint": "Horas:minutos, p. ej. 1:25",
+      "timeHint": "UTC, formato 24 h",
+      "placeHint": "Código OACI o nombre",
+      "typeHint": "Fabricante, modelo y variante, p. ej. C172S",
+      "save": "Guardar borrador",
+      "saving": "Guardando…",
+      "delete": "Eliminar borrador",
+      "cancel": "Cancelar",
+      "hints": {
+        "split_not_total": "Un solo piloto SE + ME + multipiloto no da el tiempo total.",
+        "no_function_time": "Sin tiempo de PIC, copiloto, doble mando ni instructor.",
+        "function_over_total": "PIC + copiloto + doble mando supera el tiempo total.",
+        "no_landings": "Sin aterrizajes.",
+        "night_landings_without_night": "Aterrizajes nocturnos sin tiempo de noche."
+      }
+    },
+    "detail": {
+      "history": "Versiones anteriores",
+      "correctedBy": "Corregida por",
+      "correct": "Corregir esta anotación",
+      "void": "Tachar",
+      "voidTitle": "¿Tachar esta anotación?",
+      "voidReason": "Por qué",
+      "voidHint": "Por ejemplo: anotada dos veces. Sigue visible, tachada, y deja de contar.",
+      "voided": "Tachada: {reason}",
+      "certifiedAt": "Certificada {when}",
+      "back": "Volver al libro",
+      "open": "Abrir"
+    },
+    "list": {
+      "title": "Anotaciones",
+      "empty": "Tu libro está vacío. Añade un vuelo, los totales de tu libro en papel, o vuela un alquiler de ownAplane: aparece aquí cuando el propietario confirma el registro de vuelo.",
+      "older": "Anotaciones anteriores",
+      "newer": "Anotaciones posteriores"
+    },
+    "print": {
+      "title": "Libro de vuelo del piloto",
+      "pilot": "Piloto: {name}",
+      "printed": "Impreso el {when} desde ownAplane",
+      "page": "Página {n}",
+      "thisPage": "Total de la página",
+      "previous": "Suma de las páginas anteriores",
+      "toDate": "Tiempo total",
+      "button": "Imprimir",
+      "note": "Las líneas tachadas se corrigieron o retiraron; su sustitución está en el libro. Cada línea fue certificada por el piloto en ownAplane."
+    },
+    "printLink": "Imprimir (formato EASA)"
   }
 }

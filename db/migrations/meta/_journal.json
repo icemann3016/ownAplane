@@ -463,6 +463,20 @@
       "when": 1791701893728,
       "tag": "0065_document_reads",
       "breakpoints": true
+    },
+    {
+      "idx": 66,
+      "version": "7",
+      "when": 1791703113871,
+      "tag": "0066_logbook",
+      "breakpoints": true
+    },
+    {
+      "idx": 67,
+      "version": "7",
+      "when": 1791703115360,
+      "tag": "0067_logbook_security",
+      "breakpoints": true
     }
   ]
 }

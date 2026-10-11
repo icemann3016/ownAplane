@@ -66,6 +66,7 @@ app/
                       #   search, owner/aircraft (my aircraft, new, [id]/calendar, details…requirements,
                       #   defects, remarks, usage, sync), bookings/[id] (+ log, reviews, contact), notifications,
                       #   messages (+ [id], new), reports (actions), saved (favourites, searches),
+                      #   logbook (EASA e-logbook: list + totals, new, [id], print, export CSV),
                       #   welcome (setup guide), admin (dashboard, verifications,
                       #   reports, users, aircraft, audit, api usage)
   api/auth/           # Better Auth endpoints (email links, OAuth callbacks; apps sign in here for a token)
@@ -118,6 +119,10 @@ lib/
                       #   expiry (daily job), public page data,
                       #   calendar, eligibility (+ eligibility-text), search
   weather/            # METAR/TAF from aviationweather.gov, parsing, booking warnings
+  logbook/            # pilot logbook (LOG): duration (h:mm), checks (hints), totals, pages (EASA print),
+                      #   entries (queries), ops (draft/certify/correct/strike through), csv
+  ocr/                # reading scans with a vision AI (VER-9, LOG-6): driver (anthropic.ts, plain fetch),
+                      #   credentials (licence/medical), usage (log + daily limit)
   domain/             # pure logic: units (L/US gal, kg/lb), time (airport-local ↔ UTC, calendar days)
   documents.ts        # save/read/delete private documents (checks file content, logs admin views)
   files/sniff.ts      # detect file type from content

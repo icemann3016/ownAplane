@@ -21,7 +21,8 @@
       "bookings": "Buchungen",
       "help": "Hilfe",
       "messages": "Nachrichten",
-      "saved": "Gemerkt"
+      "saved": "Gemerkt",
+      "logbook": "Flugbuch"
     },
     "footer": {
       "tagline": "Gemacht für die Allgemeine Luftfahrt in Europa.",
@@ -232,7 +233,11 @@
     "oilRose": "Öl danach darf nicht höher sein als davor. Nachgefülltes Öl erfassen Sie mit „Kraftstoff oder Öl hinzufügen“.",
     "connectionNameRequired": "Geben Sie der Verbindung einen Namen.",
     "feedUrlInvalid": "Geben Sie den vollständigen https://-Link ein.",
-    "meterRequired": "Geben Sie den Hobbs- oder den Tachostand ein."
+    "meterRequired": "Geben Sie den Hobbs- oder den Tachostand ein.",
+    "durationInvalid": "Geben Sie Stunden:Minuten ein, z. B. 1:25.",
+    "fieldRequired": "Pflichtfeld.",
+    "moreThanTotal": "Darf nicht mehr als die Gesamtflugzeit sein.",
+    "dateInFuture": "Darf nicht in der Zukunft liegen."
   },
   "dashboard": {
     "title": "Willkommen, {name}",
@@ -2775,5 +2780,146 @@
       "turnOff": "Benachrichtigungen ausschalten",
       "remove": "Gespeicherte Suche {name} entfernen"
     }
+  },
+  "logbook": {
+    "title": "Flugbuch",
+    "description": "Ihr Flugbuch im EASA-Format (AMC1 FCL.050). Bestätigte Einträge werden nie geändert: Eine Korrektur ist ein neuer Eintrag, der alte bleibt durchgestrichen erhalten.",
+    "add": {
+      "flight": "Flug hinzufügen",
+      "fstd": "Simulatorsitzung hinzufügen",
+      "brought_forward": "Übertrag"
+    },
+    "csv": "CSV herunterladen",
+    "totals": {
+      "title": "Summen",
+      "toDate": "Bis heute",
+      "last90": "Letzte 90 Tage",
+      "byType": "Stunden je Luftfahrzeugmuster",
+      "none": "Noch keine bestätigten Einträge.",
+      "flightTime": "Flugzeit",
+      "landings": "Landungen"
+    },
+    "columns": {
+      "date": "Datum",
+      "departure": "Abflug",
+      "arrival": "Ankunft",
+      "place": "Ort",
+      "time": "Zeit (UTC)",
+      "aircraft": "Luftfahrzeug",
+      "type": "Muster",
+      "registration": "Kennzeichen",
+      "singlePilot": "Single-Pilot-Zeit",
+      "se": "SE",
+      "me": "ME",
+      "mp": "Multi-Pilot-Zeit",
+      "total": "Gesamtflugzeit",
+      "picName": "Name des PIC",
+      "landings": "Landungen",
+      "day": "Tag",
+      "night": "Nacht",
+      "conditionTime": "Betriebsbedingungen",
+      "ifr": "IFR",
+      "functionTime": "Pilotenfunktion",
+      "pic": "PIC",
+      "copilot": "Copilot",
+      "dual": "Doppelsteuer",
+      "instructor": "Lehrer",
+      "fstd": "FSTD-Sitzung",
+      "fstdType": "Gerätetyp",
+      "fstdTime": "Sitzungsdauer",
+      "remarks": "Bemerkungen und Vermerke",
+      "status": "Status"
+    },
+    "status": {
+      "draft": "Entwurf",
+      "certified": "Bestätigt",
+      "superseded": "Korrigiert",
+      "voided": "Durchgestrichen"
+    },
+    "kinds": {
+      "flight": "Flug",
+      "fstd": "Simulator",
+      "brought_forward": "Übertrag"
+    },
+    "source": {
+      "ownaplane": "Aus Ihrer ownAplane-Miete",
+      "scan": "Aus einem Scan gelesen"
+    },
+    "drafts": {
+      "title": "Zu prüfende Entwürfe",
+      "description": "Prüfen und ergänzen Sie jeden Entwurf und bestätigen Sie ihn dann. Bestätigte Einträge können nicht mehr geändert werden.",
+      "certify": "Ausgewählte bestätigen",
+      "certified": "{count, plural, one {# Eintrag bestätigt.} other {# Einträge bestätigt.}}",
+      "noneSelected": "Markieren Sie zuerst die zu bestätigenden Entwürfe.",
+      "missing": "Fehlt: {fields}",
+      "select": "{name} bestätigen"
+    },
+    "errors": {
+      "incomplete": "Bei einigen ausgewählten Entwürfen fehlt etwas. Öffnen und ergänzen Sie sie zuerst.",
+      "date_in_future": "Ein Eintrag ist in der Zukunft datiert.",
+      "already_corrected": "Dieser Eintrag wurde bereits korrigiert.",
+      "not_editable": "Bestätigte Einträge können nicht geändert werden. Korrigieren Sie ihn stattdessen.",
+      "bad_correction": "Nur eigene bestätigte Einträge können korrigiert werden.",
+      "reason_required": "Bitte geben Sie den Grund an.",
+      "not_found": "Diesen Eintrag gibt es nicht (mehr).",
+      "failed": "Das hat nicht geklappt. Bitte versuchen Sie es erneut."
+    },
+    "entry": {
+      "newTitle": {
+        "flight": "Flug hinzufügen",
+        "fstd": "Simulatorsitzung hinzufügen",
+        "brought_forward": "Übertrag"
+      },
+      "editTitle": "Entwurf bearbeiten",
+      "correctTitle": "Eintrag korrigieren",
+      "correctNote": "Sobald Sie diese Korrektur bestätigen, bleibt das Original durchgestrichen im Flugbuch.",
+      "broughtForwardNote": "Die Summen Ihrer bisherigen Flugbücher je Spalte, Stand des letzten Eintrags dort. Füllen Sie nur die Spalten aus, die Sie haben.",
+      "durationHint": "Stunden:Minuten, z. B. 1:25",
+      "timeHint": "UTC, 24-Stunden-Format",
+      "placeHint": "ICAO-Code oder Name",
+      "typeHint": "Hersteller, Modell und Variante, z. B. C172S",
+      "save": "Entwurf speichern",
+      "saving": "Wird gespeichert…",
+      "delete": "Entwurf löschen",
+      "cancel": "Abbrechen",
+      "hints": {
+        "split_not_total": "Single-Pilot SE + ME + Multi-Pilot-Zeit ergibt nicht die Gesamtzeit.",
+        "no_function_time": "Keine PIC-, Copilot-, Doppelsteuer- oder Lehrerzeit.",
+        "function_over_total": "PIC + Copilot + Doppelsteuer ist mehr als die Gesamtzeit.",
+        "no_landings": "Keine Landungen.",
+        "night_landings_without_night": "Nachtlandungen, aber keine Nachtzeit."
+      }
+    },
+    "detail": {
+      "history": "Frühere Fassungen",
+      "correctedBy": "Korrigiert durch",
+      "correct": "Eintrag korrigieren",
+      "void": "Durchstreichen",
+      "voidTitle": "Diesen Eintrag durchstreichen?",
+      "voidReason": "Grund",
+      "voidHint": "Zum Beispiel: doppelt eingetragen. Er bleibt durchgestrichen sichtbar und zählt nicht mehr.",
+      "voided": "Durchgestrichen: {reason}",
+      "certifiedAt": "Bestätigt {when}",
+      "back": "Zurück zum Flugbuch",
+      "open": "Öffnen"
+    },
+    "list": {
+      "title": "Einträge",
+      "empty": "Ihr Flugbuch ist leer. Fügen Sie einen Flug hinzu, den Übertrag aus Ihrem Papierflugbuch, oder fliegen Sie eine ownAplane-Miete: Sie erscheint hier, sobald der Halter das Bordbuch bestätigt.",
+      "older": "Ältere Einträge",
+      "newer": "Neuere Einträge"
+    },
+    "print": {
+      "title": "Flugbuch",
+      "pilot": "Pilot: {name}",
+      "printed": "Gedruckt am {when} aus ownAplane",
+      "page": "Seite {n}",
+      "thisPage": "Summe dieser Seite",
+      "previous": "Übertrag von vorherigen Seiten",
+      "toDate": "Gesamtzeit",
+      "button": "Drucken",
+      "note": "Durchgestrichene Zeilen wurden korrigiert oder entfernt; ihr Ersatz steht im Flugbuch. Jede Zeile wurde vom Piloten in ownAplane bestätigt."
+    },
+    "printLink": "Drucken (EASA-Layout)"
   }
 }

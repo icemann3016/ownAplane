@@ -11,7 +11,10 @@ import { type Block, parseMarkdown, plainText } from "./markdown";
 // this order and grouped by category. Update them together with the features they describe.
 export const HELP_CATEGORIES = [
   { key: "start", slugs: ["getting-started", "account"] },
-  { key: "pilots", slugs: ["pilot-credentials", "finding-and-booking", "flying-and-flight-log"] },
+  {
+    key: "pilots",
+    slugs: ["pilot-credentials", "finding-and-booking", "flying-and-flight-log", "logbook"],
+  },
   { key: "owners", slugs: ["listing-an-aircraft", "owner-bookings-and-history", "calendar-sync"] },
   {
     key: "everyone",

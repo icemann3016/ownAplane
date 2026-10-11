@@ -44,6 +44,7 @@ import {
 } from "./openapi-helpers";
 import { aircraftOpsPaths, aircraftOpsSchemas } from "./openapi-aircraft-ops";
 import { credentialSchemas, documentAndCredentialPaths } from "./openapi-credentials";
+import { logbookPaths, logbookSchemas } from "./openapi-logbook";
 import { myAircraftPaths, myAircraftSchemas } from "./openapi-my-aircraft";
 import { socialPaths, socialSchemas } from "./openapi-social";
 import { reviewPaths, reviewSchemas } from "./reviews";
@@ -124,6 +125,7 @@ export function openApiDocument() {
         ...credentialSchemas(),
         ...myAircraftSchemas(),
         ...aircraftOpsSchemas(),
+        ...logbookSchemas(),
         WebhookEvent: output(R.webhookEvent),
         WebhookSettings: output(R.webhookSettings),
         WebhookSaved: output(R.webhookSaved),
@@ -380,6 +382,7 @@ export function openApiDocument() {
       ...documentAndCredentialPaths(),
       ...myAircraftPaths(),
       ...aircraftOpsPaths(),
+      ...logbookPaths(),
       "/api/v1/sync": {
         get: {
           tags: ["calendar sync"],

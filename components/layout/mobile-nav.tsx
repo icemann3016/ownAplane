@@ -56,6 +56,11 @@ export function MobileNav({ account }: { account: AccountSummary | null }) {
                 </Link>
               </SheetClose>
               <SheetClose asChild>
+                <Link href="/logbook" className={linkClass}>
+                  {t("logbook")}
+                </Link>
+              </SheetClose>
+              <SheetClose asChild>
                 <Link href="/saved" className={linkClass}>
                   {t("saved")}
                 </Link>

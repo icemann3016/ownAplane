@@ -21,7 +21,8 @@
       "bookings": "Bookings",
       "help": "Help",
       "messages": "Messages",
-      "saved": "Saved"
+      "saved": "Saved",
+      "logbook": "Logbook"
     },
     "footer": {
       "tagline": "Made for general aviation in Europe.",
@@ -232,7 +233,11 @@
     "oilRose": "Oil after can't be higher than oil before. Record oil you added with “Add fuel or oil”.",
     "connectionNameRequired": "Give the connection a name.",
     "feedUrlInvalid": "Enter the full https:// link.",
-    "meterRequired": "Enter the Hobbs or the tach reading."
+    "meterRequired": "Enter the Hobbs or the tach reading.",
+    "durationInvalid": "Enter hours:minutes, e.g. 1:25.",
+    "fieldRequired": "Required.",
+    "moreThanTotal": "Can't be more than the total time of flight.",
+    "dateInFuture": "Can't be in the future."
   },
   "dashboard": {
     "title": "Welcome, {name}",
@@ -2775,5 +2780,146 @@
       "turnOff": "Turn alerts off",
       "remove": "Remove the saved search {name}"
     }
+  },
+  "logbook": {
+    "title": "Logbook",
+    "description": "Your pilot logbook in the EASA format (AMC1 FCL.050). Certified entries are never changed: a correction is a new entry, and the old one stays, struck through.",
+    "add": {
+      "flight": "Add flight",
+      "fstd": "Add simulator session",
+      "brought_forward": "Totals brought forward"
+    },
+    "csv": "Download CSV",
+    "totals": {
+      "title": "Totals",
+      "toDate": "To date",
+      "last90": "Last 90 days",
+      "byType": "Hours per aircraft type",
+      "none": "No certified entries yet.",
+      "flightTime": "Flight time",
+      "landings": "Landings"
+    },
+    "columns": {
+      "date": "Date",
+      "departure": "Departure",
+      "arrival": "Arrival",
+      "place": "Place",
+      "time": "Time (UTC)",
+      "aircraft": "Aircraft",
+      "type": "Type",
+      "registration": "Registration",
+      "singlePilot": "Single-pilot time",
+      "se": "SE",
+      "me": "ME",
+      "mp": "Multi-pilot time",
+      "total": "Total time of flight",
+      "picName": "Name of PIC",
+      "landings": "Landings",
+      "day": "Day",
+      "night": "Night",
+      "conditionTime": "Operational condition time",
+      "ifr": "IFR",
+      "functionTime": "Pilot function time",
+      "pic": "PIC",
+      "copilot": "Co-pilot",
+      "dual": "Dual",
+      "instructor": "Instructor",
+      "fstd": "FSTD session",
+      "fstdType": "Type of device",
+      "fstdTime": "Session time",
+      "remarks": "Remarks and endorsements",
+      "status": "Status"
+    },
+    "status": {
+      "draft": "Draft",
+      "certified": "Certified",
+      "superseded": "Corrected",
+      "voided": "Struck through"
+    },
+    "kinds": {
+      "flight": "Flight",
+      "fstd": "Simulator",
+      "brought_forward": "Brought forward"
+    },
+    "source": {
+      "ownaplane": "From your ownAplane rental",
+      "scan": "Read from a scan"
+    },
+    "drafts": {
+      "title": "Drafts to check",
+      "description": "Check and complete each draft, then certify it. Certified entries can't be changed any more.",
+      "certify": "Certify selected",
+      "certified": "{count, plural, one {# entry certified.} other {# entries certified.}}",
+      "noneSelected": "Tick the drafts to certify first.",
+      "missing": "Missing: {fields}",
+      "select": "Certify {name}"
+    },
+    "errors": {
+      "incomplete": "Some of the selected drafts are missing something. Open them and complete them first.",
+      "date_in_future": "An entry is dated in the future.",
+      "already_corrected": "That entry has already been corrected.",
+      "not_editable": "Certified entries can't be changed. Correct it instead.",
+      "bad_correction": "Only your own certified entries can be corrected.",
+      "reason_required": "Please say why.",
+      "not_found": "This entry doesn't exist (any more).",
+      "failed": "That didn't work. Please try again."
+    },
+    "entry": {
+      "newTitle": {
+        "flight": "Add a flight",
+        "fstd": "Add a simulator session",
+        "brought_forward": "Totals brought forward"
+      },
+      "editTitle": "Edit draft",
+      "correctTitle": "Correct an entry",
+      "correctNote": "Once you certify this correction, the original stays in your logbook, struck through.",
+      "broughtForwardNote": "The totals of your previous logbooks, per column, as of the date of your last entry there. Fill in only the columns you have.",
+      "durationHint": "Hours:minutes, e.g. 1:25",
+      "timeHint": "UTC, 24-hour",
+      "placeHint": "ICAO code or name",
+      "typeHint": "Make, model and variant, e.g. C172S",
+      "save": "Save draft",
+      "saving": "Saving…",
+      "delete": "Delete draft",
+      "cancel": "Cancel",
+      "hints": {
+        "split_not_total": "Single-pilot SE + ME + multi-pilot time isn't the total time.",
+        "no_function_time": "No PIC, co-pilot, dual or instructor time.",
+        "function_over_total": "PIC + co-pilot + dual time is more than the total time.",
+        "no_landings": "No landings.",
+        "night_landings_without_night": "Night landings but no night time."
+      }
+    },
+    "detail": {
+      "history": "Earlier versions",
+      "correctedBy": "Corrected by",
+      "correct": "Correct this entry",
+      "void": "Strike through",
+      "voidTitle": "Strike this entry through?",
+      "voidReason": "Why",
+      "voidHint": "For example: entered twice. It stays visible, struck through, and no longer counts.",
+      "voided": "Struck through: {reason}",
+      "certifiedAt": "Certified {when}",
+      "back": "Back to the logbook",
+      "open": "Open"
+    },
+    "list": {
+      "title": "Entries",
+      "empty": "Your logbook is empty. Add a flight, the totals from your paper logbook, or fly an ownAplane rental: it's added here when the owner confirms the flight log.",
+      "older": "Older entries",
+      "newer": "Newer entries"
+    },
+    "print": {
+      "title": "Pilot logbook",
+      "pilot": "Pilot: {name}",
+      "printed": "Printed {when} from ownAplane",
+      "page": "Page {n}",
+      "thisPage": "Total this page",
+      "previous": "Total from previous pages",
+      "toDate": "Total time",
+      "button": "Print",
+      "note": "Struck-through lines were corrected or removed; their replacement is in the logbook. Each line was certified by the pilot in ownAplane."
+    },
+    "printLink": "Print (EASA layout)"
   }
 }

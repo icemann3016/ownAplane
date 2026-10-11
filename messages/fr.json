@@ -21,7 +21,8 @@
       "bookings": "Réservations",
       "help": "Aide",
       "messages": "Messages",
-      "saved": "Enregistrés"
+      "saved": "Enregistrés",
+      "logbook": "Carnet de vol"
     },
     "footer": {
       "tagline": "Conçu pour l'aviation générale en Europe.",
@@ -232,7 +233,11 @@
     "oilRose": "L’huile après ne peut pas dépasser l’huile avant. Enregistrez l’huile ajoutée avec « Ajouter carburant ou huile ».",
     "connectionNameRequired": "Donnez un nom à la connexion.",
     "feedUrlInvalid": "Saisissez le lien complet en https://.",
-    "meterRequired": "Saisissez le relevé Hobbs ou du compte-tours."
+    "meterRequired": "Saisissez le relevé Hobbs ou du compte-tours.",
+    "durationInvalid": "Saisissez heures:minutes, par ex. 1:25.",
+    "fieldRequired": "Champ obligatoire.",
+    "moreThanTotal": "Ne peut pas dépasser le temps de vol total.",
+    "dateInFuture": "Ne peut pas être dans le futur."
   },
   "dashboard": {
     "title": "Bienvenue, {name}",
@@ -2775,5 +2780,146 @@
       "turnOff": "Désactiver les alertes",
       "remove": "Supprimer la recherche enregistrée {name}"
     }
+  },
+  "logbook": {
+    "title": "Carnet de vol",
+    "description": "Votre carnet de vol au format EASA (AMC1 FCL.050). Les entrées certifiées ne sont jamais modifiées : une correction est une nouvelle entrée, l'ancienne reste, barrée.",
+    "add": {
+      "flight": "Ajouter un vol",
+      "fstd": "Ajouter une séance simulateur",
+      "brought_forward": "Report des totaux"
+    },
+    "csv": "Télécharger le CSV",
+    "totals": {
+      "title": "Totaux",
+      "toDate": "À ce jour",
+      "last90": "90 derniers jours",
+      "byType": "Heures par type d'aéronef",
+      "none": "Pas encore d'entrée certifiée.",
+      "flightTime": "Temps de vol",
+      "landings": "Atterrissages"
+    },
+    "columns": {
+      "date": "Date",
+      "departure": "Départ",
+      "arrival": "Arrivée",
+      "place": "Lieu",
+      "time": "Heure (UTC)",
+      "aircraft": "Aéronef",
+      "type": "Type",
+      "registration": "Immatriculation",
+      "singlePilot": "Temps monopilote",
+      "se": "SE",
+      "me": "ME",
+      "mp": "Temps multipilote",
+      "total": "Temps de vol total",
+      "picName": "Nom du CdB",
+      "landings": "Atterrissages",
+      "day": "Jour",
+      "night": "Nuit",
+      "conditionTime": "Conditions d'exploitation",
+      "ifr": "IFR",
+      "functionTime": "Fonction du pilote",
+      "pic": "CdB",
+      "copilot": "Copilote",
+      "dual": "Double commande",
+      "instructor": "Instructeur",
+      "fstd": "Séance FSTD",
+      "fstdType": "Type d'appareil",
+      "fstdTime": "Durée de la séance",
+      "remarks": "Remarques et visas",
+      "status": "Statut"
+    },
+    "status": {
+      "draft": "Brouillon",
+      "certified": "Certifiée",
+      "superseded": "Corrigée",
+      "voided": "Barrée"
+    },
+    "kinds": {
+      "flight": "Vol",
+      "fstd": "Simulateur",
+      "brought_forward": "Report"
+    },
+    "source": {
+      "ownaplane": "De votre location ownAplane",
+      "scan": "Lu sur un scan"
+    },
+    "drafts": {
+      "title": "Brouillons à vérifier",
+      "description": "Vérifiez et complétez chaque brouillon, puis certifiez-le. Les entrées certifiées ne peuvent plus être modifiées.",
+      "certify": "Certifier la sélection",
+      "certified": "{count, plural, one {# entrée certifiée.} other {# entrées certifiées.}}",
+      "noneSelected": "Cochez d'abord les brouillons à certifier.",
+      "missing": "Manque : {fields}",
+      "select": "Certifier {name}"
+    },
+    "errors": {
+      "incomplete": "Il manque quelque chose à certains brouillons sélectionnés. Ouvrez-les et complétez-les d'abord.",
+      "date_in_future": "Une entrée est datée dans le futur.",
+      "already_corrected": "Cette entrée a déjà été corrigée.",
+      "not_editable": "Les entrées certifiées ne peuvent pas être modifiées. Corrigez-la plutôt.",
+      "bad_correction": "Seules vos propres entrées certifiées peuvent être corrigées.",
+      "reason_required": "Indiquez la raison.",
+      "not_found": "Cette entrée n'existe pas (ou plus).",
+      "failed": "Cela n'a pas fonctionné. Réessayez."
+    },
+    "entry": {
+      "newTitle": {
+        "flight": "Ajouter un vol",
+        "fstd": "Ajouter une séance simulateur",
+        "brought_forward": "Report des totaux"
+      },
+      "editTitle": "Modifier le brouillon",
+      "correctTitle": "Corriger une entrée",
+      "correctNote": "Dès que vous certifiez cette correction, l'original reste dans le carnet, barré.",
+      "broughtForwardNote": "Les totaux de vos carnets précédents par colonne, à la date de la dernière entrée. Remplissez seulement les colonnes que vous avez.",
+      "durationHint": "Heures:minutes, par ex. 1:25",
+      "timeHint": "UTC, format 24 h",
+      "placeHint": "Code OACI ou nom",
+      "typeHint": "Constructeur, modèle et variante, par ex. C172S",
+      "save": "Enregistrer le brouillon",
+      "saving": "Enregistrement…",
+      "delete": "Supprimer le brouillon",
+      "cancel": "Annuler",
+      "hints": {
+        "split_not_total": "Monopilote SE + ME + multipilote ne fait pas le temps total.",
+        "no_function_time": "Aucun temps CdB, copilote, double commande ou instructeur.",
+        "function_over_total": "CdB + copilote + double commande dépasse le temps total.",
+        "no_landings": "Aucun atterrissage.",
+        "night_landings_without_night": "Atterrissages de nuit mais pas de temps de nuit."
+      }
+    },
+    "detail": {
+      "history": "Versions précédentes",
+      "correctedBy": "Corrigée par",
+      "correct": "Corriger cette entrée",
+      "void": "Barrer",
+      "voidTitle": "Barrer cette entrée ?",
+      "voidReason": "Pourquoi",
+      "voidHint": "Par exemple : saisie en double. Elle reste visible, barrée, et ne compte plus.",
+      "voided": "Barrée : {reason}",
+      "certifiedAt": "Certifiée {when}",
+      "back": "Retour au carnet",
+      "open": "Ouvrir"
+    },
+    "list": {
+      "title": "Entrées",
+      "empty": "Votre carnet est vide. Ajoutez un vol, les totaux de votre carnet papier, ou volez avec une location ownAplane : elle apparaît ici dès que le propriétaire confirme le journal de vol.",
+      "older": "Entrées plus anciennes",
+      "newer": "Entrées plus récentes"
+    },
+    "print": {
+      "title": "Carnet de vol du pilote",
+      "pilot": "Pilote : {name}",
+      "printed": "Imprimé le {when} depuis ownAplane",
+      "page": "Page {n}",
+      "thisPage": "Total de la page",
+      "previous": "Report des pages précédentes",
+      "toDate": "Temps total",
+      "button": "Imprimer",
+      "note": "Les lignes barrées ont été corrigées ou retirées ; leur remplacement figure dans le carnet. Chaque ligne a été certifiée par le pilote dans ownAplane."
+    },
+    "printLink": "Imprimer (format EASA)"
   }
 }

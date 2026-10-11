@@ -128,6 +128,21 @@ Calendar sync endpoints for partner systems are listed below.
 
 Changes to credentials answer with all of them as they are now.
 
+**Logbook (LOG-1…8).** The pilot's EASA logbook (AMC1 FCL.050). Durations in minutes, times
+`HH:MM` UTC, dates `YYYY-MM-DD`. Entries are drafts until certified; certified entries are never
+changed or deleted: correct them with a new entry (`correctsId`) or strike them through with a
+reason. Rentals on ownAplane arrive as drafts (`source: ownaplane`) when the owner confirms the
+flight log.
+
+| Method | Path | What |
+|--------|------|------|
+| GET / POST | `/api/v1/me/logbook` | Entries, newest first (`?page`, 50 a page) / a new draft `{ kind: flight \| fstd \| brought_forward, date, departurePlace, departureTime, arrivalPlace, arrivalTime, aircraftType, registration, seMinutes, meMinutes, mpMinutes, totalMinutes, picName, landingsDay, landingsNight, nightMinutes, ifrMinutes, picMinutes, copilotMinutes, dualMinutes, instructorMinutes, fstdType, fstdMinutes, remarks, correctsId? }` |
+| GET / PUT / DELETE | `/api/v1/me/logbook/{id}` | One entry with `history` and `correctedBy` / change a draft / delete a draft (409 `not_editable` once certified) |
+| POST | `/api/v1/me/logbook/certify` | `{ ids }`, all or nothing; 409 `incomplete` (`details.incomplete`), `date_in_future`, `already_corrected` |
+| POST | `/api/v1/me/logbook/{id}/void` | `{ reason }`: strike a certified entry through |
+| GET | `/api/v1/me/logbook/totals` | Totals per column to date, the last 90 days, hours per type |
+| GET | `/api/v1/me/logbook/export` | CSV in the EASA column order |
+
 **Your aircraft (owners, LST-1…8).** Quantities in SI units (`fuelBurnLph`, `usefulLoadKg`,
 `mtomKg`); every change answers with the whole aircraft as it is now, including `gaps` (what still
 stops the listing: `home_base`, `price`, `photo`, `arc`, `insurance`). Refusals carry

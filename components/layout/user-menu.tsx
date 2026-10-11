@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import {
+  BookOpenIcon,
   CalendarDaysIcon,
   HeartIcon,
   LayoutDashboardIcon,
@@ -54,6 +55,11 @@ export function UserMenu({ account }: { account: AccountSummary }) {
         <DropdownMenuItem asChild>
           <Link href="/bookings">
             <CalendarDaysIcon /> {t("bookings")}
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/logbook">
+            <BookOpenIcon /> {t("logbook")}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>

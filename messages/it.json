@@ -21,7 +21,8 @@
       "bookings": "Prenotazioni",
       "help": "Aiuto",
       "messages": "Messaggi",
-      "saved": "Salvati"
+      "saved": "Salvati",
+      "logbook": "Libretto di volo"
     },
     "footer": {
       "tagline": "Pensato per l'aviazione generale in Europa.",
@@ -232,7 +233,11 @@
     "oilRose": "L’olio dopo non può essere superiore a quello prima. Registra l’olio aggiunto con «Aggiungi carburante o olio».",
     "connectionNameRequired": "Dai un nome al collegamento.",
     "feedUrlInvalid": "Inserisci il link completo con https://.",
-    "meterRequired": "Inserisci la lettura dell'Hobbs o del contagiri."
+    "meterRequired": "Inserisci la lettura dell'Hobbs o del contagiri.",
+    "durationInvalid": "Inserisci ore:minuti, es. 1:25.",
+    "fieldRequired": "Campo obbligatorio.",
+    "moreThanTotal": "Non può superare il tempo di volo totale.",
+    "dateInFuture": "Non può essere nel futuro."
   },
   "dashboard": {
     "title": "Benvenuto, {name}",
@@ -2775,5 +2780,146 @@
       "turnOff": "Disattiva gli avvisi",
       "remove": "Rimuovi la ricerca salvata {name}"
     }
+  },
+  "logbook": {
+    "title": "Libretto di volo",
+    "description": "Il tuo libretto di volo nel formato EASA (AMC1 FCL.050). Le registrazioni certificate non cambiano mai: una correzione è una nuova registrazione e la vecchia resta, barrata.",
+    "add": {
+      "flight": "Aggiungi volo",
+      "fstd": "Aggiungi sessione al simulatore",
+      "brought_forward": "Riporto dei totali"
+    },
+    "csv": "Scarica CSV",
+    "totals": {
+      "title": "Totali",
+      "toDate": "A oggi",
+      "last90": "Ultimi 90 giorni",
+      "byType": "Ore per tipo di aeromobile",
+      "none": "Ancora nessuna registrazione certificata.",
+      "flightTime": "Tempo di volo",
+      "landings": "Atterraggi"
+    },
+    "columns": {
+      "date": "Data",
+      "departure": "Partenza",
+      "arrival": "Arrivo",
+      "place": "Luogo",
+      "time": "Ora (UTC)",
+      "aircraft": "Aeromobile",
+      "type": "Tipo",
+      "registration": "Marche",
+      "singlePilot": "Tempo single-pilot",
+      "se": "SE",
+      "me": "ME",
+      "mp": "Tempo multi-pilot",
+      "total": "Tempo di volo totale",
+      "picName": "Nome del PIC",
+      "landings": "Atterraggi",
+      "day": "Giorno",
+      "night": "Notte",
+      "conditionTime": "Condizioni operative",
+      "ifr": "IFR",
+      "functionTime": "Funzione del pilota",
+      "pic": "PIC",
+      "copilot": "Copilota",
+      "dual": "Doppio comando",
+      "instructor": "Istruttore",
+      "fstd": "Sessione FSTD",
+      "fstdType": "Tipo di dispositivo",
+      "fstdTime": "Durata della sessione",
+      "remarks": "Note e annotazioni",
+      "status": "Stato"
+    },
+    "status": {
+      "draft": "Bozza",
+      "certified": "Certificata",
+      "superseded": "Corretta",
+      "voided": "Barrata"
+    },
+    "kinds": {
+      "flight": "Volo",
+      "fstd": "Simulatore",
+      "brought_forward": "Riporto"
+    },
+    "source": {
+      "ownaplane": "Dal tuo noleggio ownAplane",
+      "scan": "Letta da una scansione"
+    },
+    "drafts": {
+      "title": "Bozze da controllare",
+      "description": "Controlla e completa ogni bozza, poi certificala. Le registrazioni certificate non si possono più modificare.",
+      "certify": "Certifica le selezionate",
+      "certified": "{count, plural, one {# registrazione certificata.} other {# registrazioni certificate.}}",
+      "noneSelected": "Seleziona prima le bozze da certificare.",
+      "missing": "Manca: {fields}",
+      "select": "Certifica {name}"
+    },
+    "errors": {
+      "incomplete": "Ad alcune bozze selezionate manca qualcosa. Aprile e completale prima.",
+      "date_in_future": "Una registrazione ha una data futura.",
+      "already_corrected": "Questa registrazione è già stata corretta.",
+      "not_editable": "Le registrazioni certificate non si possono modificare. Correggila invece.",
+      "bad_correction": "Puoi correggere solo le tue registrazioni certificate.",
+      "reason_required": "Indica il motivo.",
+      "not_found": "Questa registrazione non esiste (più).",
+      "failed": "Non ha funzionato. Riprova."
+    },
+    "entry": {
+      "newTitle": {
+        "flight": "Aggiungi un volo",
+        "fstd": "Aggiungi una sessione al simulatore",
+        "brought_forward": "Riporto dei totali"
+      },
+      "editTitle": "Modifica bozza",
+      "correctTitle": "Correggi una registrazione",
+      "correctNote": "Quando certifichi questa correzione, l'originale resta nel libretto, barrato.",
+      "broughtForwardNote": "I totali dei tuoi libretti precedenti per colonna, alla data dell'ultima registrazione. Compila solo le colonne che hai.",
+      "durationHint": "Ore:minuti, es. 1:25",
+      "timeHint": "UTC, formato 24 ore",
+      "placeHint": "Codice ICAO o nome",
+      "typeHint": "Costruttore, modello e variante, es. C172S",
+      "save": "Salva bozza",
+      "saving": "Salvataggio…",
+      "delete": "Elimina bozza",
+      "cancel": "Annulla",
+      "hints": {
+        "split_not_total": "Single-pilot SE + ME + multi-pilot non corrisponde al tempo totale.",
+        "no_function_time": "Nessun tempo come PIC, copilota, doppio comando o istruttore.",
+        "function_over_total": "PIC + copilota + doppio comando supera il tempo totale.",
+        "no_landings": "Nessun atterraggio.",
+        "night_landings_without_night": "Atterraggi notturni ma nessun tempo di notte."
+      }
+    },
+    "detail": {
+      "history": "Versioni precedenti",
+      "correctedBy": "Corretta da",
+      "correct": "Correggi questa registrazione",
+      "void": "Barra",
+      "voidTitle": "Barrare questa registrazione?",
+      "voidReason": "Perché",
+      "voidHint": "Per esempio: inserita due volte. Resta visibile, barrata, e non conta più.",
+      "voided": "Barrata: {reason}",
+      "certifiedAt": "Certificata {when}",
+      "back": "Torna al libretto",
+      "open": "Apri"
+    },
+    "list": {
+      "title": "Registrazioni",
+      "empty": "Il tuo libretto è vuoto. Aggiungi un volo, i totali del libretto cartaceo, oppure vola con un noleggio ownAplane: compare qui quando il proprietario conferma il registro di volo.",
+      "older": "Registrazioni più vecchie",
+      "newer": "Registrazioni più recenti"
+    },
+    "print": {
+      "title": "Libretto di volo del pilota",
+      "pilot": "Pilota: {name}",
+      "printed": "Stampato il {when} da ownAplane",
+      "page": "Pagina {n}",
+      "thisPage": "Totale della pagina",
+      "previous": "Riporto dalle pagine precedenti",
+      "toDate": "Tempo totale",
+      "button": "Stampa",
+      "note": "Le righe barrate sono state corrette o rimosse; la loro sostituzione è nel libretto. Ogni riga è stata certificata dal pilota in ownAplane."
+    },
+    "printLink": "Stampa (formato EASA)"
   }
 }
