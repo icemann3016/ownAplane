@@ -533,6 +533,13 @@
       "when": 1791817899743,
       "tag": "0075_drop_partner_keys",
       "breakpoints": true
+    },
+    {
+      "idx": 76,
+      "version": "7",
+      "when": 1791834649483,
+      "tag": "0076_partner_credentials",
+      "breakpoints": true
     }
   ]
 }

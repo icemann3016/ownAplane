@@ -70,10 +70,10 @@ export async function ConnectionCard({
         )}
         {partner && (
           <p className="text-sm text-muted-foreground">
-            {t("partner.about", {
-              partner: partner.name,
-              registrations: partner.registrations.join(", "),
-            })}
+            {t("partner.about", { partner: partner.name, registration })}{" "}
+            <Link href="/account/connections" className="underline">
+              {t("add.partnerKeyLink")}
+            </Link>
           </p>
         )}
         {partner && !partner.registrations.some((r) => sameRegistration(r, registration)) && (

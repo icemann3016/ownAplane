@@ -397,7 +397,8 @@
       "label": "Kontobereiche",
       "general": "Allgemein",
       "credentials": "Pilotennachweise",
-      "billing": "Tarif & Zahlungen"
+      "billing": "Tarif & Zahlungen",
+      "connections": "Verbundene Dienste"
     },
     "contact": {
       "title": "Telefon für Kontakt",
@@ -435,6 +436,30 @@
       "save": "Benachrichtigungen speichern",
       "saving": "Wird gespeichert…",
       "saved": "Gespeichert."
+    },
+    "connections": {
+      "title": "Verbundene Dienste",
+      "description": "Ihre Konten bei anderen Systemen, die ownAplane für Sie lesen kann. Deren Buchungen blockieren dann Ihre Luftfahrzeuge hier (Kalender-Sync).",
+      "partnerText": "{partner} teilt seine Buchungen über seine API. Mit Ihrem API-Schlüssel liest ownAplane dort die Buchungen Ihrer Luftfahrzeuge (derzeit deckt die API {registrations} ab).",
+      "connected": "Verbunden: API-Schlüssel endet auf …{hint}, gespeichert am {date}.",
+      "lastUsed": "Zuletzt gelesen {when}.",
+      "lastFailed": "Das letzte Lesen ist fehlgeschlagen: {reason}.",
+      "notConnected": "Nicht verbunden.",
+      "safe": "Wir prüfen den Schlüssel bei {partner} und speichern ihn verschlüsselt. Er wird nie wieder angezeigt oder an Ihren Browser gesendet, und das Feld lässt Ihren Browser ihn nicht speichern.",
+      "key": "API-Schlüssel",
+      "newKey": "Neuer API-Schlüssel",
+      "keyHint": "Fügen Sie den Schlüssel aus Ihrem Konto dort ein.",
+      "checking": "Wird geprüft…",
+      "save": "Schlüssel speichern",
+      "replace": "Schlüssel ersetzen",
+      "remove": "Schlüssel entfernen",
+      "removeText": "Ihre Verbindungen zu {partner} werden nicht mehr gelesen, bis Sie wieder einen Schlüssel hinzufügen.",
+      "useIt": "Verbinden Sie es dann mit einem Luftfahrzeug: Meine Luftfahrzeuge → Ihr Luftfahrzeug → Kalender-Sync → Partnersystem.",
+      "myAircraft": "Meine Luftfahrzeuge",
+      "keyInvalid": "Fügen Sie den ganzen API-Schlüssel ein (8 bis 500 Zeichen, ohne Leerzeichen).",
+      "keyRefused": "{partner} hat diesen Schlüssel abgelehnt. Prüfen Sie ihn und versuchen Sie es erneut.",
+      "checkFailed": "Der Schlüssel konnte bei {partner} nicht geprüft werden: {reason}. Versuchen Sie es gleich noch einmal.",
+      "saved": "Schlüssel gespeichert. Ihre Verbindungen zu {partner} werden damit gelesen."
     }
   },
   "password": {
@@ -2709,7 +2734,8 @@
       "icalUrl": "iCal-Link",
       "jsonUrl": "JSON-Link",
       "partner": "Partner",
-      "partnerOnly": "Nur für {list}.",
+      "partnerNeedsKey": "Fügen Sie zuerst Ihren API-Schlüssel hinzu:",
+      "partnerKeyLink": "Konto → Verbundene Dienste",
       "urlHint": "Der private Link aus dem anderen System. webcal://-Links funktionieren auch.",
       "linkIs": "Link:",
       "submit": "Verbinden",
@@ -2723,7 +2749,7 @@
       },
       "partner": {
         "label": "Partnersystem",
-        "hint": "Systeme, mit denen ownAplane verbunden ist, z. B. RAF Aviation: Wir lesen deren Buchungen Ihres Luftfahrzeugs, ohne dass Sie etwas einrichten müssen."
+        "hint": "Systeme mit eigener API, z. B. RAF Aviation: Fügen Sie Ihren API-Schlüssel unter Konto → Verbundene Dienste hinzu und wählen Sie das System dann hier."
       },
       "ical": {
         "label": "iCal-Link",
@@ -2778,8 +2804,8 @@
       "shownHint": "Geben Sie ihn den Entwicklern des anderen Systems. Er wird gesendet als: {header}."
     },
     "partner": {
-      "about": "Liest die Buchungen von {partner} für {registrations} mit dem Schlüssel von ownAplane. {partner} sieht unsere Buchungen über den iCal-Link unten.",
-      "otherAircraft": "{partner} teilt nur Buchungen für {registrations}, dieses Luftfahrzeug ist aber {registration}, daher blockiert nichts von {partner} es."
+      "about": "Liest die Buchungen von {partner} für {registration} mit dem API-Schlüssel aus Ihrem Konto:",
+      "otherAircraft": "Die API von {partner} teilt vorerst nur Buchungen für {registrations}, daher blockiert noch nichts von {partner} {registration}."
     },
     "remove": {
       "button": "Trennen",
@@ -2801,9 +2827,9 @@
       "too_large": "der Kalender ist größer als 2 MB",
       "ical_invalid": "es ist kein iCal-Kalender",
       "json_invalid": "es hat nicht das erwartete JSON-Format",
-      "key_rejected": "der Partner hat den Schlüssel von ownAplane abgelehnt (wir wurden benachrichtigt)",
+      "key_rejected": "der Partner hat Ihren API-Schlüssel abgelehnt",
       "rate_limited": "der Partner hat um weniger Anfragen gebeten; wir versuchen es später erneut",
-      "partner_unavailable": "dieser Partner ist bei ownAplane noch nicht eingerichtet (wir wurden benachrichtigt)",
+      "partner_unavailable": "in Ihrem Konto gibt es keinen API-Schlüssel für diesen Partner",
       "failed": "etwas ist schiefgelaufen"
     },
     "export": {

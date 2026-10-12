@@ -20,7 +20,7 @@ type Pull = Pick<CalendarConnection, "id" | "inbound" | "feedUrl" | "partner">;
 function reader(conn: Pull, fetcher: typeof fetchFeed): (() => Promise<ExternalEvent[]>) | null {
   if (conn.inbound === "partner" && isPartner(conn.partner)) {
     const partner = conn.partner;
-    return () => readPartner(partner, fetcher);
+    return () => readPartner(conn.id, partner, fetcher);
   }
   if ((conn.inbound === "ical" || conn.inbound === "json") && conn.feedUrl) {
     const [kind, link] = [conn.inbound, conn.feedUrl];
@@ -45,12 +45,7 @@ export async function syncConnection(
     const result = await applyEvents(conn.id, events, "replace");
     outcome = { ok: true, count: events.length, conflicts: result.conflicts };
   } catch (e) {
-    // A partner refusing our key, or it missing, is ours to fix: report it like a bug.
-    const ours =
-      e instanceof FeedError &&
-      conn.inbound === "partner" &&
-      (e.code === "key_rejected" || e.code === "partner_unavailable");
-    if (!(e instanceof FeedError) || ours) {
+    if (!(e instanceof FeedError)) {
       await reportError(e, { where: "calendar-sync", tags: { connection: conn.id } });
     }
     outcome = { ok: false, error: e instanceof FeedError ? e.code : "failed" };

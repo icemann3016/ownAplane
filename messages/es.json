@@ -397,7 +397,8 @@
       "label": "Secciones de la cuenta",
       "general": "General",
       "credentials": "Credenciales del piloto",
-      "billing": "Plan y pagos"
+      "billing": "Plan y pagos",
+      "connections": "Servicios conectados"
     },
     "contact": {
       "title": "Teléfono de contacto",
@@ -435,6 +436,30 @@
       "save": "Guardar notificaciones",
       "saving": "Guardando…",
       "saved": "Guardado."
+    },
+    "connections": {
+      "title": "Servicios conectados",
+      "description": "Tus cuentas en otros sistemas que ownAplane puede leer por ti. Sus reservas bloquean entonces tus aeronaves aquí (sincronización del calendario).",
+      "partnerText": "{partner} comparte sus reservas a través de su API. Con tu clave API, ownAplane lee allí las reservas de tus aeronaves (hoy su API cubre {registrations}).",
+      "connected": "Conectado: clave API que termina en …{hint}, guardada el {date}.",
+      "lastUsed": "Última lectura {when}.",
+      "lastFailed": "La última lectura falló: {reason}.",
+      "notConnected": "No conectado.",
+      "safe": "Comprobamos la clave con {partner} y la guardamos cifrada. Nunca se vuelve a mostrar ni se envía a tu navegador, y el campo no deja que tu navegador la guarde.",
+      "key": "Clave API",
+      "newKey": "Nueva clave API",
+      "keyHint": "Pega la clave de tu cuenta allí.",
+      "checking": "Comprobando…",
+      "save": "Guardar clave",
+      "replace": "Sustituir clave",
+      "remove": "Eliminar clave",
+      "removeText": "Tus conexiones con {partner} dejan de leerse hasta que vuelvas a añadir una clave.",
+      "useIt": "Después conéctalo a una aeronave: Mis aeronaves → tu aeronave → Sincronización del calendario → Sistema asociado.",
+      "myAircraft": "Mis aeronaves",
+      "keyInvalid": "Pega la clave API completa (de 8 a 500 caracteres, sin espacios).",
+      "keyRefused": "{partner} rechazó esta clave. Compruébala e inténtalo de nuevo.",
+      "checkFailed": "No se pudo comprobar la clave con {partner}: {reason}. Inténtalo de nuevo en un momento.",
+      "saved": "Clave guardada. Tus conexiones con {partner} se leen con ella."
     }
   },
   "password": {
@@ -2709,7 +2734,8 @@
       "icalUrl": "Enlace iCal",
       "jsonUrl": "Enlace JSON",
       "partner": "Socio",
-      "partnerOnly": "Solo para {list}.",
+      "partnerNeedsKey": "Primero añade tu clave API:",
+      "partnerKeyLink": "Cuenta → Servicios conectados",
       "urlHint": "El enlace privado del otro sistema. Los enlaces webcal:// también funcionan.",
       "linkIs": "Enlace:",
       "submit": "Conectar",
@@ -2723,7 +2749,7 @@
       },
       "partner": {
         "label": "Sistema asociado",
-        "hint": "Sistemas con los que ownAplane está conectado, como RAF Aviation: leemos sus reservas de tu aeronave, sin nada que configurar."
+        "hint": "Sistemas con su propia API, como RAF Aviation: añade tu clave API en Cuenta → Servicios conectados y elige el sistema aquí."
       },
       "ical": {
         "label": "Enlace iCal",
@@ -2778,8 +2804,8 @@
       "shownHint": "Entrégala a los desarrolladores del otro sistema. Se envía así: {header}."
     },
     "partner": {
-      "about": "Lee las reservas de {partner} para {registrations} con la clave de ownAplane. {partner} ve nuestras reservas mediante el enlace iCal de abajo.",
-      "otherAircraft": "{partner} solo comparte reservas de {registrations}, pero esta aeronave es {registration}, así que nada de {partner} la bloquea."
+      "about": "Lee las reservas de {partner} para {registration} con la clave API de tu cuenta:",
+      "otherAircraft": "La API de {partner} por ahora solo comparte reservas de {registrations}, así que nada de {partner} bloquea todavía {registration}."
     },
     "remove": {
       "button": "Desconectar",
@@ -2801,9 +2827,9 @@
       "too_large": "el calendario supera los 2 MB",
       "ical_invalid": "no es un calendario iCal",
       "json_invalid": "no tiene el formato JSON esperado",
-      "key_rejected": "el socio rechazó la clave de ownAplane (ya nos han avisado)",
+      "key_rejected": "el socio rechazó tu clave API",
       "rate_limited": "el socio nos pidió ir más despacio; lo intentaremos de nuevo más tarde",
-      "partner_unavailable": "este socio aún no está configurado en ownAplane (ya nos han avisado)",
+      "partner_unavailable": "no hay ninguna clave API para este socio en tu cuenta",
       "failed": "algo salió mal"
     },
     "export": {

@@ -68,7 +68,7 @@ export async function addConnection(_prev: FormState, formData: FormData): Promi
   const { aircraftId, name, inbound, feedUrl, partner } = parsed.data;
   if (partner) {
     const plane = await getOwnAircraft(user.id, aircraftId);
-    if (!plane || !partnersFor(plane).includes(partner)) {
+    if (!plane || !(await partnersFor(plane)).includes(partner)) {
       return { message: t("errors.partnerNotAllowed"), values: raw };
     }
   }

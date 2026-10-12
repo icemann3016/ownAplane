@@ -145,16 +145,15 @@ All three work the same way: the button appears once the keys are set, new accou
 - Before launch: a data processing agreement with the provider, and the privacy policy's entry
   checked by the lawyer (medicals are read only with explicit consent).
 
-### RAF Aviation (calendar sync partner, optional)
-- `RAFAVIATION_API_KEY`: the API key RAF Aviation gave ownAplane (their API:
-  https://rafaviation.flights/api-docs). Set → the owner of EC-IDR can pick **RAF Aviation**
-  under Calendar sync, and its bookings are read every 15 minutes; without it the option is off.
-  It is a server secret: never stored in the database or sent to a browser.
-- Set it in Vercel → Settings → Environment Variables (Production), then redeploy (new variables
-  only reach new deployments). Rotating it: replace the value and redeploy; nothing else changes.
-- If RAF refuses the key (or it is missing while connections exist), each failed read is
-  reported to error monitoring and the owner sees "the partner refused ownAplane's key".
-- `RAFAVIATION_API_URL` only for tests (default `https://rafaviation.flights`).
+### Partner API keys (calendar sync partners such as RAF Aviation)
+- Nothing to set: each owner adds their own API key under **Account → Connected services**. The
+  key is checked with the partner, then stored encrypted (AES-256-GCM, `lib/secrets.ts`) in
+  `partner_credentials` with a key derived from `BETTER_AUTH_SECRET`; it is never sent back to a
+  browser, and the app's database role can't read the table.
+- **Rotating `BETTER_AUTH_SECRET`** makes stored partner keys unreadable: owners see "there's no
+  API key for this partner on your account" and enter theirs again.
+- `RAFAVIATION_API_KEY` is no longer used (owners' keys replaced the site key); delete it from
+  Vercel if it was set. `RAFAVIATION_API_URL` only for tests (default `https://rafaviation.flights`).
 
 ### Monitoring (optional)
 - **Errors**: `SENTRY_DSN` of any Sentry-compatible service (Sentry with EU data region, or a

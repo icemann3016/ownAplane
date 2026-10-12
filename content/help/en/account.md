@@ -25,6 +25,15 @@ only the other side of an **accepted** booking sees it, together with your email
 - **Units:** metric (kg, litres) or imperial (lb, US gallons), for weights and fuel. Oil is always
   shown in the aircraft's own dipstick unit (US quarts or litres).
 
+## Connected services
+
+Accounts you have with other systems that ownAplane can read for you, today **RAF Aviation**.
+Paste the API key from your account there and press **Save key**: we check it with them first,
+then store it encrypted. It is never shown again or sent back to your browser, and the field
+doesn't let your browser save it; you see only its last 4 characters. **Replace key** when they
+give you a new one, **Remove key** to stop. Then connect the partner to an aircraft under
+**Calendar sync** (see "Calendar sync with other booking systems").
+
 ## Security and data
 
 - **Change password**, and the ways you can log in (**Connect Google**, **Apple** or **Facebook**; **Disconnect** while another way to log in remains).

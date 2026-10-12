@@ -1,13 +1,14 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 
 import { CopyField } from "@/components/copy-field";
 import { FormMessage } from "@/components/forms/form-message";
 import { SubmitButton } from "@/components/forms/submit-button";
 import { SelectField, TextField } from "@/components/forms/text-field";
-import { type Partner, PARTNER_INFO, PARTNERS } from "@/lib/calendar-sync/partner-list";
+import { type Partner, PARTNER_INFO } from "@/lib/calendar-sync/partner-list";
 import { initialFormState } from "@/lib/forms";
 import { CONNECTION_KINDS } from "@/lib/validation/calendar-sync";
 import { addConnection } from "./actions";
@@ -73,12 +74,10 @@ export function AddConnection({
               )}
               {k === "partner" && !partners.length && (
                 <span className="text-sm text-muted-foreground">
-                  {t("add.partnerOnly", {
-                    list: PARTNERS.map(
-                      (p) =>
-                        `${PARTNER_INFO[p].name} (${PARTNER_INFO[p].registrations.join(", ")})`,
-                    ).join(", "),
-                  })}
+                  {t("add.partnerNeedsKey")}{" "}
+                  <Link href="/account/connections" className="underline">
+                    {t("add.partnerKeyLink")}
+                  </Link>
                 </span>
               )}
             </span>

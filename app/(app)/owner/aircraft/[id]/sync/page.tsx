@@ -53,7 +53,7 @@ export default async function SyncPage({ params }: { params: Promise<{ id: strin
             <AddConnection
               aircraftId={id}
               exportAllowed={PLANS[(await getMyPlan(user.id)).plan].calendarLink}
-              partners={partnersFor(aircraft)}
+              partners={await partnersFor(aircraft)}
             />
           </CardContent>
         </Card>

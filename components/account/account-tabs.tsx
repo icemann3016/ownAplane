@@ -10,9 +10,10 @@ const TABS = [
   { href: "/account", key: "general" },
   { href: "/account/credentials", key: "credentials" },
   { href: "/account/billing", key: "billing" },
+  { href: "/account/connections", key: "connections" },
 ] as const;
 
-/** Tabs of the account area: general settings, pilot credentials, plan & billing. */
+/** Tabs of the account area: general settings, pilot credentials, plan & billing, connected services. */
 export function AccountTabs() {
   const t = useTranslations("account.tabs");
   const pathname = usePathname();

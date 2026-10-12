@@ -147,13 +147,15 @@ Aircraft home bases are airports with latitude/longitude. The search (`lib/aircr
 - Reading links: every 15 min (`/api/cron/sync` from a GitHub Actions schedule), hourly in the
   daily job, and right before a booking is requested or accepted.
 - Partners with their own API (SYN-7): connection kind `partner` with `partner` (an id from
-  `lib/calendar-sync/partner-list.ts`), read with **ownAplane's key** for that partner, a server
-  secret (`RAFAVIATION_API_KEY`, never in the database or a browser). Only the aircraft whose
-  bookings the partner shares (non-draft, same registration) can connect it, and their busy
-  times never land on another aircraft (registration check forced). Read like links (same
-  schedule, `replace`), the key as a Bearer header, never following redirects. First partner:
-  **RAF Aviation** (`rafaviation.ts`: EC-IDR's future bookings as Europe/Sofia local times →
-  UTC; "pending" = tentative). It reads ours from the connection's iCal link.
+  `lib/calendar-sync/partner-list.ts`), read with the **aircraft owner's key** for that partner
+  (Account → Connected services, `partner_credentials`: AES-256-GCM via `lib/secrets.ts` with a
+  key derived from `BETTER_AUTH_SECRET`, bound to user + partner; no app access; checked with
+  the partner before it is kept; never returned to a browser). The call asks for the aircraft's
+  registration; a partner's busy times never land on another aircraft (registration check
+  forced). Read like links (same schedule, `replace`), the key as a Bearer header, never
+  following redirects. First partner: **RAF Aviation** (`rafaviation.ts`: future bookings as
+  Europe/Sofia local times → UTC; "pending" = tentative; EC-IDR only for now, so bookings without
+  a registration count as EC-IDR's). It reads ours from the connection's iCal link.
 - Webhooks (SYN-6): `calendar_connections.webhook_url/secret`; triggers on `calendar_entries` and
   `bookings` queue `webhook_events` per connection (not for its own busy times);
   `lib/calendar-sync/webhooks.ts` sends the current state of each changed busy time, signed

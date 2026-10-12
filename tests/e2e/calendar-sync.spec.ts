@@ -205,30 +205,51 @@ test("another system pushes its bookings and never double-books the aircraft", a
   expect((await club("/api/v1/sync")).status).toBe(401);
 });
 
-test("EC-IDR's owner connects RAF Aviation, read with ownAplane's key (SYN-7)", async ({
-  page,
-}, testInfo) => {
-  // One aircraft can be EC-IDR at a time: run once, not on both devices at the same time.
-  test.skip(testInfo.project.name !== "desktop", "uses the one EC-IDR registration");
+test("an owner adds their RAF Aviation key and connects an aircraft (SYN-7)", async ({ page }) => {
   test.setTimeout(90_000);
   const id = unique();
   const ownerEmail = `raf-owner-${id}@example.com`;
   await signUp(page, `Owner ${id}`, ownerEmail);
-  await withDb((sql) => sql`delete from aircraft where registration = 'EC-IDR'`);
-  const aircraftId = await seedListedAircraft(ownerEmail, "EC-IDR");
   const letters = id
     .replace(/[^a-z]/g, "")
     .slice(0, 3)
     .toUpperCase()
     .padEnd(3, "X");
-  const otherId = await seedListedAircraft(ownerEmail, `LZ-R${letters}`);
+  const registration = `LZ-R${letters}`;
+  const aircraftId = await seedListedAircraft(ownerEmail, registration);
 
-  // Another aircraft can't use RAF Aviation: it only shares EC-IDR's bookings
-  await page.goto(`/owner/aircraft/${otherId}/sync`);
+  // No key yet: the partner option points to Connected services
+  await page.goto(`/owner/aircraft/${aircraftId}/sync`);
   await expect(page.getByRole("radio", { name: /Partner system/ })).toBeDisabled();
-  await expect(page.getByText("Only for RAF Aviation (EC-IDR).")).toBeVisible();
+  await page.getByRole("link", { name: "Account → Connected services" }).click();
+  await expect(page.getByRole("heading", { name: "Connected services", level: 1 })).toBeVisible();
 
-  // EC-IDR: no key to type; its two RAF bookings block the aircraft at once
+  // The key field: a plain masked text field the browser doesn't save or fill in
+  const field = page.getByLabel("API key", { exact: true });
+  await expect(field).toHaveAttribute("type", "text");
+  await expect(field).toHaveAttribute("autocomplete", "off");
+  await expect(field).toHaveAttribute("data-lpignore", "true");
+
+  // A wrong key is checked with RAF Aviation and refused (not kept)
+  await field.fill("not-the-right-key");
+  await page.getByRole("button", { name: "Save key" }).click();
+  await expect(
+    page.getByText("RAF Aviation refused this key. Check it and try again."),
+  ).toBeVisible();
+  await expect(page.getByText("Not connected.")).toBeVisible();
+
+  // The right one is kept, never shown again
+  await page.getByLabel("API key", { exact: true }).fill("raf-e2e-key");
+  await page.getByRole("button", { name: "Save key" }).click();
+  await expect(
+    page.getByText("Key saved. Your RAF Aviation connections are read with it."),
+  ).toBeVisible();
+  await expect(page.getByText(/Connected: API key ending in …-key/)).toBeVisible();
+  await expect(page.getByLabel("New API key")).toHaveValue("");
+  expect(await page.content()).not.toContain("raf-e2e-key");
+  await expectAccessible(page);
+
+  // Calendar sync reads RAF Aviation for this aircraft's registration
   await page.goto(`/owner/aircraft/${aircraftId}/sync`);
   await page.getByLabel("Name").fill("RAF Aviation");
   await page.getByRole("radio", { name: /Partner system/ }).check();
@@ -237,9 +258,10 @@ test("EC-IDR's owner connects RAF Aviation, read with ownAplane's key (SYN-7)", 
   await page.getByRole("button", { name: "Connect" }).click();
   await expect(page.getByText("Connected and read: 2 busy times.")).toBeVisible();
   await expect(
-    page.getByText(/Reads RAF Aviation's bookings of EC-IDR with ownAplane's key/),
+    page.getByText(
+      `Reads RAF Aviation's bookings for ${registration} with the API key on your account`,
+    ),
   ).toBeVisible();
-  await expect(page.getByText(/2 busy times\. Read every 15 minutes/)).toBeVisible();
   expect(await page.content()).not.toContain("raf-e2e-key");
   await expectAccessible(page);
   const busy = await withDb(

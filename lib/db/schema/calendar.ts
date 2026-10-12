@@ -9,6 +9,7 @@ import {
   index,
   integer,
   pgEnum,
+  primaryKey,
   pgTable,
   text,
   timestamp,
@@ -179,6 +180,38 @@ export const calendarConnections = pgTable(
       "calendar_connections_fields",
       sql`${t.exportFields} <@ array['type', 'status', 'route', 'pilot', 'reference', 'note', 'registration']::text[]
         and ${t.importFields} <@ array['title', 'type', 'status', 'registration']::text[]`,
+    ),
+  ],
+).enableRLS();
+
+/**
+ * An owner's API key for a partner's own API (SYN-7, Account → Connected services), used for all
+ * their aircraft. Stored encrypted (lib/secrets.ts, bound to the user and partner); written and
+ * read only by trusted code (no app access), never sent back to a browser.
+ */
+export const partnerCredentials = pgTable(
+  "partner_credentials",
+  {
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    partner: text("partner").notNull(),
+    /** The key, encrypted (AES-256-GCM); never in clear. */
+    secret: text("secret").notNull(),
+    /** Its last 4 characters, so the owner recognises it. */
+    hint: text("hint").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+    lastUsedAt: timestamp("last_used_at", { withTimezone: true }),
+    /** Why the last use failed (null when it worked). */
+    lastError: text("last_error"),
+  },
+  (t) => [
+    primaryKey({ columns: [t.userId, t.partner] }),
+    check(
+      "partner_credentials_values",
+      sql`${t.partner} in ('rafaviation') and char_length(${t.secret}) <= 2000
+        and char_length(${t.hint}) <= 8 and char_length(${t.lastError}) <= 100`,
     ),
   ],
 ).enableRLS();

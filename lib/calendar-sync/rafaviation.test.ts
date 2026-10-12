@@ -48,6 +48,22 @@ describe("RAF Aviation bookings (SYN-7)", () => {
     expect(events.map((e) => e.id)).toEqual(["2026-10-20T14:00/15:00"]);
   });
 
+  it("takes a booking's registration when the API sends one, else EC-IDR", () => {
+    const events = rafBookingsToEvents({
+      data: [
+        { date: "2026-10-20", from: "10:00", to: "11:00", status: "approved" },
+        {
+          date: "2026-10-21",
+          from: "10:00",
+          to: "11:00",
+          status: "approved",
+          registration: "LZABC",
+        },
+      ],
+    });
+    expect(events.map((e) => e.registration)).toEqual(["EC-IDR", "LZABC"]);
+  });
+
   it("refuses an answer in another format", () => {
     for (const body of [{ data: [{ date: "20.10.2026", from: "10:00", to: "11:00" }] }, []]) {
       expect(() => rafBookingsToEvents(body)).toThrow(FeedError);
@@ -55,12 +71,12 @@ describe("RAF Aviation bookings (SYN-7)", () => {
     expect(rafBookingsToEvents({ data: [] })).toEqual([]);
   });
 
-  it("asks for today (in Sofia) to a year ahead with the key as a Bearer token", async () => {
+  it("asks for the aircraft, today (in Sofia) to a year ahead, with the key as a Bearer token", async () => {
     const fetcher = vi.fn(async () => json({ data: [] }));
     // 22:30 UTC on 12 October is already the 13th in Sofia.
-    await readRafAviation("secret-key", new Date("2026-10-12T22:30:00Z"), fetcher);
+    await readRafAviation("secret-key", "EC-IDR", new Date("2026-10-12T22:30:00Z"), fetcher);
     expect(fetcher).toHaveBeenCalledWith(
-      "https://rafaviation.flights/api/v1/bookings?from=2026-10-13&to=2027-10-14",
+      "https://rafaviation.flights/api/v1/bookings?from=2026-10-13&to=2027-10-14&registration=ECIDR",
       {
         headers: { authorization: "Bearer secret-key", accept: "application/json" },
         trusted: true,

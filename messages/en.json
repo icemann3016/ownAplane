@@ -397,7 +397,8 @@
       "label": "Account sections",
       "general": "General",
       "credentials": "Pilot credentials",
-      "billing": "Plan & billing"
+      "billing": "Plan & billing",
+      "connections": "Connected services"
     },
     "contact": {
       "title": "Contact phone",
@@ -435,6 +436,30 @@
       "save": "Save notifications",
       "saving": "Saving…",
       "saved": "Saved."
+    },
+    "connections": {
+      "title": "Connected services",
+      "description": "Accounts you have with other systems that ownAplane can read for you. Their bookings then block your aircraft here (Calendar sync).",
+      "partnerText": "{partner} shares its bookings through its API. With your API key, ownAplane reads the bookings of your aircraft there (today its API covers {registrations}).",
+      "connected": "Connected: API key ending in …{hint}, saved {date}.",
+      "lastUsed": "Last read {when}.",
+      "lastFailed": "The last read failed: {reason}.",
+      "notConnected": "Not connected.",
+      "safe": "We check the key with {partner}, then store it encrypted. It is never shown again or sent back to your browser, and the field doesn't let your browser save it.",
+      "key": "API key",
+      "newKey": "New API key",
+      "keyHint": "Paste the key from your account there.",
+      "checking": "Checking…",
+      "save": "Save key",
+      "replace": "Replace key",
+      "remove": "Remove key",
+      "removeText": "Your connections to {partner} stop reading until you add a key again.",
+      "useIt": "Then connect it to an aircraft: My aircraft → your aircraft → Calendar sync → Partner system.",
+      "myAircraft": "My aircraft",
+      "keyInvalid": "Paste the whole API key (8 to 500 characters, no spaces).",
+      "keyRefused": "{partner} refused this key. Check it and try again.",
+      "checkFailed": "Couldn't check the key with {partner}: {reason}. Try again in a moment.",
+      "saved": "Key saved. Your {partner} connections are read with it."
     }
   },
   "password": {
@@ -2709,7 +2734,8 @@
       "icalUrl": "iCal link",
       "jsonUrl": "JSON link",
       "partner": "Partner",
-      "partnerOnly": "Only for {list}.",
+      "partnerNeedsKey": "Add your API key first:",
+      "partnerKeyLink": "Account → Connected services",
       "urlHint": "The private link from the other system. webcal:// links work too.",
       "linkIs": "Link:",
       "submit": "Connect",
@@ -2723,7 +2749,7 @@
       },
       "partner": {
         "label": "Partner system",
-        "hint": "Systems ownAplane is connected to, such as RAF Aviation: we read their bookings of your aircraft, nothing to set up."
+        "hint": "Systems with their own API, such as RAF Aviation: add your API key under Account → Connected services, then choose the system here."
       },
       "ical": {
         "label": "iCal link",
@@ -2778,8 +2804,8 @@
       "shownHint": "Give it to the other system's developers. It is sent as: {header}."
     },
     "partner": {
-      "about": "Reads {partner}'s bookings of {registrations} with ownAplane's key. {partner} can see our bookings through the iCal link below.",
-      "otherAircraft": "{partner} shares bookings of {registrations} only, but this aircraft is {registration}, so nothing from {partner} blocks it."
+      "about": "Reads {partner}'s bookings for {registration} with the API key on your account:",
+      "otherAircraft": "{partner}'s API shares bookings of {registrations} only for now, so nothing from {partner} blocks {registration} yet."
     },
     "remove": {
       "button": "Disconnect",
@@ -2801,9 +2827,9 @@
       "too_large": "the calendar is larger than 2 MB",
       "ical_invalid": "it isn't an iCal calendar",
       "json_invalid": "it isn't in the expected JSON format",
-      "key_rejected": "the partner refused ownAplane's key (we've been told)",
+      "key_rejected": "the partner refused your API key",
       "rate_limited": "the partner asked us to slow down; we'll try again later",
-      "partner_unavailable": "this partner isn't set up on ownAplane yet (we've been told)",
+      "partner_unavailable": "there's no API key for this partner on your account",
       "failed": "something went wrong"
     },
     "export": {

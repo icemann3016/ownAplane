@@ -190,7 +190,8 @@ is the secret; resetting it stops the old link. 404 for an unknown or reset link
 `plan_required` once the plan no longer includes it.
 
 Still website-only: calendar sync settings (connections, webhooks), usage exports, account
-settings, the bookings calendar link settings and admin tools.
+settings, the bookings calendar link settings, connected services (partner API keys) and admin
+tools.
 
 ## Calendar sync for other booking systems (SYN-1…8)
 
@@ -204,7 +205,7 @@ a private iCal link with our busy times (without its own, so nothing echoes back
 | publishes an **iCal link** | we read it every 15 minutes and right before a booking is requested or accepted |
 | publishes a **JSON link** | same, format below |
 | only reads ours | subscribes to `/api/v1/calendars/<token>.ics` |
-| is a **partner** with its own API (RAF Aviation, for EC-IDR) | we read it with ownAplane's key, like a link (SYN-7) |
+| is a **partner** with its own API (RAF Aviation) | we read it with the owner's key from Account → Connected services, for the aircraft's registration, like a link (SYN-7) |
 
 ### Push API (API key)
 

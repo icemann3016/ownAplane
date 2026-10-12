@@ -441,8 +441,11 @@ describeDb("calendar sync engine", () => {
     ]);
   });
 
-  it("reads a partner's API with ownAplane's key, for the aircraft it covers (SYN-7)", async () => {
+  it("reads a partner's API with the owner's own encrypted key, per registration (SYN-7)", async () => {
     const partners = await import("@/lib/calendar-sync/partners");
+    const keys = await import("@/lib/calendar-sync/partner-credentials");
+    const { FeedError } = await import("@/lib/calendar-sync/feeds");
+    process.env.BETTER_AUTH_SECRET ??= "test-secret-for-partner-keys-0123456789";
     const owner = db.getDb();
     const base = { aircraftId: plane, name: "RAF Aviation" };
     // A partner connection names a known partner, and only partner connections do.
@@ -455,99 +458,112 @@ describeDb("calendar sync engine", () => {
         "23514",
       );
     }
-    // Offered only when our key is set and to the aircraft whose bookings it shares.
-    const before = process.env.RAFAVIATION_API_KEY;
-    delete process.env.RAFAVIATION_API_KEY;
-    const ecIdr = { registration: "EC-IDR", status: "listed" as const };
-    expect(partners.partnersFor(ecIdr)).toEqual([]);
-    process.env.RAFAVIATION_API_KEY = "raf-site-key";
-    try {
-      expect(partners.partnersFor(ecIdr)).toEqual(["rafaviation"]);
-      expect(partners.partnersFor({ registration: "ECIDR", status: "unlisted" })).toEqual([
-        "rafaviation",
-      ]);
-      expect(partners.partnersFor({ ...ecIdr, status: "draft" })).toEqual([]);
-      expect(partners.partnersFor({ registration: "LZ-SYE", status: "listed" })).toEqual([]);
+    // Offered once the owner added a key (Account → Connected services); never on drafts.
+    const listed = { ownerId: OWNER, status: "listed" as const };
+    expect(await partners.partnersFor(listed)).toEqual([]);
+    await keys.storePartnerKey(OWNER, "rafaviation", "raf-owner-key-1234");
+    expect(await partners.partnersFor(listed)).toEqual(["rafaviation"]);
+    expect(await partners.partnersFor({ ...listed, status: "draft" })).toEqual([]);
+    expect(await partners.partnersFor({ ownerId: OTHER, status: "listed" })).toEqual([]);
+    // Stored encrypted; nobody reads it through the app, not even its owner.
+    const [credential] = await owner.select().from(s.partnerCredentials);
+    expect(credential).toMatchObject({ userId: OWNER, partner: "rafaviation", hint: "1234" });
+    expect(credential!.secret).not.toContain("raf-owner-key");
+    expect(await pgCode(rls.asUser(OWNER, (tx) => tx.select().from(s.partnerCredentials)))).toBe(
+      "42501",
+    );
 
-      const [c] = await rls.asUser(OWNER, (tx) =>
-        tx
-          .insert(s.calendarConnections)
-          .values({ ...base, inbound: "partner", partner: "rafaviation" })
-          .returning(),
-      );
-      const conn = {
-        id: c!.id,
-        inbound: "partner" as const,
-        feedUrl: null,
-        partner: "rafaviation",
-      };
-      const calls: { url: string; auth?: string }[] = [];
-      // RAF Aviation answers with local times in Sofia (UTC+2 in January), next January.
-      const year = new Date().getUTCFullYear() + 1;
-      const raf = async (url: string, options?: { headers?: Record<string, string> }) => {
+    const [c] = await rls.asUser(OWNER, (tx) =>
+      tx
+        .insert(s.calendarConnections)
+        .values({ ...base, inbound: "partner", partner: "rafaviation" })
+        .returning(),
+    );
+    const conn = { id: c!.id, inbound: "partner" as const, feedUrl: null, partner: "rafaviation" };
+    const calls: { url: string; auth?: string }[] = [];
+    // RAF Aviation answers in Sofia local time (UTC+2 in January), next January; with or
+    // without the registration we asked for.
+    const year = new Date().getUTCFullYear() + 1;
+    const raf =
+      (withRegistration: boolean) =>
+      async (url: string, options?: { headers?: Record<string, string> }) => {
         calls.push({ url, auth: options?.headers?.authorization });
+        const registration = withRegistration
+          ? new URL(url).searchParams.get("registration")
+          : undefined;
         return {
           contentType: "application/json",
           text: JSON.stringify({
             data: [
-              { date: `${year}-01-20`, from: "10:00", to: "12:00", status: "approved" },
-              { date: `${year}-01-21`, from: "22:00", to: "01:00", status: "pending" },
+              {
+                date: `${year}-01-20`,
+                from: "10:00",
+                to: "12:00",
+                status: "approved",
+                registration,
+              },
+              {
+                date: `${year}-01-21`,
+                from: "22:00",
+                to: "01:00",
+                status: "pending",
+                registration,
+              },
             ],
           }),
         };
       };
-      const stored = () =>
-        owner
-          .select({ id: s.calendarEntries.externalId })
-          .from(s.calendarEntries)
-          .where(eq(s.calendarEntries.connectionId, c!.id));
+    const stored = () =>
+      owner
+        .select({ id: s.calendarEntries.externalId })
+        .from(s.calendarEntries)
+        .where(eq(s.calendarEntries.connectionId, c!.id));
 
-      // This aircraft (LZ-SYE) isn't EC-IDR: RAF's bookings are read but never block it.
-      expect(await sync.syncConnection(conn, raf)).toEqual({ ok: true, count: 2, conflicts: 0 });
-      expect(calls[0]!.auth).toBe("Bearer raf-site-key");
-      expect(calls[0]!.url).toMatch(
-        /\/api\/v1\/bookings\?from=\d{4}-\d{2}-\d{2}&to=\d{4}-\d{2}-\d{2}$/,
-      );
-      expect(await stored()).toEqual([]);
+    // Asked for this aircraft (LZ-SYE) with the owner's key; its bookings block it, in UTC.
+    expect(await sync.syncConnection(conn, raf(true))).toEqual({
+      ok: true,
+      count: 2,
+      conflicts: 0,
+    });
+    expect(calls[0]!.auth).toBe("Bearer raf-owner-key-1234");
+    expect(new URL(calls[0]!.url).searchParams.get("registration")).toBe("LZSYE");
+    expect((await stored()).map((r) => r.id).sort()).toEqual([
+      `${year}-01-20T10:00/12:00`,
+      `${year}-01-21T22:00/01:00`,
+    ]);
+    const [late] = (await owner.execute(sql`
+      select lower(period) as "from", upper(period) as "to" from public.calendar_entries
+      where connection_id = ${c!.id} and external_id = ${`${year}-01-21T22:00/01:00`}`)) as unknown as {
+      from: Date;
+      to: Date;
+    }[];
+    expect([new Date(late!.from).toISOString(), new Date(late!.to).toISOString()]).toEqual([
+      `${year}-01-21T20:00:00.000Z`,
+      `${year}-01-21T23:00:00.000Z`,
+    ]);
+    expect((await keys.listPartnerCredentials(OWNER))[0]!.lastUsedAt).not.toBeNull();
 
-      // On EC-IDR they block it, in UTC; the one ending after midnight ends the next day.
-      await owner
-        .update(s.aircraft)
-        .set({ registration: "EC-IDR" })
-        .where(eq(s.aircraft.id, plane));
-      expect(await sync.syncConnection(conn, raf)).toEqual({ ok: true, count: 2, conflicts: 0 });
-      expect((await stored()).map((r) => r.id).sort()).toEqual([
-        `${year}-01-20T10:00/12:00`,
-        `${year}-01-21T22:00/01:00`,
-      ]);
-      const [late] = (await owner.execute(sql`
-        select lower(period) as "from", upper(period) as "to" from public.calendar_entries
-        where connection_id = ${c!.id} and external_id = ${`${year}-01-21T22:00/01:00`}`)) as unknown as {
-        from: Date;
-        to: Date;
-      }[];
-      expect([new Date(late!.from).toISOString(), new Date(late!.to).toISOString()]).toEqual([
-        `${year}-01-21T20:00:00.000Z`,
-        `${year}-01-21T23:00:00.000Z`,
-      ]);
+    // Without a registration in the answer they are EC-IDR's (all the API covers): not this one.
+    expect(await sync.syncConnection(conn, raf(false))).toEqual({
+      ok: true,
+      count: 2,
+      conflicts: 0,
+    });
+    expect(await stored()).toEqual([]);
 
-      // Without our key the busy times read before stay, and the owner is told why.
-      delete process.env.RAFAVIATION_API_KEY;
-      expect(await sync.syncConnection(conn, raf)).toEqual({
-        ok: false,
-        error: "partner_unavailable",
-      });
-      expect(await stored()).toHaveLength(2);
-      await rls.asUser(OWNER, (tx) =>
-        tx.delete(s.calendarConnections).where(eq(s.calendarConnections.id, c!.id)),
-      );
-    } finally {
-      await owner
-        .update(s.aircraft)
-        .set({ registration: "LZ-SYE" })
-        .where(eq(s.aircraft.id, plane));
-      if (before === undefined) delete process.env.RAFAVIATION_API_KEY;
-      else process.env.RAFAVIATION_API_KEY = before;
-    }
+    // A refused key is noted on the owner's credential; a removed key stops the reading.
+    const refused = async () => {
+      throw new FeedError("key_rejected", "401");
+    };
+    expect(await sync.syncConnection(conn, refused)).toEqual({ ok: false, error: "key_rejected" });
+    expect((await keys.listPartnerCredentials(OWNER))[0]!.lastError).toBe("key_rejected");
+    await keys.deletePartnerKey(OWNER, "rafaviation");
+    expect(await sync.syncConnection(conn, raf(true))).toEqual({
+      ok: false,
+      error: "partner_unavailable",
+    });
+    await rls.asUser(OWNER, (tx) =>
+      tx.delete(s.calendarConnections).where(eq(s.calendarConnections.id, c!.id)),
+    );
   });
 });
