@@ -910,7 +910,8 @@
       "aircraft": "Avions",
       "audit": "Journal d'audit",
       "api": "API",
-      "billing": "Facturation"
+      "billing": "Facturation",
+      "practice": "Entraînement"
     },
     "dashboard": {
       "title": "Tableau de bord admin",
@@ -1290,6 +1291,32 @@
       "errors": {
         "notFound": "Introuvable. Cela a peut-être changé ; rechargez la page.",
         "invalid": "Vérifiez les valeurs et réessayez."
+      }
+    },
+    "practice": {
+      "title": "Vol d'entraînement",
+      "description": "Essayez la prise en charge et la restitution par le pilote (carnet de vol) sur le site en ligne. Un vol d'entraînement est une réservation acceptée avec vous comme pilote, qui commence maintenant, sur votre propre aéronef d'entraînement. Il n'est jamais publié ni visible dans la recherche, et le propriétaire d'entraînement ne reçoit aucun message.",
+      "note": "Vous essayez le côté pilote : prise en charge, étapes, carburant et huile, remarques et restitution. La confirmation du propriétaire n'en fait pas partie.",
+      "current": {
+        "title": "Votre vol d'entraînement",
+        "text": "Sur {registration}, un Cessna 172 d'entraînement. En lancer un nouveau supprime le précédent avec son carnet de vol.",
+        "flight": "{registration} · {span} · {status}",
+        "link": "Lien vers la réservation",
+        "open": "Ouvrir la réservation (la prise en charge s'y trouve)",
+        "none": "Aucun vol d'entraînement en cours."
+      },
+      "start": "Lancer un vol d'entraînement",
+      "startAgain": "Lancer un nouveau vol d'entraînement",
+      "starting": "Lancement…",
+      "removing": "Suppression…",
+      "remove": {
+        "title": "Supprimer les données d'entraînement",
+        "text": "Supprime votre aéronef d'entraînement avec ses réservations et carnets de vol. Les photos et reçus envoyés sont nettoyés par la tâche quotidienne.",
+        "button": "Supprimer les données d'entraînement"
+      },
+      "removed": "Données d'entraînement supprimées.",
+      "errors": {
+        "no_airfield": "Il n'y a pas encore d'aérodromes : importez-les d'abord."
       }
     }
   },

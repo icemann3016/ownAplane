@@ -45,3 +45,13 @@ its bookings. Bookings they made as a pilot, reviews and messages stay for the o
 as a former member. It isn't possible while the member has open bookings (requested, accepted or
 in progress): suspend them meanwhile. Admin accounts can't be deleted here; remove the admin role
 first. Members can also delete their own account under **Account → Your data**.
+
+## Practice flight
+
+**Admin → Practice** lets you try the pilot's side of a rental on the live site: **Start a
+practice flight** makes an accepted booking with you as pilot, starting now, on your own practice
+aircraft (registration `ZZ-…`, a practice Cessna 172). You land on the booking: **Check out**,
+add legs, fuel, oil and remarks, and check in like a pilot would. The practice aircraft is never
+listed or searchable, and its practice owner gets no messages; the owner's confirmation isn't
+part of it. Starting again replaces the previous practice flight; **Remove practice data**
+deletes your practice aircraft with its bookings.

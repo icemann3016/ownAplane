@@ -910,7 +910,8 @@
       "aircraft": "Aerei",
       "audit": "Registro di controllo",
       "api": "API",
-      "billing": "Fatturazione"
+      "billing": "Fatturazione",
+      "practice": "Prova"
     },
     "dashboard": {
       "title": "Panoramica admin",
@@ -1290,6 +1291,32 @@
       "errors": {
         "notFound": "Non trovato. Potrebbe essere cambiato; ricarica la pagina.",
         "invalid": "Controlla i valori e riprova."
+      }
+    },
+    "practice": {
+      "title": "Volo di prova",
+      "description": "Prova il ritiro e la riconsegna del pilota (registro di volo) sul sito live. Un volo di prova è una prenotazione accettata con te come pilota, che inizia ora, sul tuo aeromobile di prova. Non è mai pubblicato né visibile nella ricerca, e il proprietario di prova non riceve messaggi.",
+      "note": "Provi il lato del pilota: ritiro, tratte, carburante e olio, osservazioni e riconsegna. La conferma del proprietario non ne fa parte.",
+      "current": {
+        "title": "Il tuo volo di prova",
+        "text": "Su {registration}, un Cessna 172 di prova. Avviarne uno nuovo rimuove il precedente con il suo registro di volo.",
+        "flight": "{registration} · {span} · {status}",
+        "link": "Link alla prenotazione",
+        "open": "Apri la prenotazione (lì c'è il ritiro)",
+        "none": "Nessun volo di prova aperto."
+      },
+      "start": "Avvia un volo di prova",
+      "startAgain": "Avvia un nuovo volo di prova",
+      "starting": "Avvio…",
+      "removing": "Rimozione…",
+      "remove": {
+        "title": "Rimuovi i dati di prova",
+        "text": "Elimina il tuo aeromobile di prova con le sue prenotazioni e i registri di volo. Le foto e le ricevute caricate vengono ripulite dal processo giornaliero.",
+        "button": "Rimuovi i dati di prova"
+      },
+      "removed": "Dati di prova rimossi.",
+      "errors": {
+        "no_airfield": "Non ci sono ancora aeroporti: importali prima."
       }
     }
   },

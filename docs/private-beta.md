@@ -8,7 +8,9 @@ public launch. Collect what's confusing and what's missing.
 - [ ] Production checklist in `docs/deployment.md` done (backups, real email, monitoring).
 - [ ] Terms and privacy reviewed by the lawyer; company details filled in (`content/legal`).
 - [ ] At least two admins (`npm run admin:grant -- email`) to verify documents within a day.
-- [ ] Demo data **not** on production (it's for demos on a separate database).
+- [ ] Demo data **not** on production (it's for demos on a separate database). To try the
+      check-out and check-in on production, admins use **Admin → Practice** instead: a hidden
+      practice aircraft per admin, removable with one click.
 
 ## Demo data for presentations
 

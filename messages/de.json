@@ -910,7 +910,8 @@
       "aircraft": "Flugzeuge",
       "audit": "Prüfprotokoll",
       "api": "API",
-      "billing": "Abrechnung"
+      "billing": "Abrechnung",
+      "practice": "Übung"
     },
     "dashboard": {
       "title": "Admin-Übersicht",
@@ -1290,6 +1291,32 @@
       "errors": {
         "notFound": "Nicht gefunden. Vielleicht hat es sich geändert; laden Sie die Seite neu.",
         "invalid": "Prüfen Sie die Werte und versuchen Sie es erneut."
+      }
+    },
+    "practice": {
+      "title": "Übungsflug",
+      "description": "Probieren Sie Check-out und Check-in des Piloten (Flugprotokoll) auf der Live-Website aus. Ein Übungsflug ist eine angenommene Buchung mit Ihnen als Pilot, die jetzt beginnt, auf Ihrem eigenen Übungsflugzeug. Es wird nie gelistet oder in der Suche gezeigt, und der Übungshalter erhält keine Nachrichten.",
+      "note": "Sie probieren die Seite des Piloten aus: Check-out, Flugabschnitte, Kraftstoff und Öl, Bemerkungen und Check-in. Die Bestätigung durch den Halter gehört nicht dazu.",
+      "current": {
+        "title": "Ihr Übungsflug",
+        "text": "Mit {registration}, einer Übungs-Cessna 172. Ein neuer Übungsflug entfernt den vorherigen mit seinem Flugprotokoll.",
+        "flight": "{registration} · {span} · {status}",
+        "link": "Link zur Buchung",
+        "open": "Buchung öffnen (dort ist der Check-out)",
+        "none": "Kein offener Übungsflug."
+      },
+      "start": "Übungsflug starten",
+      "startAgain": "Neuen Übungsflug starten",
+      "starting": "Wird gestartet…",
+      "removing": "Wird entfernt…",
+      "remove": {
+        "title": "Übungsdaten entfernen",
+        "text": "Löscht Ihr Übungsflugzeug mit seinen Buchungen und Flugprotokollen. Hochgeladene Fotos und Belege räumt der tägliche Job auf.",
+        "button": "Übungsdaten entfernen"
+      },
+      "removed": "Übungsdaten entfernt.",
+      "errors": {
+        "no_airfield": "Es gibt noch keine Flugplätze: Importieren Sie sie zuerst."
       }
     }
   },

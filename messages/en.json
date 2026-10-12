@@ -910,7 +910,8 @@
       "aircraft": "Aircraft",
       "audit": "Audit log",
       "api": "API",
-      "billing": "Billing"
+      "billing": "Billing",
+      "practice": "Practice"
     },
     "dashboard": {
       "title": "Admin dashboard",
@@ -1290,6 +1291,32 @@
       "errors": {
         "notFound": "Not found. It may have changed; reload the page.",
         "invalid": "Check the values and try again."
+      }
+    },
+    "practice": {
+      "title": "Practice flight",
+      "description": "Try the pilot's check-out and check-in (flight log) on the live site. A practice flight is an accepted booking with you as pilot, starting now, on your own practice aircraft. It is never listed or searchable, and the practice owner gets no messages.",
+      "note": "You try the pilot's side: check-out, legs, fuel and oil, remarks and check-in. The owner's confirmation isn't part of it.",
+      "current": {
+        "title": "Your practice flight",
+        "text": "On {registration}, a practice Cessna 172. Starting a new one removes the previous one with its flight log.",
+        "flight": "{registration} · {span} · {status}",
+        "link": "Link to the booking",
+        "open": "Open the booking (Check out is there)",
+        "none": "No open practice flight."
+      },
+      "start": "Start a practice flight",
+      "startAgain": "Start a new practice flight",
+      "starting": "Starting…",
+      "removing": "Removing…",
+      "remove": {
+        "title": "Remove practice data",
+        "text": "Deletes your practice aircraft with its bookings and flight logs. Uploaded photos and receipts are cleaned up by the daily job.",
+        "button": "Remove practice data"
+      },
+      "removed": "Practice data removed.",
+      "errors": {
+        "no_airfield": "There are no airfields yet: import them first."
       }
     }
   },

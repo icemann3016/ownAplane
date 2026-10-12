@@ -910,7 +910,8 @@
       "aircraft": "Aviones",
       "audit": "Registro de auditoría",
       "api": "API",
-      "billing": "Facturación"
+      "billing": "Facturación",
+      "practice": "Práctica"
     },
     "dashboard": {
       "title": "Panel de admin",
@@ -1290,6 +1291,32 @@
       "errors": {
         "notFound": "No encontrado. Puede que haya cambiado; recarga la página.",
         "invalid": "Revisa los valores e inténtalo de nuevo."
+      }
+    },
+    "practice": {
+      "title": "Vuelo de práctica",
+      "description": "Prueba la recogida y la entrega del piloto (registro de vuelo) en el sitio en vivo. Un vuelo de práctica es una reserva aceptada contigo como piloto, que empieza ahora, en tu propia aeronave de práctica. Nunca se publica ni aparece en la búsqueda, y el propietario de práctica no recibe mensajes.",
+      "note": "Pruebas el lado del piloto: recogida, tramos, combustible y aceite, observaciones y entrega. La confirmación del propietario no forma parte de ello.",
+      "current": {
+        "title": "Tu vuelo de práctica",
+        "text": "En {registration}, un Cessna 172 de práctica. Empezar uno nuevo elimina el anterior con su registro de vuelo.",
+        "flight": "{registration} · {span} · {status}",
+        "link": "Enlace a la reserva",
+        "open": "Abrir la reserva (allí está la recogida)",
+        "none": "No hay ningún vuelo de práctica abierto."
+      },
+      "start": "Empezar un vuelo de práctica",
+      "startAgain": "Empezar un nuevo vuelo de práctica",
+      "starting": "Empezando…",
+      "removing": "Eliminando…",
+      "remove": {
+        "title": "Eliminar los datos de práctica",
+        "text": "Borra tu aeronave de práctica con sus reservas y registros de vuelo. Las fotos y recibos subidos los limpia la tarea diaria.",
+        "button": "Eliminar los datos de práctica"
+      },
+      "removed": "Datos de práctica eliminados.",
+      "errors": {
+        "no_airfield": "Aún no hay aeródromos: impórtalos primero."
       }
     }
   },
