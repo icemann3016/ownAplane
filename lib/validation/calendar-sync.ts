@@ -1,9 +1,17 @@
 import { z } from "zod";
 
-// Connecting an aircraft to another booking system (SYN-1, SYN-4). Messages are keys in
+import { PARTNERS } from "@/lib/calendar-sync/partner-list";
+
+// Connecting an aircraft to another booking system (SYN-1, SYN-4, SYN-7). Messages are keys in
 // messages/*.json → "validation".
 
-export const CONNECTION_KINDS = ["push", "ical", "json", "none"] as const;
+export const CONNECTION_KINDS = ["push", "partner", "ical", "json", "none"] as const;
+
+/** A partner's API key as the owner pastes it: no spaces, 8–500 characters. */
+export const partnerKeySchema = z
+  .string()
+  .trim()
+  .regex(/^\S{8,500}$/, "partnerKeyInvalid");
 
 /** Calendar apps often hand out webcal:// links; they are https underneath. */
 const normalizeLink = (v: string) => v.trim().replace(/^webcals?:\/\//i, "https://");
@@ -14,8 +22,16 @@ export const connectionSchema = z
     name: z.string().trim().min(1, "connectionNameRequired").max(80, "textTooLong"),
     inbound: z.enum(CONNECTION_KINDS),
     feedUrl: z.string().optional().default("").transform(normalizeLink),
+    partner: z.enum(PARTNERS).optional(),
+    apiKey: z.string().optional().default(""),
   })
   .superRefine((d, ctx) => {
+    if (d.inbound === "partner") {
+      if (!d.partner) ctx.addIssue({ code: "custom", path: ["partner"], message: "fieldRequired" });
+      if (!partnerKeySchema.safeParse(d.apiKey).success) {
+        ctx.addIssue({ code: "custom", path: ["apiKey"], message: "partnerKeyInvalid" });
+      }
+    }
     if (d.inbound !== "ical" && d.inbound !== "json") return;
     let ok = false;
     try {
@@ -28,6 +44,8 @@ export const connectionSchema = z
   .transform((d) => ({
     ...d,
     feedUrl: d.inbound === "ical" || d.inbound === "json" ? d.feedUrl : null,
+    partner: d.inbound === "partner" ? (d.partner ?? null) : null,
+    apiKey: d.inbound === "partner" ? d.apiKey.trim() : null,
   }));
 
 /** A webhook address (SYN-6): https only, at most 500 characters. */

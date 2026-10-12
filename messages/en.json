@@ -235,6 +235,7 @@
     "oilRose": "Oil after can't be higher than oil before. Record oil you added with “Add fuel or oil”.",
     "connectionNameRequired": "Give the connection a name.",
     "feedUrlInvalid": "Enter the full https:// link.",
+    "partnerKeyInvalid": "Paste the whole API key (8 to 500 characters, no spaces).",
     "meterRequired": "Enter the Hobbs or the tach reading.",
     "durationInvalid": "Enter hours:minutes, e.g. 1:25.",
     "fieldRequired": "Required.",
@@ -2681,6 +2682,9 @@
       "how": "How do its bookings reach us?",
       "icalUrl": "iCal link",
       "jsonUrl": "JSON link",
+      "partner": "Partner",
+      "partnerKey": "API key from the partner",
+      "partnerKeyHint": "We use it only to read their bookings and never show it again; you'll see its last 4 characters.",
       "urlHint": "The private link from the other system. webcal:// links work too.",
       "linkIs": "Link:",
       "submit": "Connect",
@@ -2691,6 +2695,10 @@
       "push": {
         "label": "It sends them to us (API)",
         "hint": "Real-time sync for a system that can call a web address. You get an API key for its developers."
+      },
+      "partner": {
+        "label": "Partner system (API key)",
+        "hint": "Systems we work with directly, such as RAF Aviation: paste the API key they gave you and we read their bookings."
       },
       "ical": {
         "label": "iCal link",
@@ -2709,6 +2717,7 @@
       "push": "Connected. Copy the API key now: it is shown only once.",
       "synced": "Connected and read: {count, plural, =0 {no busy times} one {# busy time} other {# busy times}}.",
       "failed": "Connected, but the link couldn't be read: {reason}.",
+      "partnerFailed": "Connected, but its bookings couldn't be read: {reason}.",
       "none": "Connected. Use the iCal link below in the other system."
     },
     "synced": "Read: {count, plural, =0 {no busy times} one {# busy time} other {# busy times}}.",
@@ -2719,8 +2728,8 @@
     "keyReplaced": "New API key created. The old one no longer works.",
     "status": {
       "never": "Not read yet.",
-      "ok": "Last read {when} UTC: {count, plural, =0 {no busy times} one {# busy time} other {# busy times}}. Read every 15 minutes and before each booking.",
-      "error": "Reading it failed at {when} UTC: {reason}. The busy times read before stay in place.",
+      "ok": "Last read {when}: {count, plural, =0 {no busy times} one {# busy time} other {# busy times}}. Read every 15 minutes and before each booking.",
+      "error": "Reading it failed at {when}: {reason}. The busy times read before stay in place.",
       "push": "{count, plural, =0 {No busy times sent yet} one {# busy time from this system} other {# busy times from this system}}.",
       "none": "This system only reads our iCal link."
     },
@@ -2743,6 +2752,14 @@
       "shown": "API key (shown only once)",
       "shownHint": "Give it to the other system's developers. It is sent as: {header}."
     },
+    "partnerKey": {
+      "about": "Reads {partner}'s bookings of {registrations} with your API key ending in …{hint}. {partner} can see our bookings through the iCal link below.",
+      "otherAircraft": "{partner} shares bookings of {registrations} only, but this aircraft is {registration}: those bookings will block it. Connect {partner} on {registrations} instead.",
+      "replace": "New API key",
+      "save": "Save key",
+      "saved": "Key saved. Read {count, plural, =0 {no busy times} one {# busy time} other {# busy times}}.",
+      "failed": "Key saved, but the bookings couldn't be read: {reason}."
+    },
     "remove": {
       "button": "Disconnect",
       "title": "Disconnect {name}?",
@@ -2762,6 +2779,8 @@
       "too_large": "the calendar is larger than 2 MB",
       "ical_invalid": "it isn't an iCal calendar",
       "json_invalid": "it isn't in the expected JSON format",
+      "key_rejected": "the partner refused the API key",
+      "rate_limited": "the partner asked us to slow down; we'll try again later",
       "failed": "something went wrong"
     },
     "export": {

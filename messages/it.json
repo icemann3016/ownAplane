@@ -235,6 +235,7 @@
     "oilRose": "L’olio dopo non può essere superiore a quello prima. Registra l’olio aggiunto con «Aggiungi carburante o olio».",
     "connectionNameRequired": "Dai un nome al collegamento.",
     "feedUrlInvalid": "Inserisci il link completo con https://.",
+    "partnerKeyInvalid": "Incolla l'intera chiave API (da 8 a 500 caratteri, senza spazi).",
     "meterRequired": "Inserisci la lettura dell'Hobbs o del contagiri.",
     "durationInvalid": "Inserisci ore:minuti, es. 1:25.",
     "fieldRequired": "Campo obbligatorio.",
@@ -2681,6 +2682,9 @@
       "how": "Come ci arrivano le sue prenotazioni?",
       "icalUrl": "Link iCal",
       "jsonUrl": "Link JSON",
+      "partner": "Partner",
+      "partnerKey": "Chiave API del partner",
+      "partnerKeyHint": "La usiamo solo per leggere le loro prenotazioni e non la mostriamo mai più; vedrai i suoi ultimi 4 caratteri.",
       "urlHint": "Il link privato dell’altro sistema. Funzionano anche i link webcal://.",
       "linkIs": "Link:",
       "submit": "Collega",
@@ -2691,6 +2695,10 @@
       "push": {
         "label": "Ce le invia (API)",
         "hint": "Sincronizzazione in tempo reale per un sistema in grado di chiamare un indirizzo web. Ricevi una chiave API per i suoi sviluppatori."
+      },
+      "partner": {
+        "label": "Sistema partner (chiave API)",
+        "hint": "Sistemi con cui lavoriamo direttamente, come RAF Aviation: incolla la chiave API che ti hanno dato e leggiamo le loro prenotazioni."
       },
       "ical": {
         "label": "Link iCal",
@@ -2709,6 +2717,7 @@
       "push": "Collegato. Copia ora la chiave API: viene mostrata una sola volta.",
       "synced": "Collegato e letto: {count, plural, =0 {nessun periodo occupato} one {# periodo occupato} other {# periodi occupati}}.",
       "failed": "Collegato, ma non è stato possibile leggere il link: {reason}.",
+      "partnerFailed": "Collegato, ma non è stato possibile leggere le prenotazioni: {reason}.",
       "none": "Collegato. Usa il link iCal qui sotto nell’altro sistema."
     },
     "synced": "Letto: {count, plural, =0 {nessun periodo occupato} one {# periodo occupato} other {# periodi occupati}}.",
@@ -2719,8 +2728,8 @@
     "keyReplaced": "Nuova chiave API creata. La vecchia non funziona più.",
     "status": {
       "never": "Non ancora letto.",
-      "ok": "Ultima lettura {when} UTC: {count, plural, =0 {nessun periodo occupato} one {# periodo occupato} other {# periodi occupati}}. Letto ogni 15 minuti e prima di ogni prenotazione.",
-      "error": "La lettura delle {when} UTC non è riuscita: {reason}. I periodi letti in precedenza restano.",
+      "ok": "Ultima lettura {when}: {count, plural, =0 {nessun periodo occupato} one {# periodo occupato} other {# periodi occupati}}. Letto ogni 15 minuti e prima di ogni prenotazione.",
+      "error": "La lettura delle {when} non è riuscita: {reason}. I periodi letti in precedenza restano.",
       "push": "{count, plural, =0 {Ancora nessun periodo inviato} one {# periodo occupato da questo sistema} other {# periodi occupati da questo sistema}}.",
       "none": "Questo sistema legge solo il nostro link iCal."
     },
@@ -2743,6 +2752,14 @@
       "shown": "Chiave API (mostrata una sola volta)",
       "shownHint": "Consegnala agli sviluppatori dell’altro sistema. Si invia così: {header}."
     },
+    "partnerKey": {
+      "about": "Legge le prenotazioni di {partner} per {registrations} con la tua chiave API che termina con …{hint}. {partner} vede le nostre prenotazioni tramite il link iCal qui sotto.",
+      "otherAircraft": "{partner} condivide solo le prenotazioni di {registrations}, ma questo aeromobile è {registration}: quelle prenotazioni lo bloccheranno. Collega invece {partner} a {registrations}.",
+      "replace": "Nuova chiave API",
+      "save": "Salva la chiave",
+      "saved": "Chiave salvata. Letto: {count, plural, =0 {nessun periodo occupato} one {# periodo occupato} other {# periodi occupati}}.",
+      "failed": "Chiave salvata, ma non è stato possibile leggere le prenotazioni: {reason}."
+    },
     "remove": {
       "button": "Scollega",
       "title": "Scollegare {name}?",
@@ -2762,6 +2779,8 @@
       "too_large": "il calendario supera i 2 MB",
       "ical_invalid": "non è un calendario iCal",
       "json_invalid": "non è nel formato JSON previsto",
+      "key_rejected": "il partner ha rifiutato la chiave API",
+      "rate_limited": "il partner ci ha chiesto di rallentare; riproveremo più tardi",
       "failed": "qualcosa è andato storto"
     },
     "export": {

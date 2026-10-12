@@ -5,6 +5,7 @@ import { defineConfig, devices } from "@playwright/test";
 const PORT = 3000;
 const WEATHER_PORT = 4555;
 const OCR_PORT = 4556;
+const RAF_PORT = 4557;
 const isCI = !!process.env.CI;
 
 // CI: dummy Apple and Facebook keys (Google's are in ci.yml) show the buttons, so the redirects
@@ -41,12 +42,14 @@ export default defineConfig({
       url: `http://localhost:${PORT}`,
       reuseExistingServer: !isCI,
       timeout: 180_000,
-      // Weather and the AI reading of scans come from local stand-ins (tests/e2e/fixtures).
+      // Weather, the AI reading of scans and RAF Aviation's API come from local stand-ins
+      // (tests/e2e/fixtures).
       env: {
         WEATHER_API_URL: `http://127.0.0.1:${WEATHER_PORT}/api/data`,
         OCR_API_URL: `http://127.0.0.1:${OCR_PORT}/v1/messages`,
         ANTHROPIC_API_KEY: "test-key",
         OCR_MODEL: "test-model",
+        RAFAVIATION_API_URL: `http://127.0.0.1:${RAF_PORT}`,
       },
     },
     {
@@ -60,6 +63,12 @@ export default defineConfig({
       port: OCR_PORT,
       reuseExistingServer: !isCI,
       env: { OCR_MOCK_PORT: String(OCR_PORT) },
+    },
+    {
+      command: `node tests/e2e/fixtures/raf-mock.mjs`,
+      port: RAF_PORT,
+      reuseExistingServer: !isCI,
+      env: { RAF_MOCK_PORT: String(RAF_PORT) },
     },
   ],
 });

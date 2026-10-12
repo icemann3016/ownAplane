@@ -512,6 +512,13 @@
       "when": 1791720578117,
       "tag": "0072_booking_feeds",
       "breakpoints": true
+    },
+    {
+      "idx": 73,
+      "version": "7",
+      "when": 1791813747974,
+      "tag": "0073_calendar_partners",
+      "breakpoints": true
     }
   ]
 }

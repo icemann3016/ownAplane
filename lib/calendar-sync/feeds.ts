@@ -6,24 +6,16 @@ import { z } from "zod";
 
 import { zonedToUtc } from "@/lib/domain/time";
 import { type ExternalEvent, SYNC_AHEAD_MS, SYNC_PAST_MS } from "./events";
+import type { FeedErrorCode } from "./feed-errors";
 
 // Reading another system's busy times from a link (SYN-1): an iCal feed (Google Calendar,
 // Outlook, most booking systems) or a simple JSON list (easy to add to a custom system; format
 // in docs/api.md). Errors are FeedErrors with a code the owner sees, translated.
 
-export type FeedErrorCode =
-  | "url_invalid"
-  | "address_blocked"
-  | "unreachable"
-  | "http_error"
-  | "too_large"
-  | "ical_invalid"
-  | "json_invalid";
-
 export class FeedError extends Error {
   constructor(
     readonly code: FeedErrorCode,
-    detail?: string,
+    readonly detail?: string,
   ) {
     super(detail ? `${code}: ${detail}` : code);
   }
@@ -81,8 +73,20 @@ export async function assertPublic(url: URL) {
   }
 }
 
+export type FetchOptions = {
+  /** Extra headers, e.g. a partner's API key (SYN-7): 401/403 then mean the key was refused and
+   * 429 that the partner wants fewer requests. */
+  headers?: Record<string, string>;
+  /** The address comes from our own configuration, not from an owner (a partner's API; local
+   * stand-ins in tests), so it isn't checked for being public. */
+  trusted?: boolean;
+};
+
 /** GET a public https link (redirects checked too), at most 2 MB and 8 seconds. */
-export async function fetchFeed(link: string): Promise<{ text: string; contentType: string }> {
+export async function fetchFeed(
+  link: string,
+  options: FetchOptions = {},
+): Promise<{ text: string; contentType: string }> {
   let url: URL;
   try {
     url = new URL(link);
@@ -91,22 +95,31 @@ export async function fetchFeed(link: string): Promise<{ text: string; contentTy
   }
   const signal = AbortSignal.timeout(TIMEOUT_MS);
   for (let hop = 0; hop <= MAX_REDIRECTS; hop++) {
-    await assertPublic(url);
+    if (!options.trusted) await assertPublic(url);
     let res: Response;
     try {
       res = await fetch(url, {
         redirect: "manual",
         signal,
-        headers: { accept: "text/calendar, application/json;q=0.9, */*;q=0.5" },
+        headers: {
+          accept: "text/calendar, application/json;q=0.9, */*;q=0.5",
+          ...options.headers,
+        },
       });
     } catch (e) {
       throw new FeedError("unreachable", e instanceof Error ? e.message : undefined);
     }
     const location = res.headers.get("location");
     if (res.status >= 300 && res.status < 400 && location) {
+      // Never to another address with a key, nor unchecked from a trusted one.
+      if (options.headers || options.trusted) throw new FeedError("http_error", String(res.status));
       url = new URL(location, url);
       continue;
     }
+    if (options.headers && (res.status === 401 || res.status === 403)) {
+      throw new FeedError("key_rejected", String(res.status));
+    }
+    if (options.headers && res.status === 429) throw new FeedError("rate_limited");
     if (!res.ok) throw new FeedError("http_error", String(res.status));
     if (Number(res.headers.get("content-length") ?? 0) > MAX_BYTES)
       throw new FeedError("too_large");

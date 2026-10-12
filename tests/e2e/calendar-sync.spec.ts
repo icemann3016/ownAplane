@@ -204,3 +204,44 @@ test("another system pushes its bookings and never double-books the aircraft", a
   await expect(page.getByLabel("API key (shown only once)")).toBeVisible();
   expect((await club("/api/v1/sync")).status).toBe(401);
 });
+
+test("an owner reads RAF Aviation's bookings with their API key (SYN-7)", async ({ page }) => {
+  test.setTimeout(90_000);
+  const id = unique();
+  const ownerEmail = `raf-owner-${id}@example.com`;
+  await signUp(page, `Owner ${id}`, ownerEmail);
+  const letters = id
+    .replace(/[^a-z]/g, "")
+    .slice(0, 3)
+    .toUpperCase()
+    .padEnd(3, "X");
+  const aircraftId = await seedListedAircraft(ownerEmail, `LZ-R${letters}`);
+
+  // A wrong key: connected, but RAF Aviation refuses it
+  await page.goto(`/owner/aircraft/${aircraftId}/sync`);
+  await page.getByLabel("Name").fill("RAF Aviation");
+  await page.getByRole("radio", { name: /Partner system \(API key\)/ }).check();
+  await expect(page.getByLabel("Partner", { exact: true })).toHaveValue("rafaviation");
+  await page.getByLabel("API key from the partner").fill("not-the-right-key");
+  await page.getByRole("button", { name: "Connect" }).click();
+  await expect(
+    page.getByText(/Connected, but its bookings couldn't be read: the partner refused the API key/),
+  ).toBeVisible();
+  // The aircraft isn't EC-IDR, the only one RAF Aviation shares
+  await expect(page.getByText(/RAF Aviation shares bookings of EC-IDR only/)).toBeVisible();
+  await expect(page.getByText(/with your API key ending in …-key/)).toBeVisible();
+  await expectAccessible(page);
+
+  // The right key: its two bookings block the aircraft; the key is never sent back
+  await page.getByLabel("New API key").fill("raf-e2e-key");
+  await page.getByRole("button", { name: "Save key" }).click();
+  await expect(page.getByText("Key saved. Read 2 busy times.")).toBeVisible();
+  await expect(page.getByText(/2 busy times\. Read every 15 minutes/)).toBeVisible();
+  expect(await page.content()).not.toContain("raf-e2e-key");
+  const busy = await withDb(
+    (sql) => sql<{ count: number }[]>`
+      select count(*)::int as count from calendar_entries
+      where aircraft_id = ${aircraftId} and active and connection_id is not null`,
+  );
+  expect(busy[0]!.count).toBe(2);
+});

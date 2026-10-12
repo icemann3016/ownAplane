@@ -13,6 +13,13 @@ Give the connection a name and choose how the other system's bookings reach us:
   for example your own or your club's software. Its bookings arrive the moment they are made.
   You get an **API key**, shown only once: give it to the system's developers, with the link to
   the instructions on the connection.
+- **Partner system (API key):** systems we work with directly. Today that is **RAF Aviation**:
+  ask them for an API key, choose RAF Aviation and paste the key. We keep it safe, use it only to
+  read their bookings and never show it again (you see its last 4 characters; paste a new one on
+  the connection if they replace it). RAF Aviation shares the bookings of **EC-IDR**, in Sofia
+  time; we turn them into UTC. Their pending bookings block the time too, unless you choose to
+  take the booking status (then only approved ones block). For them to see our bookings, give
+  them the connection's iCal link.
 - **iCal link:** Google Calendar, Outlook and most booking systems have a private iCal address
   (in Google Calendar: Settings → your calendar → "Secret address in iCal format"). Paste it
   here; `webcal://` links work too.
@@ -27,7 +34,7 @@ You can connect up to 10 systems per aircraft.
 - They **block the time** here like your own blocks. Pilots only see "unavailable" (or
   "maintenance", if you take the type), never names or details. In your calendar they show
   "From" and the connection's name, and their title if you take it.
-- iCal and JSON links are read **every 15 minutes**, and again **right before** a booking is
+- iCal and JSON links and partner systems are read **every 15 minutes**, and again **right before** a booking is
   requested or accepted, so a time booked there a minute ago can't be booked here.
 - If a link can't be read, the connection says why, and the busy times read before stay in
   place.

@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { beforeAll, expect, it } from "vitest";
 
 import { describeDb, prepareDatabase } from "./setup";
@@ -348,6 +348,7 @@ describeDb("calendar sync engine", () => {
       id: connectionId,
       inbound: "json" as const,
       feedUrl: "https://club.example/b.json",
+      partner: null,
     };
     const ok = await sync.syncConnection(conn, async () => ({
       text: JSON.stringify({ busy: [{ id: "f1", start: at(9, 8), end: at(9, 9) }] }),
@@ -438,5 +439,86 @@ describeDb("calendar sync engine", () => {
       ["lesson", "unavailable", null],
       ["other", "unavailable", null],
     ]);
+  });
+
+  it("reads a partner's API with the owner's key, which nobody reads back (SYN-7)", async () => {
+    const partners = await import("@/lib/calendar-sync/partners");
+    const owner = db.getDb();
+    const base = { aircraftId: plane, name: "RAF Aviation" };
+    // A partner connection names a known partner, and only partner connections do.
+    for (const values of [
+      { inbound: "partner" as const },
+      { inbound: "partner" as const, partner: "somebody" },
+      { inbound: "json" as const, feedUrl: "https://a.example/b.json", partner: "rafaviation" },
+    ]) {
+      expect(await pgCode(owner.insert(s.calendarConnections).values({ ...base, ...values }))).toBe(
+        "23514",
+      );
+    }
+    const [c] = await rls.asUser(OWNER, (tx) =>
+      tx
+        .insert(s.calendarConnections)
+        .values({ ...base, inbound: "partner", partner: "rafaviation", apiKeyHint: "abcd" })
+        .returning(),
+    );
+    const conn = { id: c!.id, inbound: "partner" as const, feedUrl: null, partner: "rafaviation" };
+    const calls: { url: string; auth?: string }[] = [];
+    // RAF Aviation answers with local times in Sofia (UTC+2 in January), next January.
+    const year = new Date().getUTCFullYear() + 1;
+    const raf = async (url: string, options?: { headers?: Record<string, string> }) => {
+      calls.push({ url, auth: options?.headers?.authorization });
+      return {
+        contentType: "application/json",
+        text: JSON.stringify({
+          data: [
+            { date: `${year}-01-20`, from: "10:00", to: "12:00", status: "approved" },
+            { date: `${year}-01-21`, from: "22:00", to: "01:00", status: "pending" },
+          ],
+        }),
+      };
+    };
+    expect(await sync.syncConnection(conn, raf)).toEqual({ ok: false, error: "key_rejected" });
+    await partners.savePartnerKey(c!.id, "raf-first-key");
+    await partners.savePartnerKey(c!.id, "raf-test-key-abcd"); // replaced
+    expect(await sync.syncConnection(conn, raf)).toEqual({ ok: true, count: 2, conflicts: 0 });
+    expect(calls).toHaveLength(1);
+    expect(calls[0]!.auth).toBe("Bearer raf-test-key-abcd");
+    expect(calls[0]!.url).toMatch(
+      /\/api\/v1\/bookings\?from=\d{4}-\d{2}-\d{2}&to=\d{4}-\d{2}-\d{2}$/,
+    );
+    const rows = await owner
+      .select({ id: s.calendarEntries.externalId, period: s.calendarEntries.period })
+      .from(s.calendarEntries)
+      .where(eq(s.calendarEntries.connectionId, c!.id));
+    expect(rows.map((r) => r.id).sort()).toEqual([
+      `${year}-01-20T10:00/12:00`,
+      `${year}-01-21T22:00/01:00`,
+    ]);
+    const [late] = (await owner.execute(sql`
+      select lower(period) as "from", upper(period) as "to" from public.calendar_entries
+      where connection_id = ${c!.id} and external_id = ${`${year}-01-21T22:00/01:00`}`)) as unknown as {
+      from: Date;
+      to: Date;
+    }[];
+    expect([new Date(late!.from).toISOString(), new Date(late!.to).toISOString()]).toEqual([
+      `${year}-01-21T20:00:00.000Z`,
+      `${year}-01-21T23:00:00.000Z`,
+    ]);
+    // Nobody reads the key through the app, not even the aircraft's owner or an admin.
+    expect(await pgCode(rls.asUser(OWNER, (tx) => tx.select().from(s.calendarPartnerKeys)))).toBe(
+      "42501",
+    );
+    expect(
+      await pgCode(
+        rls.asUser(OWNER, (tx) =>
+          tx.insert(s.calendarPartnerKeys).values({ connectionId: c!.id, apiKey: "x".repeat(10) }),
+        ),
+      ),
+    ).toBe("42501");
+    // Disconnecting removes the key and the busy times with it.
+    await rls.asUser(OWNER, (tx) =>
+      tx.delete(s.calendarConnections).where(eq(s.calendarConnections.id, c!.id)),
+    );
+    expect(await owner.select().from(s.calendarPartnerKeys)).toEqual([]);
   });
 });

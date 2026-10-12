@@ -245,7 +245,7 @@ and the other system should see ownAplane bookings.
 | SYN-4 | M | Partner systems can **push** busy times in real time through the API (create, change, delete by their own id). The API refuses a time that overlaps an ownAplane booking (HTTP 409), so their system can refuse it too. Access with a key the owner creates per aircraft and can revoke. |
 | SYN-5 | M | A **conflict** (an external booking arrives for time already booked in ownAplane) is never resolved silently: both stay visible, the owner is notified at once and decides which one to cancel. |
 | SYN-6 | S | Outgoing notifications (**webhooks**) to partner systems when an ownAplane booking is created, changed or cancelled. **Built:** signed webhooks per connection (set by the owner or the partner via the API), retried for a day. |
-| SYN-7 | C | Two-way integrations with specific systems that have their own API, as needed. |
+| SYN-7 | C | Two-way integrations with specific systems that have their own API, as needed. **Built (2026-10-12):** partner connections read a partner's API with the key the owner pastes (kept where nobody can read it back); first partner **RAF Aviation** (bookings of EC-IDR). They read ours from the connection's iCal link. |
 | SYN-8 | M | Per connection, the owner **chooses the data exchanged** besides the times. Sent: type of block, booking status, route, pilot's name (marked as personal data), booking reference, the owner's notes, registration. Taken: title (shown only to the owner), maintenance type, tentative status (tentative bookings don't block), registration check (bookings for another aircraft are refused). Nothing extra by default; pilots' email and phone are never sent. |
 
 ### 5.14 Pilot logbook (LOG) — built (M14)

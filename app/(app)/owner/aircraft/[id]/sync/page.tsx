@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
 /** Calendar sync with other booking systems (SYN-1…5). */
 export default async function SyncPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const { user } = await requireOwnAircraft(id, "sync");
+  const { user, aircraft } = await requireOwnAircraft(id, "sync");
   const t = await getTranslations("calendarSync");
   const connections = await listConnections(user.id, id);
 
@@ -38,7 +38,9 @@ export default async function SyncPage({ params }: { params: Promise<{ id: strin
         {connections.length === 0 ? (
           <p className="text-sm text-muted-foreground">{t("none")}</p>
         ) : (
-          connections.map((c) => <ConnectionCard key={c.id} c={c} />)
+          connections.map((c) => (
+            <ConnectionCard key={c.id} c={c} registration={aircraft.registration} />
+          ))
         )}
       </section>
       {connections.length < 10 && (

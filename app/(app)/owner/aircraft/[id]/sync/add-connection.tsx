@@ -6,12 +6,13 @@ import { useTranslations } from "next-intl";
 import { CopyField } from "@/components/copy-field";
 import { FormMessage } from "@/components/forms/form-message";
 import { SubmitButton } from "@/components/forms/submit-button";
-import { TextField } from "@/components/forms/text-field";
+import { SelectField, TextField } from "@/components/forms/text-field";
+import { PARTNER_INFO, PARTNERS } from "@/lib/calendar-sync/partner-list";
 import { initialFormState } from "@/lib/forms";
 import { CONNECTION_KINDS } from "@/lib/validation/calendar-sync";
 import { addConnection } from "./actions";
 
-/** Connect another booking system (SYN-1, SYN-4): how its bookings reach us. */
+/** Connect another booking system (SYN-1, SYN-4, SYN-7): how its bookings reach us. */
 export function AddConnection({
   aircraftId,
   exportAllowed,
@@ -71,6 +72,27 @@ export function AddConnection({
           </label>
         ))}
       </fieldset>
+      {kind === "partner" && (
+        <>
+          <SelectField
+            name="partner"
+            label={t("add.partner")}
+            options={PARTNERS.map((p) => ({ value: p, label: PARTNER_INFO[p].name }))}
+            defaultValue={v.partner}
+            errors={state.errors?.partner}
+          />
+          <TextField
+            name="apiKey"
+            type="password"
+            autoComplete="off"
+            spellCheck={false}
+            label={t("add.partnerKey")}
+            hint={t("add.partnerKeyHint")}
+            errors={state.errors?.apiKey}
+            required
+          />
+        </>
+      )}
       {needsLink && (
         <TextField
           name="feedUrl"

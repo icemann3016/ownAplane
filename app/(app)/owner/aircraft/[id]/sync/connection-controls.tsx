@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { CopyField } from "@/components/copy-field";
 import { FormMessage } from "@/components/forms/form-message";
 import { SubmitButton } from "@/components/forms/submit-button";
+import { TextField } from "@/components/forms/text-field";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -19,6 +20,7 @@ import {
 } from "@/components/ui/dialog";
 import { initialFormState } from "@/lib/forms";
 import { replaceApiKey, syncNow } from "./actions";
+import { replacePartnerKey } from "./partner-actions";
 
 type Ids = { aircraftId: string; id: string };
 
@@ -73,6 +75,34 @@ export function ReplaceKey(ids: Ids) {
         </SubmitButton>
       )}
       {!state.secret && <FormMessage state={state} />}
+    </form>
+  );
+}
+
+/** Enter a partner's new API key (SYN-7); it is checked by reading the partner's bookings. */
+export function ReplacePartnerKey(ids: Ids) {
+  const t = useTranslations("calendarSync");
+  const [state, formAction] = useActionState(replacePartnerKey, initialFormState);
+  return (
+    <form action={formAction} className="grid gap-2">
+      <Hidden {...ids} />
+      <div className="flex flex-wrap items-end gap-2">
+        <TextField
+          name="apiKey"
+          id={`apiKey-${ids.id}`}
+          type="password"
+          autoComplete="off"
+          spellCheck={false}
+          label={t("partnerKey.replace")}
+          errors={state.errors?.apiKey}
+          className="w-72 max-w-full"
+          required
+        />
+        <SubmitButton variant="outline" size="sm" pendingText={t("working")}>
+          {t("partnerKey.save")}
+        </SubmitButton>
+      </div>
+      <FormMessage state={state} />
     </form>
   );
 }

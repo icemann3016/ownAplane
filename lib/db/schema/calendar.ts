@@ -85,12 +85,16 @@ export const calendarEntries = pgTable(
   ],
 ).enableRLS();
 
-/** How another system's bookings reach us (SYN-1, SYN-4): none = it only reads our iCal link. */
+/**
+ * How another system's bookings reach us (SYN-1, SYN-4): none = it only reads our iCal link;
+ * partner = we read a partner's own API with the owner's key (SYN-7).
+ */
 export const calendarConnectionInbound = pgEnum("calendar_connection_inbound", [
   "none",
   "ical",
   "json",
   "push",
+  "partner",
 ]);
 
 /**
@@ -109,6 +113,8 @@ export const calendarConnections = pgTable(
     inbound: calendarConnectionInbound("inbound").notNull(),
     /** The iCal or JSON link we read (may contain the other system's secret: owner only). */
     feedUrl: text("feed_url"),
+    /** Which partner's API we read (lib/calendar-sync/partners.ts); its key is in calendar_partner_keys. */
+    partner: text("partner"),
     /** SHA-256 of the API key the other system pushes with; the key itself is shown once. */
     apiKeyHash: text("api_key_hash").unique(),
     /** Last characters of the key, to recognise it. */
@@ -155,6 +161,11 @@ export const calendarConnections = pgTable(
       sql`(${t.inbound} = 'push') = (${t.apiKeyHash} is not null)
         and (${t.apiKeyHash} is null or ${t.apiKeyHash} ~ '^[0-9a-f]{64}$')`,
     ),
+    check(
+      "calendar_connections_partner",
+      sql`(${t.inbound}::text = 'partner') = (${t.partner} is not null)
+        and (${t.partner} is null or ${t.partner} in ('rafaviation'))`,
+    ),
     check("calendar_connections_export", sql`char_length(${t.exportToken}) >= 32`),
     check("calendar_connections_error", sql`char_length(${t.lastSyncError}) <= 500`),
     check(
@@ -170,6 +181,22 @@ export const calendarConnections = pgTable(
         and ${t.importFields} <@ array['title', 'type', 'status', 'registration']::text[]`,
     ),
   ],
+).enableRLS();
+
+/**
+ * The key we read a partner's API with (SYN-7), given by the owner. Trusted code only (no app
+ * access): nobody reads it back, the owner sees its last characters (`api_key_hint`).
+ */
+export const calendarPartnerKeys = pgTable(
+  "calendar_partner_keys",
+  {
+    connectionId: uuid("connection_id")
+      .primaryKey()
+      .references(() => calendarConnections.id, { onDelete: "cascade" }),
+    apiKey: text("api_key").notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [check("calendar_partner_keys_key", sql`char_length(${t.apiKey}) between 8 and 500`)],
 ).enableRLS();
 
 /**

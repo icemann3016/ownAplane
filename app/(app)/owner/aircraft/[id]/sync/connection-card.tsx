@@ -7,33 +7,34 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatSpan, formatUtc } from "@/lib/aircraft/format";
+import { feedErrorKey } from "@/lib/calendar-sync/feed-errors";
 import type { ConnectionView } from "@/lib/calendar-sync/owner";
+import { sameRegistration } from "@/lib/calendar-sync/events";
+import { isPartner, PARTNER_INFO } from "@/lib/calendar-sync/partner-list";
 import type { Locale } from "@/lib/i18n/config";
 import { appUrl } from "@/lib/site-url";
 import { removeConnection, resetExportLink } from "./actions";
 import { exportFields, importFields } from "@/lib/calendar-sync/fields";
-import { ConfirmAction, ReplaceKey, SyncNow } from "./connection-controls";
+import { ConfirmAction, ReplaceKey, ReplacePartnerKey, SyncNow } from "./connection-controls";
 import { DataFields } from "./data-fields";
 import { WebhookSettings } from "./webhook-settings";
-
-const FEED_ERRORS = new Set([
-  "url_invalid",
-  "address_blocked",
-  "unreachable",
-  "http_error",
-  "too_large",
-  "ical_invalid",
-  "json_invalid",
-]);
 
 const WEBHOOK_ERRORS = new Set(["url_invalid", "address_blocked", "unreachable", "no_webhook"]);
 
 /** One connected system: status, conflicts, our iCal link for it, and its controls. */
-export async function ConnectionCard({ c }: { c: ConnectionView }) {
+export async function ConnectionCard({
+  c,
+  registration,
+}: {
+  c: ConnectionView;
+  /** The aircraft's, to warn when a partner shares another aircraft's bookings. */
+  registration: string;
+}) {
   const t = await getTranslations("calendarSync");
   const locale = (await getLocale()) as Locale;
   const ids = { aircraftId: c.aircraftId, id: c.id };
-  const pull = c.inbound === "ical" || c.inbound === "json";
+  const pull = c.inbound === "ical" || c.inbound === "json" || c.inbound === "partner";
+  const partner = isPartner(c.partner) ? PARTNER_INFO[c.partner] : null;
   const when = c.lastSyncAt ? formatUtc(c.lastSyncAt, locale) : "";
   const webhookReason = (error: string) =>
     error.startsWith("http_")
@@ -41,11 +42,7 @@ export async function ConnectionCard({ c }: { c: ConnectionView }) {
       : t(
           `webhook.errors.${WEBHOOK_ERRORS.has(error) ? error : "unreachable"}` as "webhook.errors.unreachable",
         );
-  const reason = c.lastSyncError
-    ? t(
-        `feedErrors.${FEED_ERRORS.has(c.lastSyncError) ? c.lastSyncError : "failed"}` as "feedErrors.failed",
-      )
-    : "";
+  const reason = c.lastSyncError ? t(`feedErrors.${feedErrorKey(c.lastSyncError)}`) : "";
 
   return (
     <Card>
@@ -70,6 +67,27 @@ export async function ConnectionCard({ c }: { c: ConnectionView }) {
           <p className="text-sm break-all text-muted-foreground">
             {t("add.linkIs")} {c.feedUrl}
           </p>
+        )}
+        {partner && (
+          <p className="text-sm text-muted-foreground">
+            {t("partnerKey.about", {
+              partner: partner.name,
+              registrations: partner.registrations.join(", "),
+              hint: c.apiKeyHint ?? "",
+            })}
+          </p>
+        )}
+        {partner && !partner.registrations.some((r) => sameRegistration(r, registration)) && (
+          <Alert>
+            <TriangleAlertIcon />
+            <AlertDescription>
+              {t("partnerKey.otherAircraft", {
+                partner: partner.name,
+                registrations: partner.registrations.join(", "),
+                registration,
+              })}
+            </AlertDescription>
+          </Alert>
         )}
 
         {c.conflicts.length > 0 && (
@@ -135,6 +153,8 @@ export async function ConnectionCard({ c }: { c: ConnectionView }) {
             <ReplaceKey {...ids} />
           </div>
         )}
+
+        {partner && <ReplacePartnerKey {...ids} />}
 
         <div className="flex flex-wrap items-start gap-2">
           {pull && <SyncNow {...ids} />}

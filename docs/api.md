@@ -192,7 +192,7 @@ is the secret; resetting it stops the old link. 404 for an unknown or reset link
 Still website-only: calendar sync settings (connections, webhooks), usage exports, account
 settings, the bookings calendar link settings and admin tools.
 
-## Calendar sync for other booking systems (SYN-1…6, SYN-8)
+## Calendar sync for other booking systems (SYN-1…8)
 
 An aircraft's owner connects other systems under **Aircraft → Calendar sync** (help article
 `/help/calendar-sync`). Each connection works in one of these ways, and every connection also gets
@@ -204,6 +204,7 @@ a private iCal link with our busy times (without its own, so nothing echoes back
 | publishes an **iCal link** | we read it every 15 minutes and right before a booking is requested or accepted |
 | publishes a **JSON link** | same, format below |
 | only reads ours | subscribes to `/api/v1/calendars/<token>.ics` |
+| is a **partner** with its own API (RAF Aviation) | we read it with the key the owner pastes, like a link (SYN-7) |
 
 ### Push API (API key)
 

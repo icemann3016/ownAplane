@@ -235,6 +235,7 @@
     "oilRose": "L’huile après ne peut pas dépasser l’huile avant. Enregistrez l’huile ajoutée avec « Ajouter carburant ou huile ».",
     "connectionNameRequired": "Donnez un nom à la connexion.",
     "feedUrlInvalid": "Saisissez le lien complet en https://.",
+    "partnerKeyInvalid": "Collez la clé API entière (de 8 à 500 caractères, sans espaces).",
     "meterRequired": "Saisissez le relevé Hobbs ou du compte-tours.",
     "durationInvalid": "Saisissez heures:minutes, par ex. 1:25.",
     "fieldRequired": "Champ obligatoire.",
@@ -2681,6 +2682,9 @@
       "how": "Comment ses réservations nous parviennent-elles ?",
       "icalUrl": "Lien iCal",
       "jsonUrl": "Lien JSON",
+      "partner": "Partenaire",
+      "partnerKey": "Clé API du partenaire",
+      "partnerKeyHint": "Nous l'utilisons uniquement pour lire leurs réservations et ne l'affichons plus jamais ; vous verrez ses 4 derniers caractères.",
       "urlHint": "Le lien privé fourni par l’autre système. Les liens webcal:// fonctionnent aussi.",
       "linkIs": "Lien :",
       "submit": "Connecter",
@@ -2691,6 +2695,10 @@
       "push": {
         "label": "Il nous les envoie (API)",
         "hint": "Synchro en temps réel pour un système capable d’appeler une adresse web. Vous obtenez une clé API pour ses développeurs."
+      },
+      "partner": {
+        "label": "Système partenaire (clé API)",
+        "hint": "Les systèmes avec lesquels nous travaillons directement, comme RAF Aviation : collez la clé API qu'ils vous ont donnée et nous lisons leurs réservations."
       },
       "ical": {
         "label": "Lien iCal",
@@ -2709,6 +2717,7 @@
       "push": "Connecté. Copiez la clé API maintenant : elle n’est affichée qu’une fois.",
       "synced": "Connecté et lu : {count, plural, =0 {aucun créneau occupé} one {# créneau occupé} other {# créneaux occupés}}.",
       "failed": "Connecté, mais le lien n’a pas pu être lu : {reason}.",
+      "partnerFailed": "Connecté, mais les réservations n'ont pas pu être lues : {reason}.",
       "none": "Connecté. Utilisez le lien iCal ci-dessous dans l’autre système."
     },
     "synced": "Lu : {count, plural, =0 {aucun créneau occupé} one {# créneau occupé} other {# créneaux occupés}}.",
@@ -2719,8 +2728,8 @@
     "keyReplaced": "Nouvelle clé API créée. L’ancienne ne fonctionne plus.",
     "status": {
       "never": "Pas encore lu.",
-      "ok": "Dernière lecture {when} UTC : {count, plural, =0 {aucun créneau occupé} one {# créneau occupé} other {# créneaux occupés}}. Lu toutes les 15 minutes et avant chaque réservation.",
-      "error": "La lecture de {when} UTC a échoué : {reason}. Les créneaux lus auparavant restent en place.",
+      "ok": "Dernière lecture {when} : {count, plural, =0 {aucun créneau occupé} one {# créneau occupé} other {# créneaux occupés}}. Lu toutes les 15 minutes et avant chaque réservation.",
+      "error": "La lecture de {when} a échoué : {reason}. Les créneaux lus auparavant restent en place.",
       "push": "{count, plural, =0 {Aucun créneau envoyé pour l’instant} one {# créneau occupé de ce système} other {# créneaux occupés de ce système}}.",
       "none": "Ce système lit seulement notre lien iCal."
     },
@@ -2743,6 +2752,14 @@
       "shown": "Clé API (affichée une seule fois)",
       "shownHint": "Transmettez-la aux développeurs de l’autre système. Elle est envoyée ainsi : {header}."
     },
+    "partnerKey": {
+      "about": "Lit les réservations de {partner} pour {registrations} avec votre clé API se terminant par …{hint}. {partner} voit nos réservations grâce au lien iCal ci-dessous.",
+      "otherAircraft": "{partner} ne partage que les réservations de {registrations}, mais cet aéronef est {registration} : ces réservations le bloqueront. Connectez plutôt {partner} à {registrations}.",
+      "replace": "Nouvelle clé API",
+      "save": "Enregistrer la clé",
+      "saved": "Clé enregistrée. Lu : {count, plural, =0 {aucun créneau occupé} one {# créneau occupé} other {# créneaux occupés}}.",
+      "failed": "Clé enregistrée, mais les réservations n'ont pas pu être lues : {reason}."
+    },
     "remove": {
       "button": "Déconnecter",
       "title": "Déconnecter {name} ?",
@@ -2762,6 +2779,8 @@
       "too_large": "le calendrier dépasse 2 Mo",
       "ical_invalid": "ce n’est pas un calendrier iCal",
       "json_invalid": "ce n’est pas au format JSON attendu",
+      "key_rejected": "le partenaire a refusé la clé API",
+      "rate_limited": "le partenaire nous a demandé de ralentir ; nous réessaierons plus tard",
       "failed": "une erreur s’est produite"
     },
     "export": {

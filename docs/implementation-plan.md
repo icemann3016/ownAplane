@@ -146,6 +146,13 @@ Aircraft home bases are airports with latitude/longitude. The search (`lib/aircr
   overlap with a booking (still recorded as a conflict).
 - Reading links: every 15 min (`/api/cron/sync` from a GitHub Actions schedule), hourly in the
   daily job, and right before a booking is requested or accepted.
+- Partners with their own API (SYN-7): connection kind `partner` with `partner` (an id from
+  `lib/calendar-sync/partner-list.ts`); the owner's key for the partner is kept in
+  `calendar_partner_keys` (no app access, written and read only by trusted code; the owner sees
+  its last 4 characters). Read like links (same schedule, `replace`), with the key as a Bearer
+  header, never following redirects. First partner: **RAF Aviation** (`rafaviation.ts`: EC-IDR's
+  future bookings as Europe/Sofia local times → UTC; "pending" = tentative). It reads ours from
+  the connection's iCal link.
 - Webhooks (SYN-6): `calendar_connections.webhook_url/secret`; triggers on `calendar_entries` and
   `bookings` queue `webhook_events` per connection (not for its own busy times);
   `lib/calendar-sync/webhooks.ts` sends the current state of each changed busy time, signed
