@@ -184,22 +184,6 @@ export const calendarConnections = pgTable(
 ).enableRLS();
 
 /**
- * Unused since partners are read with ownAplane's own key (an environment variable); emptied by
- * 0074 and to be dropped once no live version reads it. No app access.
- */
-export const calendarPartnerKeys = pgTable(
-  "calendar_partner_keys",
-  {
-    connectionId: uuid("connection_id")
-      .primaryKey()
-      .references(() => calendarConnections.id, { onDelete: "cascade" }),
-    apiKey: text("api_key").notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
-  },
-  (t) => [check("calendar_partner_keys_key", sql`char_length(${t.apiKey}) between 8 and 500`)],
-).enableRLS();
-
-/**
  * Changes to tell connected systems about (SYN-6): queued by a trigger on calendar_entries and
  * bookings, sent by lib/calendar-sync/webhooks.ts (trusted only, no app access).
  */

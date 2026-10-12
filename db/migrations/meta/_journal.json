@@ -526,6 +526,13 @@
       "when": 1791817194364,
       "tag": "0074_partner_keys_removed",
       "breakpoints": true
+    },
+    {
+      "idx": 75,
+      "version": "7",
+      "when": 1791817899743,
+      "tag": "0075_drop_partner_keys",
+      "breakpoints": true
     }
   ]
 }
