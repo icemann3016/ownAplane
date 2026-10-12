@@ -8,6 +8,7 @@ import { requireOwnAircraft } from "@/lib/aircraft/owner";
 import { getMyPlan } from "@/lib/billing/plan";
 import { PLANS } from "@/lib/billing/plans";
 import { listConnections } from "@/lib/calendar-sync/owner";
+import { partnersFor } from "@/lib/calendar-sync/partners";
 import { AddConnection } from "./add-connection";
 import { ConnectionCard } from "./connection-card";
 
@@ -52,6 +53,7 @@ export default async function SyncPage({ params }: { params: Promise<{ id: strin
             <AddConnection
               aircraftId={id}
               exportAllowed={PLANS[(await getMyPlan(user.id)).plan].calendarLink}
+              partners={partnersFor(aircraft)}
             />
           </CardContent>
         </Card>

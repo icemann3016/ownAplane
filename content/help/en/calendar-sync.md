@@ -13,13 +13,12 @@ Give the connection a name and choose how the other system's bookings reach us:
   for example your own or your club's software. Its bookings arrive the moment they are made.
   You get an **API key**, shown only once: give it to the system's developers, with the link to
   the instructions on the connection.
-- **Partner system (API key):** systems we work with directly. Today that is **RAF Aviation**:
-  ask them for an API key, choose RAF Aviation and paste the key. We keep it safe, use it only to
-  read their bookings and never show it again (you see its last 4 characters; paste a new one on
-  the connection if they replace it). RAF Aviation shares the bookings of **EC-IDR**, in Sofia
-  time; we turn them into UTC. Their pending bookings block the time too, unless you choose to
-  take the booking status (then only approved ones block). For them to see our bookings, give
-  them the connection's iCal link.
+- **Partner system:** systems ownAplane is connected to directly, with nothing for you to set
+  up. Today that is **RAF Aviation**, which shares the bookings of **EC-IDR**: on EC-IDR, choose
+  RAF Aviation and we read its bookings (in Sofia time; we turn them into UTC). Other aircraft
+  can't use it. Their pending bookings block the time too, unless you choose to take the
+  booking status (then only approved ones block). For them to see our bookings, give them the
+  connection's iCal link.
 - **iCal link:** Google Calendar, Outlook and most booking systems have a private iCal address
   (in Google Calendar: Settings → your calendar → "Secret address in iCal format"). Paste it
   here; `webcal://` links work too.

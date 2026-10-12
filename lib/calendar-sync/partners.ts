@@ -1,16 +1,14 @@
 import "server-only";
 
-import { eq } from "drizzle-orm";
-
-import { getDb } from "@/lib/db";
-import { calendarPartnerKeys } from "@/lib/db/schema";
+import type { Aircraft } from "@/lib/db/schema";
 import type { ExternalEvent } from "./events";
+import { sameRegistration } from "./events";
 import { FeedError, fetchFeed } from "./feeds";
-import type { Partner } from "./partner-list";
+import { type Partner, PARTNER_INFO, PARTNERS } from "./partner-list";
 import { readRafAviation } from "./rafaviation";
 
-// Reading a partner's own API (SYN-7) with the key the owner gave us. Trusted code: callers
-// check that the user owns the connection first; keys are never read back to anyone.
+// Reading a partner's own API (SYN-7) with ownAplane's key for it, a server secret (Vercel
+// environment variable, never stored in the database or sent to a browser).
 
 const READERS: Record<
   Partner,
@@ -19,28 +17,30 @@ const READERS: Record<
   rafaviation: readRafAviation,
 };
 
-/** The last characters of a key, so the owner recognises it. */
-export const keyHint = (apiKey: string) => apiKey.slice(-4);
+const KEY_VARIABLES: Record<Partner, string> = {
+  rafaviation: "RAFAVIATION_API_KEY",
+};
 
-export async function savePartnerKey(connectionId: string, apiKey: string) {
-  await getDb()
-    .insert(calendarPartnerKeys)
-    .values({ connectionId, apiKey })
-    .onConflictDoUpdate({
-      target: calendarPartnerKeys.connectionId,
-      set: { apiKey, updatedAt: new Date() },
-    });
+const partnerKey = (partner: Partner) => process.env[KEY_VARIABLES[partner]]?.trim() || null;
+
+/**
+ * The partners an aircraft can be connected to: set up here (their key is set) and sharing this
+ * aircraft's bookings. Not for drafts: only registrations of non-draft aircraft are unique.
+ */
+export function partnersFor(plane: Pick<Aircraft, "registration" | "status">): Partner[] {
+  if (plane.status === "draft") return [];
+  return PARTNERS.filter(
+    (p) =>
+      partnerKey(p) !== null &&
+      PARTNER_INFO[p].registrations.some((r) => sameRegistration(r, plane.registration)),
+  );
 }
 
 export async function readPartner(
-  connectionId: string,
   partner: Partner,
   fetcher: typeof fetchFeed = fetchFeed,
 ): Promise<ExternalEvent[]> {
-  const [row] = await getDb()
-    .select({ apiKey: calendarPartnerKeys.apiKey })
-    .from(calendarPartnerKeys)
-    .where(eq(calendarPartnerKeys.connectionId, connectionId));
-  if (!row) throw new FeedError("key_rejected", "no key");
-  return READERS[partner](row.apiKey, new Date(), fetcher);
+  const key = partnerKey(partner);
+  if (!key) throw new FeedError("partner_unavailable", KEY_VARIABLES[partner]);
+  return READERS[partner](key, new Date(), fetcher);
 }

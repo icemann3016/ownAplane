@@ -15,7 +15,7 @@ import type { Locale } from "@/lib/i18n/config";
 import { appUrl } from "@/lib/site-url";
 import { removeConnection, resetExportLink } from "./actions";
 import { exportFields, importFields } from "@/lib/calendar-sync/fields";
-import { ConfirmAction, ReplaceKey, ReplacePartnerKey, SyncNow } from "./connection-controls";
+import { ConfirmAction, ReplaceKey, SyncNow } from "./connection-controls";
 import { DataFields } from "./data-fields";
 import { WebhookSettings } from "./webhook-settings";
 
@@ -70,10 +70,9 @@ export async function ConnectionCard({
         )}
         {partner && (
           <p className="text-sm text-muted-foreground">
-            {t("partnerKey.about", {
+            {t("partner.about", {
               partner: partner.name,
               registrations: partner.registrations.join(", "),
-              hint: c.apiKeyHint ?? "",
             })}
           </p>
         )}
@@ -81,7 +80,7 @@ export async function ConnectionCard({
           <Alert>
             <TriangleAlertIcon />
             <AlertDescription>
-              {t("partnerKey.otherAircraft", {
+              {t("partner.otherAircraft", {
                 partner: partner.name,
                 registrations: partner.registrations.join(", "),
                 registration,
@@ -153,8 +152,6 @@ export async function ConnectionCard({
             <ReplaceKey {...ids} />
           </div>
         )}
-
-        {partner && <ReplacePartnerKey {...ids} />}
 
         <div className="flex flex-wrap items-start gap-2">
           {pull && <SyncNow {...ids} />}

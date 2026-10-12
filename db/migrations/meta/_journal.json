@@ -519,6 +519,13 @@
       "when": 1791813747974,
       "tag": "0073_calendar_partners",
       "breakpoints": true
+    },
+    {
+      "idx": 74,
+      "version": "7",
+      "when": 1791817194364,
+      "tag": "0074_partner_keys_removed",
+      "breakpoints": true
     }
   ]
 }

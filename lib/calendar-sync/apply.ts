@@ -103,6 +103,7 @@ export async function applyEvents(
         id: calendarConnections.id,
         aircraftId: calendarConnections.aircraftId,
         importFields: calendarConnections.importFields,
+        inbound: calendarConnections.inbound,
         ownerId: aircraft.ownerId,
         registration: aircraft.registration,
       })
@@ -112,9 +113,11 @@ export async function applyEvents(
       .for("update", { of: calendarConnections });
     if (!conn) throw new Error("calendar connection not found");
 
+    // A partner's bookings never land on another aircraft, whatever the owner chose (SYN-7).
+    const fields = importFields(conn.importFields);
     const { keep, skipped } = prepareIncoming(
       events,
-      importFields(conn.importFields),
+      conn.inbound === "partner" ? [...new Set([...fields, "registration" as const])] : fields,
       conn.registration,
     );
     const ids = keep.map((k) => k.event.id);

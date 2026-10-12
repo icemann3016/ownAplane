@@ -235,7 +235,6 @@
     "oilRose": "El aceite después no puede ser mayor que antes. Registra el aceite añadido con «Añadir combustible o aceite».",
     "connectionNameRequired": "Pon un nombre a la conexión.",
     "feedUrlInvalid": "Introduce el enlace completo con https://.",
-    "partnerKeyInvalid": "Pega la clave API completa (de 8 a 500 caracteres, sin espacios).",
     "meterRequired": "Introduce la lectura del Hobbs o del tacómetro.",
     "durationInvalid": "Introduce horas:minutos, p. ej. 1:25.",
     "fieldRequired": "Campo obligatorio.",
@@ -2683,8 +2682,7 @@
       "icalUrl": "Enlace iCal",
       "jsonUrl": "Enlace JSON",
       "partner": "Socio",
-      "partnerKey": "Clave API del socio",
-      "partnerKeyHint": "Solo la usamos para leer sus reservas y nunca la volvemos a mostrar; verás sus últimos 4 caracteres.",
+      "partnerOnly": "Solo para {list}.",
       "urlHint": "El enlace privado del otro sistema. Los enlaces webcal:// también funcionan.",
       "linkIs": "Enlace:",
       "submit": "Conectar",
@@ -2697,8 +2695,8 @@
         "hint": "Sincronización en tiempo real para un sistema que puede llamar a una dirección web. Recibes una clave API para sus desarrolladores."
       },
       "partner": {
-        "label": "Sistema asociado (clave API)",
-        "hint": "Sistemas con los que trabajamos directamente, como RAF Aviation: pega la clave API que te dieron y leemos sus reservas."
+        "label": "Sistema asociado",
+        "hint": "Sistemas con los que ownAplane está conectado, como RAF Aviation: leemos sus reservas de tu aeronave, sin nada que configurar."
       },
       "ical": {
         "label": "Enlace iCal",
@@ -2752,13 +2750,9 @@
       "shown": "Clave API (solo se muestra una vez)",
       "shownHint": "Entrégala a los desarrolladores del otro sistema. Se envía así: {header}."
     },
-    "partnerKey": {
-      "about": "Lee las reservas de {partner} para {registrations} con tu clave API que termina en …{hint}. {partner} ve nuestras reservas mediante el enlace iCal de abajo.",
-      "otherAircraft": "{partner} solo comparte reservas de {registrations}, pero esta aeronave es {registration}: esas reservas la bloquearán. Conecta {partner} a {registrations} en su lugar.",
-      "replace": "Nueva clave API",
-      "save": "Guardar clave",
-      "saved": "Clave guardada. Leído: {count, plural, =0 {ningún periodo ocupado} one {# periodo ocupado} other {# periodos ocupados}}.",
-      "failed": "Clave guardada, pero no se pudieron leer las reservas: {reason}."
+    "partner": {
+      "about": "Lee las reservas de {partner} para {registrations} con la clave de ownAplane. {partner} ve nuestras reservas mediante el enlace iCal de abajo.",
+      "otherAircraft": "{partner} solo comparte reservas de {registrations}, pero esta aeronave es {registration}, así que nada de {partner} la bloquea."
     },
     "remove": {
       "button": "Desconectar",
@@ -2769,7 +2763,8 @@
       "too_many": "Una aeronave puede tener como máximo 10 sistemas conectados.",
       "not_allowed": "No puedes modificar esta aeronave.",
       "not_found": "No encontramos esta conexión.",
-      "planNeeded": "Un enlace de calendario por sí solo viene con el plan Propietario o Flota. Conectar otro sistema de reservas funciona en todos los planes."
+      "planNeeded": "Un enlace de calendario por sí solo viene con el plan Propietario o Flota. Conectar otro sistema de reservas funciona en todos los planes.",
+      "partnerNotAllowed": "Este socio no se puede conectar a esta aeronave."
     },
     "feedErrors": {
       "url_invalid": "el enlace no es una dirección https válida",
@@ -2779,8 +2774,9 @@
       "too_large": "el calendario supera los 2 MB",
       "ical_invalid": "no es un calendario iCal",
       "json_invalid": "no tiene el formato JSON esperado",
-      "key_rejected": "el socio rechazó la clave API",
+      "key_rejected": "el socio rechazó la clave de ownAplane (ya nos han avisado)",
       "rate_limited": "el socio nos pidió ir más despacio; lo intentaremos de nuevo más tarde",
+      "partner_unavailable": "este socio aún no está configurado en ownAplane (ya nos han avisado)",
       "failed": "algo salió mal"
     },
     "export": {

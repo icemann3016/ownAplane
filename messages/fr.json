@@ -235,7 +235,6 @@
     "oilRose": "L’huile après ne peut pas dépasser l’huile avant. Enregistrez l’huile ajoutée avec « Ajouter carburant ou huile ».",
     "connectionNameRequired": "Donnez un nom à la connexion.",
     "feedUrlInvalid": "Saisissez le lien complet en https://.",
-    "partnerKeyInvalid": "Collez la clé API entière (de 8 à 500 caractères, sans espaces).",
     "meterRequired": "Saisissez le relevé Hobbs ou du compte-tours.",
     "durationInvalid": "Saisissez heures:minutes, par ex. 1:25.",
     "fieldRequired": "Champ obligatoire.",
@@ -2683,8 +2682,7 @@
       "icalUrl": "Lien iCal",
       "jsonUrl": "Lien JSON",
       "partner": "Partenaire",
-      "partnerKey": "Clé API du partenaire",
-      "partnerKeyHint": "Nous l'utilisons uniquement pour lire leurs réservations et ne l'affichons plus jamais ; vous verrez ses 4 derniers caractères.",
+      "partnerOnly": "Uniquement pour {list}.",
       "urlHint": "Le lien privé fourni par l’autre système. Les liens webcal:// fonctionnent aussi.",
       "linkIs": "Lien :",
       "submit": "Connecter",
@@ -2697,8 +2695,8 @@
         "hint": "Synchro en temps réel pour un système capable d’appeler une adresse web. Vous obtenez une clé API pour ses développeurs."
       },
       "partner": {
-        "label": "Système partenaire (clé API)",
-        "hint": "Les systèmes avec lesquels nous travaillons directement, comme RAF Aviation : collez la clé API qu'ils vous ont donnée et nous lisons leurs réservations."
+        "label": "Système partenaire",
+        "hint": "Les systèmes auxquels ownAplane est connecté, comme RAF Aviation : nous lisons leurs réservations de votre aéronef, rien à configurer."
       },
       "ical": {
         "label": "Lien iCal",
@@ -2752,13 +2750,9 @@
       "shown": "Clé API (affichée une seule fois)",
       "shownHint": "Transmettez-la aux développeurs de l’autre système. Elle est envoyée ainsi : {header}."
     },
-    "partnerKey": {
-      "about": "Lit les réservations de {partner} pour {registrations} avec votre clé API se terminant par …{hint}. {partner} voit nos réservations grâce au lien iCal ci-dessous.",
-      "otherAircraft": "{partner} ne partage que les réservations de {registrations}, mais cet aéronef est {registration} : ces réservations le bloqueront. Connectez plutôt {partner} à {registrations}.",
-      "replace": "Nouvelle clé API",
-      "save": "Enregistrer la clé",
-      "saved": "Clé enregistrée. Lu : {count, plural, =0 {aucun créneau occupé} one {# créneau occupé} other {# créneaux occupés}}.",
-      "failed": "Clé enregistrée, mais les réservations n'ont pas pu être lues : {reason}."
+    "partner": {
+      "about": "Lit les réservations de {partner} pour {registrations} avec la clé d'ownAplane. {partner} voit nos réservations grâce au lien iCal ci-dessous.",
+      "otherAircraft": "{partner} ne partage que les réservations de {registrations}, mais cet aéronef est {registration} : rien de {partner} ne le bloque donc."
     },
     "remove": {
       "button": "Déconnecter",
@@ -2769,7 +2763,8 @@
       "too_many": "Un avion peut avoir au maximum 10 systèmes connectés.",
       "not_allowed": "Vous ne pouvez pas modifier cet avion.",
       "not_found": "Connexion introuvable.",
-      "planNeeded": "Un simple lien de calendrier vient avec la formule Propriétaire ou Flotte. Connecter un autre système de réservation fonctionne avec toutes les formules."
+      "planNeeded": "Un simple lien de calendrier vient avec la formule Propriétaire ou Flotte. Connecter un autre système de réservation fonctionne avec toutes les formules.",
+      "partnerNotAllowed": "Ce partenaire ne peut pas être connecté à cet aéronef."
     },
     "feedErrors": {
       "url_invalid": "le lien n’est pas une adresse https valide",
@@ -2779,8 +2774,9 @@
       "too_large": "le calendrier dépasse 2 Mo",
       "ical_invalid": "ce n’est pas un calendrier iCal",
       "json_invalid": "ce n’est pas au format JSON attendu",
-      "key_rejected": "le partenaire a refusé la clé API",
+      "key_rejected": "le partenaire a refusé la clé d'ownAplane (nous avons été prévenus)",
       "rate_limited": "le partenaire nous a demandé de ralentir ; nous réessaierons plus tard",
+      "partner_unavailable": "ce partenaire n'est pas encore configuré sur ownAplane (nous avons été prévenus)",
       "failed": "une erreur s’est produite"
     },
     "export": {

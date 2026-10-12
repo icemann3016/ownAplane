@@ -11,7 +11,8 @@ import { PLANS } from "@/lib/billing/plans";
 import { feedErrorKey } from "@/lib/calendar-sync/feed-errors";
 import { exportFields, importFields } from "@/lib/calendar-sync/fields";
 import { newApiKey } from "@/lib/calendar-sync/keys";
-import { keyHint, savePartnerKey } from "@/lib/calendar-sync/partners";
+import { partnersFor } from "@/lib/calendar-sync/partners";
+import { getOwnAircraft } from "@/lib/aircraft/queries";
 import { syncConnection } from "@/lib/calendar-sync/sync";
 import { sendNotificationsSoon } from "@/lib/notifications/soon";
 import { asUser } from "@/lib/db/rls";
@@ -55,16 +56,22 @@ async function ownConnection(userId: string, raw: Record<string, string>) {
 }
 
 /**
- * Connect another system; push connections get an API key, shown once; a partner's key is kept
- * where only the sync code reads it (SYN-7) and never sent back to the form.
+ * Connect another system; push connections get an API key, shown once. A partner (SYN-7) is read
+ * with ownAplane's own key, so only the aircraft whose bookings it shares may connect it.
  */
 export async function addConnection(_prev: FormState, formData: FormData): Promise<FormState> {
   const user = await requireUser("/owner/aircraft");
   const t = await getTranslations("calendarSync");
-  const { apiKey: _apiKey, ...raw } = formValues(formData);
-  const parsed = connectionSchema.safeParse(formValues(formData));
+  const raw = formValues(formData);
+  const parsed = connectionSchema.safeParse(raw);
   if (!parsed.success) return { errors: await localizedFieldErrors(parsed.error), values: raw };
-  const { aircraftId, name, inbound, feedUrl, partner, apiKey } = parsed.data;
+  const { aircraftId, name, inbound, feedUrl, partner } = parsed.data;
+  if (partner) {
+    const plane = await getOwnAircraft(user.id, aircraftId);
+    if (!plane || !partnersFor(plane).includes(partner)) {
+      return { message: t("errors.partnerNotAllowed"), values: raw };
+    }
+  }
   // A calendar link only (for Google or Outlook) comes with a paid plan (SUB-10); syncing with
   // other booking systems, which prevents double bookings, is on every plan.
   if (inbound === "none" && !PLANS[(await getMyPlan(user.id)).plan].calendarLink) {
@@ -83,7 +90,7 @@ export async function addConnection(_prev: FormState, formData: FormData): Promi
           feedUrl,
           partner,
           apiKeyHash: key?.hash ?? null,
-          apiKeyHint: key?.hint ?? (apiKey ? keyHint(apiKey) : null),
+          apiKeyHint: key?.hint ?? null,
         })
         .returning(),
     );
@@ -95,8 +102,6 @@ export async function addConnection(_prev: FormState, formData: FormData): Promi
     if (code === "42501") return { message: t("errors.not_allowed"), values: raw };
     throw e;
   }
-  // The insert above checked (RLS) that the user owns the aircraft.
-  if (created && apiKey) await savePartnerKey(created.id, apiKey);
   refresh(aircraftId);
   if (key) return { ok: true, message: t("added.push"), secret: key.key };
   if (created && (inbound === "ical" || inbound === "json" || inbound === "partner")) {

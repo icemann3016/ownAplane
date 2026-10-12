@@ -7,7 +7,7 @@ import { CopyField } from "@/components/copy-field";
 import { FormMessage } from "@/components/forms/form-message";
 import { SubmitButton } from "@/components/forms/submit-button";
 import { SelectField, TextField } from "@/components/forms/text-field";
-import { PARTNER_INFO, PARTNERS } from "@/lib/calendar-sync/partner-list";
+import { type Partner, PARTNER_INFO, PARTNERS } from "@/lib/calendar-sync/partner-list";
 import { initialFormState } from "@/lib/forms";
 import { CONNECTION_KINDS } from "@/lib/validation/calendar-sync";
 import { addConnection } from "./actions";
@@ -16,10 +16,13 @@ import { addConnection } from "./actions";
 export function AddConnection({
   aircraftId,
   exportAllowed,
+  partners,
 }: {
   aircraftId: string;
   /** A calendar link only (no other system) needs a paid plan (SUB-10). */
   exportAllowed: boolean;
+  /** Partners this aircraft can be connected to (SYN-7). */
+  partners: Partner[];
 }) {
   const t = useTranslations("calendarSync");
   const [state, formAction] = useActionState(addConnection, initialFormState);
@@ -59,7 +62,7 @@ export function AddConnection({
               value={k}
               checked={kind === k}
               onChange={() => setKind(k)}
-              disabled={k === "none" && !exportAllowed}
+              disabled={(k === "none" && !exportAllowed) || (k === "partner" && !partners.length)}
               className="mt-1"
             />
             <span className="grid gap-0.5">
@@ -68,30 +71,28 @@ export function AddConnection({
               {k === "none" && !exportAllowed && (
                 <span className="text-sm text-muted-foreground">{t("add.exportPlan")}</span>
               )}
+              {k === "partner" && !partners.length && (
+                <span className="text-sm text-muted-foreground">
+                  {t("add.partnerOnly", {
+                    list: PARTNERS.map(
+                      (p) =>
+                        `${PARTNER_INFO[p].name} (${PARTNER_INFO[p].registrations.join(", ")})`,
+                    ).join(", "),
+                  })}
+                </span>
+              )}
             </span>
           </label>
         ))}
       </fieldset>
       {kind === "partner" && (
-        <>
-          <SelectField
-            name="partner"
-            label={t("add.partner")}
-            options={PARTNERS.map((p) => ({ value: p, label: PARTNER_INFO[p].name }))}
-            defaultValue={v.partner}
-            errors={state.errors?.partner}
-          />
-          <TextField
-            name="apiKey"
-            type="password"
-            autoComplete="off"
-            spellCheck={false}
-            label={t("add.partnerKey")}
-            hint={t("add.partnerKeyHint")}
-            errors={state.errors?.apiKey}
-            required
-          />
-        </>
+        <SelectField
+          name="partner"
+          label={t("add.partner")}
+          options={partners.map((p) => ({ value: p, label: PARTNER_INFO[p].name }))}
+          defaultValue={v.partner}
+          errors={state.errors?.partner}
+        />
       )}
       {needsLink && (
         <TextField

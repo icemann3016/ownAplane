@@ -204,7 +204,7 @@ a private iCal link with our busy times (without its own, so nothing echoes back
 | publishes an **iCal link** | we read it every 15 minutes and right before a booking is requested or accepted |
 | publishes a **JSON link** | same, format below |
 | only reads ours | subscribes to `/api/v1/calendars/<token>.ics` |
-| is a **partner** with its own API (RAF Aviation) | we read it with the key the owner pastes, like a link (SYN-7) |
+| is a **partner** with its own API (RAF Aviation, for EC-IDR) | we read it with ownAplane's key, like a link (SYN-7) |
 
 ### Push API (API key)
 

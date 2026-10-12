@@ -11,6 +11,7 @@ export const FEED_ERROR_CODES = [
   "json_invalid",
   "key_rejected",
   "rate_limited",
+  "partner_unavailable",
 ] as const;
 export type FeedErrorCode = (typeof FEED_ERROR_CODES)[number];
 

@@ -113,7 +113,7 @@ export const calendarConnections = pgTable(
     inbound: calendarConnectionInbound("inbound").notNull(),
     /** The iCal or JSON link we read (may contain the other system's secret: owner only). */
     feedUrl: text("feed_url"),
-    /** Which partner's API we read (lib/calendar-sync/partners.ts); its key is in calendar_partner_keys. */
+    /** Which partner's API we read (lib/calendar-sync/partners.ts), with ownAplane's key for it. */
     partner: text("partner"),
     /** SHA-256 of the API key the other system pushes with; the key itself is shown once. */
     apiKeyHash: text("api_key_hash").unique(),
@@ -184,8 +184,8 @@ export const calendarConnections = pgTable(
 ).enableRLS();
 
 /**
- * The key we read a partner's API with (SYN-7), given by the owner. Trusted code only (no app
- * access): nobody reads it back, the owner sees its last characters (`api_key_hint`).
+ * Unused since partners are read with ownAplane's own key (an environment variable); emptied by
+ * 0074 and to be dropped once no live version reads it. No app access.
  */
 export const calendarPartnerKeys = pgTable(
   "calendar_partner_keys",

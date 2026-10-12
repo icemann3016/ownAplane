@@ -1,7 +1,7 @@
-// A stand-in for RAF Aviation's API during browser tests (started by playwright.config.ts,
-// RAFAVIATION_API_URL points here): GET /api/v1/bookings with the key "raf-e2e-key" answers two
-// bookings of EC-IDR in Sofia local time, three and four days after `from`; any other key gets
-// 401 like the real API.
+// A stand-in for RAF Aviation's API during browser tests (started by playwright.config.ts, which
+// points RAFAVIATION_API_URL here and sets RAFAVIATION_API_KEY to "raf-e2e-key"): GET
+// /api/v1/bookings with that key answers two bookings of EC-IDR in Sofia local time, three and
+// four days after `from`; any other key gets 401 like the real API.
 import { createServer } from "node:http";
 
 const port = Number(process.env.RAF_MOCK_PORT ?? 4557);

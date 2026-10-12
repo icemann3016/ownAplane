@@ -145,6 +145,17 @@ All three work the same way: the button appears once the keys are set, new accou
 - Before launch: a data processing agreement with the provider, and the privacy policy's entry
   checked by the lawyer (medicals are read only with explicit consent).
 
+### RAF Aviation (calendar sync partner, optional)
+- `RAFAVIATION_API_KEY`: the API key RAF Aviation gave ownAplane (their API:
+  https://rafaviation.flights/api-docs). Set → the owner of EC-IDR can pick **RAF Aviation**
+  under Calendar sync, and its bookings are read every 15 minutes; without it the option is off.
+  It is a server secret: never stored in the database or sent to a browser.
+- Set it in Vercel → Settings → Environment Variables (Production), then redeploy (new variables
+  only reach new deployments). Rotating it: replace the value and redeploy; nothing else changes.
+- If RAF refuses the key (or it is missing while connections exist), each failed read is
+  reported to error monitoring and the owner sees "the partner refused ownAplane's key".
+- `RAFAVIATION_API_URL` only for tests (default `https://rafaviation.flights`).
+
 ### Monitoring (optional)
 - **Errors**: `SENTRY_DSN` of any Sentry-compatible service (Sentry with EU data region, or a
   self-hosted GlitchTip). Server errors (pages, routes, Server Actions via `instrumentation.ts`)

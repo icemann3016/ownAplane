@@ -235,7 +235,6 @@
     "oilRose": "Oil after can't be higher than oil before. Record oil you added with “Add fuel or oil”.",
     "connectionNameRequired": "Give the connection a name.",
     "feedUrlInvalid": "Enter the full https:// link.",
-    "partnerKeyInvalid": "Paste the whole API key (8 to 500 characters, no spaces).",
     "meterRequired": "Enter the Hobbs or the tach reading.",
     "durationInvalid": "Enter hours:minutes, e.g. 1:25.",
     "fieldRequired": "Required.",
@@ -2683,8 +2682,7 @@
       "icalUrl": "iCal link",
       "jsonUrl": "JSON link",
       "partner": "Partner",
-      "partnerKey": "API key from the partner",
-      "partnerKeyHint": "We use it only to read their bookings and never show it again; you'll see its last 4 characters.",
+      "partnerOnly": "Only for {list}.",
       "urlHint": "The private link from the other system. webcal:// links work too.",
       "linkIs": "Link:",
       "submit": "Connect",
@@ -2697,8 +2695,8 @@
         "hint": "Real-time sync for a system that can call a web address. You get an API key for its developers."
       },
       "partner": {
-        "label": "Partner system (API key)",
-        "hint": "Systems we work with directly, such as RAF Aviation: paste the API key they gave you and we read their bookings."
+        "label": "Partner system",
+        "hint": "Systems ownAplane is connected to, such as RAF Aviation: we read their bookings of your aircraft, nothing to set up."
       },
       "ical": {
         "label": "iCal link",
@@ -2752,13 +2750,9 @@
       "shown": "API key (shown only once)",
       "shownHint": "Give it to the other system's developers. It is sent as: {header}."
     },
-    "partnerKey": {
-      "about": "Reads {partner}'s bookings of {registrations} with your API key ending in …{hint}. {partner} can see our bookings through the iCal link below.",
-      "otherAircraft": "{partner} shares bookings of {registrations} only, but this aircraft is {registration}: those bookings will block it. Connect {partner} on {registrations} instead.",
-      "replace": "New API key",
-      "save": "Save key",
-      "saved": "Key saved. Read {count, plural, =0 {no busy times} one {# busy time} other {# busy times}}.",
-      "failed": "Key saved, but the bookings couldn't be read: {reason}."
+    "partner": {
+      "about": "Reads {partner}'s bookings of {registrations} with ownAplane's key. {partner} can see our bookings through the iCal link below.",
+      "otherAircraft": "{partner} shares bookings of {registrations} only, but this aircraft is {registration}, so nothing from {partner} blocks it."
     },
     "remove": {
       "button": "Disconnect",
@@ -2769,7 +2763,8 @@
       "too_many": "An aircraft can have at most 10 connected systems.",
       "not_allowed": "You can't change this aircraft.",
       "not_found": "We couldn't find this connection.",
-      "planNeeded": "A calendar link on its own comes with the Owner or Fleet plan. Connecting another booking system works on every plan."
+      "planNeeded": "A calendar link on its own comes with the Owner or Fleet plan. Connecting another booking system works on every plan.",
+      "partnerNotAllowed": "This partner can't be connected to this aircraft."
     },
     "feedErrors": {
       "url_invalid": "the link isn't a valid https address",
@@ -2779,8 +2774,9 @@
       "too_large": "the calendar is larger than 2 MB",
       "ical_invalid": "it isn't an iCal calendar",
       "json_invalid": "it isn't in the expected JSON format",
-      "key_rejected": "the partner refused the API key",
+      "key_rejected": "the partner refused ownAplane's key (we've been told)",
       "rate_limited": "the partner asked us to slow down; we'll try again later",
+      "partner_unavailable": "this partner isn't set up on ownAplane yet (we've been told)",
       "failed": "something went wrong"
     },
     "export": {

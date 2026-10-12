@@ -50,6 +50,7 @@ export default defineConfig({
         ANTHROPIC_API_KEY: "test-key",
         OCR_MODEL: "test-model",
         RAFAVIATION_API_URL: `http://127.0.0.1:${RAF_PORT}`,
+        RAFAVIATION_API_KEY: "raf-e2e-key",
       },
     },
     {
