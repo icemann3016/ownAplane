@@ -55,7 +55,9 @@
     },
     "skipToContent": "Skip to content",
     "copy": "Copy",
-    "copied": "Copied"
+    "copied": "Copied",
+    "scrollLeft": "Scroll left",
+    "scrollRight": "Scroll right"
   },
   "home": {
     "badge": "Early preview · Europe",
@@ -250,7 +252,7 @@
       "answerRequest": "Answer the booking request for {registration} (by {date})",
       "finishLog": "Finish and send the flight log for {registration}",
       "confirmLog": "Check and confirm the flight log for {registration}",
-      "openDefects": "{count, plural, one {# open defect} other {# open defects}} on your aircraft",
+      "openDefects": "{count, plural, one {# open defect} other {# open defects}} on {registration}",
       "docExpiring": {
         "arc": "The ARC of {registration} expires on {date}: upload the new one",
         "insurance": "The insurance of {registration} expires on {date}: upload the new certificate"

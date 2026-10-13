@@ -39,8 +39,10 @@ test("a reported defect grounds the aircraft", async ({ page, browser }) => {
   await dialog.getByRole("button", { name: "Send to the owner" }).click();
   await expect(page.getByText("Defect reported. The owner has been told.")).toBeVisible();
 
-  // 2. The owner sees it and grounds the aircraft
-  await owner.goto(`/owner/aircraft/${aircraftId}/defects`);
+  // 2. The owner's to-do leads to it; the owner grounds the aircraft
+  await owner.goto("/dashboard");
+  await owner.getByRole("link", { name: `1 open defect on LZ-D${letters}` }).click();
+  await expect(owner).toHaveURL(new RegExp(`/owner/aircraft/${aircraftId}/defects$`));
   await expect(owner.getByText("Oil on the left cowl")).toBeVisible();
   await expect(owner.getByText(`Reported by Pilot ${id}`, { exact: false })).toBeVisible();
   await owner.getByRole("button", { name: "Ground the aircraft" }).click();

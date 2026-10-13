@@ -41,16 +41,12 @@ export async function TodoCard({
       text: t("confirmLog", { registration: reg(b) }),
       urgent: true,
     })),
-    ...(todo.openDefects
-      ? [
-          {
-            key: "defects",
-            href: "/owner/aircraft",
-            text: t("openDefects", { count: todo.openDefects }),
-            urgent: true,
-          },
-        ]
-      : []),
+    ...todo.openDefects.map((d) => ({
+      key: `defects-${d.aircraftId}`,
+      href: `/owner/aircraft/${d.aircraftId}/defects`,
+      text: t("openDefects", { count: d.count, registration: d.registration }),
+      urgent: true,
+    })),
     ...todo.docsExpiring.map((d) => ({
       key: `doc-${d.aircraftId}-${d.kind}`,
       href: `/owner/aircraft/${d.aircraftId}/documents`,

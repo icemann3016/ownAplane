@@ -10,6 +10,8 @@ import { unreadCount } from "@/lib/notifications";
 import { credentialItems, getPilotCredentials } from "@/lib/pilot/credentials";
 import { pilotSummary } from "@/lib/pilot/summary";
 
+type OpenDefects = { aircraftId: string; registration: string; count: number };
+
 type Expiring = {
   aircraftId: string;
   registration: string;
@@ -35,8 +37,12 @@ async function openItems(userId: string) {
         join public.bookings b on b.id = l.booking_id
         where l.status in ('draft', 'correction_requested') and b.pilot_id = ${userId}::uuid)
         as logs_to_finish,
-      (select count(*) from public.defects d join public.aircraft a on a.id = d.aircraft_id
-        where a.owner_id = ${userId}::uuid and d.resolved_at is null)::int as open_defects,
+      (select coalesce(json_agg(json_build_object('aircraftId', x.id,
+          'registration', x.registration, 'count', x.count) order by x.registration), '[]')
+        from (select a.id, a.registration, count(*)::int as count
+              from public.defects d join public.aircraft a on a.id = d.aircraft_id
+              where a.owner_id = ${userId}::uuid and d.resolved_at is null
+              group by a.id, a.registration) x) as open_defects,
       (select coalesce(json_agg(json_build_object('aircraftId', x.id,
           'registration', x.registration, 'kind', x.kind, 'expiresOn', x.expires_on)), '[]')
         from (select a.id, a.registration, d.kind, max(d.expires_on) as expires_on
@@ -54,7 +60,7 @@ async function openItems(userId: string) {
     reviews_due: string[];
     logs_to_confirm: string[];
     logs_to_finish: string[];
-    open_defects: number;
+    open_defects: OpenDefects[];
     docs_expiring: Expiring[];
     docs_pending: number;
     ratings: {

@@ -55,7 +55,9 @@
     },
     "skipToContent": "Vai al contenuto",
     "copy": "Copia",
-    "copied": "Copiato"
+    "copied": "Copiato",
+    "scrollLeft": "Scorri a sinistra",
+    "scrollRight": "Scorri a destra"
   },
   "home": {
     "badge": "Anteprima · Europa",
@@ -250,7 +252,7 @@
       "answerRequest": "Rispondi alla richiesta di prenotazione per {registration} (entro il {date})",
       "finishLog": "Completa e invia il registro di volo di {registration}",
       "confirmLog": "Controlla e conferma il registro di volo di {registration}",
-      "openDefects": "{count, plural, one {# difetto aperto} other {# difetti aperti}} sui tuoi aerei",
+      "openDefects": "{count, plural, one {# difetto aperto} other {# difetti aperti}} su {registration}",
       "docExpiring": {
         "arc": "L'ARC di {registration} scade il {date}: carica quello nuovo",
         "insurance": "L'assicurazione di {registration} scade il {date}: carica il nuovo certificato"

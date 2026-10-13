@@ -55,7 +55,9 @@
     },
     "skipToContent": "Aller au contenu",
     "copy": "Copier",
-    "copied": "Copié"
+    "copied": "Copié",
+    "scrollLeft": "Défiler vers la gauche",
+    "scrollRight": "Défiler vers la droite"
   },
   "home": {
     "badge": "Avant-première · Europe",
@@ -250,7 +252,7 @@
       "answerRequest": "Répondre à la demande de réservation pour {registration} (avant le {date})",
       "finishLog": "Terminer et envoyer le carnet de vol de {registration}",
       "confirmLog": "Vérifier et confirmer le carnet de vol de {registration}",
-      "openDefects": "{count, plural, one {# défaut ouvert} other {# défauts ouverts}} sur vos avions",
+      "openDefects": "{count, plural, one {# défaut ouvert} other {# défauts ouverts}} sur {registration}",
       "docExpiring": {
         "arc": "L'ARC de {registration} expire le {date} : téléversez le nouveau",
         "insurance": "L'assurance de {registration} expire le {date} : téléversez la nouvelle attestation"

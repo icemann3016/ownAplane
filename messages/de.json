@@ -55,7 +55,9 @@
     },
     "skipToContent": "Zum Inhalt springen",
     "copy": "Kopieren",
-    "copied": "Kopiert"
+    "copied": "Kopiert",
+    "scrollLeft": "Nach links scrollen",
+    "scrollRight": "Nach rechts scrollen"
   },
   "home": {
     "badge": "Frühe Vorschau · Europa",
@@ -250,7 +252,7 @@
       "answerRequest": "Buchungsanfrage für {registration} beantworten (bis {date})",
       "finishLog": "Flugbericht für {registration} fertigstellen und senden",
       "confirmLog": "Flugbericht für {registration} prüfen und bestätigen",
-      "openDefects": "{count, plural, one {# offener Mangel} other {# offene Mängel}} an Ihren Flugzeugen",
+      "openDefects": "{count, plural, one {# offener Mangel} other {# offene Mängel}} an {registration}",
       "docExpiring": {
         "arc": "Die ARC von {registration} läuft am {date} ab: Laden Sie die neue hoch",
         "insurance": "Die Versicherung von {registration} läuft am {date} ab: Laden Sie den neuen Nachweis hoch"

@@ -55,7 +55,9 @@
     },
     "skipToContent": "Към съдържанието",
     "copy": "Копирай",
-    "copied": "Копирано"
+    "copied": "Копирано",
+    "scrollLeft": "Превърти наляво",
+    "scrollRight": "Превърти надясно"
   },
   "home": {
     "badge": "Ранен достъп · Европа",
@@ -250,7 +252,7 @@
       "answerRequest": "Отговорете на заявката за {registration} (до {date})",
       "finishLog": "Довършете и изпратете бордовия дневник за {registration}",
       "confirmLog": "Прегледайте и потвърдете бордовия дневник за {registration}",
-      "openDefects": "{count, plural, one {# отворен дефект} other {# отворени дефекта}} по самолетите ви",
+      "openDefects": "{count, plural, one {# отворен дефект} other {# отворени дефекта}} по {registration}",
       "docExpiring": {
         "arc": "ARC на {registration} изтича на {date}: качете новия",
         "insurance": "Застраховката на {registration} изтича на {date}: качете новия сертификат"

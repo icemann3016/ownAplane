@@ -55,7 +55,9 @@
     },
     "skipToContent": "Ir al contenido",
     "copy": "Copiar",
-    "copied": "Copiado"
+    "copied": "Copiado",
+    "scrollLeft": "Desplazar a la izquierda",
+    "scrollRight": "Desplazar a la derecha"
   },
   "home": {
     "badge": "Vista previa · Europa",
@@ -250,7 +252,7 @@
       "answerRequest": "Responde a la solicitud de reserva de {registration} (antes del {date})",
       "finishLog": "Completa y envía el registro de vuelo de {registration}",
       "confirmLog": "Revisa y confirma el registro de vuelo de {registration}",
-      "openDefects": "{count, plural, one {# defecto abierto} other {# defectos abiertos}} en tus aviones",
+      "openDefects": "{count, plural, one {# defecto abierto} other {# defectos abiertos}} en {registration}",
       "docExpiring": {
         "arc": "El ARC de {registration} caduca el {date}: sube el nuevo",
         "insurance": "El seguro de {registration} caduca el {date}: sube el nuevo certificado"
