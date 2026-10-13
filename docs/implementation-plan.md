@@ -323,6 +323,35 @@ Sizes: **S** ≈ a few hours · **M** ≈ 1–2 sessions · **L** ≈ 3+ session
 
 **Total:** roughly 4–5 months part-time. Each milestone's issues are on GitHub.
 
+### 4.13 Airports (APT-1…7, M16; decided 2026-10-13)
+- **Teams, not a role:** an airfield is run by a team (`airport_members`: manager or staff), so
+  an airport desk with several people works from day one. The same small organisation model can
+  later serve flying clubs (SUB-11) and maintenance organisations (Phase 2).
+- **Claims (APT-1):** a person claims an airfield and proves they represent it with **a document**
+  (letter, operator certificate; private `documents` storage) **or an email address on the
+  airport's own domain** (confirmed by a code), and an admin decides in the verification queue
+  (`admin_actions`). The first verified claimant becomes the team's manager; managers invite staff.
+- **Only claimed airfields get a page:** `/airports/[ident]` exists once the airport is verified.
+  The 7,392 imported airfields stay in the picker and search as before, without a page.
+- **Profile:** runways and radio frequencies pre-filled from OurAirports' open data (runways and
+  frequencies files, same import), corrected by the operator; opening hours, closures, PPR
+  required + minimum notice, fees (landing by MTOM, parking/hangar per night; shown only, no
+  money moves), services, contacts.
+- **Opening hours are entered in the airport's local time and shown in UTC** for each date,
+  converted with the airport's IANA time zone (summer time handled, no edits twice a year). This
+  is the only local-time input; everything else stays UTC (requirements §7's "local time on PPR
+  screens" is replaced by the UTC rule of 2026-09-28).
+- **Requests (APT-2…5, 7):** `airport_requests` (aircraft from a booking, one's own or typed in;
+  ETA/ETD UTC; origin/destination; POB; purpose; parking/hangar with dates; service lines;
+  customs/immigration suggested when the other airfield is outside Schengen or the EU customs
+  area) with events and notifications like bookings; warnings, never blocks, outside opening
+  hours or below the minimum notice; the "not ATC clearance, flight plan or customs notification"
+  statement on the form, the request and the emails. RLS: the pilot sees their requests, the
+  airport's team sees its airport's, nobody else.
+- **Build order:** (1) teams and claims, (2) profile + public page, (3) requests, (4) operator
+  inbox (approve / decline / with conditions, PPR number, messages), (5) daily list, (6) API, help
+  and docs. Each step deploys on its own.
+
 **After launch readiness (decided 2026-10-08):**
 
 | # | Milestone | Requirements | Demo at the end | Rough time |
@@ -332,6 +361,7 @@ Sizes: **S** ≈ a few hours · **M** ≈ 1–2 sessions · **L** ≈ 3+ session
 | M13 | Full API | API-3, 6, 7, SYN-6 | Everything on the website is possible through the API (booking flow, flight log, messages); push notifications | 3–4 wk |
 | M14 | Document reading & e-logbook | VER-9, LOG-1…8 | A pilot uploads a licence and the form fills itself; keeps an EASA logbook with certified entries, corrections and totals; rentals appear in it; a scanned paper spread becomes draft entries with its page totals checked | 3 wk |
 | M15 | Plans & billing (test mode) | SUB-1…10, 13…15 | An owner or pilot subscribes, upgrades, downgrades and cancels without paying; limits hold in the database; AI reads use credits; Pilot Plus gives currency, the logbook print and statistics, more saved searches and a bookings calendar link; admins give plans and credits and run the beta | 2 wk |
+| M16 | Airports (Phase 3, started 2026-10-13) | APT-1…7 | Someone from an airfield claims it with a document or an airport email, an admin verifies, the team fills in the profile and its public page appears; a pilot sends a PPR with parking and fuel from a booking; the operator approves it with a PPR number; both are notified; the daily list shows the arrival | 3 wk |
 
 ## 9. How we build each task (with Claude)
 

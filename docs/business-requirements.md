@@ -192,6 +192,8 @@ Owners need to know who's flying their aircraft. Verification is the trust found
 | APT-6 | S | The operator sees a daily list of expected arrivals, departures and parked aircraft. |
 | APT-7 | C | The pilot can attach the PPR to an aircraft booking so the whole trip is in one place. |
 
+**Decided (2026-10-13), M16:** airports are run by **teams** (managers and staff); a claim is proven with **a document or an email address on the airport's domain**, and an admin decides; **only claimed, verified airfields get a public page** (and take requests); opening hours are **entered in local time and shown in UTC** for each date; all other times are UTC (this replaces §7's "local time on PPR screens"). Fees are shown only (no payments before Phase 4); airport ratings (RAT-9) and plans (SUB-12) come later.
+
 ### 5.11 Subscriptions (SUB) — built in test mode (2026-10-11)
 
 Owners pay for growth and convenience. **Pilots can rent and fly for free**: everything a rental needs (verification, search, bookings, flight log, logbook, reviews) is on every plan; **Pilot Plus** (SUB-15) adds conveniences for pilots who fly often, and AI reading is paid with credits (SUB-13). Plans and prices are in [§8](#8-business-model--payments). Built as a proof of concept: every flow works with a **test payment provider** that never moves money; SUB-11 (co-managers, organisation page) is not built yet.
