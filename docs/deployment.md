@@ -48,6 +48,10 @@ code**, so nothing about users or security is tied to a provider.
   into `airports`. Run it once per environment after the migrations, and again every few months to
   pick up changes. On Cloud Run / Azure run it as a one-off job from a machine with the repo, or
   from your laptop against the target `DATABASE_URL`.
+- Since M16 step 2 the same command also loads **runways and radio frequencies** (OurAirports'
+  `runways.csv` and `airport-frequencies.csv`) for airfields without a team; airfields with a team
+  keep what their managers entered. **Run it once on production after the step 2 deploy**, or
+  claimed airfields start with empty runway and radio lists (their managers can still add them).
 - No database extensions are needed for airports (plain latitude/longitude columns).
 
 ### Files

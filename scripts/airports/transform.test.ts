@@ -4,7 +4,13 @@ import path from "node:path";
 import { parse } from "csv-parse/sync";
 import { describe, expect, it } from "vitest";
 
-import { shouldImport, toAirportRow } from "./transform.mjs";
+import {
+  shouldImport,
+  surfaceOf,
+  toAirportRow,
+  toFrequencyRow,
+  toRunwayRow,
+} from "./transform.mjs";
 
 const records: Record<string, string>[] = parse(
   readFileSync(path.join(import.meta.dirname, "../../tests/fixtures/airports.csv")),
@@ -41,5 +47,62 @@ describe("airport import", () => {
     const row = toAirportRow(strip, () => "Europe/Sofia");
     expect(row.icao_code).toBeNull();
     expect(row.iata_code).toBeNull();
+  });
+
+  it("reads runways in metres with our surfaces, skipping closed and unnamed ones", () => {
+    const base = { airport_ident: "LBSF", lighted: "1", closed: "0" };
+    expect(
+      toRunwayRow({
+        ...base,
+        le_ident: "09",
+        he_ident: "27",
+        length_ft: "11811",
+        width_ft: "147",
+        surface: "ASP",
+      }),
+    ).toEqual({
+      airport_ident: "LBSF",
+      designator: "09/27",
+      length_m: 3600,
+      width_m: 45,
+      surface: "asphalt",
+      lighted: true,
+    });
+    expect(toRunwayRow({ ...base, le_ident: "09", he_ident: "27", closed: "1" })).toBeNull();
+    expect(toRunwayRow({ ...base, le_ident: "", he_ident: "" })).toBeNull();
+    expect(toRunwayRow({ ...base, le_ident: "H1", length_ft: "", width_ft: "x" })).toMatchObject({
+      designator: "H1",
+      length_m: null,
+      width_m: null,
+    });
+    expect(
+      ["TURF-G", "GRS", "CONC", "GRVL", "EARTH", "WATER", "ASPH/ CONC", "PIÇARRA", "UNK", ""].map(
+        surfaceOf,
+      ),
+    ).toEqual([
+      "grass",
+      "grass",
+      "concrete",
+      "gravel",
+      "dirt",
+      "water",
+      "asphalt",
+      "gravel",
+      "other",
+      "other",
+    ]);
+  });
+
+  it("reads frequencies", () => {
+    expect(
+      toFrequencyRow({
+        airport_ident: "LBSF",
+        type: "twr",
+        description: "Sofia Tower",
+        frequency_mhz: "118.1",
+      }),
+    ).toEqual({ airport_ident: "LBSF", type: "TWR", description: "Sofia Tower", mhz: 118.1 });
+    expect(toFrequencyRow({ airport_ident: "X", type: "", frequency_mhz: "118.1" })).toBeNull();
+    expect(toFrequencyRow({ airport_ident: "X", type: "A/G", frequency_mhz: "" })).toBeNull();
   });
 });

@@ -2,6 +2,7 @@
 // admin verifies, or by a manager's invitation. RLS: db/migrations/0080_airport_team_security.sql.
 import { sql } from "drizzle-orm";
 import {
+  boolean,
   check,
   index,
   integer,
@@ -14,6 +15,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
+import { fuelType } from "./aircraft";
 import { airports } from "./airports";
 import { users } from "./auth";
 import { documents } from "./documents";
@@ -30,14 +32,54 @@ export const airportClaimStatus = pgEnum("airport_claim_status", [
 /** Managers run the team and the profile; staff handle requests. */
 export const airportMemberRole = pgEnum("airport_member_role", ["manager", "staff"]);
 
-/** An airfield run on ownAplane: made when an admin verifies its first claim. Public. */
-export const airportOperators = pgTable("airport_operators", {
-  airportIdent: text("airport_ident")
-    .primaryKey()
-    .references(() => airports.ident, { onDelete: "cascade" }),
-  verifiedAt: timestamp("verified_at", { withTimezone: true }).notNull().defaultNow(),
-  verifiedBy: uuid("verified_by").references(() => users.id, { onDelete: "set null" }),
-}).enableRLS();
+/**
+ * An airfield run on ownAplane, made when an admin verifies its first claim, with its public
+ * profile (M16 step 2), which its managers keep. Public: lib/airport-profile.
+ */
+export const airportOperators = pgTable(
+  "airport_operators",
+  {
+    airportIdent: text("airport_ident")
+      .primaryKey()
+      .references(() => airports.ident, { onDelete: "cascade" }),
+    verifiedAt: timestamp("verified_at", { withTimezone: true }).notNull().defaultNow(),
+    verifiedBy: uuid("verified_by").references(() => users.id, { onDelete: "set null" }),
+    description: text("description"),
+    pprRequired: boolean("ppr_required").notNull().default(false),
+    /** Hours of notice a PPR needs, if the airfield asks for any. */
+    pprNoticeHours: integer("ppr_notice_hours"),
+    /** e.g. "Outside these hours on request". */
+    hoursNote: text("hours_note"),
+    phone: text("phone"),
+    email: text("email"),
+    website: text("website"),
+    /** The fees' currency. */
+    currency: text("currency").notNull().default("EUR"),
+    /** lib/airport-profile/catalog.ts SERVICES. */
+    services: text("services")
+      .array()
+      .notNull()
+      .default(sql`'{}'`),
+    fuels: fuelType("fuels")
+      .array()
+      .notNull()
+      .default(sql`'{}'`),
+    profileUpdatedAt: timestamp("profile_updated_at", { withTimezone: true }),
+  },
+  (t) => [
+    check(
+      "airport_operators_profile",
+      sql`char_length(${t.description}) <= 2000 and char_length(${t.hoursNote}) <= 300
+        and (${t.pprNoticeHours} is null or ${t.pprNoticeHours} between 0 and 720)
+        and char_length(${t.phone}) <= 40 and char_length(${t.email}) <= 200
+        and (${t.website} is null or (${t.website} ~ '^https?://' and char_length(${t.website}) <= 300))
+        and ${t.currency} ~ '^[A-Z]{3}$'
+        and ${t.services} <@ array['apron_parking', 'hangar', 'tie_downs', 'handling', 'customs',
+          'immigration', 'maintenance', 'catering', 'transport', 'restaurant', 'accommodation',
+          'briefing_room']::text[]`,
+    ),
+  ],
+).enableRLS();
 
 export const airportMembers = pgTable(
   "airport_members",

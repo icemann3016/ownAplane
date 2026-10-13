@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeftIcon, UsersIcon } from "lucide-react";
+import { UsersIcon } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 
 import { SubmitButton } from "@/components/forms/submit-button";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getTeam } from "@/lib/airport-teams/teams";
 import { requireUser } from "@/lib/auth/session";
@@ -30,28 +28,9 @@ export default async function AirportTeamPage({ params }: { params: Promise<{ id
   const locale = (await getLocale()) as Locale;
   const day = new Intl.DateTimeFormat(intlLocale(locale), { dateStyle: "medium", timeZone: "UTC" });
   const manager = team.role === "manager";
-  const code = team.airport.icaoCode ?? team.airport.ident;
 
   return (
-    <div className="mx-auto grid w-full max-w-3xl grid-cols-1 gap-6 px-4 py-10">
-      <Button variant="ghost" size="sm" className="-ml-3 justify-self-start" asChild>
-        <Link href="/airports/manage">
-          <ArrowLeftIcon aria-hidden /> {t("manage.title")}
-        </Link>
-      </Button>
-      <div className="grid gap-1">
-        <div className="flex flex-wrap items-center gap-2">
-          <h1 className="text-2xl font-semibold tracking-tight">
-            <span className="font-mono">{code}</span> {team.airport.name}
-          </h1>
-          <Badge variant="outline">{t(`roles.${team.role}`)}</Badge>
-        </div>
-        <p className="text-muted-foreground">
-          {[team.airport.municipality, team.airport.country].filter(Boolean).join(", ")} ·{" "}
-          {t("team.onSince", { date: day.format(team.airport.verifiedAt) })}
-        </p>
-      </div>
-
+    <>
       <Card>
         <CardHeader>
           <CardTitle as="h2" className="flex items-center gap-2">
@@ -139,6 +118,6 @@ export default async function AirportTeamPage({ params }: { params: Promise<{ id
       )}
 
       <p className="text-sm text-muted-foreground">{t("team.comingNext")}</p>
-    </div>
+    </>
   );
 }

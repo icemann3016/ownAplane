@@ -17,3 +17,4 @@ export * from "./api-usage";
 export * from "./logbook";
 export * from "./billing";
 export * from "./airport-teams";
+export * from "./airport-profiles";

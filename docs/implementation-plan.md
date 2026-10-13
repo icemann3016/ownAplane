@@ -333,10 +333,17 @@ Sizes: **S** ≈ a few hours · **M** ≈ 1–2 sessions · **L** ≈ 3+ session
   (`admin_actions`). The first verified claimant becomes the team's manager; managers invite staff.
 - **Only claimed airfields get a page:** `/airports/[ident]` exists once the airport is verified.
   The 7,392 imported airfields stay in the picker and search as before, without a page.
-- **Profile:** runways and radio frequencies pre-filled from OurAirports' open data (runways and
-  frequencies files, same import), corrected by the operator; opening hours, closures, PPR
-  required + minimum notice, fees (landing by MTOM, parking/hangar per night; shown only, no
-  money moves), services, contacts.
+- **Profile (built, step 2):** the profile fields live on `airport_operators` (description, PPR
+  required + notice hours, hours note, contacts, currency, services, fuels); `airport_runways` and
+  `airport_frequencies` are pre-filled from OurAirports' open data (runways and frequencies files,
+  same `npm run airports:import`, only for airfields **without** a team, so a team's corrections
+  are never overwritten) and corrected by the managers; `airport_hours` (ISO weekday, local
+  opens/closes, "24:00" = midnight), `airport_closures` (local dates) and `airport_fees` (kind,
+  optional max MTOM, amount, per landing/night/day/hour/once; shown only, no money moves).
+  Everyone reads them (RLS `USING (true)`); only managers write (`airport_role_of()`), with row
+  caps per airfield. Code in `lib/airport-profile/` (queries, ops, hours → UTC), operator tabs
+  under `/airports/manage/[ident]`, public pages `/airports` (index) and `/airports/[ident]`, open
+  to logged-out visitors and search engines, always with the "check the AIP and NOTAMs" note.
 - **Opening hours are entered in the airport's local time and shown in UTC** for each date,
   converted with the airport's IANA time zone (summer time handled, no edits twice a year). This
   is the only local-time input; everything else stays UTC (requirements §7's "local time on PPR

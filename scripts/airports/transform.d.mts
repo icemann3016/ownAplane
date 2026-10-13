@@ -20,3 +20,20 @@ export function toAirportRow(
   timezone: string;
   keywords: string | null;
 };
+export type RunwaySurface =
+  "asphalt" | "concrete" | "grass" | "gravel" | "dirt" | "sand" | "water" | "other";
+export function surfaceOf(raw: string | undefined): RunwaySurface;
+export function toRunwayRow(record: Record<string, string>): {
+  airport_ident: string;
+  designator: string;
+  length_m: number | null;
+  width_m: number | null;
+  surface: RunwaySurface;
+  lighted: boolean;
+} | null;
+export function toFrequencyRow(record: Record<string, string>): {
+  airport_ident: string;
+  type: string;
+  description: string | null;
+  mhz: number;
+} | null;

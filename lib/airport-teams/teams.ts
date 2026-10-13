@@ -1,6 +1,7 @@
 import "server-only";
 
 import { and, asc, eq, gt, isNull, sql } from "drizzle-orm";
+import { cache } from "react";
 
 import { asUser } from "@/lib/db/rls";
 import {
@@ -29,6 +30,23 @@ export const airportColumns = {
   municipality: airports.municipality,
   country: airports.country,
 };
+
+/** The user's role on an airfield's team, with the airfield; null when not on it. Per request. */
+export const myAirportRole = cache(async (userId: string, ident: string) => {
+  const [row] = await asUser(userId, (tx) =>
+    tx
+      .select({
+        role: airportMembers.role,
+        verifiedAt: airportOperators.verifiedAt,
+        airport: airportColumns,
+      })
+      .from(airportMembers)
+      .innerJoin(airportOperators, eq(airportOperators.airportIdent, airportMembers.airportIdent))
+      .innerJoin(airports, eq(airports.ident, airportMembers.airportIdent))
+      .where(and(eq(airportMembers.airportIdent, ident), eq(airportMembers.userId, userId))),
+  );
+  return row ?? null;
+});
 
 /** The airfields the user is on the team of, with their role. */
 export async function myAirports(userId: string) {
