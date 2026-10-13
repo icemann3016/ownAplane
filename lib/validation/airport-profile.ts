@@ -129,6 +129,9 @@ export const serviceSchema = z
     note: optionalText(200),
   })
   .refine((d) => d.category !== "other" || d.label, { path: ["label"], error: "fieldRequired" })
-  .refine((d) => d.category !== "fuel" || d.fuelType, { path: ["fuelType"], error: "fieldRequired" })
+  .refine((d) => d.category !== "fuel" || d.fuelType, {
+    path: ["fuelType"],
+    error: "fieldRequired",
+  })
   .transform((d) => ({ ...d, fuelType: d.category === "fuel" ? d.fuelType : null }));
 export type ServiceInput = z.output<typeof serviceSchema>;

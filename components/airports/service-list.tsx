@@ -35,8 +35,9 @@ export async function ServiceList({
   const name = (s: AirportService) =>
     s.fuelType
       ? ta(`fuelTypes.${s.fuelType}`)
-      : (s.label ?? (s.maxMtomKg ? t("upToTitle", { kg: number.format(s.maxMtomKg) }) : null)) ??
-        t(`categories.${s.category}`);
+      : (s.label ??
+        (s.maxMtomKg ? t("upToTitle", { kg: number.format(s.maxMtomKg) }) : null) ??
+        t(`categories.${s.category}`));
 
   return (
     <div className="grid gap-5">
