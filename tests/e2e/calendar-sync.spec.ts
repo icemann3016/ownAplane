@@ -283,7 +283,10 @@ test("an owner adds their RAF Aviation key and their aircraft sync by themselves
   expect(busy).toHaveLength(2);
   const month = new Date(busy[0]!.from).toISOString().slice(0, 7);
   await page.goto(`/owner/aircraft/${aircraftId}/calendar?month=${month}`);
-  const external = page.getByRole("listitem").filter({ hasText: "From RAF Aviation" });
+  // "Coming up" lists them (the calendar's day cells mention them too).
+  const external = page
+    .getByRole("listitem")
+    .filter({ has: page.getByText("From RAF Aviation", { exact: true }) });
   await expect(external).toHaveCount(2);
   await expect(external.first()).toContainText("External booking");
 
