@@ -4,7 +4,13 @@ import { and, desc, eq, inArray, sql } from "drizzle-orm";
 
 import { getDb } from "@/lib/db";
 import { asUser } from "@/lib/db/rls";
-import { airportClaims, airportMembers, airportOperators, airports } from "@/lib/db/schema";
+import {
+  airportClaims,
+  airportMembers,
+  airportOperators,
+  airports,
+  userRoles,
+} from "@/lib/db/schema";
 import { sendClaimCode } from "./claim-code";
 import { isWorkEmail } from "./proof";
 
@@ -33,7 +39,8 @@ export type FileClaimResult =
         | "already_member"
         | "already_open"
         | "too_many_claims"
-        | "free_email";
+        | "free_email"
+        | "pilot_account";
     };
 
 /** File a claim; with an email address, its code is sent at once. */
@@ -45,6 +52,12 @@ export async function fileClaim(userId: string, input: ClaimInput): Promise<File
     .leftJoin(airportOperators, eq(airportOperators.airportIdent, airports.ident))
     .where(eq(airports.ident, input.airportIdent));
   if (!airport) return { ok: false, error: "airport_unknown" };
+  // Airfield accounts aren't pilot accounts (the database refuses it too).
+  const [pilot] = await db
+    .select({ role: userRoles.role })
+    .from(userRoles)
+    .where(and(eq(userRoles.userId, userId), eq(userRoles.role, "pilot")));
+  if (pilot) return { ok: false, error: "pilot_account" };
   if (airport.operated) {
     const [member] = await asUser(userId, (tx) =>
       tx
@@ -79,6 +92,7 @@ export async function fileClaim(userId: string, input: ClaimInput): Promise<File
     const { code, message } = pgError(e);
     if (code === "23505") return { ok: false, error: "already_open" };
     if (message?.includes("too_many_claims")) return { ok: false, error: "too_many_claims" };
+    if (message?.includes("operator_not_pilot")) return { ok: false, error: "pilot_account" };
     throw e;
   }
   if (!row) throw new Error("claim not saved");

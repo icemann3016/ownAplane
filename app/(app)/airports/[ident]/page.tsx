@@ -3,7 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   ClockIcon,
-  FuelIcon,
   MailIcon,
   PhoneIcon,
   PlaneLandingIcon,
@@ -13,8 +12,8 @@ import {
 } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 
-import { FeeList } from "@/components/airports/fee-list";
 import { FrequencyList, RunwayList } from "@/components/airports/runway-lists";
+import { ServiceList } from "@/components/airports/service-list";
 import { WeekInUtc } from "@/components/airports/week-in-utc";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -52,7 +51,6 @@ export default async function AirportPage({ params }: { params: Promise<{ ident:
   const user = await getUser();
   const membership = user ? await myAirportRole(user.id, ident) : null;
   const t = await getTranslations("airports");
-  const ta = await getTranslations("aircraft");
   const locale = (await getLocale()) as Locale;
   const country = new Intl.DisplayNames([intlLocale(locale)], { type: "region" });
   const number = new Intl.NumberFormat(intlLocale(locale));
@@ -144,38 +142,12 @@ export default async function AirportPage({ params }: { params: Promise<{ ident:
       <Card>
         <CardHeader>
           <CardTitle as="h2" className="flex items-center gap-2">
-            <FuelIcon className="size-5 text-primary" aria-hidden /> {t("public.services")}
+            <ReceiptIcon className="size-5 text-primary" aria-hidden /> {t("public.services")}
           </CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-3 text-sm">
-          {profile.fuels.length || profile.services.length ? (
-            <div className="flex flex-wrap gap-2">
-              {profile.fuels.map((f) => (
-                <Badge key={f} variant="secondary">
-                  {ta(`fuelTypes.${f}`)}
-                </Badge>
-              ))}
-              {profile.services.map((s) => (
-                <Badge key={s} variant="outline">
-                  {t(`services.${s as "hangar"}`)}
-                </Badge>
-              ))}
-            </div>
-          ) : (
-            <p className="text-muted-foreground">{t("public.noServices")}</p>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle as="h2" className="flex items-center gap-2">
-            <ReceiptIcon className="size-5 text-primary" aria-hidden /> {t("fees.title")}
-          </CardTitle>
-          <CardDescription>{t("public.feesText")}</CardDescription>
+          <CardDescription>{t("public.servicesText")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <FeeList fees={data.fees} currency={profile.currency} />
+          <ServiceList services={data.services} currency={profile.currency} />
         </CardContent>
       </Card>
 

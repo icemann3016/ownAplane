@@ -2,7 +2,12 @@
 
 If you run an airfield, you can bring it to ownAplane so pilots send you PPR, parking, hangar and
 service requests online instead of by email or phone. An airfield is run by a **team**: managers
-and staff. Open **Airports** in your account menu.
+and staff. Open **Airports** in your account menu, or pick **I run an airfield** when you sign up.
+
+**Airfield accounts aren't pilot accounts.** An account on an airfield's team (or claiming one)
+can't switch on the pilot role, and a pilot account can't claim or join an airfield: if you also
+fly, use a separate account (another email address) for the airfield. An airfield account can
+still list aircraft for rent.
 
 ## Claim your airfield
 
@@ -41,8 +46,7 @@ airfields are listed under **Airports** at the bottom of every page. Managers ke
 from the tabs on the airfield (staff can look, not change):
 
 - **Profile:** a few lines about the airfield, whether pilots need **PPR** and how many hours'
-  notice, services (parking, hangar, handling, customs…), fuels, phone, email and website, and the
-  currency of your fees.
+  notice, phone, email and website, and the currency of your prices.
 - **Opening hours:** tick the days you're open and enter the times in the airfield's **local
   time**, as you know them; **Use Monday's hours for every day** copies Monday to the others. Pilots
   see them in **UTC** for each of the next 7 days, with summer and winter time taken into account,
@@ -51,8 +55,13 @@ from the tabs on the airfield (staff can look, not change):
 - **Runways & radio:** runways (designator, length, width, surface, lights) and frequencies (type,
   MHz, callsign). Airfields start with the runways and frequencies from the public OurAirports
   data; check them and remove or add what's needed.
-- **Fees:** landing, parking, hangar and other fees, optionally up to a maximum take-off mass (MTOM),
-  per landing, night, day, hour or once. They're shown to pilots only: they pay you as today, not
+- **Services & prices:** everything you offer and what it costs: landing charges, aircraft ground
+  handling, passenger handling, apron parking, hangar, customs, fuel (per litre, by type), oil and
+  anything else (**Other services**, with a name you choose). Each line has a price and what it's
+  per (landing, movement, night, day, hour, passenger, litre or one-off); leave the price empty for
+  "price on request". For prices by weight, add one line per band with **Up to MTOM (kg)**, e.g.
+  landing up to 1,000 kg and up to 2,000 kg. **Edit** changes a line, **Remove** takes it off.
+  Pilots will pick from this list when they send you a request; they pay you as today, not
   through ownAplane.
 
 The page always reminds pilots to check the AIP and NOTAMs: it's information from your team, never
@@ -60,6 +69,8 @@ an official source.
 
 ## What comes next
 
-Pilots' requests: PPR, parking or hangar, fuel and other services, and customs, with a daily list
-for the airfield. A PPR on ownAplane will be the operator's administrative permission only: it
+Pilots' requests to arrive or depart, with the services they need ticked from your list (plus
+"Other" in their own words) and a rough total. Where you require PPR you approve them (or not);
+where you don't, they're confirmed at once. You'll see who comes and goes, and what they need, by
+day, week or month. A PPR on ownAplane will be the operator's administrative permission only: it
 never replaces ATC clearance, a flight plan or official customs and border procedures.

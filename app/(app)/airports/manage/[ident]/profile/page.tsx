@@ -46,8 +46,6 @@ export default async function AirportProfilePage({
               pprRequired: p.pprRequired,
               pprNoticeHours: p.pprNoticeHours,
               currency: p.currency,
-              services: p.services,
-              fuels: p.fuels,
             }}
           />
         ) : (

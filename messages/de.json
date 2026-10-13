@@ -298,6 +298,11 @@
       "noUpcoming": "Keine anstehenden Buchungen.",
       "recentBookings": "Letzte Buchungen Ihrer Flugzeuge",
       "noPast": "Noch keine vergangenen Buchungen."
+    },
+    "airfields": {
+      "title": "Ihre Flugplätze",
+      "text": "Halten Sie Leistungen, Preise und Öffnungszeiten aktuell.",
+      "publicPage": "Öffentliche Seite"
     }
   },
   "account": {
@@ -350,7 +355,8 @@
       "switchOn": "Einschalten",
       "switchOff": "Ausschalten",
       "switchOnLabel": "Einschalten: {role}",
-      "switchOffLabel": "Ausschalten: {role}"
+      "switchOffLabel": "Ausschalten: {role}",
+      "pilotAirport": "Dieses Konto betreibt einen Flugplatz und kann daher kein Pilotenkonto sein. Verwenden Sie zum Fliegen ein eigenes Konto."
     },
     "preferences": {
       "title": "Einstellungen",
@@ -2739,6 +2745,7 @@
     "rolesTitle": "Willkommen, {name}! Wie werden Sie ownAplane nutzen?",
     "rolesText": "Wählen Sie eine Option; wir führen Sie durch die Schritte, die für Sie wichtig sind.",
     "rolesLater": "Sie können das jederzeit im Konto ändern.",
+    "airportNote": "Dieses Konto betreibt einen Flugplatz und kann daher kein Pilotenkonto sein. Es kann trotzdem Flugzeuge vermieten.",
     "choices": {
       "pilot": {
         "title": "Ich bin Pilot",
@@ -2751,6 +2758,10 @@
       "both": {
         "title": "Beides",
         "text": "Ich fliege und vermiete mein eigenes Flugzeug."
+      },
+      "airfield": {
+        "title": "Ich betreibe einen Flugplatz",
+        "text": "Piloten senden mir ihre Ankünfte, Abflüge und Leistungsanfragen. (Flugplatzkonten sind keine Pilotenkonten.)"
       }
     },
     "stepsTitle": "Konto einrichten",
@@ -3546,7 +3557,8 @@
       "note": "Was wir wissen sollten (optional)",
       "privacy": "Nur Sie und unsere Admins sehen Ihren Antrag und sein Dokument.",
       "submit": "Antrag senden",
-      "submitting": "Wird gesendet…"
+      "submitting": "Wird gesendet…",
+      "pilotAccount": "Dies ist ein Pilotenkonto, Flugplatzkonten sind davon getrennt. Registrieren Sie sich mit einer anderen E-Mail-Adresse (z. B. der des Flugplatzes), um einen Flugplatz zu beanspruchen. Ein Flugplatzkonto kann trotzdem Flugzeuge vermieten."
     },
     "team": {
       "metaTitle": "Flugplatz-Team",
@@ -3607,7 +3619,8 @@
       "too_many_invites": "Ein Flugplatz kann höchstens 20 offene Einladungen haben.",
       "invite_invalid": "Diese Einladung ist abgelaufen oder wurde schon verwendet.",
       "invite_other_email": "Diese Einladung gilt für eine andere E-Mail-Adresse.",
-      "too_many_rows": "Diese Liste ist für diesen Flugplatz voll. Entfernen Sie zuerst einen Eintrag."
+      "too_many_rows": "Diese Liste ist für diesen Flugplatz voll. Entfernen Sie zuerst einen Eintrag.",
+      "pilot_account": "Pilotenkonten können keinen Flugplatz betreiben. Verwenden Sie für den Flugplatz ein eigenes Konto mit einer anderen E-Mail-Adresse."
     },
     "tabs": {
       "label": "Bereiche des Flugplatzes",
@@ -3615,21 +3628,7 @@
       "profile": "Profil",
       "hours": "Öffnungszeiten",
       "runways": "Pisten & Funk",
-      "fees": "Gebühren"
-    },
-    "services": {
-      "apron_parking": "Vorfeld-Parken",
-      "hangar": "Hangar",
-      "tie_downs": "Verankerung",
-      "handling": "Handling",
-      "customs": "Zoll",
-      "immigration": "Grenzkontrolle",
-      "maintenance": "Wartung",
-      "catering": "Catering",
-      "transport": "Taxi / Transport",
-      "restaurant": "Restaurant",
-      "accommodation": "Unterkunft",
-      "briefing_room": "Briefingraum"
+      "services": "Leistungen & Preise"
     },
     "profile": {
       "viewPage": "Öffentliche Seite ansehen",
@@ -3640,13 +3639,11 @@
       "pprRequired": "Piloten brauchen eine PPR, um hier zu landen",
       "pprNotice": "Nötige Vorlaufzeit (Stunden)",
       "pprNoticeHint": "Wie viele Stunden vor der Ankunft eine PPR bei Ihnen sein muss. Leer lassen, wenn keine.",
-      "services": "Dienste",
-      "fuels": "Kraftstoff",
       "phone": "Telefon",
       "email": "E-Mail",
       "website": "Website",
-      "currency": "Währung der Gebühren",
-      "currencyHint": "Die Gebühren werden darin angezeigt.",
+      "currency": "Währung Ihrer Preise",
+      "currencyHint": "Leistungen & Preise werden darin angezeigt.",
       "publicNote": "Alles hier erscheint auf der öffentlichen Seite des Flugplatzes.",
       "save": "Profil speichern",
       "saving": "Wird gespeichert…",
@@ -3717,47 +3714,83 @@
       "removeFrequency": "{type} {mhz} entfernen",
       "saving": "Wird gespeichert…"
     },
-    "fees": {
-      "title": "Gebühren",
-      "text": "Für Piloten in {currency} angezeigt. Sie zahlen direkt an den Flugplatz, nicht über ownAplane.",
-      "none": "Keine Gebühren angegeben.",
-      "kind": "Art",
-      "kinds": {
-        "landing": "Landung",
-        "parking": "Parken",
-        "hangar": "Hangar",
-        "other": "Sonstige"
+    "catalog": {
+      "title": "Leistungen & Preise",
+      "text": "Was Piloten bei Ankunft oder Abflug anfragen können und was es kostet, in {currency}. Piloten zahlen direkt an den Flugplatz, nicht über ownAplane.",
+      "none": "Noch nichts eingetragen.",
+      "addTitle": "Leistung hinzufügen",
+      "editTitle": "Leistung ändern",
+      "formText": "Für Preise nach Flugzeuggewicht legen Sie pro Gewichtsklasse eine Zeile an. Lassen Sie den Preis leer, wenn er auf Anfrage ist.",
+      "category": "Leistung",
+      "categories": {
+        "landing": "Landegebühren",
+        "ground_handling": "Bodenabfertigung des Flugzeugs",
+        "pax_handling": "Passagierabfertigung",
+        "parking_apron": "Abstellen auf dem Vorfeld",
+        "parking_hangar": "Hangar",
+        "customs": "Zoll und Grenzkontrolle",
+        "fuel": "Kraftstoff",
+        "oil": "Öl",
+        "other": "Weitere Leistungen"
       },
-      "label": "Name (optional)",
-      "labelPlaceholder": "z. B. Touch-and-go",
-      "amount": "Betrag ({currency})",
+      "fuelType": "Kraftstoff",
+      "name": "Bezeichnung",
+      "nameOptional": "Bezeichnung (optional)",
+      "placeholders": {
+        "landing": "z. B. Touch-and-go",
+        "ground_handling": "z. B. Einwinken und Bremsklötze",
+        "pax_handling": "z. B. VIP-Lounge",
+        "parking_apron": "z. B. Grasabstellfläche",
+        "parking_hangar": "z. B. Beheizter Hangar",
+        "customs": "z. B. Auf Anfrage, 24 h vorher",
+        "fuel": "z. B. Selbstbedienung",
+        "oil": "z. B. AeroShell W100",
+        "other": "z. B. Verzurren, Catering, Taxi"
+      },
+      "maxMtom": "Bis MTOM (kg)",
+      "maxMtomHint": "Leer lassen, wenn der Preis für alle Flugzeuge gleich ist.",
+      "upTo": "bis {kg} kg MTOM",
+      "upToTitle": "Bis {kg} kg MTOM",
+      "price": "Preis ({currency})",
+      "priceHint": "Leer lassen für „Preis auf Anfrage“.",
+      "onRequest": "Preis auf Anfrage",
       "unit": "Pro",
       "units": {
         "landing": "Landung",
+        "movement": "Bewegung (Ankunft oder Abflug)",
         "night": "Nacht",
         "day": "Tag",
         "hour": "Stunde",
+        "pax": "Passagier",
+        "litre": "Liter",
         "once": "Einmalig"
       },
       "per": {
         "landing": "pro Landung",
+        "movement": "pro Bewegung",
         "night": "pro Nacht",
         "day": "pro Tag",
         "hour": "pro Stunde",
+        "pax": "pro Passagier",
+        "litre": "pro Liter",
         "once": "einmalig"
       },
-      "price": "{amount} {unit}",
-      "maxMtom": "Bis MTOM (kg)",
-      "maxMtomHint": "Leer lassen, wenn es für alle Luftfahrzeuge gilt.",
-      "upTo": "bis {kg} kg MTOM",
-      "add": "Gebühr hinzufügen",
-      "added": "Gebühr hinzugefügt.",
+      "priceLine": "{amount} {unit}",
+      "note": "Hinweis (optional)",
+      "notePlaceholder": "z. B. 24 h vorher, nur werktags",
+      "add": "Zur Liste hinzufügen",
+      "added": "Zur Liste hinzugefügt.",
+      "save": "Änderungen speichern",
+      "saved": "Gespeichert.",
+      "cancel": "Abbrechen",
+      "edit": "Bearbeiten",
+      "editLabel": "{item} bearbeiten",
       "remove": "Entfernen",
-      "removeLabel": "Gebühr {fee} entfernen",
-      "saving": "Wird gespeichert…"
+      "removeLabel": "{item} entfernen",
+      "saving": "Wird gespeichert …"
     },
     "public": {
-      "metaDescription": "Öffnungszeiten in UTC, Pisten, Funk, Dienste und Gebühren von {name}.",
+      "metaDescription": "Öffnungszeiten in UTC, Pisten, Funk, Leistungen und Preise von {name}.",
       "elevation": "Höhe {ft} ft",
       "ppr": "PPR erforderlich",
       "pprNotice": "PPR erforderlich, {hours} h Vorlauf",
@@ -3766,15 +3799,14 @@
       "hours": "Öffnungszeiten (UTC)",
       "hoursText": "Die nächsten 7 Tage. Der Flugplatz legt seine Zeiten in Ortszeit fest ({timeZone}).",
       "noHours": "Öffnungszeiten noch nicht angegeben. Kontaktieren Sie den Flugplatz.",
-      "services": "Dienste und Kraftstoff",
-      "noServices": "Noch nicht angegeben.",
-      "feesText": "An den Flugplatz zu zahlen, nicht über ownAplane.",
+      "services": "Leistungen & Preise",
+      "servicesText": "An den Flugplatz zu zahlen, nicht über ownAplane.",
       "contact": "Kontakt",
       "requestsSoon": "Bald können Sie hier PPR-, Parkplatz-, Hangar- und Serviceanfragen an diesen Flugplatz senden."
     },
     "index": {
       "title": "Flugplätze auf ownAplane",
-      "description": "Flugplätze, deren Teams ihre Angaben hier pflegen: Öffnungszeiten in UTC, Pisten, Funk, Dienste und Gebühren.",
+      "description": "Flugplätze, deren Teams ihre Angaben hier pflegen: Öffnungszeiten in UTC, Pisten, Funk, Leistungen und Preise.",
       "none": "Noch keine Flugplätze.",
       "runOne": "Betreiben Sie einen Flugplatz? Bringen Sie ihn auf ownAplane."
     }

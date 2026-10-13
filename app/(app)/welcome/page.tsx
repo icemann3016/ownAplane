@@ -1,11 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRightIcon, PlaneIcon, PlaneTakeoffIcon, UsersIcon } from "lucide-react";
+import {
+  ArrowRightIcon,
+  PlaneIcon,
+  PlaneTakeoffIcon,
+  TowerControlIcon,
+  UsersIcon,
+} from "lucide-react";
 import { getTranslations } from "next-intl/server";
 
 import { CompletionList } from "@/components/completion-list";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { isAirportAccount } from "@/lib/airport-teams/teams";
 import { requireProfile } from "@/lib/auth/session";
 import { getProfileCompletion } from "@/lib/dashboard/completion";
 import { chooseRoles } from "./actions";
@@ -19,6 +26,7 @@ const CHOICES = [
   { value: "pilot", icon: PlaneTakeoffIcon },
   { value: "owner", icon: PlaneIcon },
   { value: "both", icon: UsersIcon },
+  { value: "airfield", icon: TowerControlIcon },
 ] as const;
 
 /**
@@ -35,9 +43,11 @@ export default async function WelcomePage({
   const t = await getTranslations("welcome");
   const isPilot = roles.includes("pilot");
   const isOwner = roles.includes("owner");
+  // Airfield accounts can't be pilots (Zlati, 2026-10-13).
+  const airport = await isAirportAccount(userId);
   const firstName = profile.displayName.split(/\s+/)[0] ?? profile.displayName;
 
-  if (step === "roles" || (!isPilot && !isOwner)) {
+  if (step === "roles" || (!isPilot && !isOwner && !airport)) {
     const current = isPilot && isOwner ? "both" : isPilot ? "pilot" : isOwner ? "owner" : null;
     return (
       <div className="mx-auto grid w-full max-w-3xl gap-6 px-4 py-10">
@@ -47,7 +57,7 @@ export default async function WelcomePage({
           </h1>
           <p className="text-muted-foreground">{t("rolesText")}</p>
         </div>
-        <form action={chooseRoles} className="grid gap-3 sm:grid-cols-3">
+        <form action={chooseRoles} className="grid gap-3 sm:grid-cols-2">
           {CHOICES.map(({ value, icon: Icon }) => (
             <button
               key={value}
@@ -55,7 +65,8 @@ export default async function WelcomePage({
               name="choice"
               value={value}
               aria-pressed={current === value}
-              className="grid gap-2 rounded-xl border p-5 text-left transition-colors hover:border-primary hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none aria-pressed:border-primary"
+              disabled={airport && (value === "pilot" || value === "both")}
+              className="grid content-start gap-2 rounded-xl border p-5 text-left transition-colors hover:border-primary hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 aria-pressed:border-primary"
             >
               <Icon className="size-6 text-primary" aria-hidden />
               <span className="font-semibold">{t(`choices.${value}.title`)}</span>
@@ -63,6 +74,7 @@ export default async function WelcomePage({
             </button>
           ))}
         </form>
+        {airport && <p className="text-sm text-muted-foreground">{t("airportNote")}</p>}
         <p className="text-xs text-muted-foreground">{t("rolesLater")}</p>
       </div>
     );

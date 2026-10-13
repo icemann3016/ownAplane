@@ -18,6 +18,8 @@ const CLAIMANT = "a1a1a1a1-1111-4111-8111-111111111111";
 const STAFF = "b2b2b2b2-2222-4222-8222-222222222222";
 const OTHER = "c3c3c3c3-3333-4333-8333-333333333333";
 const ADMIN = "d4d4d4d4-4444-4444-8444-444444444444";
+const PILOT = "e5e5e5e5-5555-4555-8555-555555555555";
+const NEWBIE = "f6f6f6f6-6666-4666-8666-666666666666";
 const AIRPORT = "LBSF";
 
 async function pgError(promise: Promise<unknown>): Promise<string | undefined> {
@@ -51,8 +53,13 @@ describeDb("airport teams and claims (APT-1)", () => {
       { id: STAFF, name: "Stan Staff", email: "stan@sofia-airport.example" },
       { id: OTHER, name: "Olga Other", email: "olga@example.com" },
       { id: ADMIN, name: "Ada Admin", email: "ada@ownaplane.example" },
+      { id: PILOT, name: "Petra Pilot", email: "petra@example.com" },
+      { id: NEWBIE, name: "Nina New", email: "nina@plovdiv-airport.example" },
     ]);
-    await owner.insert(s.userRoles).values({ userId: ADMIN, role: "admin" });
+    await owner.insert(s.userRoles).values([
+      { userId: ADMIN, role: "admin" },
+      { userId: PILOT, role: "pilot" },
+    ]);
     await owner.insert(s.airports).values(
       ["LBSF", "LBPD"].map((ident) => ({
         ident,
@@ -379,5 +386,51 @@ describeDb("airport teams and claims (APT-1)", () => {
       select count(*)::int as n from public.documents d
       join public.airport_claims c on c.document_id = d.id`)) as unknown as { n: number }[];
     expect(kept!.n).toBeGreaterThan(0);
+  });
+
+  it("keeps airfield accounts and pilot accounts apart", async () => {
+    // A pilot can't claim an airfield or join a team…
+    expect(
+      await claims.fileClaim(PILOT, {
+        airportIdent: "LBPD",
+        position: "Manager",
+        note: null,
+        proof: { documentId: await docOf(PILOT) },
+      }),
+    ).toEqual({ ok: false, error: "pilot_account" });
+    expect(
+      await pgError(
+        db
+          .getDb()
+          .insert(s.airportMembers)
+          .values({ airportIdent: AIRPORT, userId: PILOT, role: "staff" }),
+      ),
+    ).toContain("operator_not_pilot");
+    expect(await teams.isAirportAccount(PILOT)).toBe(false);
+
+    // …and someone claiming one (or on a team) can't become a pilot; an owner, yes.
+    const filed = await claims.fileClaim(NEWBIE, {
+      airportIdent: "LBPD",
+      position: "Manager",
+      note: null,
+      proof: { documentId: await docOf(NEWBIE) },
+    });
+    expect(filed).toMatchObject({ ok: true, status: "pending" });
+    expect(await teams.isAirportAccount(NEWBIE)).toBe(true);
+    expect(
+      await pgError(
+        rls.asUser(NEWBIE, (tx) =>
+          tx.insert(s.userRoles).values({ userId: NEWBIE, role: "pilot" }),
+        ),
+      ),
+    ).toContain("operator_not_pilot");
+    await rls.asUser(NEWBIE, (tx) =>
+      tx.insert(s.userRoles).values({ userId: NEWBIE, role: "owner" }),
+    );
+    // Once the claim is withdrawn the account is free to fly again.
+    expect(await claims.withdrawClaim(NEWBIE, filed.ok ? filed.id : "")).toBe(true);
+    await rls.asUser(NEWBIE, (tx) =>
+      tx.insert(s.userRoles).values({ userId: NEWBIE, role: "pilot" }),
+    );
   });
 });

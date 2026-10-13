@@ -1,18 +1,20 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 
 import {
   addClosure,
-  addFee,
   addFrequency,
   addRunway,
+  addService,
   type ProfileResult,
   removeItem,
   setHours,
   updateProfile,
+  updateService,
 } from "@/lib/airport-profile/ops";
 import { WEEKDAYS } from "@/lib/airport-profile/catalog";
 import { requireUser } from "@/lib/auth/session";
@@ -20,11 +22,11 @@ import { type FormState, formValues } from "@/lib/forms";
 import { localizedFieldErrors } from "@/lib/i18n/server";
 import {
   closureSchema,
-  feeSchema,
   frequencySchema,
   hoursSchema,
   profileSchema,
   runwaySchema,
+  serviceSchema,
 } from "@/lib/validation/airport-profile";
 
 // An airfield's profile (APT-1). The database lets only its managers change it (RLS).
@@ -54,8 +56,6 @@ export async function updateProfileAction(
   const parsed = profileSchema.safeParse({
     ...raw,
     pprRequired: formData.get("pprRequired") === "on",
-    services: formData.getAll("services").map(String),
-    fuels: formData.getAll("fuels").map(String),
   });
   if (!parsed.success) return { errors: await localizedFieldErrors(parsed.error), values: raw };
   const ident = identOf(formData);
@@ -131,13 +131,33 @@ export async function addFrequencyAction(_prev: FormState, formData: FormData) {
   return addWith(formData, frequencySchema, {}, addFrequency, "runways.frequencyAdded");
 }
 
-export async function addFeeAction(_prev: FormState, formData: FormData) {
-  return addWith(formData, feeSchema, {}, addFee, "fees.added");
+export async function addServiceAction(_prev: FormState, formData: FormData) {
+  return addWith(formData, serviceSchema, {}, addService, "catalog.added");
+}
+
+/** Save a changed service, then leave the form's edit mode. */
+export async function updateServiceAction(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  const id = z.uuid().safeParse(formData.get("id"));
+  if (!id.success) return { message: (await getTranslations("airports"))("errors.not_allowed") };
+  const result = await addWith(
+    formData,
+    serviceSchema,
+    {},
+    (userId, ident, input) => updateService(userId, ident, id.data, input),
+    "catalog.saved",
+  );
+  if (result.ok) {
+    redirect(`/airports/manage/${encodeURIComponent(identOf(formData))}/services`);
+  }
+  return result;
 }
 
 const removeInput = z.object({
   ident: z.string().min(1).max(20),
-  item: z.enum(["closure", "runway", "frequency", "fee"]),
+  item: z.enum(["closure", "runway", "frequency", "service"]),
   id: z.uuid(),
 });
 

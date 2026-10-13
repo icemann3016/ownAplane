@@ -5,6 +5,7 @@ import { cache } from "react";
 
 import { asUser } from "@/lib/db/rls";
 import {
+  airportClaims,
   airportInvites,
   airportMembers,
   airportOperators,
@@ -46,6 +47,22 @@ export const myAirportRole = cache(async (userId: string, ident: string) => {
       .where(and(eq(airportMembers.airportIdent, ident), eq(airportMembers.userId, userId))),
   );
   return row ?? null;
+});
+
+/**
+ * Whether this is an airfield account: on an airfield's team or with an open claim for one.
+ * Airfield accounts can't be pilot accounts (Zlati, 2026-10-13; enforced by the database).
+ */
+export const isAirportAccount = cache(async (userId: string) => {
+  const [row] = await asUser(userId, (tx) =>
+    tx.execute(sql`select exists (
+        select 1 from ${airportMembers} where ${airportMembers.userId} = ${userId}
+      ) or exists (
+        select 1 from ${airportClaims} where ${airportClaims.userId} = ${userId}
+          and ${airportClaims.status} in ('unconfirmed', 'pending')
+      ) as yes`),
+  );
+  return Boolean((row as { yes?: boolean } | undefined)?.yes);
 });
 
 /** The airfields the user is on the team of, with their role. */

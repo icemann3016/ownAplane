@@ -5,13 +5,13 @@ import { useTranslations } from "next-intl";
 
 import { TabBar } from "@/components/layout/tab-bar";
 
-const TABS = ["", "/profile", "/hours", "/runways", "/fees"] as const;
+const TABS = ["", "/profile", "/hours", "/runways", "/services"] as const;
 const KEYS = {
   "": "team",
   "/profile": "profile",
   "/hours": "hours",
   "/runways": "runways",
-  "/fees": "fees",
+  "/services": "services",
 } as const;
 
 /** Tabs of an airfield's area for its team (APT-1). */

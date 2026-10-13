@@ -6,6 +6,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
+import { pgError } from "@/lib/aircraft/manage";
 import { getAuth } from "@/lib/auth/auth";
 import { authErrorCode } from "@/lib/auth/errors";
 import { isProviderEnabled, isSocialProvider } from "@/lib/auth/providers";
@@ -60,15 +61,20 @@ export async function setRole(formData: FormData) {
   const role = selfServiceRoleSchema.parse(formData.get("role"));
   const enable = formData.get("enable") === "true";
 
-  await asUser(user.id, async (tx) => {
-    if (enable) {
-      await tx.insert(userRoles).values({ userId: user.id, role }).onConflictDoNothing();
-    } else {
-      await tx
-        .delete(userRoles)
-        .where(and(eq(userRoles.userId, user.id), eq(userRoles.role, role)));
-    }
-  });
+  try {
+    await asUser(user.id, async (tx) => {
+      if (enable) {
+        await tx.insert(userRoles).values({ userId: user.id, role }).onConflictDoNothing();
+      } else {
+        await tx
+          .delete(userRoles)
+          .where(and(eq(userRoles.userId, user.id), eq(userRoles.role, role)));
+      }
+    });
+  } catch (e) {
+    // Airfield accounts can't be pilots (the page shows why instead of the switch).
+    if (!pgError(e).message?.includes("operator_not_pilot")) throw e;
+  }
   revalidatePath("/", "layout");
 }
 

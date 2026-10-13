@@ -2,10 +2,9 @@ import { z } from "zod";
 
 import { CURRENCIES } from "@/lib/aircraft/catalog";
 import {
-  FEE_KINDS,
-  FEE_UNITS,
   RUNWAY_SURFACES,
-  SERVICES,
+  SERVICE_CATEGORIES,
+  SERVICE_UNITS,
   WEEKDAYS,
 } from "@/lib/airport-profile/catalog";
 import { FUEL_TYPES } from "@/lib/aircraft/catalog";
@@ -52,8 +51,6 @@ export const profileSchema = z
     pprRequired: z.boolean(),
     pprNoticeHours: wholeNumber(0, 720),
     currency: z.enum(CURRENCIES, "invalid"),
-    services: z.array(z.enum(SERVICES)),
-    fuels: z.array(z.enum(FUEL_TYPES)),
   })
   .transform((d) => ({ ...d, pprNoticeHours: d.pprRequired ? d.pprNoticeHours : null }));
 export type ProfileInput = z.output<typeof profileSchema>;
@@ -110,15 +107,28 @@ export const frequencySchema = z.object({
 });
 export type FrequencyInput = z.output<typeof frequencySchema>;
 
-export const feeSchema = z.object({
-  kind: z.enum(FEE_KINDS, "invalid"),
-  label: optionalText(80),
-  maxMtomKg: wholeNumber(1, 100000),
-  amount: z
-    .string()
-    .trim()
-    .refine((v) => /^\d{1,5}([.,]\d{1,2})?$/.test(v), "priceInvalid")
-    .transform((v) => Number(v.replace(",", "."))),
-  unit: z.enum(FEE_UNITS, "invalid"),
-});
-export type FeeInput = z.output<typeof feeSchema>;
+export const serviceSchema = z
+  .object({
+    category: z.enum(SERVICE_CATEGORIES, "invalid"),
+    label: optionalText(80),
+    fuelType: z
+      .string()
+      .optional()
+      .default("")
+      .transform((v) => v || null)
+      .pipe(z.enum(FUEL_TYPES, "invalid").nullable()),
+    maxMtomKg: wholeNumber(1, 100000),
+    price: z
+      .string()
+      .trim()
+      .optional()
+      .default("")
+      .refine((v) => v === "" || /^\d{1,5}([.,]\d{1,3})?$/.test(v), "priceInvalid")
+      .transform((v) => (v === "" ? null : Number(v.replace(",", ".")))),
+    unit: z.enum(SERVICE_UNITS, "invalid"),
+    note: optionalText(200),
+  })
+  .refine((d) => d.category !== "other" || d.label, { path: ["label"], error: "fieldRequired" })
+  .refine((d) => d.category !== "fuel" || d.fuelType, { path: ["fuelType"], error: "fieldRequired" })
+  .transform((d) => ({ ...d, fuelType: d.category === "fuel" ? d.fuelType : null }));
+export type ServiceInput = z.output<typeof serviceSchema>;

@@ -114,7 +114,8 @@ export async function inviteByToken(token: string) {
 }
 
 export type AcceptResult =
-  { ok: true; ident: string } | { ok: false; error: "invite_invalid" | "invite_other_email" };
+  | { ok: true; ident: string }
+  | { ok: false; error: "invite_invalid" | "invite_other_email" | "pilot_account" };
 
 /** Join the team with an invitation's token: only as the invited email address. */
 export async function acceptInvite(userId: string, token: string): Promise<AcceptResult> {
@@ -128,6 +129,7 @@ export async function acceptInvite(userId: string, token: string): Promise<Accep
     const message = pgMessage(e);
     if (message.includes("invite_other_email")) return { ok: false, error: "invite_other_email" };
     if (message.includes("invite_invalid")) return { ok: false, error: "invite_invalid" };
+    if (message.includes("operator_not_pilot")) return { ok: false, error: "pilot_account" };
     throw e;
   }
 }

@@ -8,6 +8,7 @@ import { AccountTabs } from "@/components/account/account-tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { isAirportAccount } from "@/lib/airport-teams/teams";
 import { getAirport } from "@/lib/airports";
 import { presetFromKey } from "@/lib/avatar-presets";
 import { avatarUrl } from "@/lib/avatar-url";
@@ -106,7 +107,7 @@ export default async function AccountPage({
           <CardDescription>{t("roles.description")}</CardDescription>
         </CardHeader>
         <CardContent>
-          <RolesForm roles={roles} />
+          <RolesForm roles={roles} airportAccount={await isAirportAccount(userId)} />
         </CardContent>
       </Card>
 

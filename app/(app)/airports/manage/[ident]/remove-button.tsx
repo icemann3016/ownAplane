@@ -2,7 +2,7 @@ import { SubmitButton } from "@/components/forms/submit-button";
 import type { ProfileItem } from "@/lib/airport-profile/ops";
 import { removeItemAction } from "./profile-actions";
 
-/** Remove one closure, runway, frequency or fee (managers). */
+/** Remove one closure, runway, frequency or service (managers). */
 export function RemoveButton({
   ident,
   item,

@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 
+import { myAirports } from "@/lib/airport-teams/teams";
 import { requireProfile } from "@/lib/auth/session";
 import { getDashboard } from "@/lib/dashboard";
 import { getProfileCompletion } from "@/lib/dashboard/completion";
 import { intlLocale } from "@/lib/i18n/config";
 import { credentialLabel, type PilotTranslate } from "@/lib/pilot/labels";
+import { AirfieldsCard } from "./airfields-card";
 import { OwnerCard } from "./owner-card";
 import { PilotCard } from "./pilot-card";
 import { CompletionCard } from "./completion-card";
@@ -26,9 +28,10 @@ export default async function DashboardPage() {
   const t = await getTranslations("dashboard");
   const isPilot = roles.includes("pilot");
   const isOwner = roles.includes("owner");
-  const [data, completion] = await Promise.all([
+  const [data, completion, airfields] = await Promise.all([
     getDashboard(userId, { pilot: isPilot, owner: isOwner }),
     getProfileCompletion(userId, { pilot: isPilot, owner: isOwner }, profile),
+    myAirports(userId),
   ]);
   const firstName = profile.displayName.split(/\s+/)[0] ?? profile.displayName;
   const summary = data.pilot?.credentials ?? null;
@@ -69,6 +72,8 @@ export default async function DashboardPage() {
         <h1 className="text-2xl font-semibold tracking-tight">{t("title", { name: firstName })}</h1>
         <p className="text-muted-foreground">{t("subtitle")}</p>
       </div>
+
+      {airfields.length > 0 && <AirfieldsCard airfields={airfields} />}
 
       <CompletionCard completion={completion} />
 

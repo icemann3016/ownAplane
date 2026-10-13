@@ -5,19 +5,19 @@ import { and, eq } from "drizzle-orm";
 import { asUser } from "@/lib/db/rls";
 import {
   airportClosures,
-  airportFees,
   airportFrequencies,
   airportHours,
   airportOperators,
   airportRunways,
+  airportServices,
 } from "@/lib/db/schema";
 import type {
   ClosureInput,
-  FeeInput,
   FrequencyInput,
   HoursInput,
   ProfileInput,
   RunwayInput,
+  ServiceInput,
 } from "@/lib/validation/airport-profile";
 
 // Changes to an airfield's profile (APT-1), with the user's own rights: the database lets only
@@ -109,13 +109,26 @@ export function addFrequency(userId: string, ident: string, input: FrequencyInpu
   );
 }
 
-export function addFee(userId: string, ident: string, input: FeeInput) {
+export function addService(userId: string, ident: string, input: ServiceInput) {
   return change(() =>
     asUser(userId, (tx) =>
       tx
-        .insert(airportFees)
+        .insert(airportServices)
         .values({ ...input, airportIdent: ident })
-        .returning({ id: airportFees.id }),
+        .returning({ id: airportServices.id }),
+    ),
+  );
+}
+
+/** Change a service or its price. */
+export function updateService(userId: string, ident: string, id: string, input: ServiceInput) {
+  return change(() =>
+    asUser(userId, (tx) =>
+      tx
+        .update(airportServices)
+        .set(input)
+        .where(and(eq(airportServices.id, id), eq(airportServices.airportIdent, ident)))
+        .returning({ id: airportServices.id }),
     ),
   );
 }
@@ -124,11 +137,11 @@ const TABLES = {
   closure: airportClosures,
   runway: airportRunways,
   frequency: airportFrequencies,
-  fee: airportFees,
+  service: airportServices,
 } as const;
 export type ProfileItem = keyof typeof TABLES;
 
-/** Remove a closure, runway, frequency or fee. */
+/** Remove a closure, runway, frequency or service. */
 export function removeItem(userId: string, ident: string, item: ProfileItem, id: string) {
   const table = TABLES[item];
   return change(() =>

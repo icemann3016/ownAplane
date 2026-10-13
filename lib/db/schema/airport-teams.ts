@@ -55,7 +55,7 @@ export const airportOperators = pgTable(
     website: text("website"),
     /** The fees' currency. */
     currency: text("currency").notNull().default("EUR"),
-    /** lib/airport-profile/catalog.ts SERVICES. */
+    /** Replaced by airport_services (0085 copied them); dropped in a later migration. */
     services: text("services")
       .array()
       .notNull()

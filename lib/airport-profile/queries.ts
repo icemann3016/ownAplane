@@ -1,15 +1,15 @@
 import "server-only";
 
-import { asc, eq } from "drizzle-orm";
+import { asc, eq, sql } from "drizzle-orm";
 
 import { asAnon } from "@/lib/db/rls";
 import {
   airportClosures,
-  airportFees,
   airportFrequencies,
   airportHours,
   airportOperators,
   airportRunways,
+  airportServices,
   airports,
 } from "@/lib/db/schema";
 
@@ -28,6 +28,23 @@ const airportColumns = {
   elevationFt: airports.elevationFt,
   timezone: airports.timezone,
 };
+
+type Tx = Parameters<Parameters<typeof asAnon>[0]>[0];
+
+/** An airfield's services and prices: by kind (the list's order), then weight band and price. */
+export function listServices(tx: Tx, ident: string) {
+  return tx
+    .select()
+    .from(airportServices)
+    .where(eq(airportServices.airportIdent, ident))
+    .orderBy(
+      asc(airportServices.category),
+      asc(airportServices.fuelType),
+      sql`${airportServices.maxMtomKg} asc nulls last`,
+      asc(airportServices.label),
+      asc(airportServices.price),
+    );
+}
 
 /** An airfield on ownAplane with everything its page shows; null if it has no team. */
 export async function getAirportProfile(ident: string) {
@@ -58,12 +75,8 @@ export async function getAirportProfile(ident: string) {
       .from(airportClosures)
       .where(eq(airportClosures.airportIdent, ident))
       .orderBy(asc(airportClosures.startsOn));
-    const fees = await tx
-      .select()
-      .from(airportFees)
-      .where(eq(airportFees.airportIdent, ident))
-      .orderBy(asc(airportFees.kind), asc(airportFees.maxMtomKg), asc(airportFees.amount));
-    return { ...row, runways, frequencies, hours, closures, fees };
+    const services = await listServices(tx, ident);
+    return { ...row, runways, frequencies, hours, closures, services };
   });
 }
 

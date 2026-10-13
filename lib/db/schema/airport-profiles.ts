@@ -1,7 +1,8 @@
 // An airfield's details for pilots (APT-1, M16 step 2). Runways and frequencies come from
 // OurAirports' open data for every airfield (npm run airports:import) and are the team's to keep
-// once the airfield has one; hours, closures and fees are the team's. All public to read; only
-// the airfield's managers change them. RLS: db/migrations/0082_airport_profile_security.sql.
+// once the airfield has one; hours, closures, services and prices are the team's. All public to
+// read; only the airfield's managers change them. RLS: db/migrations/0082_airport_profile_security.sql
+// and 0085_airport_services_security.sql.
 import { sql } from "drizzle-orm";
 import {
   boolean,
@@ -19,6 +20,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
+import { fuelType } from "./aircraft";
 import { airportOperators } from "./airport-teams";
 import { airports } from "./airports";
 
@@ -131,7 +133,7 @@ export const airportFeeUnit = pgEnum("airport_fee_unit", [
   "once",
 ]);
 
-/** Fees shown to pilots (no payments through the app); amounts in the airfield's currency. */
+/** Replaced by airport_services (0085, which copied the rows); dropped in a later migration. */
 export const airportFees = pgTable(
   "airport_fees",
   {
@@ -156,6 +158,66 @@ export const airportFees = pgTable(
   ],
 ).enableRLS();
 
+export const airportServiceCategory = pgEnum("airport_service_category", [
+  "landing",
+  "ground_handling",
+  "pax_handling",
+  "parking_apron",
+  "parking_hangar",
+  "customs",
+  "fuel",
+  "oil",
+  "other",
+]);
+export const airportServiceUnit = pgEnum("airport_service_unit", [
+  "landing",
+  "movement",
+  "night",
+  "day",
+  "hour",
+  "pax",
+  "litre",
+  "once",
+]);
+
+/**
+ * What an airfield offers and at what price (Zlati, 2026-10-13): landing charges, handling,
+ * parking, customs, fuel, oil and anything else, in the airfield's currency. Shown to pilots,
+ * who pick from them in their requests; paid to the airfield, never through the app. Prices by
+ * weight are one row per band (max_mtom_kg); a null price is "on request".
+ */
+export const airportServices = pgTable(
+  "airport_services",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    airportIdent: text("airport_ident")
+      .notNull()
+      .references(() => airportOperators.airportIdent, { onDelete: "cascade" }),
+    category: airportServiceCategory("category").notNull(),
+    /** Required for "other" (e.g. "Tie-downs"); otherwise an optional detail. */
+    label: text("label"),
+    /** Only for fuel. */
+    fuelType: fuelType("fuel_type"),
+    /** Applies to aircraft up to this MTOM; null = any weight. */
+    maxMtomKg: integer("max_mtom_kg"),
+    price: numeric("price", { precision: 10, scale: 3, mode: "number" }),
+    unit: airportServiceUnit("unit").notNull(),
+    note: text("note"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index("airport_services_airport_idx").on(t.airportIdent),
+    check(
+      "airport_services_values",
+      sql`char_length(${t.label}) <= 80 and char_length(${t.note}) <= 200
+        and (${t.price} is null or (${t.price} >= 0 and ${t.price} < 100000))
+        and (${t.maxMtomKg} is null or ${t.maxMtomKg} between 1 and 100000)
+        and (${t.category} <> 'other' or char_length(btrim(${t.label})) > 0)
+        and ((${t.category} = 'fuel') = (${t.fuelType} is not null))`,
+    ),
+  ],
+).enableRLS();
+
 export type AirportRunway = typeof airportRunways.$inferSelect;
 export type AirportFrequency = typeof airportFrequencies.$inferSelect;
-export type AirportFee = typeof airportFees.$inferSelect;
+export type AirportService = typeof airportServices.$inferSelect;

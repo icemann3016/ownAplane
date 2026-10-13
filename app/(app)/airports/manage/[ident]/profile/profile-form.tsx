@@ -7,8 +7,7 @@ import { CheckboxField } from "@/components/forms/checkbox-field";
 import { FormMessage } from "@/components/forms/form-message";
 import { SubmitButton } from "@/components/forms/submit-button";
 import { SelectField, TextAreaField, TextField } from "@/components/forms/text-field";
-import { CURRENCIES, FUEL_TYPES } from "@/lib/aircraft/catalog";
-import { SERVICES } from "@/lib/airport-profile/catalog";
+import { CURRENCIES } from "@/lib/aircraft/catalog";
 import { initialFormState } from "@/lib/forms";
 import { updateProfileAction } from "../profile-actions";
 
@@ -20,14 +19,11 @@ export type ProfileValues = {
   pprRequired: boolean;
   pprNoticeHours: number | null;
   currency: string;
-  services: string[];
-  fuels: string[];
 };
 
-/** An airfield's details for pilots: description, contacts, PPR, services, fuel (APT-1). */
+/** An airfield's details for pilots: description, PPR, contacts, currency (APT-1). */
 export function ProfileForm({ ident, initial }: { ident: string; initial: ProfileValues }) {
   const t = useTranslations("airports");
-  const ta = useTranslations("aircraft");
   const [state, formAction] = useActionState(updateProfileAction, initialFormState);
   const [ppr, setPpr] = useState(initial.pprRequired);
   const v = state.values ?? {};
@@ -67,36 +63,6 @@ export function ProfileForm({ ident, initial }: { ident: string; initial: Profil
             className="w-32"
           />
         )}
-      </fieldset>
-      <fieldset className="grid gap-2">
-        <legend className="mb-1 text-sm font-medium">{t("profile.services")}</legend>
-        <div className="grid gap-2 sm:grid-cols-2">
-          {SERVICES.map((s) => (
-            <CheckboxField
-              key={s}
-              name="services"
-              id={`service-${s}`}
-              value={s}
-              label={t(`services.${s}`)}
-              defaultChecked={initial.services.includes(s)}
-            />
-          ))}
-        </div>
-      </fieldset>
-      <fieldset className="grid gap-2">
-        <legend className="mb-1 text-sm font-medium">{t("profile.fuels")}</legend>
-        <div className="grid gap-2 sm:grid-cols-2">
-          {FUEL_TYPES.map((f) => (
-            <CheckboxField
-              key={f}
-              name="fuels"
-              id={`fuel-${f}`}
-              value={f}
-              label={ta(`fuelTypes.${f}`)}
-              defaultChecked={initial.fuels.includes(f)}
-            />
-          ))}
-        </div>
       </fieldset>
       <div className="grid gap-4 sm:grid-cols-2">
         <TextField

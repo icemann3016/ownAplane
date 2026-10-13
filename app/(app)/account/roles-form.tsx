@@ -11,7 +11,17 @@ const ROLES = [
   { role: "owner", icon: CalendarCheckIcon },
 ] as const;
 
-export async function RolesForm({ roles }: { roles: AppRole[] }) {
+/**
+ * Pilot and owner switches. Airfield accounts (on a team or claiming one) can't be pilots
+ * (Zlati, 2026-10-13), so their pilot switch is replaced by a note.
+ */
+export async function RolesForm({
+  roles,
+  airportAccount,
+}: {
+  roles: AppRole[];
+  airportAccount: boolean;
+}) {
   const t = await getTranslations("account.roles");
   return (
     <div className="grid gap-3 sm:grid-cols-2">
@@ -41,16 +51,22 @@ export async function RolesForm({ roles }: { roles: AppRole[] }) {
               <p className="font-medium">{title}</p>
               <p className="text-sm text-muted-foreground">{t(`${role}Text`)}</p>
             </div>
-            <SubmitButton
-              size="sm"
-              variant={active ? "outline" : "default"}
-              className="mt-auto self-start"
-              aria-label={
-                active ? t("switchOffLabel", { role: title }) : t("switchOnLabel", { role: title })
-              }
-            >
-              {active ? t("switchOff") : t("switchOn")}
-            </SubmitButton>
+            {role === "pilot" && airportAccount && !active ? (
+              <p className="mt-auto text-sm text-muted-foreground">{t("pilotAirport")}</p>
+            ) : (
+              <SubmitButton
+                size="sm"
+                variant={active ? "outline" : "default"}
+                className="mt-auto self-start"
+                aria-label={
+                  active
+                    ? t("switchOffLabel", { role: title })
+                    : t("switchOnLabel", { role: title })
+                }
+              >
+                {active ? t("switchOff") : t("switchOn")}
+              </SubmitButton>
+            )}
           </form>
         );
       })}

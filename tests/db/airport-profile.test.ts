@@ -23,8 +23,16 @@ const profile = {
   pprRequired: true,
   pprNoticeHours: 24,
   currency: "EUR" as const,
-  services: ["hangar" as const, "tie_downs" as const],
-  fuels: ["avgas_100ll" as const],
+};
+
+const landing = {
+  category: "landing" as const,
+  label: null,
+  fuelType: null,
+  maxMtomKg: 1000,
+  price: 15,
+  unit: "landing" as const,
+  note: null,
 };
 
 describeDb("airport profiles (APT-1)", () => {
@@ -89,7 +97,7 @@ describeDb("airport profiles (APT-1)", () => {
     expect(data?.profile.profileUpdatedAt).not.toBeNull();
   });
 
-  it("keeps hours, closures, runways, frequencies and fees for managers to change", async () => {
+  it("keeps hours, closures, runways, frequencies and services for managers to change", async () => {
     const hours = {
       note: "Outside these hours on request",
       hours: [1, 2, 3, 4, 5].map((weekday) => ({
@@ -123,15 +131,24 @@ describeDb("airport profiles (APT-1)", () => {
     expect(
       await ops.addFrequency(MANAGER, RUN, { type: "A/G", mhz: 123.5, description: "Ruse Radio" }),
     ).toEqual({ ok: true });
+    expect(await ops.addService(STAFF, RUN, landing)).toEqual({ ok: false, error: "not_allowed" });
+    expect(await ops.addService(MANAGER, RUN, landing)).toEqual({ ok: true });
     expect(
-      await ops.addFee(MANAGER, RUN, {
-        kind: "landing",
-        label: null,
-        maxMtomKg: 1000,
-        amount: 15,
-        unit: "landing",
+      await ops.addService(MANAGER, RUN, {
+        ...landing,
+        category: "fuel",
+        fuelType: "avgas_100ll",
+        maxMtomKg: null,
+        price: 2.859,
+        unit: "litre",
       }),
     ).toEqual({ ok: true });
+    // Fuel needs its type; "other" needs a name (the database checks too).
+    await expect(
+      rls.asUser(MANAGER, (tx) =>
+        tx.insert(s.airportServices).values({ ...landing, category: "fuel", airportIdent: RUN }),
+      ),
+    ).rejects.toThrow();
 
     // Everyone reads them, even logged out.
     const data = await queries.getAirportProfile(RUN);
@@ -139,7 +156,19 @@ describeDb("airport profiles (APT-1)", () => {
     expect(data?.profile.hoursNote).toBe("Outside these hours on request");
     expect(data?.runways.map((r) => r.designator)).toEqual(["01/19", "08/26"]);
     expect(data?.frequencies).toMatchObject([{ type: "A/G", mhz: 123.5 }]);
-    expect(data?.fees).toMatchObject([{ kind: "landing", amount: 15, maxMtomKg: 1000 }]);
+    expect(data?.services).toMatchObject([
+      { category: "landing", price: 15, maxMtomKg: 1000 },
+      { category: "fuel", fuelType: "avgas_100ll", price: 2.859, unit: "litre" },
+    ]);
+    // Managers change prices; staff can't.
+    const [fee] = data!.services;
+    const dearer = { ...landing, price: 18 };
+    expect(await ops.updateService(STAFF, RUN, fee!.id, dearer)).toEqual({
+      ok: false,
+      error: "not_allowed",
+    });
+    expect(await ops.updateService(MANAGER, RUN, fee!.id, dearer)).toEqual({ ok: true });
+    expect((await queries.getAirportProfile(RUN))?.services[0]?.price).toBe(18);
     expect(data?.closures).toMatchObject([{ startsOn: "2027-01-01", note: "Holidays" }]);
     expect(await rls.asAnon((tx) => tx.select().from(s.airportRunways))).toHaveLength(3);
 
@@ -162,17 +191,14 @@ describeDb("airport profiles (APT-1)", () => {
   });
 
   it("caps the rows a team adds", async () => {
-    const fee = {
-      kind: "other" as const,
-      label: "Fee",
-      maxMtomKg: null,
-      amount: 1,
-      unit: "once" as const,
-    };
-    for (let i = 0; i < 49; i++) {
-      expect(await ops.addFee(MANAGER, RUN, fee)).toEqual({ ok: true });
+    const other = { ...landing, category: "other" as const, label: "Tie-downs", maxMtomKg: null };
+    for (let i = 0; i < 98; i++) {
+      expect(await ops.addService(MANAGER, RUN, other)).toEqual({ ok: true });
     }
-    expect(await ops.addFee(MANAGER, RUN, fee)).toEqual({ ok: false, error: "too_many_rows" });
+    expect(await ops.addService(MANAGER, RUN, other)).toEqual({
+      ok: false,
+      error: "too_many_rows",
+    });
   });
 
   it("shows pages only for airfields with a team", async () => {

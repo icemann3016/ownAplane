@@ -92,3 +92,36 @@ test("an airfield is claimed, verified and gets a team", async ({ page, browser 
   await expect(page.getByRole("button", { name: "Make staff" })).toBeVisible();
   await expect(page.getByText(/^Manager · since/)).toHaveCount(2);
 });
+
+// Airfield accounts aren't pilot accounts (Zlati, 2026-10-13): the welcome step offers the
+// airfield, a pilot is told to use another account, and an airfield account can't turn pilot.
+test("airfield accounts and pilot accounts stay apart", async ({ page }) => {
+  const id = unique();
+  await signUp(page, `Pilot ${id}`, `pilot-apart-${id}@example.com`);
+  await page.getByRole("button", { name: /I'm a pilot/ }).click();
+  await expect(page.getByRole("button", { name: /I'm a pilot/ })).toHaveCount(0);
+  await page.goto("/airports/manage/claim");
+  await expect(page.getByText(/This is a pilot account/)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Send claim" })).toHaveCount(0);
+  await page.context().clearCookies();
+
+  await signUp(page, `Airfield ${id}`, `airfield-apart-${id}@example.com`);
+  await page.getByRole("button", { name: /I run an airfield/ }).click();
+  await expect(page).toHaveURL(/\/airports\/manage$/);
+  // A claim makes it an airfield account: no pilot switch any more, owner still possible.
+  await withDb(async (sql) => {
+    const [{ id: userId }] = await sql<
+      { id: string }[]
+    >`select id from users where email = ${`airfield-apart-${id}@example.com`}`;
+    await sql`insert into airport_claims (airport_ident, user_id, position, email)
+      values ('LBSF', ${userId}, 'Manager', ${`ops-${id}@sofia-airport.example`})`;
+  });
+  await page.goto("/account");
+  await expect(page.getByText(/This account runs an airfield/)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Switch on: I'm a pilot" })).toHaveCount(0);
+  await page.getByRole("button", { name: "Switch on: I own an aircraft" }).click();
+  await expect(page.getByRole("button", { name: "Switch off: I own an aircraft" })).toBeVisible();
+  await page.goto("/welcome?step=roles");
+  await expect(page.getByRole("button", { name: /I'm a pilot/ })).toBeDisabled();
+  await expectAccessible(page);
+});
