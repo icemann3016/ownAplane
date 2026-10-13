@@ -23,7 +23,8 @@
       "messages": "Nachrichten",
       "saved": "Gemerkt",
       "logbook": "Flugbuch",
-      "billing": "Tarif & Zahlungen"
+      "billing": "Tarif & Zahlungen",
+      "airports": "Flugplätze"
     },
     "footer": {
       "tagline": "Gemacht für die Allgemeine Luftfahrt in Europa.",
@@ -664,6 +665,29 @@
       "greeting": "Hallo {name},",
       "body": "Neue Flugzeuge passen zu Ihrer gespeicherten Suche „{search}“ auf ownAplane.",
       "cta": "Flugzeuge ansehen"
+    },
+    "airportCode": {
+      "subject": "Ihr ownAplane-Code: {code}",
+      "greeting": "Hallo {name},",
+      "body": "Ihr Code zur Bestätigung dieser Adresse für Ihren Antrag zu {airport} lautet {code}. Er gilt 30 Minuten.",
+      "ignore": "Wenn Sie ihn nicht angefordert haben, können Sie diese E-Mail ignorieren.",
+      "cta": "ownAplane öffnen"
+    },
+    "airportClaim": {
+      "verifiedSubject": "Ihr Antrag zu {airport} ist bestätigt",
+      "rejectedSubject": "Ihr Antrag zu {airport} wurde nicht bestätigt",
+      "greeting": "Hallo {name},",
+      "verifiedBody": "Sie leiten jetzt {airport} auf ownAplane. Laden Sie Ihr Team unter „Flugplätze“ ein.",
+      "rejectedBody": "Ein Admin konnte nicht bestätigen, dass Sie {airport} vertreten.",
+      "reason": "Grund: {reason}",
+      "cta": "Flugplätze öffnen"
+    },
+    "airportInvite": {
+      "subject": "Treten Sie dem Team von {airport} auf ownAplane bei",
+      "greeting": "Hallo,",
+      "body": "{inviter} lädt Sie in das Team von {airport} auf ownAplane ein, wo Piloten PPR-, Parkplatz-, Hangar- und Serviceanfragen senden.",
+      "expires": "Der Link gilt 14 Tage. Melden Sie sich mit dieser E-Mail-Adresse an oder registrieren Sie sich, um beizutreten.",
+      "cta": "Dem Team beitreten"
     }
   },
   "airportPicker": {
@@ -865,14 +889,16 @@
     "verifications": {
       "eyebrow": "Admin",
       "title": "Prüfwarteschlange",
-      "description": "Pilotennachweise und Flugzeugdokumente, die auf Prüfung warten.",
+      "description": "Pilotennachweise, Luftfahrzeugdokumente und Flugplatz-Anträge, die geprüft werden müssen.",
       "waiting": "{count, plural, =0 {Niemand wartet} one {# Pilot wartet} other {# Piloten warten}}",
       "oldestFirst": "Älteste zuerst. Möglichst innerhalb von zwei Werktagen antworten.",
       "empty": "Derzeit nichts zu prüfen.",
       "items": "{count, plural, one {# Eintrag} other {# Einträge}}",
       "since": "wartet seit {date} UTC",
       "aircraftWaiting": "{count, plural, =0 {Kein Flugzeug wartet} one {# Flugzeug wartet} other {# Flugzeuge warten}}",
-      "aircraftText": "Lufttüchtigkeitszeugnisse, ARC und Versicherungsnachweise. Älteste zuerst."
+      "aircraftText": "Lufttüchtigkeitszeugnisse, ARC und Versicherungsnachweise. Älteste zuerst.",
+      "airportsWaiting": "{count, plural, =0 {Keine Flugplatz-Anträge offen} one {# Flugplatz-Antrag offen} other {# Flugplatz-Anträge offen}}",
+      "airportsText": "Personen, die einen Flugplatz auf ownAplane betreiben möchten. Älteste zuerst."
     },
     "review": {
       "metaTitle": "Pilot prüfen",
@@ -900,7 +926,7 @@
       "rejected": "Abgelehnt. Der Pilot wurde über den Grund informiert.",
       "errors": {
         "notFound": "Dieser Eintrag existiert nicht mehr.",
-        "ownItem": "Sie können Ihre eigenen Nachweise oder Flugzeuge nicht prüfen. Bitten Sie einen anderen Admin.",
+        "ownItem": "Sie können Ihre eigenen Nachweise, Luftfahrzeuge oder Flugplatz-Anträge nicht prüfen. Bitten Sie einen anderen Admin.",
         "changed": "Dieser Eintrag wurde geändert, seit Sie die Seite geöffnet haben. Bitte prüfen Sie ihn erneut."
       },
       "experience": "Angegebene Erfahrung",
@@ -916,7 +942,11 @@
       "reasonOwner": "Grund (wird an den Halter gesendet)",
       "confirmRejectOwner": "Ablehnen und Halter informieren",
       "verifiedOwner": "Verifiziert. Der Halter wurde informiert.",
-      "rejectedOwner": "Abgelehnt. Der Halter wurde über den Grund informiert."
+      "rejectedOwner": "Abgelehnt. Der Halter wurde über den Grund informiert.",
+      "reasonClaimant": "Grund (wird dem Antragsteller gesendet)",
+      "confirmRejectClaimant": "Ablehnen und Antragsteller informieren",
+      "verifiedClaimant": "Bestätigt. Der Antragsteller leitet jetzt das Team des Flugplatzes und wurde informiert.",
+      "rejectedClaimant": "Abgelehnt. Der Antragsteller wurde über den Grund informiert."
     },
     "aircraftReview": {
       "metaTitle": "Flugzeug prüfen",
@@ -1354,6 +1384,25 @@
       "errors": {
         "no_airfield": "Es gibt noch keine Flugplätze: Importieren Sie sie zuerst."
       }
+    },
+    "airportClaim": {
+      "metaTitle": "Flugplatz-Antrag prüfen",
+      "back": "Zurück zur Warteschlange",
+      "title": "Antrag für {airport}",
+      "checklist": "Prüfen Sie, ob das Dokument oder die Domain der E-Mail-Adresse wirklich zum Betreiber dieses Flugplatzes gehört und ob der Name zum Konto passt. Das Öffnen des Dokuments wird protokolliert.",
+      "alreadyOperated": "{airport} hat schon ein Team auf ownAplane. Mit der Bestätigung wird {name} ein weiterer Manager.",
+      "claimant": "Antragsteller",
+      "member": "Mitgliedsseite",
+      "position": "Funktion: {position}",
+      "filed": "Gesendet am {date}",
+      "note": "Anmerkung: {note}",
+      "openDocument": "{name} öffnen",
+      "emailConfirmed": "{email}, bestätigt am {date}",
+      "emailUnconfirmed": "{email}, noch nicht bestätigt",
+      "domain": "(Domain: {domain})",
+      "noProof": "Kein Nachweis beigefügt.",
+      "rejectedBecause": "Abgelehnt: {reason}",
+      "decided": "{status} am {date}"
     }
   },
   "aircraft": {
@@ -2475,6 +2524,7 @@
       "start": "Erste Schritte",
       "pilots": "Für Piloten",
       "owners": "Für Flugzeughalter",
+      "airports": "Für Flugplätze",
       "everyone": "Für alle",
       "admins": "Für Admins"
     },
@@ -3426,6 +3476,136 @@
       "included": "Das gehört zu Pilot Plus und zu den Tarifen Halter und Flotte.",
       "get": "Pilot Plus holen",
       "compare": "Tarife vergleichen"
+    }
+  },
+  "airports": {
+    "roles": {
+      "manager": "Manager",
+      "staff": "Mitarbeiter"
+    },
+    "manage": {
+      "title": "Flugplätze",
+      "description": "Führen Sie Ihren Flugplatz auf ownAplane, damit Piloten PPR-, Parkplatz-, Hangar- und Serviceanfragen online senden können. Beanspruchen Sie Ihren Flugplatz und laden Sie dann Ihr Team ein.",
+      "claimAirport": "Flugplatz beanspruchen",
+      "myAirports": "Ihre Flugplätze",
+      "noAirports": "Sie sind noch in keinem Flugplatz-Team.",
+      "claims": "Ihre Anträge",
+      "noClaims": "Noch keine Anträge.",
+      "filed": {
+        "pending": "Antrag gesendet. Ein Admin prüft ihn, meist innerhalb von zwei Werktagen, und wir schreiben Ihnen.",
+        "unconfirmed": "Antrag gespeichert. Geben Sie den Code ein, den wir gerade an Ihre Flugplatz-E-Mail gesendet haben.",
+        "unsent": "Antrag gespeichert, aber wir konnten den Code nicht an Ihre Flugplatz-E-Mail senden. Versuchen Sie gleich „Neuen Code senden“."
+      }
+    },
+    "claimStatus": {
+      "unconfirmed": "E-Mail nicht bestätigt",
+      "pending": "Wartet auf einen Admin",
+      "verified": "Bestätigt",
+      "rejected": "Nicht bestätigt",
+      "withdrawn": "Zurückgezogen"
+    },
+    "claimCard": {
+      "filed": "Gesendet am {date} als {position}",
+      "proofEmail": "Nachweis: {email}",
+      "proofDocument": "Nachweis: ein Dokument",
+      "pending": "Ein Admin prüft Ihren Antrag. Wir schreiben Ihnen.",
+      "verified": "Bestätigt am {date}. Sie leiten das Team dieses Flugplatzes.",
+      "rejected": "Nicht bestätigt: {reason}",
+      "rejectedAgain": "Sie können ihn mit einem anderen Nachweis erneut beanspruchen.",
+      "withdraw": "Zurückziehen",
+      "withdrawing": "Wird zurückgezogen…",
+      "enterCode": "Geben Sie den 6-stelligen Code ein, den wir an {email} gesendet haben. Er gilt 30 Minuten.",
+      "code": "Code",
+      "confirm": "Bestätigen",
+      "confirming": "Wird geprüft…",
+      "resend": "Neuen Code senden",
+      "resending": "Wird gesendet…",
+      "codeSent": "Ein neuer Code ist unterwegs.",
+      "confirmed": "E-Mail bestätigt. Jetzt prüft ein Admin Ihren Antrag."
+    },
+    "claim": {
+      "title": "Flugplatz beanspruchen",
+      "description": "Sagen Sie uns, welchen Flugplatz Sie betreiben, und zeigen Sie, dass Sie ihn vertreten. Ein Admin prüft jeden Antrag, bevor der Flugplatz auf ownAplane erscheint.",
+      "airport": "Flugplatz",
+      "position": "Ihre Funktion",
+      "positionPlaceholder": "z. B. Flugplatzleiter, Diensthabender",
+      "proof": "Wie zeigen Sie, dass Sie ihn vertreten?",
+      "proofs": {
+        "document": {
+          "label": "Ein Dokument",
+          "hint": "Ein Schreiben der Flugplatzleitung, ein Betreiberzeugnis oder ein ähnliches Dokument mit Ihrem Namen und dem Flugplatz."
+        },
+        "email": {
+          "label": "Meine Flugplatz-E-Mail",
+          "hint": "Eine Adresse unter der eigenen Domain des Flugplatzes, z. B. ops@your-airport.com. Wir senden ihr einen Code."
+        }
+      },
+      "document": "Dokument",
+      "email": "Flugplatz-E-Mail",
+      "note": "Was wir wissen sollten (optional)",
+      "privacy": "Nur Sie und unsere Admins sehen Ihren Antrag und sein Dokument.",
+      "submit": "Antrag senden",
+      "submitting": "Wird gesendet…"
+    },
+    "team": {
+      "metaTitle": "Flugplatz-Team",
+      "onSince": "auf ownAplane seit {date}",
+      "members": "Team",
+      "rolesText": "Manager leiten das Team und bald das Profil des Flugplatzes. Mitarbeiter bearbeiten Anfragen.",
+      "you": "Sie",
+      "since": "seit {date}",
+      "makeManager": "Zum Manager machen",
+      "makeStaff": "Zum Mitarbeiter machen",
+      "remove": "Entfernen",
+      "removeLabel": "{name} aus dem Team entfernen",
+      "leave": "Team verlassen",
+      "saving": "Wird gespeichert…",
+      "roleChanged": "Rolle geändert.",
+      "removed": "Aus dem Team entfernt.",
+      "invite": "Jemanden einladen",
+      "inviteText": "Die Person erhält eine E-Mail mit einem Link, der 14 Tage gilt, nur für diese Adresse.",
+      "inviteEmail": "E-Mail",
+      "inviteRole": "Rolle",
+      "inviteSubmit": "Einladung senden",
+      "inviting": "Wird gesendet…",
+      "invited": "Einladung an {email} gesendet.",
+      "invitedNotEmailed": "Einladung erstellt, aber die E-Mail konnte nicht gesendet werden. Geben Sie {email} den Link unten.",
+      "inviteLink": "Einladungslink (wird einmal angezeigt)",
+      "inviteLinkHint": "Gilt 14 Tage, nur für die eingeladene Adresse.",
+      "openInvites": "Offene Einladungen",
+      "inviteExpires": "{role}, bis {date}",
+      "cancelInvite": "Zurücknehmen",
+      "cancelInviteLabel": "Einladung für {email} zurücknehmen",
+      "comingNext": "Als Nächstes auf ownAplane: Profil und Seite des Flugplatzes, dann Anfragen von Piloten."
+    },
+    "join": {
+      "title": "Einem Flugplatz-Team beitreten",
+      "invitedAs": "Sie sind als {role} in das Team von {airport} eingeladen.",
+      "invalid": "Diese Einladung ist abgelaufen oder wurde schon verwendet. Bitten Sie den Manager des Flugplatzes um eine neue.",
+      "otherEmail": "Diese Einladung gilt für {email}. Melden Sie sich mit dieser Adresse an (oder registrieren Sie sich), um sie anzunehmen.",
+      "accept": "Dem Team beitreten",
+      "accepting": "Wird beigetreten…"
+    },
+    "errors": {
+      "airport_unknown": "Wählen Sie den Flugplatz aus der Liste.",
+      "already_on_ownaplane": "Dieser Flugplatz hat schon ein Team auf ownAplane. Bitten Sie einen seiner Manager, Sie einzuladen.",
+      "already_member": "Sie sind schon im Team dieses Flugplatzes.",
+      "already_open": "Sie haben schon einen offenen Antrag für diesen Flugplatz.",
+      "too_many_claims": "Zu viele Anträge: höchstens 5 gleichzeitig offen und 10 pro Tag.",
+      "free_email": "Verwenden Sie eine Adresse unter der eigenen Domain des Flugplatzes, keinen kostenlosen E-Mail-Dienst, oder senden Sie stattdessen ein Dokument.",
+      "not_found": "Wir haben diesen Antrag nicht gefunden.",
+      "too_soon": "Warten Sie eine Minute, bevor Sie einen neuen Code anfordern.",
+      "too_many_codes": "Für diesen Antrag können keine Codes mehr gesendet werden. Ziehen Sie ihn zurück und senden Sie stattdessen ein Dokument.",
+      "not_sent": "Wir konnten den Code nicht senden. Versuchen Sie es gleich noch einmal.",
+      "wrong_code": "Dieser Code stimmt nicht.",
+      "expired": "Der Code ist abgelaufen. Senden Sie einen neuen.",
+      "too_many_tries": "Zu viele falsche Codes. Senden Sie einen neuen.",
+      "last_manager": "Ein Team braucht mindestens einen Manager. Machen Sie zuerst jemand anderen zum Manager.",
+      "not_allowed": "Das können nur die Manager des Teams.",
+      "invite_already_member": "Diese Adresse ist schon im Team.",
+      "too_many_invites": "Ein Flugplatz kann höchstens 20 offene Einladungen haben.",
+      "invite_invalid": "Diese Einladung ist abgelaufen oder wurde schon verwendet.",
+      "invite_other_email": "Diese Einladung gilt für eine andere E-Mail-Adresse."
     }
   }
 }

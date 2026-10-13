@@ -554,6 +554,20 @@
       "when": 1791880560067,
       "tag": "0078_partner_auto_sync",
       "breakpoints": true
+    },
+    {
+      "idx": 79,
+      "version": "7",
+      "when": 1791888210400,
+      "tag": "0079_airport_teams",
+      "breakpoints": true
+    },
+    {
+      "idx": 80,
+      "version": "7",
+      "when": 1791888212234,
+      "tag": "0080_airport_team_security",
+      "breakpoints": true
     }
   ]
 }

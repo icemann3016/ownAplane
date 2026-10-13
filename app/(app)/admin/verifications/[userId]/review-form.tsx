@@ -12,9 +12,16 @@ import { initialFormState } from "@/lib/forms";
 import type { CredentialKind } from "@/lib/pilot/labels";
 import { review } from "../actions";
 
+const REASON = { pilot: "reason", owner: "reasonOwner", claimant: "reasonClaimant" } as const;
+const CONFIRM_REJECT = {
+  pilot: "confirmReject",
+  owner: "confirmRejectOwner",
+  claimant: "confirmRejectClaimant",
+} as const;
+
 /**
- * Verify / reject buttons for one credential or aircraft document. Rejecting asks for a reason
- * for the pilot or owner.
+ * Verify / reject buttons for one credential, aircraft document or airport claim. Rejecting asks
+ * for a reason for the pilot, owner or claimant.
  */
 export function ReviewForm({
   kind,
@@ -24,14 +31,14 @@ export function ReviewForm({
   status,
   recipient = "pilot",
 }: {
-  kind: CredentialKind | "aircraftDocument";
+  kind: CredentialKind | "aircraftDocument" | "airportClaim";
   id: string;
   /** updated_at the admin is looking at (ISO). */
   version: string;
   name: string;
   status: "pending" | "verified" | "rejected";
   /** Who is told about a rejection. */
-  recipient?: "pilot" | "owner";
+  recipient?: "pilot" | "owner" | "claimant";
 }) {
   const t = useTranslations("admin.review");
   const [state, formAction] = useActionState(review, initialFormState);
@@ -49,7 +56,7 @@ export function ReviewForm({
           <TextAreaField
             name="reason"
             id={`reason-${id}`}
-            label={recipient === "owner" ? t("reasonOwner") : t("reason")}
+            label={t(REASON[recipient])}
             placeholder={t("reasonPlaceholder")}
             maxLength={500}
             rows={3}
@@ -60,8 +67,7 @@ export function ReviewForm({
           />
           <div className="flex flex-wrap gap-2">
             <SubmitButton variant="destructive" size="sm" pendingText={t("rejecting")}>
-              <XIcon aria-hidden />{" "}
-              {recipient === "owner" ? t("confirmRejectOwner") : t("confirmReject")}
+              <XIcon aria-hidden /> {t(CONFIRM_REJECT[recipient])}
             </SubmitButton>
             <Button type="button" variant="ghost" size="sm" onClick={() => setRejecting(false)}>
               {t("cancel")}

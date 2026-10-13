@@ -10,7 +10,7 @@ function localeOf(locale: string | null | undefined): Locale {
   return isLocale(locale) ? locale : defaultLocale;
 }
 
-function translator(locale: string | null | undefined) {
+export function translator(locale: string | null | undefined) {
   const l = localeOf(locale);
   return createTranslator({ locale: l, messages: catalogs[l], namespace: "email" });
 }
@@ -44,7 +44,7 @@ type Parts = {
 };
 
 /** Plain text + simple HTML version of an email with one button. */
-function render({ subject, greeting, paragraphs, list, cta, url, locale }: Parts) {
+export function render({ subject, greeting, paragraphs, list, cta, url, locale }: Parts) {
   const fallback = translator(locale)("linkFallback");
   const text = [
     greeting,

@@ -23,7 +23,8 @@
       "messages": "Messages",
       "saved": "Saved",
       "logbook": "Logbook",
-      "billing": "Plan & billing"
+      "billing": "Plan & billing",
+      "airports": "Airports"
     },
     "footer": {
       "tagline": "Made for general aviation in Europe.",
@@ -664,6 +665,29 @@
       "greeting": "Hi {name},",
       "body": "New aircraft match your saved search “{search}” on ownAplane.",
       "cta": "Show the aircraft"
+    },
+    "airportCode": {
+      "subject": "Your ownAplane code: {code}",
+      "greeting": "Hello {name},",
+      "body": "Your code to confirm this address for your claim of {airport} is {code}. It works for 30 minutes.",
+      "ignore": "If you didn't ask for it, you can ignore this email.",
+      "cta": "Open ownAplane"
+    },
+    "airportClaim": {
+      "verifiedSubject": "Your claim of {airport} is verified",
+      "rejectedSubject": "Your claim of {airport} wasn't verified",
+      "greeting": "Hello {name},",
+      "verifiedBody": "You now manage {airport} on ownAplane. Invite your team from Airports.",
+      "rejectedBody": "An admin couldn't verify that you represent {airport}.",
+      "reason": "Reason: {reason}",
+      "cta": "Open Airports"
+    },
+    "airportInvite": {
+      "subject": "Join the team of {airport} on ownAplane",
+      "greeting": "Hello,",
+      "body": "{inviter} invites you to the team of {airport} on ownAplane, where pilots send PPR, parking, hangar and service requests.",
+      "expires": "The link works for 14 days. Log in or sign up with this email address to accept.",
+      "cta": "Join the team"
     }
   },
   "airportPicker": {
@@ -865,14 +889,16 @@
     "verifications": {
       "eyebrow": "Admin",
       "title": "Verification queue",
-      "description": "Pilot credentials and aircraft documents waiting to be checked.",
+      "description": "Pilot credentials, aircraft documents and airport claims waiting to be checked.",
       "waiting": "{count, plural, =0 {Nobody waiting} one {# pilot waiting} other {# pilots waiting}}",
       "oldestFirst": "Oldest first. Try to answer within two working days.",
       "empty": "Nothing to review right now.",
       "items": "{count, plural, one {# item} other {# items}}",
       "since": "waiting since {date} UTC",
       "aircraftWaiting": "{count, plural, =0 {No aircraft waiting} one {# aircraft waiting} other {# aircraft waiting}}",
-      "aircraftText": "CofA, ARC and insurance certificates. Oldest first."
+      "aircraftText": "CofA, ARC and insurance certificates. Oldest first.",
+      "airportsWaiting": "{count, plural, =0 {No airport claims waiting} one {# airport claim waiting} other {# airport claims waiting}}",
+      "airportsText": "People who want to run an airfield on ownAplane. Oldest first."
     },
     "review": {
       "metaTitle": "Review pilot",
@@ -900,7 +926,7 @@
       "rejected": "Rejected. The pilot has been told why.",
       "errors": {
         "notFound": "This item no longer exists.",
-        "ownItem": "You can't review your own credentials or aircraft. Ask another admin.",
+        "ownItem": "You can't review your own credentials, aircraft or airport claims. Ask another admin.",
         "changed": "This item was changed since you opened the page. Please check it again."
       },
       "experience": "Declared experience",
@@ -916,7 +942,11 @@
       "reasonOwner": "Reason (sent to the owner)",
       "confirmRejectOwner": "Reject and tell the owner",
       "verifiedOwner": "Verified. The owner has been told.",
-      "rejectedOwner": "Rejected. The owner has been told why."
+      "rejectedOwner": "Rejected. The owner has been told why.",
+      "reasonClaimant": "Reason (sent to the claimant)",
+      "confirmRejectClaimant": "Reject and tell the claimant",
+      "verifiedClaimant": "Verified. The claimant now manages the airfield's team and has been told.",
+      "rejectedClaimant": "Rejected. The claimant has been told why."
     },
     "aircraftReview": {
       "metaTitle": "Review aircraft",
@@ -1354,6 +1384,25 @@
       "errors": {
         "no_airfield": "There are no airfields yet: import them first."
       }
+    },
+    "airportClaim": {
+      "metaTitle": "Review airport claim",
+      "back": "Back to the queue",
+      "title": "Claim for {airport}",
+      "checklist": "Check that the document, or the email address's domain, really belongs to this airfield's operator, and that the name matches the account. Opening the document is logged.",
+      "alreadyOperated": "{airport} already has a team on ownAplane. Verifying adds {name} as another manager.",
+      "claimant": "Claimant",
+      "member": "Member page",
+      "position": "Position: {position}",
+      "filed": "Sent {date}",
+      "note": "Note: {note}",
+      "openDocument": "Open {name}",
+      "emailConfirmed": "{email}, confirmed {date}",
+      "emailUnconfirmed": "{email}, not confirmed yet",
+      "domain": "(domain: {domain})",
+      "noProof": "No proof attached.",
+      "rejectedBecause": "Rejected: {reason}",
+      "decided": "{status} on {date}"
     }
   },
   "aircraft": {
@@ -2475,6 +2524,7 @@
       "start": "Getting started",
       "pilots": "For pilots",
       "owners": "For aircraft owners",
+      "airports": "For airports",
       "everyone": "For everyone",
       "admins": "For admins"
     },
@@ -3426,6 +3476,136 @@
       "included": "This comes with Pilot Plus and with the Owner and Fleet plans.",
       "get": "Get Pilot Plus",
       "compare": "Compare the plans"
+    }
+  },
+  "airports": {
+    "roles": {
+      "manager": "Manager",
+      "staff": "Staff"
+    },
+    "manage": {
+      "title": "Airports",
+      "description": "Run your airfield on ownAplane, so pilots can send PPR, parking, hangar and service requests online. Claim your airfield, then invite your team.",
+      "claimAirport": "Claim an airfield",
+      "myAirports": "Your airfields",
+      "noAirports": "You aren't on an airfield's team yet.",
+      "claims": "Your claims",
+      "noClaims": "No claims yet.",
+      "filed": {
+        "pending": "Claim sent. An admin checks it, usually within two working days, and we'll email you.",
+        "unconfirmed": "Claim saved. Enter the code we've just sent to your airport email.",
+        "unsent": "Claim saved, but we couldn't send the code to your airport email. Try \"Send a new code\" in a moment."
+      }
+    },
+    "claimStatus": {
+      "unconfirmed": "Email not confirmed",
+      "pending": "Waiting for an admin",
+      "verified": "Verified",
+      "rejected": "Not verified",
+      "withdrawn": "Withdrawn"
+    },
+    "claimCard": {
+      "filed": "Sent {date} as {position}",
+      "proofEmail": "proof: {email}",
+      "proofDocument": "proof: a document",
+      "pending": "An admin is checking your claim. We'll email you.",
+      "verified": "Verified on {date}. You manage this airfield's team.",
+      "rejected": "Not verified: {reason}",
+      "rejectedAgain": "You can claim it again with other proof.",
+      "withdraw": "Withdraw",
+      "withdrawing": "Withdrawing…",
+      "enterCode": "Enter the 6-digit code we sent to {email}. It works for 30 minutes.",
+      "code": "Code",
+      "confirm": "Confirm",
+      "confirming": "Checking…",
+      "resend": "Send a new code",
+      "resending": "Sending…",
+      "codeSent": "A new code is on its way.",
+      "confirmed": "Email confirmed. An admin checks your claim now."
+    },
+    "claim": {
+      "title": "Claim an airfield",
+      "description": "Tell us which airfield you run and show that you represent it. An admin checks every claim before the airfield appears on ownAplane.",
+      "airport": "Airfield",
+      "position": "Your position",
+      "positionPlaceholder": "e.g. Airport manager, Duty officer",
+      "proof": "How do you show that you represent it?",
+      "proofs": {
+        "document": {
+          "label": "A document",
+          "hint": "A letter from the airfield's management, an operator certificate or a similar document with your name and the airfield."
+        },
+        "email": {
+          "label": "My airport email",
+          "hint": "An address on the airfield's own domain, such as ops@your-airport.com. We send it a code."
+        }
+      },
+      "document": "Document",
+      "email": "Airport email",
+      "note": "Anything we should know (optional)",
+      "privacy": "Only you and our admins see your claim and its document.",
+      "submit": "Send claim",
+      "submitting": "Sending…"
+    },
+    "team": {
+      "metaTitle": "Airfield team",
+      "onSince": "on ownAplane since {date}",
+      "members": "Team",
+      "rolesText": "Managers run the team and, soon, the airfield's profile. Staff handle requests.",
+      "you": "you",
+      "since": "since {date}",
+      "makeManager": "Make manager",
+      "makeStaff": "Make staff",
+      "remove": "Remove",
+      "removeLabel": "Remove {name} from the team",
+      "leave": "Leave the team",
+      "saving": "Saving…",
+      "roleChanged": "Role changed.",
+      "removed": "Removed from the team.",
+      "invite": "Invite someone",
+      "inviteText": "They get an email with a link that works for 14 days, for that address only.",
+      "inviteEmail": "Email",
+      "inviteRole": "Role",
+      "inviteSubmit": "Send invitation",
+      "inviting": "Sending…",
+      "invited": "Invitation sent to {email}.",
+      "invitedNotEmailed": "Invitation made, but the email couldn't be sent. Give {email} the link below.",
+      "inviteLink": "Invitation link (shown once)",
+      "inviteLinkHint": "Works for 14 days, only for the invited address.",
+      "openInvites": "Open invitations",
+      "inviteExpires": "{role}, until {date}",
+      "cancelInvite": "Cancel",
+      "cancelInviteLabel": "Cancel the invitation for {email}",
+      "comingNext": "Next on ownAplane: the airfield's profile and page, then requests from pilots."
+    },
+    "join": {
+      "title": "Join an airfield's team",
+      "invitedAs": "You're invited to the team of {airport} as {role}.",
+      "invalid": "This invitation has expired or was already used. Ask the airfield's manager for a new one.",
+      "otherEmail": "This invitation is for {email}. Log in (or sign up) with that address to accept it.",
+      "accept": "Join the team",
+      "accepting": "Joining…"
+    },
+    "errors": {
+      "airport_unknown": "Pick the airfield from the list.",
+      "already_on_ownaplane": "This airfield already has a team on ownAplane. Ask one of its managers to invite you.",
+      "already_member": "You're already on this airfield's team.",
+      "already_open": "You already have an open claim for this airfield.",
+      "too_many_claims": "Too many claims: at most 5 open at a time and 10 a day.",
+      "free_email": "Use an address on the airfield's own domain, not a free email provider, or send a document instead.",
+      "not_found": "We couldn't find this claim.",
+      "too_soon": "Wait a minute before asking for another code.",
+      "too_many_codes": "No more codes for this claim. Withdraw it and send a document instead.",
+      "not_sent": "We couldn't send the code. Try again in a moment.",
+      "wrong_code": "That code isn't right.",
+      "expired": "The code has expired. Send a new one.",
+      "too_many_tries": "Too many wrong codes. Send a new one.",
+      "last_manager": "A team needs at least one manager. Make someone else a manager first.",
+      "not_allowed": "Only the team's managers can do that.",
+      "invite_already_member": "That address is already on the team.",
+      "too_many_invites": "An airfield can have at most 20 open invitations.",
+      "invite_invalid": "This invitation has expired or was already used.",
+      "invite_other_email": "This invitation is for another email address."
     }
   }
 }

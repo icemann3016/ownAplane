@@ -5,6 +5,7 @@ import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 
 import { reviewAircraftDocument } from "@/lib/admin/aircraft";
+import { decideClaim } from "@/lib/airport-teams/claim-review";
 import { reviewCredential } from "@/lib/admin/verifications";
 import { requireAdmin } from "@/lib/auth/session";
 import type { FormState } from "@/lib/forms";
@@ -13,7 +14,7 @@ import { localizedFieldErrors } from "@/lib/i18n/server";
 
 const reviewSchema = z
   .object({
-    kind: z.enum(["licence", "rating", "medical", "aircraftDocument"]),
+    kind: z.enum(["licence", "rating", "medical", "aircraftDocument", "airportClaim"]),
     id: z.uuid(),
     version: z.iso.datetime({ offset: true }),
     decision: z.enum(["verify", "reject"]),
@@ -37,6 +38,17 @@ export async function review(_prev: FormState, formData: FormData): Promise<Form
     ...rest,
     reason: rest.decision === "reject" ? reason : null,
   };
+
+  if (kind === "airportClaim") {
+    const result = await decideClaim(args);
+    if (!result.ok) return { message: t(`errors.${result.error}`), values: raw };
+    revalidatePath("/admin/verifications");
+    revalidatePath(`/admin/verifications/airports/${rest.id}`);
+    return {
+      ok: true,
+      message: rest.decision === "verify" ? t("verifiedClaimant") : t("rejectedClaimant"),
+    };
+  }
 
   if (kind === "aircraftDocument") {
     const result = await reviewAircraftDocument(args);

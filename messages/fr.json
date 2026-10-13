@@ -23,7 +23,8 @@
       "messages": "Messages",
       "saved": "Enregistrés",
       "logbook": "Carnet de vol",
-      "billing": "Formule et paiements"
+      "billing": "Formule et paiements",
+      "airports": "Aérodromes"
     },
     "footer": {
       "tagline": "Conçu pour l'aviation générale en Europe.",
@@ -664,6 +665,29 @@
       "greeting": "Bonjour {name},",
       "body": "De nouveaux avions correspondent à votre recherche enregistrée « {search} » sur ownAplane.",
       "cta": "Voir les avions"
+    },
+    "airportCode": {
+      "subject": "Votre code ownAplane : {code}",
+      "greeting": "Bonjour {name},",
+      "body": "Votre code pour confirmer cette adresse pour votre demande concernant {airport} est {code}. Il est valable 30 minutes.",
+      "ignore": "Si vous ne l'avez pas demandé, vous pouvez ignorer cet e-mail.",
+      "cta": "Ouvrir ownAplane"
+    },
+    "airportClaim": {
+      "verifiedSubject": "Votre demande pour {airport} est vérifiée",
+      "rejectedSubject": "Votre demande pour {airport} n'a pas été vérifiée",
+      "greeting": "Bonjour {name},",
+      "verifiedBody": "Vous gérez désormais {airport} sur ownAplane. Invitez votre équipe depuis Aérodromes.",
+      "rejectedBody": "Un administrateur n'a pas pu vérifier que vous représentez {airport}.",
+      "reason": "Motif : {reason}",
+      "cta": "Ouvrir Aérodromes"
+    },
+    "airportInvite": {
+      "subject": "Rejoignez l'équipe de {airport} sur ownAplane",
+      "greeting": "Bonjour,",
+      "body": "{inviter} vous invite dans l'équipe de {airport} sur ownAplane, où les pilotes envoient leurs demandes de PPR, de stationnement, de hangar et de services.",
+      "expires": "Le lien est valable 14 jours. Connectez-vous ou inscrivez-vous avec cette adresse e-mail pour accepter.",
+      "cta": "Rejoindre l'équipe"
     }
   },
   "airportPicker": {
@@ -865,14 +889,16 @@
     "verifications": {
       "eyebrow": "Admin",
       "title": "File de vérification",
-      "description": "Qualifications de pilote et documents d'avion en attente de vérification.",
+      "description": "Justificatifs de pilotes, documents d'aéronefs et demandes d'aérodrome à vérifier.",
       "waiting": "{count, plural, =0 {Personne en attente} one {# pilote en attente} other {# pilotes en attente}}",
       "oldestFirst": "Les plus anciens d'abord. Essayez de répondre sous deux jours ouvrés.",
       "empty": "Rien à vérifier pour l'instant.",
       "items": "{count, plural, one {# élément} other {# éléments}}",
       "since": "en attente depuis le {date} UTC",
       "aircraftWaiting": "{count, plural, =0 {Aucun avion en attente} one {# avion en attente} other {# avions en attente}}",
-      "aircraftText": "Certificats de navigabilité, ARC et attestations d'assurance. Les plus anciens d'abord."
+      "aircraftText": "Certificats de navigabilité, ARC et attestations d'assurance. Les plus anciens d'abord.",
+      "airportsWaiting": "{count, plural, =0 {Aucune demande d'aérodrome en attente} one {# demande d'aérodrome en attente} other {# demandes d'aérodrome en attente}}",
+      "airportsText": "Les personnes qui veulent gérer un aérodrome sur ownAplane. Les plus anciennes d'abord."
     },
     "review": {
       "metaTitle": "Vérifier un pilote",
@@ -900,7 +926,7 @@
       "rejected": "Refusé. Le pilote a été informé du motif.",
       "errors": {
         "notFound": "Cet élément n'existe plus.",
-        "ownItem": "Vous ne pouvez pas vérifier vos propres qualifications ou avions. Demandez à un autre admin.",
+        "ownItem": "Vous ne pouvez pas vérifier vos propres justificatifs, aéronefs ou demandes d'aérodrome. Demandez à un autre administrateur.",
         "changed": "Cet élément a été modifié depuis l'ouverture de la page. Veuillez le vérifier à nouveau."
       },
       "experience": "Expérience déclarée",
@@ -916,7 +942,11 @@
       "reasonOwner": "Motif (envoyé au propriétaire)",
       "confirmRejectOwner": "Refuser et prévenir le propriétaire",
       "verifiedOwner": "Validé. Le propriétaire a été prévenu.",
-      "rejectedOwner": "Refusé. Le propriétaire a été informé du motif."
+      "rejectedOwner": "Refusé. Le propriétaire a été informé du motif.",
+      "reasonClaimant": "Motif (envoyé au demandeur)",
+      "confirmRejectClaimant": "Refuser et prévenir le demandeur",
+      "verifiedClaimant": "Vérifiée. Le demandeur gère maintenant l'équipe de l'aérodrome et a été prévenu.",
+      "rejectedClaimant": "Refusée. Le demandeur a été informé du motif."
     },
     "aircraftReview": {
       "metaTitle": "Vérifier un avion",
@@ -1354,6 +1384,25 @@
       "errors": {
         "no_airfield": "Il n'y a pas encore d'aérodromes : importez-les d'abord."
       }
+    },
+    "airportClaim": {
+      "metaTitle": "Vérifier une demande d'aérodrome",
+      "back": "Retour à la file",
+      "title": "Demande pour {airport}",
+      "checklist": "Vérifiez que le document, ou le domaine de l'adresse e-mail, appartient bien à l'exploitant de cet aérodrome et que le nom correspond au compte. L'ouverture du document est journalisée.",
+      "alreadyOperated": "{airport} a déjà une équipe sur ownAplane. La vérification ajoute {name} comme responsable supplémentaire.",
+      "claimant": "Demandeur",
+      "member": "Page du membre",
+      "position": "Fonction : {position}",
+      "filed": "Envoyée le {date}",
+      "note": "Note : {note}",
+      "openDocument": "Ouvrir {name}",
+      "emailConfirmed": "{email}, confirmé le {date}",
+      "emailUnconfirmed": "{email}, pas encore confirmé",
+      "domain": "(domaine : {domain})",
+      "noProof": "Aucun justificatif joint.",
+      "rejectedBecause": "Refusée : {reason}",
+      "decided": "{status} le {date}"
     }
   },
   "aircraft": {
@@ -2475,6 +2524,7 @@
       "start": "Pour commencer",
       "pilots": "Pour les pilotes",
       "owners": "Pour les propriétaires d'avions",
+      "airports": "Pour les aérodromes",
       "everyone": "Pour tous",
       "admins": "Pour les admins"
     },
@@ -3426,6 +3476,136 @@
       "included": "Inclus dans Pilot Plus et dans les formules Propriétaire et Flotte.",
       "get": "Prendre Pilot Plus",
       "compare": "Comparer les formules"
+    }
+  },
+  "airports": {
+    "roles": {
+      "manager": "Responsable",
+      "staff": "Personnel"
+    },
+    "manage": {
+      "title": "Aérodromes",
+      "description": "Gérez votre aérodrome sur ownAplane pour que les pilotes envoient en ligne leurs demandes de PPR, de stationnement, de hangar et de services. Revendiquez votre aérodrome, puis invitez votre équipe.",
+      "claimAirport": "Revendiquer un aérodrome",
+      "myAirports": "Vos aérodromes",
+      "noAirports": "Vous ne faites encore partie d'aucune équipe d'aérodrome.",
+      "claims": "Vos demandes",
+      "noClaims": "Aucune demande pour l'instant.",
+      "filed": {
+        "pending": "Demande envoyée. Un administrateur la vérifie, en général sous deux jours ouvrés, et nous vous écrirons.",
+        "unconfirmed": "Demande enregistrée. Saisissez le code que nous venons d'envoyer à votre adresse e-mail d'aérodrome.",
+        "unsent": "Demande enregistrée, mais nous n'avons pas pu envoyer le code à votre adresse e-mail d'aérodrome. Essayez « Envoyer un nouveau code » dans un instant."
+      }
+    },
+    "claimStatus": {
+      "unconfirmed": "E-mail non confirmé",
+      "pending": "En attente d'un administrateur",
+      "verified": "Vérifiée",
+      "rejected": "Non vérifiée",
+      "withdrawn": "Retirée"
+    },
+    "claimCard": {
+      "filed": "Envoyée le {date} en tant que {position}",
+      "proofEmail": "justificatif : {email}",
+      "proofDocument": "justificatif : un document",
+      "pending": "Un administrateur vérifie votre demande. Nous vous écrirons.",
+      "verified": "Vérifiée le {date}. Vous gérez l'équipe de cet aérodrome.",
+      "rejected": "Non vérifiée : {reason}",
+      "rejectedAgain": "Vous pouvez le revendiquer à nouveau avec un autre justificatif.",
+      "withdraw": "Retirer",
+      "withdrawing": "Retrait…",
+      "enterCode": "Saisissez le code à 6 chiffres envoyé à {email}. Il est valable 30 minutes.",
+      "code": "Code",
+      "confirm": "Confirmer",
+      "confirming": "Vérification…",
+      "resend": "Envoyer un nouveau code",
+      "resending": "Envoi…",
+      "codeSent": "Un nouveau code est en route.",
+      "confirmed": "E-mail confirmé. Un administrateur vérifie maintenant votre demande."
+    },
+    "claim": {
+      "title": "Revendiquer un aérodrome",
+      "description": "Dites-nous quel aérodrome vous gérez et montrez que vous le représentez. Un administrateur vérifie chaque demande avant que l'aérodrome n'apparaisse sur ownAplane.",
+      "airport": "Aérodrome",
+      "position": "Votre fonction",
+      "positionPlaceholder": "p. ex. Directeur d'aérodrome, Agent de permanence",
+      "proof": "Comment montrez-vous que vous le représentez ?",
+      "proofs": {
+        "document": {
+          "label": "Un document",
+          "hint": "Une lettre de la direction de l'aérodrome, un certificat d'exploitant ou un document similaire avec votre nom et l'aérodrome."
+        },
+        "email": {
+          "label": "Mon e-mail d'aérodrome",
+          "hint": "Une adresse sur le domaine propre de l'aérodrome, comme ops@your-airport.com. Nous lui envoyons un code."
+        }
+      },
+      "document": "Document",
+      "email": "E-mail d'aérodrome",
+      "note": "Ce que nous devrions savoir (facultatif)",
+      "privacy": "Seuls vous et nos administrateurs voyez votre demande et son document.",
+      "submit": "Envoyer la demande",
+      "submitting": "Envoi…"
+    },
+    "team": {
+      "metaTitle": "Équipe de l'aérodrome",
+      "onSince": "sur ownAplane depuis le {date}",
+      "members": "Équipe",
+      "rolesText": "Les responsables gèrent l'équipe et bientôt le profil de l'aérodrome. Le personnel traite les demandes.",
+      "you": "vous",
+      "since": "depuis le {date}",
+      "makeManager": "Nommer responsable",
+      "makeStaff": "Passer en personnel",
+      "remove": "Retirer",
+      "removeLabel": "Retirer {name} de l'équipe",
+      "leave": "Quitter l'équipe",
+      "saving": "Enregistrement…",
+      "roleChanged": "Rôle modifié.",
+      "removed": "Retiré de l'équipe.",
+      "invite": "Inviter quelqu'un",
+      "inviteText": "La personne reçoit un e-mail avec un lien valable 14 jours, pour cette adresse uniquement.",
+      "inviteEmail": "E-mail",
+      "inviteRole": "Rôle",
+      "inviteSubmit": "Envoyer l'invitation",
+      "inviting": "Envoi…",
+      "invited": "Invitation envoyée à {email}.",
+      "invitedNotEmailed": "Invitation créée, mais l'e-mail n'a pas pu être envoyé. Donnez à {email} le lien ci-dessous.",
+      "inviteLink": "Lien d'invitation (affiché une fois)",
+      "inviteLinkHint": "Valable 14 jours, uniquement pour l'adresse invitée.",
+      "openInvites": "Invitations en cours",
+      "inviteExpires": "{role}, jusqu'au {date}",
+      "cancelInvite": "Annuler",
+      "cancelInviteLabel": "Annuler l'invitation pour {email}",
+      "comingNext": "Prochainement sur ownAplane : le profil et la page de l'aérodrome, puis les demandes des pilotes."
+    },
+    "join": {
+      "title": "Rejoindre l'équipe d'un aérodrome",
+      "invitedAs": "Vous êtes invité dans l'équipe de {airport} en tant que {role}.",
+      "invalid": "Cette invitation a expiré ou a déjà été utilisée. Demandez-en une nouvelle au responsable de l'aérodrome.",
+      "otherEmail": "Cette invitation est destinée à {email}. Connectez-vous (ou inscrivez-vous) avec cette adresse pour l'accepter.",
+      "accept": "Rejoindre l'équipe",
+      "accepting": "Adhésion…"
+    },
+    "errors": {
+      "airport_unknown": "Choisissez l'aérodrome dans la liste.",
+      "already_on_ownaplane": "Cet aérodrome a déjà une équipe sur ownAplane. Demandez à l'un de ses responsables de vous inviter.",
+      "already_member": "Vous faites déjà partie de l'équipe de cet aérodrome.",
+      "already_open": "Vous avez déjà une demande en cours pour cet aérodrome.",
+      "too_many_claims": "Trop de demandes : au plus 5 en cours à la fois et 10 par jour.",
+      "free_email": "Utilisez une adresse sur le domaine propre de l'aérodrome, pas une messagerie gratuite, ou envoyez plutôt un document.",
+      "not_found": "Nous n'avons pas trouvé cette demande.",
+      "too_soon": "Attendez une minute avant de demander un autre code.",
+      "too_many_codes": "Plus de codes pour cette demande. Retirez-la et envoyez plutôt un document.",
+      "not_sent": "Nous n'avons pas pu envoyer le code. Réessayez dans un instant.",
+      "wrong_code": "Ce code n'est pas le bon.",
+      "expired": "Le code a expiré. Envoyez-en un nouveau.",
+      "too_many_tries": "Trop de codes erronés. Envoyez-en un nouveau.",
+      "last_manager": "Une équipe a besoin d'au moins un responsable. Nommez d'abord quelqu'un d'autre responsable.",
+      "not_allowed": "Seuls les responsables de l'équipe peuvent faire cela.",
+      "invite_already_member": "Cette adresse fait déjà partie de l'équipe.",
+      "too_many_invites": "Un aérodrome peut avoir au plus 20 invitations en cours.",
+      "invite_invalid": "Cette invitation a expiré ou a déjà été utilisée.",
+      "invite_other_email": "Cette invitation est destinée à une autre adresse e-mail."
     }
   }
 }

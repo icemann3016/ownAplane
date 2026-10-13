@@ -6,6 +6,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getAircraftQueue } from "@/lib/admin/aircraft";
 import { getVerificationQueue } from "@/lib/admin/verifications";
+import { getClaimQueue } from "@/lib/airport-teams/claim-review";
 import { requireAdmin } from "@/lib/auth/session";
 import { intlLocale } from "@/lib/i18n/config";
 
@@ -19,6 +20,7 @@ export default async function VerificationQueuePage() {
   const t = await getTranslations("admin.verifications");
   const queue = await getVerificationQueue(userId);
   const aircraftQueue = await getAircraftQueue(userId);
+  const claimQueue = await getClaimQueue();
   const format = new Intl.DateTimeFormat(intlLocale(await getLocale()), {
     dateStyle: "medium",
     timeStyle: "short",
@@ -90,6 +92,43 @@ export default async function VerificationQueuePage() {
                       <span className="text-sm text-muted-foreground">
                         {t("items", { count: entry.items })} ·{" "}
                         {t("since", { date: `${format.format(entry.since)} UTC` })}
+                      </span>
+                    </div>
+                    <ChevronRightIcon className="ml-auto size-4 shrink-0" aria-hidden />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle as="h2">{t("airportsWaiting", { count: claimQueue.length })}</CardTitle>
+          <CardDescription>{t("airportsText")}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {claimQueue.length === 0 ? (
+            <p className="flex items-center gap-2 text-sm text-muted-foreground">
+              <InboxIcon className="size-4" aria-hidden /> {t("empty")}
+            </p>
+          ) : (
+            <ul className="grid divide-y">
+              {claimQueue.map((entry) => (
+                <li key={entry.id}>
+                  <Link
+                    href={`/admin/verifications/airports/${entry.id}`}
+                    className="-mx-2 flex items-center gap-3 rounded-md px-2 py-3 hover:bg-accent"
+                  >
+                    <div className="grid min-w-0 gap-0.5">
+                      <span className="truncate font-medium">
+                        <span className="font-mono">
+                          {entry.airport.icaoCode ?? entry.airport.ident}
+                        </span>{" "}
+                        {entry.airport.name} · {entry.claimant}
+                      </span>
+                      <span className="text-sm text-muted-foreground">
+                        {t("since", { date: `${format.format(entry.createdAt)} UTC` })}
                       </span>
                     </div>
                     <ChevronRightIcon className="ml-auto size-4 shrink-0" aria-hidden />

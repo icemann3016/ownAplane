@@ -12,6 +12,7 @@ import {
   MessagesSquareIcon,
   SettingsIcon,
   ShieldCheckIcon,
+  TowerControlIcon,
   UserRoundIcon,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -71,6 +72,11 @@ export function UserMenu({ account }: { account: AccountSummary }) {
         <DropdownMenuItem asChild>
           <Link href="/messages">
             <MessagesSquareIcon /> {t("messages")}
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/airports/manage">
+            <TowerControlIcon /> {t("airports")}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>

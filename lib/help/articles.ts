@@ -16,6 +16,7 @@ export const HELP_CATEGORIES = [
     slugs: ["pilot-credentials", "finding-and-booking", "flying-and-flight-log", "logbook"],
   },
   { key: "owners", slugs: ["listing-an-aircraft", "owner-bookings-and-history", "calendar-sync"] },
+  { key: "airports", slugs: ["airports"] },
   {
     key: "everyone",
     slugs: [

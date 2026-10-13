@@ -68,7 +68,8 @@ app/
                       #   messages (+ [id], new), reports (actions), saved (favourites, searches),
                       #   logbook (EASA e-logbook: list + totals, new, [id], print, export CSV, currency, stats),
                       #   welcome (setup guide), billing/checkout/[id] (test-mode checkout), admin (dashboard,
-                      #   verifications, reports, users, aircraft, audit, api usage, billing, practice)
+                      #   verifications (+ airports claims), reports, users, aircraft, audit, api usage, billing,
+                      #   practice), airports (manage: my airfields + claims, claim, [ident] team; invite/[token])
   api/auth/           # Better Auth endpoints (email links, OAuth callbacks; apps sign in here for a token)
   api/v1/             # REST API for apps and partners (docs/api.md): me (+ credentials, aircraft), airports,
                       #   aircraft, bookings, documents, conversations, notifications, favourites, saved-searches,
@@ -112,6 +113,8 @@ lib/
   admin/              # verification queues, moderation (suspend, unlist, hide, reports), members, roles, queries, metrics,
                       #   practice (practice flights)
                       #   (trusted admin code, after requireAdmin())
+  airport-teams/      # airports (APT-1, M16): claims (file, email code, admin decision), teams (members,
+                      #   roles, invitations), proof (work-email check)
   reviews/            # review queries, submit/reply, daily publishing
   saved/              # favourites, saved searches, daily saved-search alerts (SRC-6)
   messages/           # conversations, unread counts, message emails
