@@ -11,6 +11,11 @@ public launch. Collect what's confusing and what's missing.
 - [ ] Demo data **not** on production (it's for demos on a separate database). To try the
       check-out and check-in on production, admins use **Admin → Practice** instead: a hidden
       practice aircraft per admin, removable with one click.
+- [ ] **Remove the test accounts before inviting real users** (Admin → Members, search
+      `test.ownaplane.eu`, delete each): `pilot@`, `owner@` (listed test aircraft ZZ-IFR, ZZ-VFR,
+      ZZ-MEP) and `airport@` (manager of the made-up airfield OAP-TEST). They were added on
+      2026-10-13 for testing on the live site (migration `0083_test_accounts.sql`; the password is
+      not in git). The airfield OAP-TEST stays in the airport list without a page.
 
 ## Demo data for presentations
 
