@@ -34,7 +34,8 @@ const texts: IcsTexts = {
     booked: "Booked (ownAplane)",
     owner_use: "Own use",
     maintenance: "Maintenance",
-    unavailable: "Unavailable",
+    busy: "Busy",
+    unavailable: "External booking",
   },
   labels: {
     status: "Status",
@@ -48,7 +49,7 @@ const texts: IcsTexts = {
 };
 
 describe("what is shared with another system", () => {
-  it("shares only times and booked/unavailable by default", () => {
+  it("shares only times and booked/busy by default", () => {
     expect(Object.values(sharedDetails(booking, [], "u")).every((v) => v === undefined)).toBe(true);
     expect(toIcsEvent(booking, [], texts, "u")).toEqual({
       id: "e1",
@@ -60,7 +61,7 @@ describe("what is shared with another system", () => {
       status: undefined,
       url: undefined,
     });
-    expect(toIcsEvent(block, [], texts, "").summary).toBe("Unavailable");
+    expect(toIcsEvent(block, [], texts, "").summary).toBe("Busy");
   });
 
   it("adds each chosen detail", () => {

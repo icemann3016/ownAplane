@@ -11,8 +11,6 @@ import { PLANS } from "@/lib/billing/plans";
 import { feedErrorKey } from "@/lib/calendar-sync/feed-errors";
 import { exportFields, importFields } from "@/lib/calendar-sync/fields";
 import { newApiKey } from "@/lib/calendar-sync/keys";
-import { partnersFor } from "@/lib/calendar-sync/partners";
-import { getOwnAircraft } from "@/lib/aircraft/queries";
 import { syncConnection } from "@/lib/calendar-sync/sync";
 import { sendNotificationsSoon } from "@/lib/notifications/soon";
 import { asUser } from "@/lib/db/rls";
@@ -56,8 +54,8 @@ async function ownConnection(userId: string, raw: Record<string, string>) {
 }
 
 /**
- * Connect another system; push connections get an API key, shown once. A partner (SYN-7) is read
- * with ownAplane's own key, so only the aircraft whose bookings it shares may connect it.
+ * Connect another system; push connections get an API key, shown once. Partners (SYN-7) aren't
+ * added here: they are connected automatically from the owner's key (Account → Connected services).
  */
 export async function addConnection(_prev: FormState, formData: FormData): Promise<FormState> {
   const user = await requireUser("/owner/aircraft");
@@ -65,13 +63,7 @@ export async function addConnection(_prev: FormState, formData: FormData): Promi
   const raw = formValues(formData);
   const parsed = connectionSchema.safeParse(raw);
   if (!parsed.success) return { errors: await localizedFieldErrors(parsed.error), values: raw };
-  const { aircraftId, name, inbound, feedUrl, partner } = parsed.data;
-  if (partner) {
-    const plane = await getOwnAircraft(user.id, aircraftId);
-    if (!plane || !(await partnersFor(plane)).includes(partner)) {
-      return { message: t("errors.partnerNotAllowed"), values: raw };
-    }
-  }
+  const { aircraftId, name, inbound, feedUrl } = parsed.data;
   // A calendar link only (for Google or Outlook) comes with a paid plan (SUB-10); syncing with
   // other booking systems, which prevents double bookings, is on every plan.
   if (inbound === "none" && !PLANS[(await getMyPlan(user.id)).plan].calendarLink) {
@@ -88,7 +80,6 @@ export async function addConnection(_prev: FormState, formData: FormData): Promi
           name,
           inbound,
           feedUrl,
-          partner,
           apiKeyHash: key?.hash ?? null,
           apiKeyHint: key?.hint ?? null,
         })
@@ -104,14 +95,14 @@ export async function addConnection(_prev: FormState, formData: FormData): Promi
   }
   refresh(aircraftId);
   if (key) return { ok: true, message: t("added.push"), secret: key.key };
-  if (created && (inbound === "ical" || inbound === "json" || inbound === "partner")) {
+  if (created && (inbound === "ical" || inbound === "json")) {
     sendNotificationsSoon();
     const result = await syncConnection(created);
     refresh(aircraftId);
     return result.ok
       ? { ok: true, message: t("added.synced", { count: result.count }) }
       : {
-          message: t(inbound === "partner" ? "added.partnerFailed" : "added.failed", {
+          message: t("added.failed", {
             reason: t(`feedErrors.${feedErrorKey(result.error)}`),
           }),
         };
@@ -119,7 +110,7 @@ export async function addConnection(_prev: FormState, formData: FormData): Promi
   return { ok: true, message: t("added.none") };
 }
 
-/** Read a link or partner connection now. */
+/** Read a link now; a partner connection reads the owner's whole account with that partner. */
 export async function syncNow(_prev: FormState, formData: FormData): Promise<FormState> {
   const user = await requireUser("/owner/aircraft");
   const t = await getTranslations("calendarSync");
@@ -186,11 +177,14 @@ export async function resetExportLink(formData: FormData) {
   refresh(conn.aircraftId);
 }
 
-/** Disconnect: its busy times are removed with it (the time becomes free here). */
+/**
+ * Disconnect: its busy times are removed with it (the time becomes free here). Partner
+ * connections go when the owner removes the key (they would come back with the next read).
+ */
 export async function removeConnection(formData: FormData) {
   const user = await requireUser("/owner/aircraft");
   const conn = await ownConnection(user.id, formValues(formData));
-  if (!conn) return;
+  if (!conn || conn.partner) return;
   await asUser(user.id, (tx) =>
     tx.delete(calendarConnections).where(eq(calendarConnections.id, conn.id)),
   );

@@ -13,7 +13,7 @@ import { pgError } from "./manage";
 // RLS and the database functions decide what the owner may do.
 
 export type CalendarBlock = {
-  kind: "owner_use" | "maintenance" | "unavailable";
+  kind: "owner_use" | "maintenance";
   from: Date;
   to: Date;
   note: string | null;

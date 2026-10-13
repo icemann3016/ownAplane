@@ -32,7 +32,8 @@ Photos, specifications, equipment, price and terms, the home base, the owner, th
 ## The availability calendar
 
 - Each day shows whether it's free, partly busy or fully busy, with coloured dots for what's on
-  it: **booking**, **own use**, **maintenance** or **unavailable**.
+  it: **booking**, **external booking** (booked in another system), **own use** or
+  **maintenance**.
 - **Hover over or tap a day** to see each entry's times (UTC) and kind; a booking that's only
   requested says so. You never see who booked it or the owner's notes.
 - **Pick dates like on a hotel site:** click the first day, then the last day, and set the start

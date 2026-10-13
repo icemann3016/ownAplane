@@ -7,10 +7,10 @@ import { PARTNER_INFO } from "./partner-list";
 
 // RAF Aviation's public API (https://rafaviation.flights/api-docs, SYN-7): GET /api/v1/bookings
 // with the owner's key as a Bearer token returns the bookings that haven't ended, as local dates
-// and times in Europe/Sofia, "pending" or "approved". We ask for the connected aircraft's
-// registration (`registration=ECIDR`); today the API covers EC-IDR only and has no such filter,
-// so bookings without a registration count as EC-IDR's and never block another aircraft. It only
-// reads: RAF Aviation can subscribe to the connection's iCal link to see our bookings.
+// and times in Europe/Sofia, "pending" or "approved". One read per key covers all the owner's
+// aircraft: each booking's registration (today the API covers EC-IDR only and doesn't say, so a
+// booking without one is EC-IDR's) picks the aircraft. It only reads: RAF Aviation can subscribe
+// to the connection's iCal link to see our bookings.
 
 const ZONE = "Europe/Sofia";
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -44,8 +44,8 @@ const instant = (date: string, hhmm: string) =>
 
 /**
  * RAF Aviation bookings as busy times: local times to UTC; an end at or before the start is on
- * the next day; "pending" ones are tentative. Their id is the date and times (the API has none).
- * Pure.
+ * the next day; "pending" ones are tentative. Their id is the registration, date and times (the
+ * API has none). Pure.
  */
 export function rafBookingsToEvents(json: unknown): ExternalEvent[] {
   const parsed = response.safeParse(json);
@@ -59,22 +59,22 @@ export function rafBookingsToEvents(json: unknown): ExternalEvent[] {
     const from = instant(b.date, b.from);
     const to = b.to === "24:00" ? instant(b.date, b.to) : instant(endDate, b.to);
     if (!from || !to) throw new FeedError("json_invalid", `bad time on ${b.date}`);
+    const registration = b.registration || covered;
     events.push({
-      id: `${b.date}T${b.from}/${b.to}`,
+      id: `${(registration ?? "").replace(/[^a-z0-9]/gi, "").toUpperCase()}:${b.date}T${b.from}/${b.to}`,
       from,
       to,
       type: "booking",
       tentative: status === "pending",
-      registration: b.registration || covered,
+      registration,
     });
   }
   return events;
 }
 
-/** Read RAF Aviation's bookings of an aircraft from today (Sofia) to a year ahead. */
+/** Read the bookings the key sees, from today (Sofia) to a year ahead. */
 export async function readRafAviation(
   apiKey: string,
-  registration: string,
   now = new Date(),
   fetcher: typeof fetchFeed = fetchFeed,
 ): Promise<ExternalEvent[]> {
@@ -85,8 +85,6 @@ export async function readRafAviation(
   const query = new URLSearchParams({
     from: zonedDay(now, ZONE),
     to: zonedDay(new Date(now.getTime() + DAYS_AHEAD * DAY_MS), ZONE),
-    // As RAF Aviation writes it: "ECIDR".
-    registration: registration.replace(/[^a-z0-9]/gi, "").toUpperCase(),
   });
   const { text } = await fetcher(`${base}/api/v1/bookings?${query}`, {
     headers: { authorization: `Bearer ${apiKey}`, accept: "application/json" },

@@ -9,7 +9,7 @@ import { SelectField, TextField } from "@/components/forms/text-field";
 import { initialFormState } from "@/lib/forms";
 import { addCalendarBlock } from "./actions";
 
-const KINDS = ["owner_use", "maintenance", "unavailable"] as const;
+const KINDS = ["owner_use", "maintenance"] as const;
 
 /** Block time on the calendar, in UTC; dates picked on the calendar arrive as `initial`. */
 export function BlockForm({

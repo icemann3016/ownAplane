@@ -205,7 +205,9 @@ test("another system pushes its bookings and never double-books the aircraft", a
   expect((await club("/api/v1/sync")).status).toBe(401);
 });
 
-test("an owner adds their RAF Aviation key and connects an aircraft (SYN-7)", async ({ page }) => {
+test("an owner adds their RAF Aviation key and their aircraft sync by themselves (SYN-7)", async ({
+  page,
+}) => {
   test.setTimeout(90_000);
   const id = unique();
   const ownerEmail = `raf-owner-${id}@example.com`;
@@ -217,10 +219,14 @@ test("an owner adds their RAF Aviation key and connects an aircraft (SYN-7)", as
     .padEnd(3, "X");
   const registration = `LZ-R${letters}`;
   const aircraftId = await seedListedAircraft(ownerEmail, registration);
+  // The stand-in answers with this registration's bookings for this key (as RAF writes it).
+  const apiKey = `raf-e2e-key-LZR${letters}`;
 
-  // No key yet: the partner option points to Connected services
+  // Nothing to set up per aircraft: Calendar sync points to Connected services
   await page.goto(`/owner/aircraft/${aircraftId}/sync`);
-  await expect(page.getByRole("radio", { name: /Partner system/ })).toBeDisabled();
+  await expect(page.getByRole("radio", { name: /Partner system|Connected service/ })).toHaveCount(
+    0,
+  );
   await page.getByRole("link", { name: "Account → Connected services" }).click();
   await expect(page.getByRole("heading", { name: "Connected services", level: 1 })).toBeVisible();
 
@@ -238,36 +244,57 @@ test("an owner adds their RAF Aviation key and connects an aircraft (SYN-7)", as
   ).toBeVisible();
   await expect(page.getByText("Not connected.")).toBeVisible();
 
-  // The right one is kept, never shown again
-  await page.getByLabel("API key", { exact: true }).fill("raf-e2e-key");
+  // The right one is kept, never shown again, and read at once for all the owner's aircraft
+  await page.getByLabel("API key", { exact: true }).fill(apiKey);
   await page.getByRole("button", { name: "Save key" }).click();
   await expect(
-    page.getByText("Key saved. Your RAF Aviation connections are read with it."),
+    page.getByText(
+      `Key saved. Read: ${registration}: 2 bookings. Left out: bookings for EC-IDR, which none of your aircraft has (drafts excluded).`,
+    ),
   ).toBeVisible();
-  await expect(page.getByText(/Connected: API key ending in …-key/)).toBeVisible();
+  await expect(page.getByText(/Connected: API key ending in …/)).toBeVisible();
   await expect(page.getByLabel("New API key")).toHaveValue("");
+  await expect(page.getByRole("link", { name: registration })).toBeVisible();
+  await expect(page.getByText(`${registration} · 2 bookings`)).toBeVisible();
   expect(await page.content()).not.toContain("raf-e2e-key");
   await expectAccessible(page);
 
-  // Calendar sync reads RAF Aviation for this aircraft's registration
+  // The aircraft got its RAF Aviation connection by itself
   await page.goto(`/owner/aircraft/${aircraftId}/sync`);
-  await page.getByLabel("Name").fill("RAF Aviation");
-  await page.getByRole("radio", { name: /Partner system/ }).check();
-  await expect(page.getByLabel("Partner", { exact: true })).toHaveValue("rafaviation");
-  await expect(page.getByRole("textbox", { name: /API key/ })).toHaveCount(0);
-  await page.getByRole("button", { name: "Connect" }).click();
-  await expect(page.getByText("Connected and read: 2 busy times.")).toBeVisible();
+  await expect(page.getByText("Connected service", { exact: true })).toBeVisible();
   await expect(
     page.getByText(
-      `Reads RAF Aviation's bookings for ${registration} with the API key on your account`,
+      /^Added automatically: RAF Aviation's bookings for this aircraft's registration/,
     ),
   ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Disconnect" })).toHaveCount(0);
+  await page.getByRole("button", { name: "Sync now" }).click();
+  await expect(page.getByText("Read: 2 busy times.")).toBeVisible();
   expect(await page.content()).not.toContain("raf-e2e-key");
   await expectAccessible(page);
+
+  // Its bookings block the aircraft and show as external bookings
   const busy = await withDb(
-    (sql) => sql<{ count: number }[]>`
-      select count(*)::int as count from calendar_entries
-      where aircraft_id = ${aircraftId} and active and connection_id is not null`,
+    (sql) => sql<{ from: Date }[]>`
+      select lower(period) as from from calendar_entries
+      where aircraft_id = ${aircraftId} and active and connection_id is not null
+      order by lower(period)`,
   );
-  expect(busy[0]!.count).toBe(2);
+  expect(busy).toHaveLength(2);
+  const month = new Date(busy[0]!.from).toISOString().slice(0, 7);
+  await page.goto(`/owner/aircraft/${aircraftId}/calendar?month=${month}`);
+  const external = page.getByRole("listitem").filter({ hasText: "From RAF Aviation" });
+  await expect(external).toHaveCount(2);
+  await expect(external.first()).toContainText("External booking");
+
+  // Removing the key takes RAF Aviation's bookings off the aircraft
+  await page.goto("/account/connections");
+  await page.getByRole("button", { name: "Remove key" }).click();
+  await expect(page.getByText("Not connected.")).toBeVisible();
+  const left = await withDb(
+    (sql) => sql<{ count: number }[]>`
+      select count(*)::int as count from calendar_connections
+      where aircraft_id = ${aircraftId} and partner is not null`,
+  );
+  expect(left[0]!.count).toBe(0);
 });

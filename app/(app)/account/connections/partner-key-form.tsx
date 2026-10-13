@@ -8,7 +8,7 @@ import { SubmitButton } from "@/components/forms/submit-button";
 import { TextField } from "@/components/forms/text-field";
 import type { Partner } from "@/lib/calendar-sync/partner-list";
 import { initialFormState } from "@/lib/forms";
-import { savePartnerKeyAction } from "./actions";
+import { savePartnerKeyAction, syncPartnerAction } from "./actions";
 
 /**
  * Enter a partner's API key (SYN-7). Write-only: never filled in or shown again. It isn't a
@@ -43,6 +43,26 @@ export function PartnerKeyForm({ partner, hasKey }: { partner: Partner; hasKey: 
       <SubmitButton className="justify-self-start" pendingText={t("checking")}>
         {hasKey ? t("replace") : t("save")}
       </SubmitButton>
+    </form>
+  );
+}
+
+/** Read the partner again now, for all the owner's aircraft. */
+export function PartnerSyncNow({ partner }: { partner: Partner }) {
+  const t = useTranslations("account.connections");
+  const [state, formAction] = useActionState(syncPartnerAction, initialFormState);
+  return (
+    <form action={formAction} className="grid gap-2">
+      <input type="hidden" name="partner" value={partner} />
+      <SubmitButton
+        variant="outline"
+        size="sm"
+        className="justify-self-start"
+        pendingText={t("syncing")}
+      >
+        {t("syncNow")}
+      </SubmitButton>
+      <FormMessage state={state} />
     </form>
   );
 }

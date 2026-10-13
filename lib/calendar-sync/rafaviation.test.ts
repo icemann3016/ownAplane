@@ -15,8 +15,18 @@ describe("RAF Aviation bookings (SYN-7)", () => {
       ],
     });
     expect(events.map((e) => [e.id, iso(e.from), iso(e.to), e.tentative])).toEqual([
-      ["2026-07-15T10:00/12:00", "2026-07-15T07:00:00.000Z", "2026-07-15T09:00:00.000Z", false],
-      ["2026-12-15T10:00/12:30", "2026-12-15T08:00:00.000Z", "2026-12-15T10:30:00.000Z", true],
+      [
+        "ECIDR:2026-07-15T10:00/12:00",
+        "2026-07-15T07:00:00.000Z",
+        "2026-07-15T09:00:00.000Z",
+        false,
+      ],
+      [
+        "ECIDR:2026-12-15T10:00/12:30",
+        "2026-12-15T08:00:00.000Z",
+        "2026-12-15T10:30:00.000Z",
+        true,
+      ],
     ]);
     expect(events[0]).toMatchObject({ type: "booking", registration: "EC-IDR" });
   });
@@ -45,7 +55,7 @@ describe("RAF Aviation bookings (SYN-7)", () => {
       ],
     });
     // An unknown status still blocks: better a free slot missed than a double booking.
-    expect(events.map((e) => e.id)).toEqual(["2026-10-20T14:00/15:00"]);
+    expect(events.map((e) => e.id)).toEqual(["ECIDR:2026-10-20T14:00/15:00"]);
   });
 
   it("takes a booking's registration when the API sends one, else EC-IDR", () => {
@@ -71,12 +81,12 @@ describe("RAF Aviation bookings (SYN-7)", () => {
     expect(rafBookingsToEvents({ data: [] })).toEqual([]);
   });
 
-  it("asks for the aircraft, today (in Sofia) to a year ahead, with the key as a Bearer token", async () => {
+  it("asks for today (in Sofia) to a year ahead, with the key as a Bearer token", async () => {
     const fetcher = vi.fn(async () => json({ data: [] }));
     // 22:30 UTC on 12 October is already the 13th in Sofia.
-    await readRafAviation("secret-key", "EC-IDR", new Date("2026-10-12T22:30:00Z"), fetcher);
+    await readRafAviation("secret-key", new Date("2026-10-12T22:30:00Z"), fetcher);
     expect(fetcher).toHaveBeenCalledWith(
-      "https://rafaviation.flights/api/v1/bookings?from=2026-10-13&to=2027-10-14&registration=ECIDR",
+      "https://rafaviation.flights/api/v1/bookings?from=2026-10-13&to=2027-10-14",
       {
         headers: { authorization: "Bearer secret-key", accept: "application/json" },
         trusted: true,

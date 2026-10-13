@@ -440,7 +440,7 @@
     "connections": {
       "title": "Servicios conectados",
       "description": "Tus cuentas en otros sistemas que ownAplane puede leer por ti. Sus reservas bloquean entonces tus aeronaves aquí (sincronización del calendario).",
-      "partnerText": "{partner} comparte sus reservas a través de su API. Con tu clave API, ownAplane lee allí las reservas de tus aeronaves (hoy su API cubre {registrations}).",
+      "partnerText": "{partner} comparte sus reservas a través de su API. Con tu clave API, ownAplane las lee y coloca cada una en tu aeronave con la misma matrícula, como reserva externa: sin configuración por aeronave (hoy su API cubre {registrations}).",
       "connected": "Conectado: clave API que termina en …{hint}, guardada el {date}.",
       "lastUsed": "Última lectura {when}.",
       "lastFailed": "La última lectura falló: {reason}.",
@@ -453,13 +453,22 @@
       "save": "Guardar clave",
       "replace": "Sustituir clave",
       "remove": "Eliminar clave",
-      "removeText": "Tus conexiones con {partner} dejan de leerse hasta que vuelvas a añadir una clave.",
-      "useIt": "Después conéctalo a una aeronave: Mis aeronaves → tu aeronave → Sincronización del calendario → Sistema asociado.",
-      "myAircraft": "Mis aeronaves",
+      "removeText": "Las reservas de {partner} se quitan de tus aeronaves hasta que vuelvas a añadir una clave.",
       "keyInvalid": "Pega la clave API completa (de 8 a 500 caracteres, sin espacios).",
       "keyRefused": "{partner} rechazó esta clave. Compruébala e inténtalo de nuevo.",
       "checkFailed": "No se pudo comprobar la clave con {partner}: {reason}. Inténtalo de nuevo en un momento.",
-      "saved": "Clave guardada. Tus conexiones con {partner} se leen con ella."
+      "saved": "Clave guardada.",
+      "syncNow": "Sincronizar ahora",
+      "syncing": "Leyendo…",
+      "syncFailed": "No se pudo leer {partner}: {reason}.",
+      "syncedAircraft": "Leído: {list}.",
+      "aircraftCount": "{registration}: {count, plural, one {# reserva} other {# reservas}}",
+      "syncedNothing": "{partner} no tiene reservas para tus aeronaves en este momento.",
+      "unmatched": "Omitidas: reservas para {registrations}, matrícula que no tiene ninguna de tus aeronaves (sin borradores).",
+      "aircraftTitle": "Tus aeronaves",
+      "aircraftBusy": "{count, plural, =0 {sin reservas por ahora} one {# reserva} other {# reservas}}",
+      "aircraftFailed": "la última lectura falló: {reason}",
+      "aircraftNone": "Ninguna todavía. En cuanto {partner} tenga reservas para una de tus aeronaves (misma matrícula, sin borradores), aparecerán aquí y en su calendario."
     }
   },
   "password": {
@@ -1400,7 +1409,7 @@
       "photos": "Al menos una foto, hasta 20. La primera es la portada.",
       "documents": "Nuestro equipo revisa los documentos. El avión se puede ofrecer cuando se hayan verificado un ARC y un seguro válidos.",
       "requirements": "Elige quién puede alquilar el avión. Los pilotos lo ven antes de preguntar.",
-      "calendar": "Bloquea los periodos en que usas el avión, el mantenimiento y otras indisponibilidades. Las reservas aparecen aquí automáticamente.",
+      "calendar": "Bloquea los periodos en que usas el avión o está en mantenimiento. Las reservas, incluidas las de sistemas conectados, aparecen aquí automáticamente.",
       "remarks": "Lo que anotaron los pilotos después de volar. Marca las observaciones del avión como puntos conocidos para que los siguientes pilotos las vean antes de volar.",
       "usage": "Horas, aterrizajes, combustible y aceite de los registros de vuelo confirmados, por mes y por piloto.",
       "defects": "Defectos notificados por los pilotos o por ti. Inmoviliza el avión si no debe volar."
@@ -1760,7 +1769,7 @@
         "booking": "Reserva",
         "owner_use": "Uso propio",
         "maintenance": "Mantenimiento",
-        "unavailable": "No disponible"
+        "unavailable": "Reserva externa"
       },
       "states": {
         "free": "Libre",
@@ -2733,9 +2742,6 @@
       "how": "¿Cómo nos llegan sus reservas?",
       "icalUrl": "Enlace iCal",
       "jsonUrl": "Enlace JSON",
-      "partner": "Socio",
-      "partnerNeedsKey": "Primero añade tu clave API:",
-      "partnerKeyLink": "Cuenta → Servicios conectados",
       "urlHint": "El enlace privado del otro sistema. Los enlaces webcal:// también funcionan.",
       "linkIs": "Enlace:",
       "submit": "Conectar",
@@ -2748,8 +2754,7 @@
         "hint": "Sincronización en tiempo real para un sistema que puede llamar a una dirección web. Recibes una clave API para sus desarrolladores."
       },
       "partner": {
-        "label": "Sistema asociado",
-        "hint": "Sistemas con su propia API, como RAF Aviation: añade tu clave API en Cuenta → Servicios conectados y elige el sistema aquí."
+        "label": "Servicio conectado"
       },
       "ical": {
         "label": "Enlace iCal",
@@ -2768,7 +2773,6 @@
       "push": "Conectado. Copia ahora la clave API: solo se muestra una vez.",
       "synced": "Conectado y leído: {count, plural, =0 {ningún periodo ocupado} one {# periodo ocupado} other {# periodos ocupados}}.",
       "failed": "Conectado, pero no se pudo leer el enlace: {reason}.",
-      "partnerFailed": "Conectado, pero no se pudieron leer las reservas: {reason}.",
       "none": "Conectado. Usa el enlace iCal de abajo en el otro sistema."
     },
     "synced": "Leído: {count, plural, =0 {ningún periodo ocupado} one {# periodo ocupado} other {# periodos ocupados}}.",
@@ -2804,8 +2808,9 @@
       "shownHint": "Entrégala a los desarrolladores del otro sistema. Se envía así: {header}."
     },
     "partner": {
-      "about": "Lee las reservas de {partner} para {registration} con la clave API de tu cuenta:",
-      "otherAircraft": "La API de {partner} por ahora solo comparte reservas de {registrations}, así que nada de {partner} bloquea todavía {registration}."
+      "about": "Añadido automáticamente: las reservas de {partner} para la matrícula de esta aeronave, leídas con la clave API de tu cuenta y mostradas como reservas externas.",
+      "auto": "Los servicios conectados en tu cuenta ({partners}) aparecen aquí solos, para cada aeronave de la que tengan reservas:",
+      "keyLink": "Cuenta → Servicios conectados"
     },
     "remove": {
       "button": "Desconectar",
@@ -2816,8 +2821,7 @@
       "too_many": "Una aeronave puede tener como máximo 10 sistemas conectados.",
       "not_allowed": "No puedes modificar esta aeronave.",
       "not_found": "No encontramos esta conexión.",
-      "planNeeded": "Un enlace de calendario por sí solo viene con el plan Propietario o Flota. Conectar otro sistema de reservas funciona en todos los planes.",
-      "partnerNotAllowed": "Este socio no se puede conectar a esta aeronave."
+      "planNeeded": "Un enlace de calendario por sí solo viene con el plan Propietario o Flota. Conectar otro sistema de reservas funciona en todos los planes."
     },
     "feedErrors": {
       "url_invalid": "el enlace no es una dirección https válida",
@@ -2835,7 +2839,8 @@
     "export": {
       "name": "{registration} ({site})",
       "booked": "Reservado ({site})",
-      "blocked": "No disponible",
+      "blocked": "Ocupado",
+      "external": "Reserva externa",
       "ownUse": "Uso del propietario",
       "maintenance": "Mantenimiento",
       "labels": {
@@ -2870,7 +2875,7 @@
       "export": {
         "type": {
           "label": "Tipo",
-          "hint": "Uso propio, mantenimiento o no disponible, en lugar de solo «no disponible»."
+          "hint": "Uso propio, mantenimiento o reserva externa, en lugar de solo «ocupado»."
         },
         "status": {
           "label": "Estado de la reserva",

@@ -64,7 +64,7 @@ flowchart LR
 ## 4. Key technical decisions
 
 ### 4.1 No double bookings (SRC-5, BKG-5)
-All time an aircraft is busy lives in one table, `calendar_entries` (`aircraft_id`, `period tstzrange`, `kind` = booking / owner_use / maintenance / unavailable). A Postgres **exclusion constraint** makes overlapping active entries impossible, even if two pilots click "Book" at the same moment:
+All time an aircraft is busy lives in one table, `calendar_entries` (`aircraft_id`, `period tstzrange`, `kind` = booking / owner_use / maintenance / unavailable; `unavailable` is only used for an **external booking** from a connected system). A Postgres **exclusion constraint** makes overlapping active entries impossible, even if two pilots click "Book" at the same moment:
 
 ```sql
 exclude using gist (aircraft_id with =, period with &&) where (active)
@@ -128,7 +128,8 @@ Aircraft home bases are airports with latitude/longitude. The search (`lib/aircr
   reach us by push API (API key), iCal link or JSON link, or not at all (it only reads ours).
 - External busy times are rows in `calendar_entries` (kind `unavailable`, with `connection_id` and
   the other system's id), so the **same exclusion constraint** keeps them from overlapping
-  ownAplane bookings. Pilots see them as "unavailable".
+  ownAplane bookings. Everyone sees them as "External booking" (owners block only own use or
+  maintenance).
 - iCal import: the owner's ICS links are fetched by a sync job (target every 15 min) and again,
   with a short timeout, right before a booking request is created or accepted (SYN-2). Events are
   upserted by UID; removed events are deactivated. Recurring events are expanded for the next 12
@@ -146,14 +147,18 @@ Aircraft home bases are airports with latitude/longitude. The search (`lib/aircr
   overlap with a booking (still recorded as a conflict).
 - Reading links: every 15 min (`/api/cron/sync` from a GitHub Actions schedule), hourly in the
   daily job, and right before a booking is requested or accepted.
-- Partners with their own API (SYN-7): connection kind `partner` with `partner` (an id from
-  `lib/calendar-sync/partner-list.ts`), read with the **aircraft owner's key** for that partner
-  (Account → Connected services, `partner_credentials`: AES-256-GCM via `lib/secrets.ts` with a
-  key derived from `BETTER_AUTH_SECRET`, bound to user + partner; no app access; checked with
-  the partner before it is kept; never returned to a browser). The call asks for the aircraft's
-  registration; a partner's busy times never land on another aircraft (registration check
-  forced). Read like links (same schedule, `replace`), the key as a Bearer header, never
-  following redirects. First partner: **RAF Aviation** (`rafaviation.ts`: future bookings as
+- Partners with their own API (SYN-7): the **owner's key** for that partner (Account → Connected
+  services, `partner_credentials`: AES-256-GCM via `lib/secrets.ts` with a key derived from
+  `BETTER_AUTH_SECRET`, bound to user + partner; no app access; checked with the partner before
+  it is kept; never returned to a browser) is read **once for all the owner's aircraft**
+  (`syncPartnerAccount()` in `lib/calendar-sync/partners.ts`): each booking goes to the owner's
+  non-draft aircraft with the same registration, whose connection (kind `partner`, `partner` = an
+  id from `partner-list.ts`, one per aircraft and partner) is made automatically the first time
+  it has bookings; connections without bookings are emptied, never deleted; removing the key
+  deletes them. A partner's busy times never land on another aircraft (registration check
+  forced). Read on the links' schedule (`partner_credentials.last_sync_at`), before each
+  request/acceptance of one of the owner's aircraft and by "Sync now"; the key as a Bearer header,
+  never following redirects. First partner: **RAF Aviation** (`rafaviation.ts`: future bookings as
   Europe/Sofia local times → UTC; "pending" = tentative; EC-IDR only for now, so bookings without
   a registration count as EC-IDR's). It reads ours from the connection's iCal link.
 - Webhooks (SYN-6): `calendar_connections.webhook_url/secret`; triggers on `calendar_entries` and

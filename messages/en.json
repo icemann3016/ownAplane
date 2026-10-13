@@ -440,7 +440,7 @@
     "connections": {
       "title": "Connected services",
       "description": "Accounts you have with other systems that ownAplane can read for you. Their bookings then block your aircraft here (Calendar sync).",
-      "partnerText": "{partner} shares its bookings through its API. With your API key, ownAplane reads the bookings of your aircraft there (today its API covers {registrations}).",
+      "partnerText": "{partner} shares its bookings through its API. With your API key, ownAplane reads them and puts each one on your aircraft with the same registration, as an external booking: no setup per aircraft (today its API covers {registrations}).",
       "connected": "Connected: API key ending in …{hint}, saved {date}.",
       "lastUsed": "Last read {when}.",
       "lastFailed": "The last read failed: {reason}.",
@@ -453,13 +453,22 @@
       "save": "Save key",
       "replace": "Replace key",
       "remove": "Remove key",
-      "removeText": "Your connections to {partner} stop reading until you add a key again.",
-      "useIt": "Then connect it to an aircraft: My aircraft → your aircraft → Calendar sync → Partner system.",
-      "myAircraft": "My aircraft",
+      "removeText": "{partner}'s bookings are removed from your aircraft until you add a key again.",
       "keyInvalid": "Paste the whole API key (8 to 500 characters, no spaces).",
       "keyRefused": "{partner} refused this key. Check it and try again.",
       "checkFailed": "Couldn't check the key with {partner}: {reason}. Try again in a moment.",
-      "saved": "Key saved. Your {partner} connections are read with it."
+      "saved": "Key saved.",
+      "syncNow": "Sync now",
+      "syncing": "Reading…",
+      "syncFailed": "Couldn't read {partner}: {reason}.",
+      "syncedAircraft": "Read: {list}.",
+      "aircraftCount": "{registration}: {count, plural, one {# booking} other {# bookings}}",
+      "syncedNothing": "{partner} has no bookings for your aircraft right now.",
+      "unmatched": "Left out: bookings for {registrations}, which none of your aircraft has (drafts excluded).",
+      "aircraftTitle": "Your aircraft",
+      "aircraftBusy": "{count, plural, =0 {no bookings right now} one {# booking} other {# bookings}}",
+      "aircraftFailed": "last read failed: {reason}",
+      "aircraftNone": "None yet. As soon as {partner} has bookings for one of your aircraft (same registration, drafts excluded), they appear here and in its calendar."
     }
   },
   "password": {
@@ -1400,7 +1409,7 @@
       "photos": "At least one photo, up to 20. The first one is the cover.",
       "documents": "Documents are checked by our team. The aircraft can be listed once a valid ARC and insurance are verified.",
       "requirements": "Choose who can rent the aircraft. Pilots see these before they ask.",
-      "calendar": "Block the times you use the aircraft yourself, maintenance and other unavailable periods. Bookings appear here automatically.",
+      "calendar": "Block the times you use the aircraft yourself or it is in maintenance. Bookings, including those from connected systems, appear here automatically.",
       "remarks": "What pilots noted after their flights. Mark aircraft remarks as known items so later renters see them before they fly.",
       "usage": "Hours, landings, fuel and oil from confirmed flight logs, per month and per pilot.",
       "defects": "Defects reported by renters or by you. Ground the aircraft if it shouldn't fly."
@@ -1760,7 +1769,7 @@
         "booking": "Booking",
         "owner_use": "Own use",
         "maintenance": "Maintenance",
-        "unavailable": "Unavailable"
+        "unavailable": "External booking"
       },
       "states": {
         "free": "Free",
@@ -2733,9 +2742,6 @@
       "how": "How do its bookings reach us?",
       "icalUrl": "iCal link",
       "jsonUrl": "JSON link",
-      "partner": "Partner",
-      "partnerNeedsKey": "Add your API key first:",
-      "partnerKeyLink": "Account → Connected services",
       "urlHint": "The private link from the other system. webcal:// links work too.",
       "linkIs": "Link:",
       "submit": "Connect",
@@ -2748,8 +2754,7 @@
         "hint": "Real-time sync for a system that can call a web address. You get an API key for its developers."
       },
       "partner": {
-        "label": "Partner system",
-        "hint": "Systems with their own API, such as RAF Aviation: add your API key under Account → Connected services, then choose the system here."
+        "label": "Connected service"
       },
       "ical": {
         "label": "iCal link",
@@ -2768,7 +2773,6 @@
       "push": "Connected. Copy the API key now: it is shown only once.",
       "synced": "Connected and read: {count, plural, =0 {no busy times} one {# busy time} other {# busy times}}.",
       "failed": "Connected, but the link couldn't be read: {reason}.",
-      "partnerFailed": "Connected, but its bookings couldn't be read: {reason}.",
       "none": "Connected. Use the iCal link below in the other system."
     },
     "synced": "Read: {count, plural, =0 {no busy times} one {# busy time} other {# busy times}}.",
@@ -2804,8 +2808,9 @@
       "shownHint": "Give it to the other system's developers. It is sent as: {header}."
     },
     "partner": {
-      "about": "Reads {partner}'s bookings for {registration} with the API key on your account:",
-      "otherAircraft": "{partner}'s API shares bookings of {registrations} only for now, so nothing from {partner} blocks {registration} yet."
+      "about": "Added automatically: {partner}'s bookings for this aircraft's registration, read with the API key on your account and shown as external bookings.",
+      "auto": "Services you connect in your account ({partners}) appear here by themselves, for each aircraft they have bookings for:",
+      "keyLink": "Account → Connected services"
     },
     "remove": {
       "button": "Disconnect",
@@ -2816,8 +2821,7 @@
       "too_many": "An aircraft can have at most 10 connected systems.",
       "not_allowed": "You can't change this aircraft.",
       "not_found": "We couldn't find this connection.",
-      "planNeeded": "A calendar link on its own comes with the Owner or Fleet plan. Connecting another booking system works on every plan.",
-      "partnerNotAllowed": "This partner can't be connected to this aircraft."
+      "planNeeded": "A calendar link on its own comes with the Owner or Fleet plan. Connecting another booking system works on every plan."
     },
     "feedErrors": {
       "url_invalid": "the link isn't a valid https address",
@@ -2835,7 +2839,8 @@
     "export": {
       "name": "{registration} ({site})",
       "booked": "Booked ({site})",
-      "blocked": "Unavailable",
+      "blocked": "Busy",
+      "external": "External booking",
       "ownUse": "Owner's use",
       "maintenance": "Maintenance",
       "labels": {
@@ -2870,7 +2875,7 @@
       "export": {
         "type": {
           "label": "Type",
-          "hint": "Own use, maintenance or unavailable, instead of just \"unavailable\"."
+          "hint": "Own use, maintenance or external booking, instead of just \"busy\"."
         },
         "status": {
           "label": "Booking status",

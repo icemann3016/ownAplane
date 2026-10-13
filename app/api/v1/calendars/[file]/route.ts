@@ -38,9 +38,10 @@ export const GET = apiRoute(
     const texts: IcsTexts = {
       titles: {
         booked: t("booked", { site }),
+        busy: t("blocked"),
         owner_use: t("ownUse"),
         maintenance: t("maintenance"),
-        unavailable: t("blocked"),
+        unavailable: t("external"),
       },
       labels: {
         status: t("labels.status"),

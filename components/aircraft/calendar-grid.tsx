@@ -28,11 +28,12 @@ export type CalendarEntryView = {
 
 export type CalendarDayView = { day: string; state: DayState; entries: CalendarEntryView[] };
 
+/** Legend order too. `unavailable` = an external booking (from a connected system). */
 export const KIND_DOT: Record<CalendarEntryKind, string> = {
   booking: "bg-primary",
+  unavailable: "bg-violet-500",
   owner_use: "bg-sky-500",
   maintenance: "bg-warning",
-  unavailable: "bg-muted-foreground",
 };
 
 /**

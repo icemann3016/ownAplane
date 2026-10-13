@@ -19,7 +19,7 @@ const iso = (d: Date | string) => new Date(d).toISOString();
 
 export const calendarBlockBody = z
   .object({
-    kind: z.enum(["owner_use", "maintenance", "unavailable"]),
+    kind: z.enum(["owner_use", "maintenance"]),
     from: z.iso.datetime({ offset: true }),
     to: z.iso.datetime({ offset: true }),
     note: z

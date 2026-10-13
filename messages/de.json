@@ -440,7 +440,7 @@
     "connections": {
       "title": "Verbundene Dienste",
       "description": "Ihre Konten bei anderen Systemen, die ownAplane für Sie lesen kann. Deren Buchungen blockieren dann Ihre Luftfahrzeuge hier (Kalender-Sync).",
-      "partnerText": "{partner} teilt seine Buchungen über seine API. Mit Ihrem API-Schlüssel liest ownAplane dort die Buchungen Ihrer Luftfahrzeuge (derzeit deckt die API {registrations} ab).",
+      "partnerText": "{partner} teilt seine Buchungen über seine API. Mit Ihrem API-Schlüssel liest ownAplane sie und trägt jede bei Ihrem Luftfahrzeug mit demselben Kennzeichen als externe Buchung ein: keine Einrichtung pro Luftfahrzeug (derzeit deckt die API {registrations} ab).",
       "connected": "Verbunden: API-Schlüssel endet auf …{hint}, gespeichert am {date}.",
       "lastUsed": "Zuletzt gelesen {when}.",
       "lastFailed": "Das letzte Lesen ist fehlgeschlagen: {reason}.",
@@ -453,13 +453,22 @@
       "save": "Schlüssel speichern",
       "replace": "Schlüssel ersetzen",
       "remove": "Schlüssel entfernen",
-      "removeText": "Ihre Verbindungen zu {partner} werden nicht mehr gelesen, bis Sie wieder einen Schlüssel hinzufügen.",
-      "useIt": "Verbinden Sie es dann mit einem Luftfahrzeug: Meine Luftfahrzeuge → Ihr Luftfahrzeug → Kalender-Sync → Partnersystem.",
-      "myAircraft": "Meine Luftfahrzeuge",
+      "removeText": "Die Buchungen von {partner} werden von Ihren Luftfahrzeugen entfernt, bis Sie wieder einen Schlüssel hinzufügen.",
       "keyInvalid": "Fügen Sie den ganzen API-Schlüssel ein (8 bis 500 Zeichen, ohne Leerzeichen).",
       "keyRefused": "{partner} hat diesen Schlüssel abgelehnt. Prüfen Sie ihn und versuchen Sie es erneut.",
       "checkFailed": "Der Schlüssel konnte bei {partner} nicht geprüft werden: {reason}. Versuchen Sie es gleich noch einmal.",
-      "saved": "Schlüssel gespeichert. Ihre Verbindungen zu {partner} werden damit gelesen."
+      "saved": "Schlüssel gespeichert.",
+      "syncNow": "Jetzt synchronisieren",
+      "syncing": "Wird gelesen…",
+      "syncFailed": "{partner} konnte nicht gelesen werden: {reason}.",
+      "syncedAircraft": "Gelesen: {list}.",
+      "aircraftCount": "{registration}: {count, plural, one {# Buchung} other {# Buchungen}}",
+      "syncedNothing": "{partner} hat derzeit keine Buchungen für Ihre Luftfahrzeuge.",
+      "unmatched": "Ausgelassen: Buchungen für {registrations}; keines Ihrer Luftfahrzeuge hat dieses Kennzeichen (Entwürfe ausgenommen).",
+      "aircraftTitle": "Ihre Luftfahrzeuge",
+      "aircraftBusy": "{count, plural, =0 {derzeit keine Buchungen} one {# Buchung} other {# Buchungen}}",
+      "aircraftFailed": "letztes Lesen fehlgeschlagen: {reason}",
+      "aircraftNone": "Noch keine. Sobald {partner} Buchungen für eines Ihrer Luftfahrzeuge hat (gleiches Kennzeichen, Entwürfe ausgenommen), erscheinen sie hier und in dessen Kalender."
     }
   },
   "password": {
@@ -1400,7 +1409,7 @@
       "photos": "Mindestens ein Foto, bis zu 20. Das erste ist das Titelbild.",
       "documents": "Dokumente werden von unserem Team geprüft. Das Flugzeug kann angeboten werden, sobald eine gültige ARC und Versicherung verifiziert sind.",
       "requirements": "Bestimmen Sie, wer das Flugzeug mieten darf. Piloten sehen das, bevor sie anfragen.",
-      "calendar": "Sperren Sie Zeiten für eigene Nutzung, Wartung und andere Nichtverfügbarkeit. Buchungen erscheinen hier automatisch.",
+      "calendar": "Sperren Sie Zeiten für eigene Nutzung oder Wartung. Buchungen, auch aus verbundenen Systemen, erscheinen hier automatisch.",
       "remarks": "Was Piloten nach ihren Flügen notiert haben. Markieren Sie Flugzeugbemerkungen als bekannte Punkte, damit spätere Mieter sie vor dem Flug sehen.",
       "usage": "Stunden, Landungen, Kraftstoff und Öl aus bestätigten Flugberichten, pro Monat und pro Pilot.",
       "defects": "Von Mietern oder Ihnen gemeldete Mängel. Setzen Sie das Flugzeug am Boden fest, wenn es nicht fliegen sollte."
@@ -1760,7 +1769,7 @@
         "booking": "Buchung",
         "owner_use": "Eigene Nutzung",
         "maintenance": "Wartung",
-        "unavailable": "Nicht verfügbar"
+        "unavailable": "Externe Buchung"
       },
       "states": {
         "free": "Frei",
@@ -2733,9 +2742,6 @@
       "how": "Wie kommen dessen Buchungen zu uns?",
       "icalUrl": "iCal-Link",
       "jsonUrl": "JSON-Link",
-      "partner": "Partner",
-      "partnerNeedsKey": "Fügen Sie zuerst Ihren API-Schlüssel hinzu:",
-      "partnerKeyLink": "Konto → Verbundene Dienste",
       "urlHint": "Der private Link aus dem anderen System. webcal://-Links funktionieren auch.",
       "linkIs": "Link:",
       "submit": "Verbinden",
@@ -2748,8 +2754,7 @@
         "hint": "Echtzeit-Sync für ein System, das eine Webadresse aufrufen kann. Sie erhalten einen API-Schlüssel für dessen Entwickler."
       },
       "partner": {
-        "label": "Partnersystem",
-        "hint": "Systeme mit eigener API, z. B. RAF Aviation: Fügen Sie Ihren API-Schlüssel unter Konto → Verbundene Dienste hinzu und wählen Sie das System dann hier."
+        "label": "Verbundener Dienst"
       },
       "ical": {
         "label": "iCal-Link",
@@ -2768,7 +2773,6 @@
       "push": "Verbunden. Kopieren Sie den API-Schlüssel jetzt: Er wird nur einmal angezeigt.",
       "synced": "Verbunden und gelesen: {count, plural, =0 {keine belegten Zeiten} one {# belegte Zeit} other {# belegte Zeiten}}.",
       "failed": "Verbunden, aber der Link konnte nicht gelesen werden: {reason}.",
-      "partnerFailed": "Verbunden, aber die Buchungen konnten nicht gelesen werden: {reason}.",
       "none": "Verbunden. Verwenden Sie den iCal-Link unten im anderen System."
     },
     "synced": "Gelesen: {count, plural, =0 {keine belegten Zeiten} one {# belegte Zeit} other {# belegte Zeiten}}.",
@@ -2804,8 +2808,9 @@
       "shownHint": "Geben Sie ihn den Entwicklern des anderen Systems. Er wird gesendet als: {header}."
     },
     "partner": {
-      "about": "Liest die Buchungen von {partner} für {registration} mit dem API-Schlüssel aus Ihrem Konto:",
-      "otherAircraft": "Die API von {partner} teilt vorerst nur Buchungen für {registrations}, daher blockiert noch nichts von {partner} {registration}."
+      "about": "Automatisch hinzugefügt: Buchungen von {partner} für das Kennzeichen dieses Luftfahrzeugs, gelesen mit dem API-Schlüssel in Ihrem Konto und als externe Buchungen angezeigt.",
+      "auto": "Dienste, die Sie in Ihrem Konto verbinden ({partners}), erscheinen hier von selbst bei jedem Luftfahrzeug, für das sie Buchungen haben:",
+      "keyLink": "Konto → Verbundene Dienste"
     },
     "remove": {
       "button": "Trennen",
@@ -2816,8 +2821,7 @@
       "too_many": "Ein Flugzeug kann höchstens 10 verbundene Systeme haben.",
       "not_allowed": "Sie können dieses Flugzeug nicht ändern.",
       "not_found": "Diese Verbindung wurde nicht gefunden.",
-      "planNeeded": "Ein reiner Kalender-Link gehört zum Tarif Halter oder Flotte. Die Verbindung mit einem anderen Buchungssystem funktioniert in jedem Tarif.",
-      "partnerNotAllowed": "Dieser Partner kann nicht mit diesem Luftfahrzeug verbunden werden."
+      "planNeeded": "Ein reiner Kalender-Link gehört zum Tarif Halter oder Flotte. Die Verbindung mit einem anderen Buchungssystem funktioniert in jedem Tarif."
     },
     "feedErrors": {
       "url_invalid": "der Link ist keine gültige https-Adresse",
@@ -2835,7 +2839,8 @@
     "export": {
       "name": "{registration} ({site})",
       "booked": "Gebucht ({site})",
-      "blocked": "Nicht verfügbar",
+      "blocked": "Belegt",
+      "external": "Externe Buchung",
       "ownUse": "Eigennutzung",
       "maintenance": "Wartung",
       "labels": {
@@ -2870,7 +2875,7 @@
       "export": {
         "type": {
           "label": "Art",
-          "hint": "Eigennutzung, Wartung oder nicht verfügbar, statt nur „nicht verfügbar“."
+          "hint": "Eigene Nutzung, Wartung oder externe Buchung, statt nur „belegt“."
         },
         "status": {
           "label": "Buchungsstatus",

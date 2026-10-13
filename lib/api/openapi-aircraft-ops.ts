@@ -56,7 +56,7 @@ export function aircraftOpsPaths() {
       },
       post: {
         tags,
-        summary: "Block time (own use, maintenance, unavailable); 409 overlaps",
+        summary: "Block time (own use or maintenance); 409 overlaps",
         security: signedIn,
         parameters: [id],
         requestBody: jsonBody(calendarBlockBody),

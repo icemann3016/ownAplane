@@ -151,6 +151,10 @@ export const calendarConnections = pgTable(
   },
   (t) => [
     index("calendar_connections_aircraft_idx").on(t.aircraftId),
+    // Partner connections are made automatically: one per aircraft and partner (SYN-7).
+    uniqueIndex("calendar_connections_partner_unique")
+      .on(t.aircraftId, t.partner)
+      .where(sql`${t.partner} is not null`),
     check("calendar_connections_name", sql`char_length(btrim(${t.name})) between 1 and 80`),
     check(
       "calendar_connections_feed",
@@ -205,6 +209,8 @@ export const partnerCredentials = pgTable(
     lastUsedAt: timestamp("last_used_at", { withTimezone: true }),
     /** Why the last use failed (null when it worked). */
     lastError: text("last_error"),
+    /** When the partner was last read with this key (the scheduled sync's clock). */
+    lastSyncAt: timestamp("last_sync_at", { withTimezone: true }),
   },
   (t) => [
     primaryKey({ columns: [t.userId, t.partner] }),

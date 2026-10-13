@@ -172,7 +172,7 @@ Running the aircraft (BKG-7, BKG-8, BKG-15, SRC-5):
 
 | Method | Path | What |
 |--------|------|------|
-| GET / POST | `…/{id}/calendar` | Bookings, your blocks and busy times from connected systems (`?from&to`, default 60 days) / block time `{ kind: owner_use \| maintenance \| unavailable, from, to, note }` (409 `overlaps`) |
+| GET / POST | `…/{id}/calendar` | Bookings, your blocks and busy times from connected systems (`?from&to`, default 60 days) / block time `{ kind: owner_use \| maintenance, from, to, note }` (409 `overlaps`) |
 | DELETE | `…/{id}/calendar/{entryId}` | Remove a block |
 | POST | `…/{id}/ground` | Ground it; listing it again (`…/status`) checks everything again |
 | GET / POST | `…/{id}/defects` | Reported defects / record one yourself `{ severity, description, photoId }` |
@@ -205,7 +205,7 @@ a private iCal link with our busy times (without its own, so nothing echoes back
 | publishes an **iCal link** | we read it every 15 minutes and right before a booking is requested or accepted |
 | publishes a **JSON link** | same, format below |
 | only reads ours | subscribes to `/api/v1/calendars/<token>.ics` |
-| is a **partner** with its own API (RAF Aviation) | we read it with the owner's key from Account → Connected services, for the aircraft's registration, like a link (SYN-7) |
+| is a **partner** with its own API (RAF Aviation) | we read it with the owner's key from Account → Connected services, once for all their aircraft, and put each booking on the aircraft with its registration (no setup per aircraft, SYN-7) |
 
 ### Push API (API key)
 
@@ -237,7 +237,7 @@ everything is fine.
 
 | Owner's choice | JSON field | In the iCal link |
 |---|---|---|
-| Type | `type`: `booking`, `owner_use`, `maintenance`, `unavailable` | SUMMARY "Maintenance", "Owner's use" |
+| Type | `type`: `booking`, `owner_use`, `maintenance`, `unavailable` (an external booking, from another connected system) | SUMMARY "Maintenance", "Owner's use", "External booking" (else "Busy") |
 | Booking status | `status`: `requested`, `accepted`, `in_progress`, `completed` | DESCRIPTION; requests are `STATUS:TENTATIVE` |
 | Route | `route`: `{ departure, arrival }` (airport idents) | DESCRIPTION, LOCATION = departure |
 | Pilot's name | `pilot`: `{ name }` | DESCRIPTION |

@@ -221,7 +221,7 @@ const localDateTime = z
 export const calendarBlockSchema = z
   .object({
     aircraftId: z.uuid(),
-    kind: z.enum(["owner_use", "maintenance", "unavailable"], "invalid"),
+    kind: z.enum(["owner_use", "maintenance"], "invalid"),
     from: localDateTime,
     to: localDateTime,
     note: optionalText(200, "textTooLong").optional().default(null),

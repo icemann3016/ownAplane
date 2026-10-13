@@ -40,7 +40,8 @@ export function sharedDetails(b: BusyDetail, fields: readonly ExportField[], boo
 }
 
 export type IcsTexts = {
-  titles: Record<"booked" | "owner_use" | "maintenance" | "unavailable", string>;
+  /** `busy` when the type isn't shared; `unavailable` = a booking from another connected system. */
+  titles: Record<"booked" | "busy" | "owner_use" | "maintenance" | "unavailable", string>;
   labels: Record<"status" | "route" | "pilot" | "booking" | "note" | "aircraft", string>;
   statuses: Record<string, string>;
 };
@@ -53,11 +54,7 @@ export function toIcsEvent(
 ): IcsEvent {
   const d = sharedDetails(b, fields, bookingUrl);
   const summary =
-    b.kind === "booking"
-      ? texts.titles.booked
-      : d.type
-        ? texts.titles[b.kind]
-        : texts.titles.unavailable;
+    b.kind === "booking" ? texts.titles.booked : d.type ? texts.titles[b.kind] : texts.titles.busy;
   const lines = [
     d.status && `${texts.labels.status}: ${texts.statuses[d.status] ?? d.status}`,
     d.route && `${texts.labels.route}: ${d.route.departure} → ${d.route.arrival}`,

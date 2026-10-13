@@ -9,7 +9,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatSpan, formatUtc } from "@/lib/aircraft/format";
 import { feedErrorKey } from "@/lib/calendar-sync/feed-errors";
 import type { ConnectionView } from "@/lib/calendar-sync/owner";
-import { sameRegistration } from "@/lib/calendar-sync/events";
 import { isPartner, PARTNER_INFO } from "@/lib/calendar-sync/partner-list";
 import type { Locale } from "@/lib/i18n/config";
 import { appUrl } from "@/lib/site-url";
@@ -22,14 +21,7 @@ import { WebhookSettings } from "./webhook-settings";
 const WEBHOOK_ERRORS = new Set(["url_invalid", "address_blocked", "unreachable", "no_webhook"]);
 
 /** One connected system: status, conflicts, our iCal link for it, and its controls. */
-export async function ConnectionCard({
-  c,
-  registration,
-}: {
-  c: ConnectionView;
-  /** The aircraft's, to warn when a partner shares another aircraft's bookings. */
-  registration: string;
-}) {
+export async function ConnectionCard({ c }: { c: ConnectionView }) {
   const t = await getTranslations("calendarSync");
   const locale = (await getLocale()) as Locale;
   const ids = { aircraftId: c.aircraftId, id: c.id };
@@ -70,23 +62,11 @@ export async function ConnectionCard({
         )}
         {partner && (
           <p className="text-sm text-muted-foreground">
-            {t("partner.about", { partner: partner.name, registration })}{" "}
+            {t("partner.about", { partner: partner.name })}{" "}
             <Link href="/account/connections" className="underline">
-              {t("add.partnerKeyLink")}
+              {t("partner.keyLink")}
             </Link>
           </p>
-        )}
-        {partner && !partner.registrations.some((r) => sameRegistration(r, registration)) && (
-          <Alert>
-            <TriangleAlertIcon />
-            <AlertDescription>
-              {t("partner.otherAircraft", {
-                partner: partner.name,
-                registrations: partner.registrations.join(", "),
-                registration,
-              })}
-            </AlertDescription>
-          </Alert>
         )}
 
         {c.conflicts.length > 0 && (
@@ -163,15 +143,17 @@ export async function ConnectionCard({
             text={t("exportLink.resetText")}
             confirm={t("exportLink.reset")}
           />
-          <ConfirmAction
-            ids={ids}
-            action={removeConnection}
-            button={t("remove.button")}
-            title={t("remove.title", { name: c.name })}
-            text={t("remove.text")}
-            confirm={t("remove.button")}
-            destructive
-          />
+          {!partner && (
+            <ConfirmAction
+              ids={ids}
+              action={removeConnection}
+              button={t("remove.button")}
+              title={t("remove.title", { name: c.name })}
+              text={t("remove.text")}
+              confirm={t("remove.button")}
+              destructive
+            />
+          )}
         </div>
       </CardContent>
     </Card>

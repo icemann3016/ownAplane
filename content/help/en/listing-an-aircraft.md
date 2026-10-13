@@ -8,7 +8,7 @@ don't see it until you publish it.
 | Tab | What it's for |
 |---|---|
 | **Overview** | Status, what's still missing, publish/pause/unlist, view the public listing, delete. |
-| **Calendar** | Your own use, maintenance and unavailable times; all bookings. |
+| **Calendar** | Your own use and maintenance times; all bookings, including external ones. |
 | **Details** | Registration, manufacturer, model, ICAO type, category, year, seats, engine, fuel type and burn, cruise speed, useful load, maximum take-off mass (MTOM: pilots with only a LAPL may fly up to 2,000 kg), endurance. |
 | **Equipment** | Avionics, transponder, night VFR / IFR approval. |
 | **Home base** | Airfield from the airport list. |
@@ -59,7 +59,7 @@ Your calendar shows every booking and block, in UTC. **Hover over or tap a day**
 times, the pilot of each booking (with a link to it) and the note of each block (e.g. "50 h
 check").
 
-Block time for **own use**, **maintenance** or **unavailable**, with an optional note: click the
+Block time for **own use** or **maintenance**, with an optional note: click the
 first and last day on the calendar, set the times and **Block this time** (the form below is
 filled in), or fill in the form directly. Blocks and bookings can never overlap. Pilots see the
 times and the kind of each entry, never your notes or who booked it.

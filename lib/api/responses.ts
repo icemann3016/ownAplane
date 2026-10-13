@@ -207,7 +207,9 @@ export const busyTime = z.object({
   type: z
     .enum(calendarEntryKind.enumValues)
     .optional()
-    .describe("booking, owner_use, maintenance or unavailable"),
+    .describe(
+      "booking, owner_use, maintenance or unavailable (an external booking: from a connected system)",
+    ),
   status: z.string().optional().describe("Bookings: requested, accepted or in_progress"),
   route: z.object({ departure: z.string(), arrival: z.string() }).optional(),
   pilot: z.object({ name: z.string() }).optional(),

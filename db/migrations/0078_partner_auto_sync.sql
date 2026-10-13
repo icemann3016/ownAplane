@@ -1,0 +1,2 @@
+ALTER TABLE "partner_credentials" ADD COLUMN "last_sync_at" timestamp with time zone;--> statement-breakpoint
+CREATE UNIQUE INDEX "calendar_connections_partner_unique" ON "calendar_connections" USING btree ("aircraft_id","partner") WHERE "calendar_connections"."partner" is not null;

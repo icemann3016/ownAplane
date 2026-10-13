@@ -31,8 +31,14 @@ Accounts you have with other systems that ownAplane can read for you, today **RA
 Paste the API key from your account there and press **Save key**: we check it with them first,
 then store it encrypted. It is never shown again or sent back to your browser, and the field
 doesn't let your browser save it; you see only its last 4 characters. **Replace key** when they
-give you a new one, **Remove key** to stop. Then connect the partner to an aircraft under
-**Calendar sync** (see "Calendar sync with other booking systems").
+give you a new one, **Remove key** to stop.
+
+There is nothing to set up per aircraft: with the key saved, we read their bookings at once and
+put each one on **your aircraft with the same registration** (any aircraft that isn't a draft),
+as an **external booking**. The card lists your aircraft that got bookings, and registrations
+none of your aircraft has. **Sync now** reads them again; otherwise they're read every 15
+minutes and right before each booking request or acceptance. **Remove key** also removes their
+bookings from your aircraft. See "Calendar sync with other booking systems".
 
 ## Security and data
 

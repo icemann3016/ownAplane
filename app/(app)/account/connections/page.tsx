@@ -9,24 +9,29 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { formatUtc } from "@/lib/aircraft/format";
 import { requireUser } from "@/lib/auth/session";
 import { feedErrorKey } from "@/lib/calendar-sync/feed-errors";
+import { listPartnerAircraft } from "@/lib/calendar-sync/owner";
 import { listPartnerCredentials } from "@/lib/calendar-sync/partner-credentials";
 import { PARTNER_INFO, PARTNERS } from "@/lib/calendar-sync/partner-list";
 import type { Locale } from "@/lib/i18n/config";
 import { removePartnerKeyAction } from "./actions";
-import { PartnerKeyForm } from "./partner-key-form";
+import { PartnerKeyForm, PartnerSyncNow } from "./partner-key-form";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("account.connections");
   return { title: t("title") };
 }
 
-/** Connected services (SYN-7): the owner's API keys for partners, used by Calendar sync. */
+/**
+ * Connected services (SYN-7): the owner's API keys for partners. With a key, the partner's
+ * bookings are put on the owner's aircraft with the same registration, without setup per aircraft.
+ */
 export default async function ConnectionsPage() {
   const user = await requireUser("/account/connections");
   const t = await getTranslations("account.connections");
   const reasons = await getTranslations("calendarSync.feedErrors");
   const locale = (await getLocale()) as Locale;
   const keys = new Map((await listPartnerCredentials(user.id)).map((k) => [k.partner, k]));
+  const synced = await listPartnerAircraft(user.id);
 
   return (
     <div className="mx-auto grid w-full max-w-4xl gap-6 px-4 py-10">
@@ -38,6 +43,7 @@ export default async function ConnectionsPage() {
       {PARTNERS.map((partner) => {
         const info = PARTNER_INFO[partner];
         const key = keys.get(partner);
+        const planes = synced.filter((s) => s.partner === partner);
         return (
           <Card key={partner}>
             <CardHeader>
@@ -81,6 +87,38 @@ export default async function ConnectionsPage() {
               ) : (
                 <p className="text-muted-foreground">{t("notConnected")}</p>
               )}
+              {key && (
+                <section className="grid gap-2" aria-labelledby={`aircraft-${partner}`}>
+                  <h3 id={`aircraft-${partner}`} className="font-medium">
+                    {t("aircraftTitle")}
+                  </h3>
+                  {planes.length ? (
+                    <ul className="grid gap-1">
+                      {planes.map((p) => (
+                        <li key={p.aircraftId}>
+                          <Link
+                            href={`/owner/aircraft/${p.aircraftId}/calendar`}
+                            className="font-medium underline"
+                          >
+                            {p.registration}
+                          </Link>
+                          {" · "}
+                          {p.lastSyncError
+                            ? t("aircraftFailed", {
+                                reason: reasons(feedErrorKey(p.lastSyncError)),
+                              })
+                            : t("aircraftBusy", { count: p.lastSyncCount ?? 0 })}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-muted-foreground">
+                      {t("aircraftNone", { partner: info.name })}
+                    </p>
+                  )}
+                  <PartnerSyncNow partner={partner} />
+                </section>
+              )}
               <p className="text-muted-foreground">{t("safe", { partner: info.name })}</p>
               <PartnerKeyForm partner={partner} hasKey={Boolean(key)} />
               {key && (
@@ -92,12 +130,6 @@ export default async function ConnectionsPage() {
                   <p className="text-muted-foreground">{t("removeText", { partner: info.name })}</p>
                 </form>
               )}
-              <p>
-                {t("useIt")}{" "}
-                <Link href="/owner/aircraft" className="underline">
-                  {t("myAircraft")}
-                </Link>
-              </p>
             </CardContent>
           </Card>
         );

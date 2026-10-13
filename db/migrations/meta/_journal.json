@@ -540,6 +540,20 @@
       "when": 1791834649483,
       "tag": "0076_partner_credentials",
       "breakpoints": true
+    },
+    {
+      "idx": 77,
+      "version": "7",
+      "when": 1791880540174,
+      "tag": "0077_external_bookings",
+      "breakpoints": true
+    },
+    {
+      "idx": 78,
+      "version": "7",
+      "when": 1791880560067,
+      "tag": "0078_partner_auto_sync",
+      "breakpoints": true
     }
   ]
 }

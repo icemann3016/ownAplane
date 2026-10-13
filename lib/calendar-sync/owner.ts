@@ -3,9 +3,9 @@ import "server-only";
 import { and, asc, eq, isNotNull, sql } from "drizzle-orm";
 
 import { asUser } from "@/lib/db/rls";
-import { calendarConnections, calendarEntries } from "@/lib/db/schema";
+import { aircraft, calendarConnections, calendarEntries } from "@/lib/db/schema";
 
-// The owner's view of an aircraft's connections (SYN-1…5), with their own rights (RLS).
+// The owner's view of their connections (SYN-1…5, SYN-7), with their own rights (RLS).
 
 export async function listConnections(userId: string, aircraftId: string) {
   return asUser(userId, async (tx) => {
@@ -53,3 +53,22 @@ export async function listConnections(userId: string, aircraftId: string) {
 }
 
 export type ConnectionView = Awaited<ReturnType<typeof listConnections>>[number];
+
+/** The owner's aircraft connected to partners automatically (SYN-7), for Connected services. */
+export async function listPartnerAircraft(userId: string) {
+  return asUser(userId, (tx) =>
+    tx
+      .select({
+        partner: calendarConnections.partner,
+        aircraftId: aircraft.id,
+        registration: aircraft.registration,
+        lastSyncAt: calendarConnections.lastSyncAt,
+        lastSyncError: calendarConnections.lastSyncError,
+        lastSyncCount: calendarConnections.lastSyncCount,
+      })
+      .from(calendarConnections)
+      .innerJoin(aircraft, eq(aircraft.id, calendarConnections.aircraftId))
+      .where(and(eq(aircraft.ownerId, userId), isNotNull(calendarConnections.partner)))
+      .orderBy(asc(aircraft.registration)),
+  );
+}

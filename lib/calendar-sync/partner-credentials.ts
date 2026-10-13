@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, eq } from "drizzle-orm";
+import { and, eq, isNull, lt, or, sql } from "drizzle-orm";
 
 import { getDb } from "@/lib/db";
 import { partnerCredentials } from "@/lib/db/schema";
@@ -19,6 +19,7 @@ export type PartnerCredentialView = {
   updatedAt: Date;
   lastUsedAt: Date | null;
   lastError: string | null;
+  lastSyncAt: Date | null;
 };
 
 export async function listPartnerCredentials(userId: string): Promise<PartnerCredentialView[]> {
@@ -29,6 +30,7 @@ export async function listPartnerCredentials(userId: string): Promise<PartnerCre
       updatedAt: partnerCredentials.updatedAt,
       lastUsedAt: partnerCredentials.lastUsedAt,
       lastError: partnerCredentials.lastError,
+      lastSyncAt: partnerCredentials.lastSyncAt,
     })
     .from(partnerCredentials)
     .where(eq(partnerCredentials.userId, userId));
@@ -64,6 +66,37 @@ export async function partnerKeyOf(userId: string, partner: Partner): Promise<st
     .from(partnerCredentials)
     .where(and(eq(partnerCredentials.userId, userId), eq(partnerCredentials.partner, partner)));
   return row ? decryptSecret(row.secret, context(userId, partner)) : null;
+}
+
+/** Keys whose partner wasn't read for `maxAgeMs` (the scheduled sync), oldest first. */
+export async function partnerKeysDue(maxAgeMs: number, limit = 50, userId?: string) {
+  const rows = await getDb()
+    .select({ userId: partnerCredentials.userId, partner: partnerCredentials.partner })
+    .from(partnerCredentials)
+    .where(
+      and(
+        userId ? eq(partnerCredentials.userId, userId) : undefined,
+        or(
+          isNull(partnerCredentials.lastSyncAt),
+          lt(partnerCredentials.lastSyncAt, new Date(Date.now() - maxAgeMs)),
+        ),
+      ),
+    )
+    .orderBy(sql`${partnerCredentials.lastSyncAt} asc nulls first`)
+    .limit(limit);
+  return rows.flatMap((r) => (isPartner(r.partner) ? [{ ...r, partner: r.partner }] : []));
+}
+
+/** An owner's keys not read for `maxAgeMs` (right before a booking of one of their aircraft). */
+export async function ownerPartnersDue(userId: string, maxAgeMs: number): Promise<Partner[]> {
+  return (await partnerKeysDue(maxAgeMs, 10, userId)).map((k) => k.partner);
+}
+
+export async function markPartnerSync(userId: string, partner: Partner) {
+  await getDb()
+    .update(partnerCredentials)
+    .set({ lastSyncAt: new Date() })
+    .where(and(eq(partnerCredentials.userId, userId), eq(partnerCredentials.partner, partner)));
 }
 
 /** After a call: when the key last worked, or why it didn't. */
