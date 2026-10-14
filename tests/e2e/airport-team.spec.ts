@@ -64,6 +64,10 @@ test("an airfield is claimed, verified and gets a team", async ({ page, browser 
   await expect(page.getByText("Verified", { exact: true })).toBeVisible();
   await page.getByRole("link", { name: new RegExp(name) }).click();
   await expect(page.getByRole("heading", { name: `${ident} ${name}`, level: 1 })).toBeVisible();
+  // The airfield opens on its movements board; the team has its own tab.
+  await expect(page.getByRole("heading", { name: "Movements" })).toBeVisible();
+  await page.getByRole("link", { name: "Team", exact: true }).click();
+  await expect(page).toHaveURL(/\/team$/);
   await page.getByLabel("Email").fill(staffEmail);
   await page.getByRole("button", { name: "Send invitation" }).click();
   const link = page.getByLabel("Invitation link (shown once)");
@@ -82,6 +86,7 @@ test("an airfield is claimed, verified and gets a team", async ({ page, browser 
   ).toBeVisible();
   await staff.getByRole("button", { name: "Join the team" }).click();
   await expect(staff).toHaveURL(new RegExp(`/airports/manage/${encodeURIComponent(ident)}$`));
+  await staff.getByRole("link", { name: "Team", exact: true }).click();
   await expect(staff.getByText(`Manager ${id}`)).toBeVisible();
   await expect(staff.getByRole("button", { name: "Send invitation" })).toHaveCount(0);
   await staffContext.close();
