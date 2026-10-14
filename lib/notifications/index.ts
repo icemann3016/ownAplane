@@ -4,9 +4,18 @@ import { and, count, desc, eq, inArray, isNull, sql } from "drizzle-orm";
 
 import { getDb } from "@/lib/db";
 import { asUser } from "@/lib/db/rls";
-import { aircraft, bookings, notifications, profiles, savedSearches } from "@/lib/db/schema";
+import {
+  aircraft,
+  airportRequests,
+  airports,
+  bookings,
+  notifications,
+  profiles,
+  savedSearches,
+} from "@/lib/db/schema";
 import { sendEmail } from "@/lib/email";
 import { getRecipient } from "@/lib/email/recipient";
+import { airportRequestEmail } from "@/lib/email/airport-templates";
 import { bookingNotificationEmail, savedSearchAlertEmail } from "@/lib/email/templates";
 
 type BookingEmailType = Parameters<typeof bookingNotificationEmail>[0]["type"];
@@ -37,6 +46,12 @@ export const NOTIFICATION_TYPES = [
   "payment_failed",
   "currency_ending",
   "revalidation_due",
+  "apt_requested",
+  "apt_notice",
+  "apt_approved",
+  "apt_declined",
+  "apt_cancelled",
+  "apt_updated",
 ] as const;
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
 export const knownType = (type: string): NotificationType | "other" =>
@@ -63,6 +78,25 @@ async function bookingContext(ids: string[]) {
   );
 }
 
+/** Requests to airfields: registration, the airfield and the first movement (UTC). */
+async function requestContext(ids: string[]) {
+  if (!ids.length) return new Map<string, { registration: string; airport: string; at: Date }>();
+  // Trusted read: callers only pass requests the user was notified about.
+  const rows = await getDb()
+    .select({
+      id: airportRequests.id,
+      registration: airportRequests.registration,
+      code: sql<string>`coalesce(${airports.icaoCode}, ${airports.ident})`,
+      at: sql<string>`coalesce(${airportRequests.arrivalAt}, ${airportRequests.departureAt})`,
+    })
+    .from(airportRequests)
+    .innerJoin(airports, eq(airports.ident, airportRequests.airportIdent))
+    .where(inArray(airportRequests.id, ids));
+  return new Map(
+    rows.map((r) => [r.id, { registration: r.registration, airport: r.code, at: new Date(r.at) }]),
+  );
+}
+
 /** The user's latest notifications with what they're about (RLS: own only). */
 export async function listNotifications(userId: string, limit = 50) {
   const rows = await asUser(userId, (tx) =>
@@ -82,10 +116,14 @@ export async function listNotifications(userId: string, limit = 50) {
   const context = await bookingContext([
     ...new Set(rows.flatMap((r) => (r.n.bookingId ? [r.n.bookingId] : []))),
   ]);
+  const requests = await requestContext([
+    ...new Set(rows.flatMap((r) => (r.n.airportRequestId ? [r.n.airportRequestId] : []))),
+  ]);
   return rows.map((r) => ({
     ...r.n,
     actor: r.actor,
     booking: r.n.bookingId ? (context.get(r.n.bookingId) ?? null) : null,
+    request: r.n.airportRequestId ? (requests.get(r.n.airportRequestId) ?? null) : null,
     search: r.n.savedSearchId ? r.search : null,
   }));
 }
@@ -128,17 +166,22 @@ export async function deliverNotificationEmails(limit = 50): Promise<number> {
       where emailed_at is null and created_at > now() - interval '3 days'
       order by created_at limit ${limit}
       for update skip locked)
-    returning id, user_id, type, booking_id, actor_id, saved_search_id`)) as unknown as {
+    returning id, user_id, type, booking_id, actor_id, saved_search_id,
+      airport_request_id`)) as unknown as {
     id: string;
     user_id: string;
     type: string;
     booking_id: string | null;
     actor_id: string | null;
     saved_search_id: string | null;
+    airport_request_id: string | null;
   }[];
   if (!claimed.length) return 0;
   const context = await bookingContext([
     ...new Set(claimed.flatMap((n) => (n.booking_id ? [n.booking_id] : []))),
+  ]);
+  const requests = await requestContext([
+    ...new Set(claimed.flatMap((n) => (n.airport_request_id ? [n.airport_request_id] : []))),
   ]);
   const actorIds = [...new Set(claimed.flatMap((n) => (n.actor_id ? [n.actor_id] : [])))];
   const actors = actorIds.length
@@ -156,7 +199,23 @@ export async function deliverNotificationEmails(limit = 50): Promise<number> {
     try {
       const to = await getRecipient(n.user_id);
       const search = n.saved_search_id ? await savedSearchOf(n.saved_search_id) : null;
-      if (to && search) {
+      const request = n.airport_request_id ? requests.get(n.airport_request_id) : undefined;
+      if (to && request) {
+        ok = await sendEmail({
+          to: to.email,
+          ...airportRequestEmail({
+            name: to.name,
+            locale: to.locale,
+            type: knownType(n.type),
+            airport: request.airport,
+            registration: request.registration,
+            at: request.at,
+            other: (n.actor_id && actorName.get(n.actor_id)) || "",
+            url: `${appUrl()}/airport-requests/${n.airport_request_id}`,
+          }),
+        });
+        if (ok) sent += 1;
+      } else if (to && search) {
         ok = await sendEmail({
           to: to.email,
           ...savedSearchAlertEmail({

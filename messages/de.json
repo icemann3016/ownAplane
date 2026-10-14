@@ -24,7 +24,8 @@
       "saved": "Gemerkt",
       "logbook": "Flugbuch",
       "billing": "Tarif & Zahlungen",
-      "airports": "Flugplätze"
+      "airports": "Flugplätze",
+      "airportRequests": "Anfragen an Flugplätze"
     },
     "footer": {
       "tagline": "Gemacht für die Allgemeine Luftfahrt in Europa.",
@@ -243,7 +244,8 @@
     "durationInvalid": "Geben Sie Stunden:Minuten ein, z. B. 1:25.",
     "fieldRequired": "Pflichtfeld.",
     "moreThanTotal": "Darf nicht mehr als die Gesamtflugzeit sein.",
-    "dateInFuture": "Darf nicht in der Zukunft liegen."
+    "dateInFuture": "Darf nicht in der Zukunft liegen.",
+    "arrivalOrDeparture": "Kreuzen Sie Ankunft, Abflug oder beides an."
   },
   "dashboard": {
     "title": "Willkommen, {name}",
@@ -302,7 +304,8 @@
     "airfields": {
       "title": "Ihre Flugplätze",
       "text": "Halten Sie Leistungen, Preise und Öffnungszeiten aktuell.",
-      "publicPage": "Öffentliche Seite"
+      "publicPage": "Öffentliche Seite",
+      "today": "Heute: {arrivals} Ankünfte · {departures} Abflüge · {open} zu beantworten"
     }
   },
   "account": {
@@ -695,6 +698,35 @@
       "body": "{inviter} lädt Sie in das Team von {airport} auf ownAplane ein, wo Piloten PPR-, Parkplatz-, Hangar- und Serviceanfragen senden.",
       "expires": "Der Link gilt 14 Tage. Melden Sie sich mit dieser E-Mail-Adresse an oder registrieren Sie sich, um beizutreten.",
       "cta": "Dem Team beitreten"
+    },
+    "airportRequest": {
+      "greeting": "Hallo {name},",
+      "cta": "Anfrage öffnen",
+      "notClearance": "Eine Anfrage auf ownAplane ist nur die administrative Erlaubnis des Flugplatzes. Sie ersetzt keine Flugverkehrskontrollfreigabe, keinen Flugplan und keine Zoll- oder Grenzanmeldung.",
+      "apt_requested": {
+        "subject": "Neue Anfrage für {airport}: {registration}, {when}",
+        "body": "{other} möchte in {airport} mit {registration} ankommen oder abfliegen ({when}). Öffnen Sie die Anfrage, um die gewünschten Leistungen zu sehen und zu antworten."
+      },
+      "apt_notice": {
+        "subject": "{registration} kommt nach {airport}, {when}",
+        "body": "{other} hat {airport} einen Besuch mit {registration} gemeldet ({when}). Er ist bestätigt, da kein PPR nötig ist; öffnen Sie ihn, um die gewünschten Leistungen zu sehen."
+      },
+      "apt_approved": {
+        "subject": "{airport} hat Ihre Anfrage genehmigt ({registration}, {when})",
+        "body": "{airport} hat Ihre Anfrage für {registration} genehmigt ({when}). Öffnen Sie sie für die PPR-Nummer und eventuelle Bedingungen."
+      },
+      "apt_declined": {
+        "subject": "{airport} hat Ihre Anfrage abgelehnt ({registration}, {when})",
+        "body": "{airport} hat Ihre Anfrage für {registration} abgelehnt ({when}). Öffnen Sie sie, um den Grund zu sehen."
+      },
+      "apt_cancelled": {
+        "subject": "Anfrage storniert: {registration} in {airport}, {when}",
+        "body": "{other} hat die Anfrage für {registration} in {airport} storniert ({when})."
+      },
+      "apt_updated": {
+        "subject": "{airport} hat seine Antwort geändert ({registration}, {when})",
+        "body": "{airport} hat PPR-Nummer, Bedingungen oder Hinweis für {registration} geändert ({when}). Öffnen Sie die Anfrage, um sie zu sehen."
+      }
     }
   },
   "airportPicker": {
@@ -2499,7 +2531,13 @@
       "plan_unlisted": "Einige Ihrer Flugzeuge wurden offline genommen, weil Ihr Tarif weniger erlaubt. Nichts wurde gelöscht: Upgraden Sie unter Tarif & Zahlungen, um sie wieder zu veröffentlichen.",
       "payment_failed": "Eine Zahlung für Ihren Tarif ist fehlgeschlagen. Zahlen Sie innerhalb von 7 Tagen unter Tarif & Zahlungen, um Ihren Tarif zu behalten.",
       "currency_ending": "Ihre Passagier-Erfahrung endet innerhalb einer Woche. Planen Sie ein paar Starts und Landungen.",
-      "revalidation_due": "Ihre SEP-Berechtigung läuft innerhalb von 60 Tagen ab und die Erfahrung für die Verlängerung ist noch nicht vollständig."
+      "revalidation_due": "Ihre SEP-Berechtigung läuft innerhalb von 60 Tagen ab und die Erfahrung für die Verlängerung ist noch nicht vollständig.",
+      "apt_requested": "{other} möchte nach {airport} kommen: {registration}, {when}",
+      "apt_notice": "{other} kommt nach {airport}: {registration}, {when} (kein PPR nötig)",
+      "apt_approved": "{airport} hat Ihre Anfrage für {registration} genehmigt, {when}",
+      "apt_declined": "{airport} hat Ihre Anfrage für {registration} abgelehnt, {when}",
+      "apt_cancelled": "{other} hat die Anfrage für {registration} in {airport} storniert, {when}",
+      "apt_updated": "{airport} hat seine Antwort für {registration} geändert, {when}"
     }
   },
   "checkoutFlight": {
@@ -3588,8 +3626,7 @@
       "openInvites": "Offene Einladungen",
       "inviteExpires": "{role}, bis {date}",
       "cancelInvite": "Zurücknehmen",
-      "cancelInviteLabel": "Einladung für {email} zurücknehmen",
-      "comingNext": "Als Nächstes auf ownAplane: Anfragen von Piloten (PPR, Parken, Hangar und Dienste)."
+      "cancelInviteLabel": "Einladung für {email} zurücknehmen"
     },
     "join": {
       "title": "Einem Flugplatz-Team beitreten",
@@ -3624,6 +3661,7 @@
     },
     "tabs": {
       "label": "Bereiche des Flugplatzes",
+      "movements": "Bewegungen",
       "team": "Team",
       "profile": "Profil",
       "hours": "Öffnungszeiten",
@@ -3802,13 +3840,163 @@
       "services": "Leistungen & Preise",
       "servicesText": "An den Flugplatz zu zahlen, nicht über ownAplane.",
       "contact": "Kontakt",
-      "requestsSoon": "Bald können Sie hier PPR-, Parkplatz-, Hangar- und Serviceanfragen an diesen Flugplatz senden."
+      "request": "Ankunft oder Abflug anfragen",
+      "requestText": "Piloten: senden Sie von dieser Seite Ihre Ankunft oder Ihren Abflug und die Leistungen, die Sie brauchen."
     },
     "index": {
       "title": "Flugplätze auf ownAplane",
       "description": "Flugplätze, deren Teams ihre Angaben hier pflegen: Öffnungszeiten in UTC, Pisten, Funk, Leistungen und Preise.",
       "none": "Noch keine Flugplätze.",
       "runOne": "Betreiben Sie einen Flugplatz? Bringen Sie ihn auf ownAplane."
+    }
+  },
+  "airportRequests": {
+    "form": {
+      "metaTitle": "Anfrage für Ankunft oder Abflug",
+      "title": "Ankunft oder Abflug in {airport}",
+      "pprText": "Dieser Flugplatz verlangt PPR ({hours} h vorher): Ihre Anfrage wartet auf seine Antwort.",
+      "noPprText": "Dieser Flugplatz verlangt kein PPR: Ihre Anfrage ist sofort bestätigt und der Flugplatz sieht, was Sie brauchen.",
+      "notPilot": "Nur Pilotenkonten können Anfragen an Flugplätze senden. Schalten Sie die Pilotenrolle im Konto ein (Flugplatzkonten können keine Piloten sein).",
+      "fromBooking": "Aus Ihrer Buchung von {registration} ausgefüllt. Prüfen Sie die Zeiten.",
+      "aircraft": "Flugzeug",
+      "registration": "Kennzeichen",
+      "aircraftType": "Muster (ICAO)",
+      "mtom": "MTOM (kg)",
+      "mtomHint": "Damit die richtige Gewichtsklasse gilt.",
+      "when": "Ankunft und Abflug",
+      "whenText": "Zeiten in UTC. Kreuzen Sie an, was Sie dort tun: ankommen, abfliegen oder beides.",
+      "arriving": "Ich komme an",
+      "arrivalAt": "Ankunft (UTC)",
+      "from": "Von",
+      "departing": "Ich fliege ab",
+      "departureAt": "Abflug (UTC)",
+      "to": "Nach",
+      "pob": "Personen an Bord",
+      "purpose": "Zweck",
+      "purposes": {
+        "private": "Privat",
+        "training": "Schulung",
+        "business": "Geschäftlich",
+        "other": "Sonstiges"
+      },
+      "services": "Leistungen",
+      "servicesText": "Kreuzen Sie an, was Sie aus der Liste des Flugplatzes brauchen. Die Preise sind die des Flugplatzes: Sie zahlen direkt dort, nicht über ownAplane.",
+      "noServices": "Der Flugplatz hat seine Leistungen noch nicht eingetragen. Schreiben Sie unter Sonstiges, was Sie brauchen.",
+      "noPrice": "Kein Preis für dieses Gewicht: unter Sonstiges anfragen",
+      "lightestBand": "Preis für das leichteste Flugzeug: MTOM eingeben",
+      "quantityFor": "Menge für {service}",
+      "total": "Ungefähre Summe: {amount}",
+      "plusOnRequest": "+ {count, plural, one {# Leistung} other {# Leistungen}} auf Anfrage",
+      "totalText": "Nur zur Orientierung: der Flugplatz rechnet direkt mit Ihnen ab.",
+      "other": "Sonstiges",
+      "otherHint": "Alles, was nicht in der Liste steht, in Ihren eigenen Worten.",
+      "statement": "Eine Anfrage auf ownAplane ist nur die administrative Erlaubnis des Flugplatzes. Sie ersetzt keine Flugverkehrskontrollfreigabe, keinen Flugplan und keine Zoll- oder Grenzanmeldung.",
+      "send": "Anfrage senden",
+      "sending": "Wird gesendet …"
+    },
+    "statuses": {
+      "pending": "Wartet auf den Flugplatz",
+      "approved": "Genehmigt",
+      "confirmed": "Bestätigt",
+      "declined": "Abgelehnt",
+      "cancelled": "Storniert"
+    },
+    "detail": {
+      "metaTitle": "Anfrage an einen Flugplatz",
+      "title": "{registration} in {airport}",
+      "sentOn": "Gesendet {date}",
+      "sentPending": "Anfrage gesendet. Der Flugplatz antwortet und Sie werden benachrichtigt.",
+      "sentConfirmed": "Anfrage gesendet und bestätigt: der Flugplatz verlangt kein PPR. Er sieht, was Sie brauchen.",
+      "trip": "Reise",
+      "arrival": "Ankunft",
+      "departure": "Abflug",
+      "fromPlace": "von {place}",
+      "toPlace": "nach {place}",
+      "aircraft": "Flugzeug",
+      "mtom": "MTOM {kg} kg",
+      "pilot": "Pilot",
+      "noServices": "Keine Leistungen angefragt.",
+      "total": "Ungefähre Summe",
+      "plusOnRequest": "+ {count, plural, one {# Leistung} other {# Leistungen}} auf Anfrage",
+      "totalText": "Zu den Preisen des Flugplatzes beim Senden; an den Flugplatz zu zahlen, nicht über ownAplane.",
+      "answer": "Antwort des Flugplatzes",
+      "waiting": "Wartet auf die Antwort von {airport}.",
+      "autoConfirmed": "Sofort bestätigt: {airport} verlangt kein PPR.",
+      "answeredBy": "Beantwortet von {name}, {date}",
+      "cancel": "Anfrage stornieren",
+      "cancelling": "Wird storniert …",
+      "cancelled": "Anfrage storniert. Der Flugplatz wurde informiert.",
+      "contact": "{airport}: {contact}",
+      "booking": "Zur Buchung"
+    },
+    "answer": {
+      "decision": "Ihre Antwort",
+      "approve": "Genehmigen",
+      "decline": "Ablehnen",
+      "pprNumber": "PPR-Nummer (optional)",
+      "conditions": "Bedingungen (optional)",
+      "conditionsPlaceholder": "z. B. Ankunft nach 10:00 UTC",
+      "note": "Hinweis an den Piloten (optional)",
+      "reason": "Grund (für den Piloten sichtbar)",
+      "save": "Antwort senden",
+      "saving": "Wird gesendet …",
+      "saved": "Antwort gesendet. Der Pilot wurde informiert."
+    },
+    "warnings": {
+      "at": {
+        "arrival": "Ankunft",
+        "departure": "Abflug"
+      },
+      "outside_hours": "{at} liegt außerhalb der Öffnungszeiten.",
+      "closed": "{at}: der Flugplatz ist an diesem Tag geschlossen. {note}",
+      "short_notice": "Weniger als {hours} h Vorlauf für PPR.",
+      "customs": "Diese Reise überquert eine Schengen- oder EU-Zollgrenze: fragen Sie Zoll an."
+    },
+    "list": {
+      "title": "Anfragen an Flugplätze",
+      "description": "Ihre Anfragen für Ankunft oder Abflug an Flugplätzen auf ownAplane.",
+      "none": "Noch keine Anfragen.",
+      "findAirfield": "Flugplätze auf ownAplane ansehen",
+      "arrives": "Ankunft {when}",
+      "departs": "Abflug {when}"
+    },
+    "board": {
+      "title": "Bewegungen",
+      "text": "Ankünfte, Abflüge und Flugzeuge am Boden aus den Anfragen der Piloten. Zeiten in UTC.",
+      "viewLabel": "Zeitraum",
+      "views": {
+        "day": "Tag",
+        "week": "Woche",
+        "month": "Monat"
+      },
+      "previous": "Zurück",
+      "next": "Weiter",
+      "today": "Heute",
+      "counts": "{arrivals} Ankünfte · {departures} Abflüge · {open} warten auf Antwort",
+      "none": "Keine Ankünfte oder Abflüge.",
+      "onGround": "Am Boden",
+      "arrival": "Ankunft",
+      "departure": "Abflug",
+      "ground": "Am Boden",
+      "from": "von {place}",
+      "to": "nach {place}",
+      "pob": "{count} an Bord",
+      "otherAsked": "+ sonstige Anfrage"
+    },
+    "booking": {
+      "title": "Flugplätze dieser Reise",
+      "text": "Diese Flugplätze nehmen Anfragen auf ownAplane an: senden Sie Ihre, ausgefüllt aus dieser Buchung.",
+      "send": "Anfrage an {airport} senden"
+    },
+    "errors": {
+      "not_pilot": "Nur Pilotenkonten können Anfragen an Flugplätze senden.",
+      "unknown_airfield": "Wählen Sie die Flugplätze aus der Liste.",
+      "booking_not_yours": "Diese Buchung gehört nicht Ihnen.",
+      "in_the_past": "Diese Zeit ist vorbei. Prüfen Sie das Datum (UTC).",
+      "too_many_requests": "Heute zu viele Anfragen. Versuchen Sie es morgen wieder.",
+      "unknown_service": "Eine der Leistungen steht nicht mehr in der Liste des Flugplatzes. Laden Sie die Seite neu.",
+      "not_allowed": "Das können Sie bei dieser Anfrage nicht tun.",
+      "request_closed": "Diese Anfrage wurde storniert."
     }
   }
 }

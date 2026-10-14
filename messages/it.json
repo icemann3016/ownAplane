@@ -24,7 +24,8 @@
       "saved": "Salvati",
       "logbook": "Libretto di volo",
       "billing": "Piano e pagamenti",
-      "airports": "Aeroporti"
+      "airports": "Aeroporti",
+      "airportRequests": "Richieste agli aeroporti"
     },
     "footer": {
       "tagline": "Pensato per l'aviazione generale in Europa.",
@@ -243,7 +244,8 @@
     "durationInvalid": "Inserisci ore:minuti, es. 1:25.",
     "fieldRequired": "Campo obbligatorio.",
     "moreThanTotal": "Non può superare il tempo di volo totale.",
-    "dateInFuture": "Non può essere nel futuro."
+    "dateInFuture": "Non può essere nel futuro.",
+    "arrivalOrDeparture": "Spunta arrivo, partenza o entrambi."
   },
   "dashboard": {
     "title": "Benvenuto, {name}",
@@ -302,7 +304,8 @@
     "airfields": {
       "title": "I tuoi aeroporti",
       "text": "Tieni aggiornati servizi, prezzi e orari.",
-      "publicPage": "Pagina pubblica"
+      "publicPage": "Pagina pubblica",
+      "today": "Oggi: {arrivals} in arrivo · {departures} in partenza · {open} da gestire"
     }
   },
   "account": {
@@ -695,6 +698,35 @@
       "body": "{inviter} ti invita nel team di {airport} su ownAplane, dove i piloti inviano richieste di PPR, parcheggio, hangar e servizi.",
       "expires": "Il link è valido 14 giorni. Accedi o registrati con questo indirizzo email per accettare.",
       "cta": "Entra nel team"
+    },
+    "airportRequest": {
+      "greeting": "Ciao {name},",
+      "cta": "Apri la richiesta",
+      "notClearance": "Una richiesta su ownAplane è solo l'autorizzazione amministrativa dell'aeroporto. Non sostituisce un'autorizzazione ATC, un piano di volo né le comunicazioni doganali e di frontiera.",
+      "apt_requested": {
+        "subject": "Nuova richiesta per {airport}: {registration}, {when}",
+        "body": "{other} chiede di arrivare o partire da {airport} con {registration} ({when}). Apri la richiesta per vedere i servizi richiesti e rispondere."
+      },
+      "apt_notice": {
+        "subject": "{registration} viene a {airport}, {when}",
+        "body": "{other} ha annunciato a {airport} una visita con {registration} ({when}). È confermata perché il PPR non è necessario; aprila per vedere i servizi richiesti."
+      },
+      "apt_approved": {
+        "subject": "{airport} ha approvato la tua richiesta ({registration}, {when})",
+        "body": "{airport} ha approvato la tua richiesta per {registration} ({when}). Aprila per il numero PPR ed eventuali condizioni."
+      },
+      "apt_declined": {
+        "subject": "{airport} ha rifiutato la tua richiesta ({registration}, {when})",
+        "body": "{airport} ha rifiutato la tua richiesta per {registration} ({when}). Aprila per vedere il motivo."
+      },
+      "apt_cancelled": {
+        "subject": "Richiesta annullata: {registration} a {airport}, {when}",
+        "body": "{other} ha annullato la richiesta per {registration} a {airport} ({when})."
+      },
+      "apt_updated": {
+        "subject": "{airport} ha modificato la risposta ({registration}, {when})",
+        "body": "{airport} ha modificato il numero PPR, le condizioni o la nota per {registration} ({when}). Apri la richiesta per vederli."
+      }
     }
   },
   "airportPicker": {
@@ -2499,7 +2531,13 @@
       "plan_unlisted": "Alcuni tuoi aerei sono stati ritirati perché il tuo piano ne consente meno. Non è stato eliminato nulla: passa a un piano superiore da Piano e pagamenti per ripubblicarli.",
       "payment_failed": "Un pagamento per il tuo piano non è andato a buon fine. Paga entro 7 giorni da Piano e pagamenti per mantenere il piano.",
       "currency_ending": "La tua esperienza recente per trasportare passeggeri scade entro una settimana. Pianifica qualche decollo e atterraggio.",
-      "revalidation_due": "La tua abilitazione SEP scade entro 60 giorni e l'esperienza per il rinnovo non è ancora completa."
+      "revalidation_due": "La tua abilitazione SEP scade entro 60 giorni e l'esperienza per il rinnovo non è ancora completa.",
+      "apt_requested": "{other} chiede di venire a {airport}: {registration}, {when}",
+      "apt_notice": "{other} viene a {airport}: {registration}, {when} (PPR non necessario)",
+      "apt_approved": "{airport} ha approvato la tua richiesta per {registration}, {when}",
+      "apt_declined": "{airport} ha rifiutato la tua richiesta per {registration}, {when}",
+      "apt_cancelled": "{other} ha annullato la richiesta per {registration} a {airport}, {when}",
+      "apt_updated": "{airport} ha modificato la risposta per {registration}, {when}"
     }
   },
   "checkoutFlight": {
@@ -3588,8 +3626,7 @@
       "openInvites": "Inviti aperti",
       "inviteExpires": "{role}, fino al {date}",
       "cancelInvite": "Annulla",
-      "cancelInviteLabel": "Annulla l'invito per {email}",
-      "comingNext": "Prossimamente su ownAplane: le richieste dei piloti (PPR, parcheggio, hangar e servizi)."
+      "cancelInviteLabel": "Annulla l'invito per {email}"
     },
     "join": {
       "title": "Entra nel team di un aeroporto",
@@ -3624,6 +3661,7 @@
     },
     "tabs": {
       "label": "Sezioni dell'aeroporto",
+      "movements": "Movimenti",
       "team": "Team",
       "profile": "Profilo",
       "hours": "Orari",
@@ -3802,13 +3840,163 @@
       "services": "Servizi e prezzi",
       "servicesText": "Da pagare all'aeroporto, non tramite ownAplane.",
       "contact": "Contatti",
-      "requestsSoon": "Presto potrai inviare qui a questo aeroporto richieste di PPR, parcheggio, hangar e servizi."
+      "request": "Richiedi arrivo o partenza",
+      "requestText": "Piloti: inviate da questa pagina il vostro arrivo o la partenza e i servizi che vi servono."
     },
     "index": {
       "title": "Aeroporti su ownAplane",
       "description": "Aeroporti i cui team tengono aggiornati qui i propri dati: orari in UTC, piste, radio, servizi e prezzi.",
       "none": "Ancora nessun aeroporto.",
       "runOne": "Gestisci un aeroporto? Portalo su ownAplane."
+    }
+  },
+  "airportRequests": {
+    "form": {
+      "metaTitle": "Richiesta di arrivo o partenza",
+      "title": "Arrivo o partenza a {airport}",
+      "pprText": "Questo aeroporto richiede il PPR ({hours} h di preavviso): la tua richiesta attende la sua risposta.",
+      "noPprText": "Questo aeroporto non richiede il PPR: la tua richiesta è confermata subito e l'aeroporto vede di cosa hai bisogno.",
+      "notPilot": "Solo gli account pilota possono inviare richieste agli aeroporti. Attiva il ruolo di pilota in Account (gli account degli aeroporti non possono essere piloti).",
+      "fromBooking": "Compilata dalla tua prenotazione di {registration}. Controlla gli orari.",
+      "aircraft": "Aereo",
+      "registration": "Marche",
+      "aircraftType": "Tipo (ICAO)",
+      "mtom": "MTOM (kg)",
+      "mtomHint": "Per applicare la fascia di peso giusta.",
+      "when": "Arrivo e partenza",
+      "whenText": "Orari in UTC. Spunta cosa farai lì: arrivo, partenza o entrambi.",
+      "arriving": "Arrivo",
+      "arrivalAt": "Arrivo (UTC)",
+      "from": "Da",
+      "departing": "Parto",
+      "departureAt": "Partenza (UTC)",
+      "to": "Per",
+      "pob": "Persone a bordo",
+      "purpose": "Scopo",
+      "purposes": {
+        "private": "Privato",
+        "training": "Addestramento",
+        "business": "Lavoro",
+        "other": "Altro"
+      },
+      "services": "Servizi",
+      "servicesText": "Spunta ciò che ti serve dall'elenco dell'aeroporto. I prezzi sono dell'aeroporto: lo paghi direttamente, non tramite ownAplane.",
+      "noServices": "L'aeroporto non ha ancora elencato i suoi servizi. Scrivi ciò che ti serve in Altro.",
+      "noPrice": "Nessun prezzo per questo peso: chiedi in Altro",
+      "lightestBand": "prezzo per l'aereo più leggero: inserisci la MTOM",
+      "quantityFor": "Quantità per {service}",
+      "total": "Totale indicativo: {amount}",
+      "plusOnRequest": "+ {count, plural, one {# servizio} other {# servizi}} su richiesta",
+      "totalText": "Solo indicativo: l'aeroporto ti addebita direttamente.",
+      "other": "Altro",
+      "otherHint": "Tutto ciò che non è nell'elenco, con parole tue.",
+      "statement": "Una richiesta su ownAplane è solo l'autorizzazione amministrativa dell'aeroporto. Non sostituisce un'autorizzazione ATC, un piano di volo né le comunicazioni doganali e di frontiera.",
+      "send": "Invia la richiesta",
+      "sending": "Invio…"
+    },
+    "statuses": {
+      "pending": "In attesa dell'aeroporto",
+      "approved": "Approvata",
+      "confirmed": "Confermata",
+      "declined": "Rifiutata",
+      "cancelled": "Annullata"
+    },
+    "detail": {
+      "metaTitle": "Richiesta a un aeroporto",
+      "title": "{registration} a {airport}",
+      "sentOn": "Inviata {date}",
+      "sentPending": "Richiesta inviata. L'aeroporto risponderà e riceverai una notifica.",
+      "sentConfirmed": "Richiesta inviata e confermata: l'aeroporto non richiede il PPR. Vede di cosa hai bisogno.",
+      "trip": "Viaggio",
+      "arrival": "Arrivo",
+      "departure": "Partenza",
+      "fromPlace": "da {place}",
+      "toPlace": "per {place}",
+      "aircraft": "Aereo",
+      "mtom": "MTOM {kg} kg",
+      "pilot": "Pilota",
+      "noServices": "Nessun servizio richiesto.",
+      "total": "Totale indicativo",
+      "plusOnRequest": "+ {count, plural, one {# servizio} other {# servizi}} su richiesta",
+      "totalText": "Ai prezzi dell'aeroporto al momento dell'invio; da pagare all'aeroporto, non tramite ownAplane.",
+      "answer": "Risposta dell'aeroporto",
+      "waiting": "In attesa della risposta di {airport}.",
+      "autoConfirmed": "Confermata subito: {airport} non richiede il PPR.",
+      "answeredBy": "Risposta di {name}, {date}",
+      "cancel": "Annulla la richiesta",
+      "cancelling": "Annullamento…",
+      "cancelled": "Richiesta annullata. L'aeroporto è stato avvisato.",
+      "contact": "{airport}: {contact}",
+      "booking": "Apri la prenotazione"
+    },
+    "answer": {
+      "decision": "La tua risposta",
+      "approve": "Approva",
+      "decline": "Rifiuta",
+      "pprNumber": "Numero PPR (facoltativo)",
+      "conditions": "Condizioni (facoltative)",
+      "conditionsPlaceholder": "es. Arrivo dopo le 10:00 UTC",
+      "note": "Nota al pilota (facoltativa)",
+      "reason": "Perché (visibile al pilota)",
+      "save": "Invia la risposta",
+      "saving": "Invio…",
+      "saved": "Risposta inviata. Il pilota è stato avvisato."
+    },
+    "warnings": {
+      "at": {
+        "arrival": "L'arrivo",
+        "departure": "La partenza"
+      },
+      "outside_hours": "{at} è fuori dall'orario di apertura.",
+      "closed": "{at}: l'aeroporto è chiuso quel giorno. {note}",
+      "short_notice": "Meno di {hours} h di preavviso per il PPR.",
+      "customs": "Questo viaggio attraversa un confine Schengen o doganale UE: chiedi la dogana."
+    },
+    "list": {
+      "title": "Richieste agli aeroporti",
+      "description": "Le tue richieste di arrivo o partenza agli aeroporti su ownAplane.",
+      "none": "Ancora nessuna richiesta.",
+      "findAirfield": "Vedi gli aeroporti su ownAplane",
+      "arrives": "arrivo {when}",
+      "departs": "partenza {when}"
+    },
+    "board": {
+      "title": "Movimenti",
+      "text": "Arrivi, partenze e aerei a terra dalle richieste dei piloti. Orari in UTC.",
+      "viewLabel": "Periodo",
+      "views": {
+        "day": "Giorno",
+        "week": "Settimana",
+        "month": "Mese"
+      },
+      "previous": "Precedente",
+      "next": "Successivo",
+      "today": "Oggi",
+      "counts": "{arrivals} in arrivo · {departures} in partenza · {open} in attesa di risposta",
+      "none": "Nessun arrivo o partenza.",
+      "onGround": "A terra",
+      "arrival": "Arrivo",
+      "departure": "Partenza",
+      "ground": "A terra",
+      "from": "da {place}",
+      "to": "per {place}",
+      "pob": "{count} a bordo",
+      "otherAsked": "+ altra richiesta"
+    },
+    "booking": {
+      "title": "Aeroporti di questo viaggio",
+      "text": "Questi aeroporti ricevono richieste su ownAplane: invia la tua, compilata da questa prenotazione.",
+      "send": "Invia una richiesta a {airport}"
+    },
+    "errors": {
+      "not_pilot": "Solo gli account pilota possono inviare richieste agli aeroporti.",
+      "unknown_airfield": "Scegli gli aeroporti dall'elenco.",
+      "booking_not_yours": "Questa prenotazione non è tua.",
+      "in_the_past": "Quest'ora è passata. Controlla la data (UTC).",
+      "too_many_requests": "Troppe richieste oggi. Riprova domani.",
+      "unknown_service": "Uno dei servizi non è più nell'elenco dell'aeroporto. Ricarica la pagina.",
+      "not_allowed": "Non puoi farlo su questa richiesta.",
+      "request_closed": "Questa richiesta è stata annullata."
     }
   }
 }

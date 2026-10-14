@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 
+import { airfieldToday } from "@/lib/airport-requests/queries";
 import { myAirports } from "@/lib/airport-teams/teams";
 import { requireProfile } from "@/lib/auth/session";
 import { getDashboard } from "@/lib/dashboard";
@@ -73,7 +74,15 @@ export default async function DashboardPage() {
         <p className="text-muted-foreground">{t("subtitle")}</p>
       </div>
 
-      {airfields.length > 0 && <AirfieldsCard airfields={airfields} />}
+      {airfields.length > 0 && (
+        <AirfieldsCard
+          airfields={airfields}
+          today={await airfieldToday(
+            userId,
+            airfields.map((a) => a.airport.ident),
+          )}
+        />
+      )}
 
       <CompletionCard completion={completion} />
 

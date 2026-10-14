@@ -1,4 +1,6 @@
-import { render, translator } from "./templates";
+import { intlLocale } from "@/lib/i18n/config";
+
+import { localeOf, render, translator } from "./templates";
 
 // Emails about airport teams (APT-1, M16).
 
@@ -80,6 +82,51 @@ export function airportInviteEmail({
     greeting: t("airportInvite.greeting"),
     paragraphs: [t("airportInvite.body", { airport, inviter }), t("airportInvite.expires")],
     cta: t("airportInvite.cta"),
+    url,
+    locale,
+  });
+}
+
+/**
+ * A request to an airfield sent, answered, changed or cancelled (APT-4). Times are UTC, like
+ * everywhere in the app; the details are on the request's page.
+ */
+export function airportRequestEmail({
+  name,
+  locale,
+  type,
+  airport,
+  registration,
+  at,
+  other,
+  url,
+}: {
+  name: string;
+  locale?: string | null;
+  type: string;
+  airport: string;
+  registration: string;
+  at: Date;
+  other: string;
+  url: string;
+}) {
+  const t = translator(locale);
+  const kind =
+    (
+      ["apt_requested", "apt_notice", "apt_approved", "apt_declined", "apt_cancelled"] as const
+    ).find((k) => k === type) ?? "apt_updated";
+  const when = `${new Intl.DateTimeFormat(intlLocale(localeOf(locale)), {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "UTC",
+    hourCycle: "h23",
+  }).format(at)} UTC`;
+  const values = { airport, registration, when, other: other || t("booking.someone") };
+  return render({
+    subject: t(`airportRequest.${kind}.subject`, values),
+    greeting: t("airportRequest.greeting", { name }),
+    paragraphs: [t(`airportRequest.${kind}.body`, values), t("airportRequest.notClearance")],
+    cta: t("airportRequest.cta"),
     url,
     locale,
   });

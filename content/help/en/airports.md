@@ -27,10 +27,10 @@ with other proof. If the airfield already has a team, ask one of its managers to
 
 ## Your team
 
-Open the airfield under **Airports → Your airfields**.
+Open the airfield under **Airports → Your airfields**; the team is under its **Team** tab.
 
 - **Managers** invite people, change roles and remove people, and keep the airfield's page.
-  **Staff** see everything and will handle requests.
+  **Staff** see everything and answer requests.
 - **Invite someone:** enter their email and role. They get a link that works for **14 days**, only
   for that address: they log in (or sign up) with it and press **Join the team**. The link is also
   shown to you once, so you can pass it on if the email doesn't arrive. Cancel open invitations at
@@ -61,16 +61,33 @@ from the tabs on the airfield (staff can look, not change):
   per (landing, movement, night, day, hour, passenger, litre or one-off); leave the price empty for
   "price on request". For prices by weight, add one line per band with **Up to MTOM (kg)**, e.g.
   landing up to 1,000 kg and up to 2,000 kg. **Edit** changes a line, **Remove** takes it off.
-  Pilots will pick from this list when they send you a request; they pay you as today, not
-  through ownAplane.
+  Pilots pick from this list when they send you a request; they pay you as today, not through
+  ownAplane.
 
 The page always reminds pilots to check the AIP and NOTAMs: it's information from your team, never
 an official source.
 
-## What comes next
+## Movements: who comes and goes
 
-Pilots' requests to arrive or depart, with the services they need ticked from your list (plus
-"Other" in their own words) and a rough total. Where you require PPR you approve them (or not);
-where you don't, they're confirmed at once. You'll see who comes and goes, and what they need, by
-day, week or month. A PPR on ownAplane will be the operator's administrative permission only: it
-never replaces ATC clearance, a flight plan or official customs and border procedures.
+The airfield's first tab, **Movements**, shows the arrivals and departures pilots have asked for,
+by **day**, **week** or **month** (your choice is remembered), in **UTC**. Each line has the time,
+the aircraft and type, where it comes from or goes to, the pilot, the people on board, the
+services they asked for and where the request stands. **On the ground** lists aircraft that
+arrived earlier and leave later. The dashboard shows today's numbers for each of your airfields.
+
+Open a request to see everything, with the services at your prices and a rough total, the
+pilot's own words under "Other", and warnings (outside your hours, a closed day, less notice than
+you ask for, a border crossing without customs).
+
+## Answering
+
+- If you **require PPR** (Profile), every request waits for your answer: **Approve** (with a PPR
+  number and conditions if you like, e.g. "arrive after 10:00 UTC") or **Decline** with a reason.
+- If you **don't require PPR**, requests are **confirmed** at once and you're told; you only
+  answer if something can't be provided (decline with a reason, or add conditions).
+
+Managers and staff can answer. The pilot is notified of each answer, and you're notified of new
+and cancelled requests (in the app and by email, following your booking notification settings).
+
+A request on ownAplane is the airfield's administrative permission only: it never replaces ATC
+clearance, a flight plan or official customs and border procedures.

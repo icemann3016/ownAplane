@@ -8,8 +8,10 @@ import type { myAirports } from "@/lib/airport-teams/teams";
 /** The airfields the user runs, first on an airfield account's dashboard (APT-1). */
 export async function AirfieldsCard({
   airfields,
+  today,
 }: {
   airfields: Awaited<ReturnType<typeof myAirports>>;
+  today: Map<string, { arrivals: number; departures: number; open: number }>;
 }) {
   const t = await getTranslations("dashboard.airfields");
   const ta = await getTranslations("airports");
@@ -36,6 +38,9 @@ export async function AirfieldsCard({
                 </Link>
                 <span className="text-muted-foreground">{ta(`roles.${role}`)}</span>
                 <span className="ml-auto flex gap-4">
+                  <Link href={`/airports/manage/${path}`} className="underline underline-offset-4">
+                    {ta("tabs.movements")}
+                  </Link>
                   <Link
                     href={`/airports/manage/${path}/services`}
                     className="underline underline-offset-4"
@@ -45,6 +50,9 @@ export async function AirfieldsCard({
                   <Link href={`/airports/${path}`} className="underline underline-offset-4">
                     {t("publicPage")}
                   </Link>
+                </span>
+                <span className="basis-full text-muted-foreground">
+                  {t("today", today.get(airport.ident) ?? { arrivals: 0, departures: 0, open: 0 })}
                 </span>
               </li>
             );

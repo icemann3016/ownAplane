@@ -27,6 +27,7 @@ import { getKnownItems } from "@/lib/bookings/remarks";
 import { FREE_CANCELLATION_HOURS } from "@/lib/bookings/respond";
 import { toRange, utcToZoned } from "@/lib/domain/time";
 import type { Locale } from "@/lib/i18n/config";
+import { AirfieldRequests } from "./airfield-requests";
 import { BookingContact } from "./booking-contact";
 import { BookingHistory } from "./booking-history";
 import { BookingReviews } from "./booking-reviews";
@@ -162,6 +163,9 @@ export default async function BookingPage({
           period={period}
           aircraftIfr={plane.ifr}
         />
+      )}
+      {b.pilotId === user.id && ["requested", "accepted"].includes(b.status) && (
+        <AirfieldRequests userId={user.id} bookingId={b.id} route={route} />
       )}
       {["requested", "accepted", "in_progress"].includes(b.status) && (
         <KnownItems items={await getKnownItems(user.id, b.aircraftId)} />

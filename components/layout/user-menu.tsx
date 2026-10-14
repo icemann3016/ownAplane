@@ -10,6 +10,7 @@ import {
   LifeBuoyIcon,
   LogOutIcon,
   MessagesSquareIcon,
+  PlaneLandingIcon,
   SettingsIcon,
   ShieldCheckIcon,
   TowerControlIcon,
@@ -74,6 +75,13 @@ export function UserMenu({ account }: { account: AccountSummary }) {
             <MessagesSquareIcon /> {t("messages")}
           </Link>
         </DropdownMenuItem>
+        {account.isPilot && (
+          <DropdownMenuItem asChild>
+            <Link href="/airport-requests">
+              <PlaneLandingIcon /> {t("airportRequests")}
+            </Link>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem asChild>
           <Link href="/airports/manage">
             <TowerControlIcon /> {t("airports")}

@@ -13,7 +13,13 @@ export const HELP_CATEGORIES = [
   { key: "start", slugs: ["getting-started", "account"] },
   {
     key: "pilots",
-    slugs: ["pilot-credentials", "finding-and-booking", "flying-and-flight-log", "logbook"],
+    slugs: [
+      "pilot-credentials",
+      "finding-and-booking",
+      "flying-and-flight-log",
+      "logbook",
+      "airfield-requests",
+    ],
   },
   { key: "owners", slugs: ["listing-an-aircraft", "owner-bookings-and-history", "calendar-sync"] },
   { key: "airports", slugs: ["airports"] },

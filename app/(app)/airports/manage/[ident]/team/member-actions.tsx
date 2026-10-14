@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { FormMessage } from "@/components/forms/form-message";
 import { SubmitButton } from "@/components/forms/submit-button";
 import { initialFormState } from "@/lib/forms";
-import { changeMemberAction } from "./actions";
+import { changeMemberAction } from "../actions";
 
 /** A manager's buttons for one member (role, remove), or "Leave the team" on one's own row. */
 export function MemberActions({

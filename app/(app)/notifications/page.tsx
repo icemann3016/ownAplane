@@ -42,21 +42,24 @@ export default async function NotificationsPage() {
             <ul className="grid divide-y">
               {items.map((n) => {
                 const values = {
-                  registration: n.booking?.registration ?? "",
-                  when: n.booking ? format(n.booking.from) : "",
+                  registration: n.booking?.registration ?? n.request?.registration ?? "",
+                  when: n.booking ? format(n.booking.from) : n.request ? format(n.request.at) : "",
                   other: n.actor ?? t("someone"),
                   search: n.search?.name ?? "",
+                  airport: n.request?.airport ?? "",
                 };
                 const text = t(`types.${knownType(n.type)}`, values);
-                const href = n.search
-                  ? `/search${n.search.query ? `?${n.search.query}` : ""}`
-                  : PLAN_TYPES.has(n.type)
-                    ? "/account/billing"
-                    : CURRENCY_TYPES.has(n.type)
-                      ? "/logbook/currency"
-                      : n.bookingId
-                        ? `/bookings/${n.bookingId}`
-                        : "/bookings";
+                const href = n.airportRequestId
+                  ? `/airport-requests/${n.airportRequestId}`
+                  : n.search
+                    ? `/search${n.search.query ? `?${n.search.query}` : ""}`
+                    : PLAN_TYPES.has(n.type)
+                      ? "/account/billing"
+                      : CURRENCY_TYPES.has(n.type)
+                        ? "/logbook/currency"
+                        : n.bookingId
+                          ? `/bookings/${n.bookingId}`
+                          : "/bookings";
                 return (
                   <li key={n.id}>
                     <Link

@@ -21,7 +21,7 @@ const memberInput = z.object({
   role: z.enum(["manager", "staff"]).optional(),
 });
 
-const teamPath = (ident: string) => `/airports/manage/${encodeURIComponent(ident)}`;
+const teamPath = (ident: string) => `/airports/manage/${encodeURIComponent(ident)}/team`;
 
 export async function changeMemberAction(_prev: FormState, formData: FormData): Promise<FormState> {
   const user = await requireUser("/airports/manage");

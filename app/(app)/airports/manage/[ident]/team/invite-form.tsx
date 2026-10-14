@@ -8,7 +8,7 @@ import { FormMessage } from "@/components/forms/form-message";
 import { SubmitButton } from "@/components/forms/submit-button";
 import { SelectField, TextField } from "@/components/forms/text-field";
 import { initialFormState } from "@/lib/forms";
-import { inviteAction } from "./actions";
+import { inviteAction } from "../actions";
 
 /** A manager invites someone to the team by email; the link is also shown once. */
 export function InviteForm({ ident }: { ident: string }) {

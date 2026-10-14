@@ -5,9 +5,10 @@ import { useTranslations } from "next-intl";
 
 import { TabBar } from "@/components/layout/tab-bar";
 
-const TABS = ["", "/profile", "/hours", "/runways", "/services"] as const;
+const TABS = ["", "/team", "/profile", "/hours", "/runways", "/services"] as const;
 const KEYS = {
-  "": "team",
+  "": "movements",
+  "/team": "team",
   "/profile": "profile",
   "/hours": "hours",
   "/runways": "runways",

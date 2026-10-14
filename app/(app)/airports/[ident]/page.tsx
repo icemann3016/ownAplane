@@ -81,10 +81,16 @@ export default async function AirportPage({ params }: { params: Promise<{ ident:
             {airport.iataCode && <Badge variant="outline">IATA {airport.iataCode}</Badge>}
           </div>
         </div>
-        {membership && (
+        {membership ? (
           <Button variant="outline" size="sm" asChild>
             <Link href={`/airports/manage/${encodeURIComponent(airport.ident)}/profile`}>
               {t("public.edit")}
+            </Link>
+          </Button>
+        ) : (
+          <Button size="sm" asChild>
+            <Link href={`/airports/${encodeURIComponent(airport.ident)}/request`}>
+              <PlaneLandingIcon aria-hidden /> {t("public.request")}
             </Link>
           </Button>
         )}
@@ -187,7 +193,7 @@ export default async function AirportPage({ params }: { params: Promise<{ ident:
         </Card>
       )}
 
-      <p className="text-sm text-muted-foreground">{t("public.requestsSoon")}</p>
+      <p className="text-sm text-muted-foreground">{t("public.requestText")}</p>
     </div>
   );
 }

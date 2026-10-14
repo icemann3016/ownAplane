@@ -6,7 +6,7 @@ import { type CredentialRef, credentialLabel } from "@/lib/pilot/labels";
 import { siteConfig } from "@/lib/site";
 import { catalogs } from "@/lib/i18n/catalogs";
 
-function localeOf(locale: string | null | undefined): Locale {
+export function localeOf(locale: string | null | undefined): Locale {
   return isLocale(locale) ? locale : defaultLocale;
 }
 

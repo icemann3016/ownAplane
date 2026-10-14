@@ -24,7 +24,8 @@
       "saved": "Saved",
       "logbook": "Logbook",
       "billing": "Plan & billing",
-      "airports": "Airports"
+      "airports": "Airports",
+      "airportRequests": "Airfield requests"
     },
     "footer": {
       "tagline": "Made for general aviation in Europe.",
@@ -243,7 +244,8 @@
     "durationInvalid": "Enter hours:minutes, e.g. 1:25.",
     "fieldRequired": "Required.",
     "moreThanTotal": "Can't be more than the total time of flight.",
-    "dateInFuture": "Can't be in the future."
+    "dateInFuture": "Can't be in the future.",
+    "arrivalOrDeparture": "Tick arriving, departing or both."
   },
   "dashboard": {
     "title": "Welcome, {name}",
@@ -302,7 +304,8 @@
     "airfields": {
       "title": "Your airfields",
       "text": "Keep their services, prices and opening hours up to date.",
-      "publicPage": "Public page"
+      "publicPage": "Public page",
+      "today": "Today: {arrivals} arriving · {departures} departing · {open} to answer"
     }
   },
   "account": {
@@ -695,6 +698,35 @@
       "body": "{inviter} invites you to the team of {airport} on ownAplane, where pilots send PPR, parking, hangar and service requests.",
       "expires": "The link works for 14 days. Log in or sign up with this email address to accept.",
       "cta": "Join the team"
+    },
+    "airportRequest": {
+      "greeting": "Hello {name},",
+      "cta": "Open the request",
+      "notClearance": "A request on ownAplane is the airfield's administrative permission only. It doesn't replace an ATC clearance, a flight plan or customs and border notifications.",
+      "apt_requested": {
+        "subject": "New request for {airport}: {registration}, {when}",
+        "body": "{other} asks to arrive or depart at {airport} with {registration} ({when}). Open the request to see the services they need and answer."
+      },
+      "apt_notice": {
+        "subject": "{registration} is coming to {airport}, {when}",
+        "body": "{other} told {airport} about a visit with {registration} ({when}). It is confirmed, as no PPR is needed; open it to see the services they need."
+      },
+      "apt_approved": {
+        "subject": "{airport} approved your request ({registration}, {when})",
+        "body": "{airport} approved your request for {registration} ({when}). Open it for the PPR number and any conditions."
+      },
+      "apt_declined": {
+        "subject": "{airport} declined your request ({registration}, {when})",
+        "body": "{airport} declined your request for {registration} ({when}). Open it to see why."
+      },
+      "apt_cancelled": {
+        "subject": "Request cancelled: {registration} at {airport}, {when}",
+        "body": "{other} cancelled the request for {registration} at {airport} ({when})."
+      },
+      "apt_updated": {
+        "subject": "{airport} updated its answer ({registration}, {when})",
+        "body": "{airport} changed the PPR number, conditions or note for {registration} ({when}). Open the request to see them."
+      }
     }
   },
   "airportPicker": {
@@ -2499,7 +2531,13 @@
       "plan_unlisted": "Some of your aircraft were unlisted because your plan lists fewer. Nothing was deleted: upgrade under Plan & billing to list them again.",
       "payment_failed": "A payment for your plan didn't go through. Pay within 7 days under Plan & billing to keep your plan.",
       "currency_ending": "Your passenger recency ends within a week. Plan a few take-offs and landings.",
-      "revalidation_due": "Your SEP rating expires within 60 days and the experience for revalidation isn't complete yet."
+      "revalidation_due": "Your SEP rating expires within 60 days and the experience for revalidation isn't complete yet.",
+      "apt_requested": "{other} asks to come to {airport}: {registration}, {when}",
+      "apt_notice": "{other} is coming to {airport}: {registration}, {when} (no PPR needed)",
+      "apt_approved": "{airport} approved your request for {registration}, {when}",
+      "apt_declined": "{airport} declined your request for {registration}, {when}",
+      "apt_cancelled": "{other} cancelled the request for {registration} at {airport}, {when}",
+      "apt_updated": "{airport} updated its answer for {registration}, {when}"
     }
   },
   "checkoutFlight": {
@@ -3588,8 +3626,7 @@
       "openInvites": "Open invitations",
       "inviteExpires": "{role}, until {date}",
       "cancelInvite": "Cancel",
-      "cancelInviteLabel": "Cancel the invitation for {email}",
-      "comingNext": "Next on ownAplane: requests from pilots (PPR, parking, hangar and services)."
+      "cancelInviteLabel": "Cancel the invitation for {email}"
     },
     "join": {
       "title": "Join an airfield's team",
@@ -3624,6 +3661,7 @@
     },
     "tabs": {
       "label": "Airfield sections",
+      "movements": "Movements",
       "team": "Team",
       "profile": "Profile",
       "hours": "Opening hours",
@@ -3802,13 +3840,163 @@
       "services": "Services & prices",
       "servicesText": "Paid to the airfield, not through ownAplane.",
       "contact": "Contact",
-      "requestsSoon": "Soon you'll be able to send PPR, parking, hangar and service requests to this airfield here."
+      "request": "Request to arrive or depart",
+      "requestText": "Pilots: send your arrival or departure and the services you need from this page."
     },
     "index": {
       "title": "Airfields on ownAplane",
       "description": "Airfields whose teams keep their details here: opening hours in UTC, runways, radio, services and prices.",
       "none": "No airfields yet.",
       "runOne": "Do you run an airfield? Bring it to ownAplane."
+    }
+  },
+  "airportRequests": {
+    "form": {
+      "metaTitle": "Request to arrive or depart",
+      "title": "Arrive or depart at {airport}",
+      "pprText": "This airfield requires PPR ({hours} h notice): your request waits for its answer.",
+      "noPprText": "This airfield doesn't require PPR: your request is confirmed at once and the airfield sees what you need.",
+      "notPilot": "Only pilot accounts can send requests to airfields. Switch on the pilot role in Account (airfield accounts can't be pilots).",
+      "fromBooking": "Filled in from your booking of {registration}. Check the times.",
+      "aircraft": "Aircraft",
+      "registration": "Registration",
+      "aircraftType": "Type (ICAO)",
+      "mtom": "MTOM (kg)",
+      "mtomHint": "So the right weight band applies.",
+      "when": "Arrival and departure",
+      "whenText": "Times in UTC. Tick what you'll do there: arrive, depart or both.",
+      "arriving": "I'm arriving",
+      "arrivalAt": "Arrival (UTC)",
+      "from": "From",
+      "departing": "I'm departing",
+      "departureAt": "Departure (UTC)",
+      "to": "To",
+      "pob": "People on board",
+      "purpose": "Purpose",
+      "purposes": {
+        "private": "Private",
+        "training": "Training",
+        "business": "Business",
+        "other": "Other"
+      },
+      "services": "Services",
+      "servicesText": "Tick what you need from the airfield's list. The prices are the airfield's: you pay it directly, not through ownAplane.",
+      "noServices": "The airfield hasn't listed its services yet. Write what you need under Other.",
+      "noPrice": "No price for this weight: ask under Other",
+      "lightestBand": "price for the lightest aircraft: enter the MTOM",
+      "quantityFor": "Quantity for {service}",
+      "total": "Rough total: {amount}",
+      "plusOnRequest": "+ {count, plural, one {# item} other {# items}} on request",
+      "totalText": "A guide only: the airfield charges you directly.",
+      "other": "Other",
+      "otherHint": "Anything not on the list, in your own words.",
+      "statement": "A request on ownAplane is the airfield's administrative permission only. It doesn't replace an ATC clearance, a flight plan or customs and border notifications.",
+      "send": "Send request",
+      "sending": "Sending…"
+    },
+    "statuses": {
+      "pending": "Waiting for the airfield",
+      "approved": "Approved",
+      "confirmed": "Confirmed",
+      "declined": "Declined",
+      "cancelled": "Cancelled"
+    },
+    "detail": {
+      "metaTitle": "Airfield request",
+      "title": "{registration} at {airport}",
+      "sentOn": "Sent {date}",
+      "sentPending": "Request sent. The airfield will answer and you'll be notified.",
+      "sentConfirmed": "Request sent and confirmed: the airfield doesn't require PPR. It sees what you need.",
+      "trip": "Trip",
+      "arrival": "Arrival",
+      "departure": "Departure",
+      "fromPlace": "from {place}",
+      "toPlace": "to {place}",
+      "aircraft": "Aircraft",
+      "mtom": "MTOM {kg} kg",
+      "pilot": "Pilot",
+      "noServices": "No services asked for.",
+      "total": "Rough total",
+      "plusOnRequest": "+ {count, plural, one {# item} other {# items}} on request",
+      "totalText": "At the airfield's prices when the request was sent; paid to the airfield, not through ownAplane.",
+      "answer": "The airfield's answer",
+      "waiting": "Waiting for {airport} to answer.",
+      "autoConfirmed": "Confirmed at once: {airport} doesn't require PPR.",
+      "answeredBy": "Answered by {name}, {date}",
+      "cancel": "Cancel request",
+      "cancelling": "Cancelling…",
+      "cancelled": "Request cancelled. The airfield has been told.",
+      "contact": "{airport}: {contact}",
+      "booking": "Open the booking"
+    },
+    "answer": {
+      "decision": "Your answer",
+      "approve": "Approve",
+      "decline": "Decline",
+      "pprNumber": "PPR number (optional)",
+      "conditions": "Conditions (optional)",
+      "conditionsPlaceholder": "e.g. Arrive after 10:00 UTC",
+      "note": "Note to the pilot (optional)",
+      "reason": "Why (shown to the pilot)",
+      "save": "Send answer",
+      "saving": "Sending…",
+      "saved": "Answer sent. The pilot has been told."
+    },
+    "warnings": {
+      "at": {
+        "arrival": "Arrival",
+        "departure": "Departure"
+      },
+      "outside_hours": "{at} is outside the opening hours.",
+      "closed": "{at}: the airfield is closed that day. {note}",
+      "short_notice": "Less than {hours} h notice for PPR.",
+      "customs": "This trip crosses a Schengen or EU customs border: ask for customs."
+    },
+    "list": {
+      "title": "Airfield requests",
+      "description": "Your requests to arrive at or depart from airfields on ownAplane.",
+      "none": "No requests yet.",
+      "findAirfield": "See the airfields on ownAplane",
+      "arrives": "arrives {when}",
+      "departs": "departs {when}"
+    },
+    "board": {
+      "title": "Movements",
+      "text": "Arrivals, departures and aircraft on the ground from pilots' requests. Times in UTC.",
+      "viewLabel": "Period",
+      "views": {
+        "day": "Day",
+        "week": "Week",
+        "month": "Month"
+      },
+      "previous": "Previous",
+      "next": "Next",
+      "today": "Today",
+      "counts": "{arrivals} arriving · {departures} departing · {open} waiting for an answer",
+      "none": "No arrivals or departures.",
+      "onGround": "On the ground",
+      "arrival": "Arrival",
+      "departure": "Departure",
+      "ground": "On the ground",
+      "from": "from {place}",
+      "to": "to {place}",
+      "pob": "{count} on board",
+      "otherAsked": "+ other request"
+    },
+    "booking": {
+      "title": "Airfields on this trip",
+      "text": "These airfields take requests on ownAplane: send yours, filled in from this booking.",
+      "send": "Send a request to {airport}"
+    },
+    "errors": {
+      "not_pilot": "Only pilot accounts can send requests to airfields.",
+      "unknown_airfield": "Pick the airfields from the list.",
+      "booking_not_yours": "That booking isn't yours.",
+      "in_the_past": "That time has passed. Check the date (UTC).",
+      "too_many_requests": "Too many requests today. Try again tomorrow.",
+      "unknown_service": "One of the services is no longer on the airfield's list. Reload the page.",
+      "not_allowed": "You can't do that on this request.",
+      "request_closed": "This request was cancelled."
     }
   }
 }

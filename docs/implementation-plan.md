@@ -357,22 +357,30 @@ Sizes: **S** ≈ a few hours · **M** ≈ 1–2 sessions · **L** ≈ 3+ session
   converted with the airport's IANA time zone (summer time handled, no edits twice a year). This
   is the only local-time input; everything else stays UTC (requirements §7's "local time on PPR
   screens" is replaced by the UTC rule of 2026-09-28).
-- **Requests (APT-2…5, 7):** `airport_requests` (aircraft from a booking, one's own or typed in;
-  arrival and/or departure ETA/ETD UTC; the other airfield; POB; purpose) with request lines
-  picked from the airfield's services (quantity where it matters: litres, passengers; nights from
-  the dates) plus an **Other** free text, the prices shown and a rough total (paid to the
-  airfield); customs suggested when the other airfield is outside Schengen or the EU customs
-  area. Airfields **with PPR** answer (approve / with conditions / decline, PPR number);
-  airfields **without PPR** confirm at once (Zlati). Events and notifications like bookings;
-  warnings, never blocks, outside opening hours, during closures or below the minimum notice; the
-  "not ATC clearance, flight plan or customs notification" statement on the form, the request and
-  the emails. RLS: the pilot sees their requests, the airport's team sees its airport's, nobody
-  else.
-- **Movements board (APT-6):** the operator's first tab: arrivals, departures and parked aircraft
-  with their requested services, by **day, week or month** (the operator's choice, remembered).
+- **Requests (APT-2…5, 7; built 2026-10-14):** `airport_requests` (registration, ICAO type,
+  MTOM; arrival and/or departure in UTC with the other airfield; POB; purpose; "Other" free text;
+  `booking_id` when sent from a booking) and `airport_request_items` (service, quantity; name,
+  unit and price **copied by a trigger from `airport_services`**, never from the pilot). Status:
+  `pending` → `approved`/`declined` by the team, `cancelled` by the pilot; set by a trigger from
+  the airfield's PPR setting (no PPR = `approved` + `auto_confirmed`, Zlati). RLS: the pilot sees
+  theirs, the airfield's team its airfield's, admins all; only pilots send (`user_has_role
+  ('pilot')`), max 20 a day. Notifications (`notifications.airport_request_id`; `apt_requested`,
+  `apt_notice`, `apt_approved`, `apt_declined`, `apt_cancelled`, `apt_updated`) by trigger,
+  emails by `deliverNotificationEmails()`. Code in `lib/airport-requests/` (ops, queries, estimate:
+  weight bands, default quantities and the rough total; checks: warnings for hours, closures, PPR
+  notice and Schengen/EU customs borders; board: day/week/month; prefill from a booking). Pages:
+  `/airports/[ident]/request` (form, `?booking=` prefill), `/airport-requests` (pilot's list),
+  `/airport-requests/[id]` (pilot cancels, team answers), the booking page's "Airfields on this
+  trip". The "not ATC clearance, flight plan or customs notification" statement is on the form,
+  the request and the emails.
+- **Movements board (APT-6, built):** the airfield's first tab (`/airports/manage/[ident]`; the
+  team moved to `/team`): arrivals, departures and aircraft on the ground with their services by
+  **day, week (Monday first) or month** in UTC, the choice kept in a cookie; today's numbers on the
+  dashboard.
 - **Build order:** (1) teams and claims, (2) profile + public page, (2b) services & prices +
-  airfield accounts apart from pilots, (3) pilots' requests, (4) movements board and answers,
-  (5) booking link, API, help and docs. Each step deploys on its own.
+  airfield accounts apart from pilots, (3) pilots' requests + movements board and answers +
+  booking link (done), (4) API for apps and partners. Each step deploys on its own. Still to do:
+  drop `airport_fees` and `airport_operators.services/fuels` (replaced in 0085).
 
 **After launch readiness (decided 2026-10-08):**
 

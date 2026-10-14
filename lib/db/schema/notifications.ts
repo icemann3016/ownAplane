@@ -4,6 +4,7 @@
 import { sql } from "drizzle-orm";
 import { boolean, index, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
+import { airportRequests } from "./airport-requests";
 import { users } from "./auth";
 import { bookings } from "./bookings";
 import { savedSearches } from "./saved";
@@ -21,6 +22,10 @@ export const notifications = pgTable(
     actorId: uuid("actor_id").references(() => users.id, { onDelete: "set null" }),
     /** For "saved_search" alerts (SRC-6): the search with new aircraft. */
     savedSearchId: uuid("saved_search_id").references(() => savedSearches.id, {
+      onDelete: "cascade",
+    }),
+    /** For airfield requests (APT-4): the request sent, answered or cancelled. */
+    airportRequestId: uuid("airport_request_id").references(() => airportRequests.id, {
       onDelete: "cascade",
     }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
