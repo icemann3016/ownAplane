@@ -127,3 +127,31 @@ export async function apiSignIn(baseURL: string | undefined, email: string): Pro
   }
   throw new Error("sign-in kept being rate-limited");
 }
+
+/**
+ * An airfield on ownAplane run by `managerEmail`, with landing charges in two weight bands,
+ * AVGAS by the litre and customs on request (APT-1/2).
+ */
+export async function seedAirfield(
+  ident: string,
+  name: string,
+  managerEmail: string,
+  ppr: boolean,
+) {
+  await withDb(async (sql) => {
+    const [{ id }] = await sql<
+      { id: string }[]
+    >`select id from users where email = ${managerEmail}`;
+    await sql`insert into airports (ident, type, name, country, latitude, longitude, timezone)
+      values (${ident}, 'small_airport', ${name}, 'BG', 42.9, 25.3, 'Europe/Sofia')`;
+    await sql`insert into airport_operators (airport_ident, ppr_required, ppr_notice_hours)
+      values (${ident}, ${ppr}, ${ppr ? 2 : null})`;
+    await sql`insert into airport_members (airport_ident, user_id, role)
+      values (${ident}, ${id}, 'manager')`;
+    await sql`insert into airport_services (airport_ident, category, fuel_type, max_mtom_kg, price, unit)
+      values (${ident}, 'landing', null, 1000, 15, 'landing'),
+             (${ident}, 'landing', null, 2000, 25, 'landing'),
+             (${ident}, 'fuel', 'avgas_100ll', null, 2.859, 'litre'),
+             (${ident}, 'customs', null, null, null, 'once')`;
+  });
+}

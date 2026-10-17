@@ -377,9 +377,15 @@ Sizes: **S** ≈ a few hours · **M** ≈ 1–2 sessions · **L** ≈ 3+ session
   team moved to `/team`): arrivals, departures and aircraft on the ground with their services by
   **day, week (Monday first) or month** in UTC, the choice kept in a cookie; today's numbers on the
   dashboard.
+- **API (built 2026-10-17):** `GET /api/v1/airports/{ident}/services` (public, like the page),
+  `/api/v1/airport-requests` (pilot's list, send), `…/{id}` (pilot or team, with the estimate and
+  warnings), `…/{id}/cancel`, `…/{id}/answer`, `/api/v1/me/airports` (the user's airfields with
+  today's numbers) and `/api/v1/me/airports/{ident}/movements?from&to` (the board, ≤ 62 days);
+  thin routes around `lib/airport-requests` (`lib/api/airport-requests.ts`, `-dto.ts`,
+  `openapi-airport-requests.ts`). Teams, claims and profiles stay website-only.
 - **Build order:** (1) teams and claims, (2) profile + public page, (2b) services & prices +
   airfield accounts apart from pilots, (3) pilots' requests + movements board and answers +
-  booking link (done), (4) API for apps and partners. Each step deploys on its own. Still to do:
+  booking link, (4) API for apps and partners (all done). Each step deploys on its own. Still to do:
   drop `airport_fees` and `airport_operators.services/fuels` (replaced in 0085).
 
 **After launch readiness (decided 2026-10-08):**

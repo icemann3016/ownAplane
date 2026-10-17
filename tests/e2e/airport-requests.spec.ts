@@ -3,6 +3,7 @@ import { expect, test } from "@playwright/test";
 import { expectAccessible } from "./a11y";
 import {
   seedAcceptedBooking,
+  seedAirfield,
   seedListedAircraft,
   seedVerifiedPilot,
   signUp,
@@ -18,25 +19,6 @@ test.skip(!process.env.E2E_FULL, "set E2E_FULL=1 to run against a throwaway data
 /** "2026-10-14T12:00" (UTC) `hours` from now, for a datetime-local field. */
 const utcIn = (hours: number) =>
   new Date(Date.now() + hours * 3_600_000).toISOString().slice(0, 13) + ":00";
-
-async function seedAirfield(ident: string, name: string, managerEmail: string, ppr: boolean) {
-  await withDb(async (sql) => {
-    const [{ id }] = await sql<
-      { id: string }[]
-    >`select id from users where email = ${managerEmail}`;
-    await sql`insert into airports (ident, type, name, country, latitude, longitude, timezone)
-      values (${ident}, 'small_airport', ${name}, 'BG', 42.9, 25.3, 'Europe/Sofia')`;
-    await sql`insert into airport_operators (airport_ident, ppr_required, ppr_notice_hours)
-      values (${ident}, ${ppr}, ${ppr ? 2 : null})`;
-    await sql`insert into airport_members (airport_ident, user_id, role)
-      values (${ident}, ${id}, 'manager')`;
-    await sql`insert into airport_services (airport_ident, category, fuel_type, max_mtom_kg, price, unit)
-      values (${ident}, 'landing', null, 1000, 15, 'landing'),
-             (${ident}, 'landing', null, 2000, 25, 'landing'),
-             (${ident}, 'fuel', 'avgas_100ll', null, 2.859, 'litre'),
-             (${ident}, 'customs', null, null, null, 'once')`;
-  });
-}
 
 test("a pilot asks an airfield for PPR and services; its team answers from the board", async ({
   page,

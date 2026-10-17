@@ -111,6 +111,8 @@ export async function myAirportRequests(userId: string) {
   );
 }
 
+export type MyAirportRequest = Awaited<ReturnType<typeof myAirportRequests>>[number];
+
 /**
  * An airfield's movements between `from` and `to` (UTC) for its team: requests arriving or
  * departing then, or on the ground meanwhile, with the services asked for. Cancelled ones are

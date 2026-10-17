@@ -8,6 +8,7 @@ import { answerAirportRequest, cancelAirportRequest } from "@/lib/airport-reques
 import { requireUser } from "@/lib/auth/session";
 import { type FormState, formValues } from "@/lib/forms";
 import { localizedFieldErrors } from "@/lib/i18n/server";
+import { sendNotificationsSoon } from "@/lib/notifications/soon";
 import { requestAnswerSchema } from "@/lib/validation/airport-request";
 
 const idOf = (formData: FormData) => z.uuid().safeParse(formData.get("id"));
@@ -21,6 +22,7 @@ export async function cancelRequestAction(
   const user = await requireUser("/airport-requests");
   const t = await getTranslations("airportRequests");
   if (!id.success) return { message: t("errors.not_allowed") };
+  sendNotificationsSoon();
   const result = await cancelAirportRequest(user.id, id.data);
   if (!result.ok) return { message: t(`errors.${result.error}`) };
   revalidatePath(`/airport-requests/${id.data}`);
@@ -40,6 +42,7 @@ export async function answerRequestAction(
   if (!id.success) return { message: t("errors.not_allowed"), values: raw };
   const parsed = requestAnswerSchema.safeParse(raw);
   if (!parsed.success) return { errors: await localizedFieldErrors(parsed.error), values: raw };
+  sendNotificationsSoon();
   const result = await answerAirportRequest(user.id, id.data, parsed.data);
   if (!result.ok) return { message: t(`errors.${result.error}`), values: raw };
   revalidatePath(`/airport-requests/${id.data}`);

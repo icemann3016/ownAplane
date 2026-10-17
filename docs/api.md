@@ -189,9 +189,29 @@ private link, `/api/v1/calendars/bookings/{token}.ics`, with their bookings as p
 is the secret; resetting it stops the old link. 404 for an unknown or reset link, 402
 `plan_required` once the plan no longer includes it.
 
+**Airfield requests (APT-2…7).** Pilots ask an airfield on ownAplane for an arrival and/or a
+departure, with services picked from the airfield's own list; the airfield's team (managers and
+staff) answers and sees its movements board. Airfields that require PPR answer (`pending` →
+`approved` or `declined`); the others confirm at once (`approved`, `autoConfirmed: true`) and can
+still decline. Prices are the airfield's, copied when the request is sent: `estimate.total` is the
+rough total of the priced services (paid to the airfield), `estimate.onRequest` how many are priced
+on request. A request is the airfield's administrative permission only, never an ATC clearance, a
+flight plan or a customs and border notification.
+
+| Method | Path | Sign-in | What |
+|--------|------|---------|------|
+| GET | `/api/v1/airports/{ident}/services` | – | The airfield's `services` (`id`, `category`, `fuelType`, `maxMtomKg` = weight band, `price` or null = on request, `unit`), `currency`, `pprRequired`, `pprNoticeHours`. 404 for airfields not on ownAplane |
+| GET | `/api/v1/airport-requests` | required | Your requests as a pilot, the latest trip first |
+| POST | `/api/v1/airport-requests` | required | `{ airport, registration, aircraftType?, mtomKg?, arrival?: { at, from }, departure?: { at, to }, pob, purpose?, other?, services: [{ serviceId, quantity }], bookingId? }` with an arrival, a departure or both. 403 `not_pilot` (airfield accounts aren't pilot accounts), 404 when the airfield isn't on ownAplane, 400 `unknown_service` (not on its list), `in_the_past`, `booking_not_yours`, `fields.arrival`/`departure: ["airportUnknown"]`, 429 `too_many_requests` (20 a day) |
+| GET | `/api/v1/airport-requests/{id}` | required | One request for its pilot or the airfield's team: `yourRole`, the services with their prices, `estimate`, the answer (`pprNumber`, `conditions`, `airfieldNote`, `answeredBy`), `airfieldContact` and `warnings` (`closed`, `outside_hours`, `short_notice`, `customs`; never a block) |
+| POST | `/api/v1/airport-requests/{id}/cancel` | required | The pilot cancels (403 `not_allowed` for anyone else, 409 `request_closed`) |
+| POST | `/api/v1/airport-requests/{id}/answer` | required | The team answers `{ decision: approve \| decline, pprNumber?, conditions?, note? }`; the pilot is told (403 `not_allowed`, 409 `request_closed`) |
+| GET | `/api/v1/me/airports` | required | The airfields whose team you're on, with your `role` and `today` (`arrivals`, `departures`, `open` = waiting for an answer) |
+| GET | `/api/v1/me/airports/{ident}/movements?from=&to=` | required | The movements board (its team only, else 404): requests arriving, departing or on the ground in the period (at most 62 days), earliest first, with their services and pilot; cancelled ones are left out |
+
 Still website-only: calendar sync settings (connections, webhooks), usage exports, account
-settings, the bookings calendar link settings, connected services (partner API keys) and admin
-tools.
+settings, the bookings calendar link settings, connected services (partner API keys), airfield
+teams, claims and profiles (with their services and prices) and admin tools.
 
 ## Calendar sync for other booking systems (SYN-1…8)
 

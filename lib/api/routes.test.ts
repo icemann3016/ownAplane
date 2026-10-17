@@ -6,12 +6,14 @@ import { describe, expect, it } from "vitest";
 // Security guard (API-2, like lib/server-actions.test.ts): every /api/v1 endpoint checks the
 // token (requireApiUser, or optionalApiUser where anonymous visitors may read public data; partner
 // systems use their connection's API key, requireConnection) and answers through apiRoute (JSON
-// errors, nothing internal leaks). Public on purpose: airports, the OpenAPI description, and the
+// errors, nothing internal leaks). Public on purpose: airports (with the services and prices of
+// airfields on ownAplane, like their public pages), the OpenAPI description, and the
 // iCal exports (the secret token in the link is the access check: an aircraft's, SYN-3, and a
 // user's own bookings, SUB-15).
 const PUBLIC = [
   "app/api/v1/airports/route.ts",
   "app/api/v1/airports/[ident]/route.ts",
+  "app/api/v1/airports/[ident]/services/route.ts",
   "app/api/v1/calendars/[file]/route.ts",
   "app/api/v1/calendars/bookings/[file]/route.ts",
 ];

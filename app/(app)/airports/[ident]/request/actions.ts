@@ -8,6 +8,7 @@ import { sendAirportRequest } from "@/lib/airport-requests/ops";
 import { requireUser } from "@/lib/auth/session";
 import { type FormState, formValues } from "@/lib/forms";
 import { localizedFieldErrors } from "@/lib/i18n/server";
+import { sendNotificationsSoon } from "@/lib/notifications/soon";
 import { airportRequestSchema } from "@/lib/validation/airport-request";
 
 /** Send a request to an airfield (APT-2/3), then open it. */
@@ -26,6 +27,7 @@ export async function sendRequestAction(_prev: FormState, formData: FormData): P
     services,
   });
   if (!parsed.success) return { errors: await localizedFieldErrors(parsed.error), values: raw };
+  sendNotificationsSoon();
   const result = await sendAirportRequest(user.id, ident, parsed.data);
   if (!result.ok) {
     const t = await getTranslations("airportRequests.errors");

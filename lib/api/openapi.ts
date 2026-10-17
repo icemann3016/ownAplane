@@ -50,6 +50,7 @@ import { logbookPaths, logbookSchemas } from "./openapi-logbook";
 import { myAircraftPaths, myAircraftSchemas } from "./openapi-my-aircraft";
 import { socialPaths, socialSchemas } from "./openapi-social";
 import { reviewPaths, reviewSchemas } from "./reviews";
+import { airportRequestPaths, airportRequestSchemas } from "./openapi-airport-requests";
 const takenExtras =
   "`title`, `type`, `status` and `registration` are optional and used only as the aircraft's owner chose; always sending them is fine.";
 
@@ -130,6 +131,7 @@ export function openApiDocument() {
         ...logbookSchemas(),
         ...billingSchemas(),
         ...pilotPlusSchemas(),
+        ...airportRequestSchemas(),
         WebhookEvent: output(R.webhookEvent),
         WebhookSettings: output(R.webhookSettings),
         WebhookSaved: output(R.webhookSaved),
@@ -389,6 +391,7 @@ export function openApiDocument() {
       ...logbookPaths(),
       ...billingPaths(),
       ...pilotPlusPaths(),
+      ...airportRequestPaths(),
       "/api/v1/sync": {
         get: {
           tags: ["calendar sync"],
