@@ -124,40 +124,6 @@ export const airportClosures = pgTable(
   ],
 ).enableRLS();
 
-export const airportFeeKind = pgEnum("airport_fee_kind", ["landing", "parking", "hangar", "other"]);
-export const airportFeeUnit = pgEnum("airport_fee_unit", [
-  "landing",
-  "night",
-  "day",
-  "hour",
-  "once",
-]);
-
-/** Replaced by airport_services (0085, which copied the rows); dropped in a later migration. */
-export const airportFees = pgTable(
-  "airport_fees",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    airportIdent: text("airport_ident")
-      .notNull()
-      .references(() => airportOperators.airportIdent, { onDelete: "cascade" }),
-    kind: airportFeeKind("kind").notNull(),
-    label: text("label"),
-    /** Applies to aircraft up to this MTOM; null = any weight. */
-    maxMtomKg: integer("max_mtom_kg"),
-    amount: numeric("amount", { precision: 10, scale: 2, mode: "number" }).notNull(),
-    unit: airportFeeUnit("unit").notNull(),
-  },
-  (t) => [
-    index("airport_fees_airport_idx").on(t.airportIdent),
-    check(
-      "airport_fees_values",
-      sql`char_length(${t.label}) <= 80 and ${t.amount} >= 0 and ${t.amount} < 100000
-        and (${t.maxMtomKg} is null or ${t.maxMtomKg} between 1 and 100000)`,
-    ),
-  ],
-).enableRLS();
-
 export const airportServiceCategory = pgEnum("airport_service_category", [
   "landing",
   "ground_handling",

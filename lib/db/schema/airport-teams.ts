@@ -15,7 +15,6 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 
-import { fuelType } from "./aircraft";
 import { airports } from "./airports";
 import { users } from "./auth";
 import { documents } from "./documents";
@@ -53,17 +52,8 @@ export const airportOperators = pgTable(
     phone: text("phone"),
     email: text("email"),
     website: text("website"),
-    /** The fees' currency. */
+    /** The services' prices are in it. */
     currency: text("currency").notNull().default("EUR"),
-    /** Replaced by airport_services (0085 copied them); dropped in a later migration. */
-    services: text("services")
-      .array()
-      .notNull()
-      .default(sql`'{}'`),
-    fuels: fuelType("fuels")
-      .array()
-      .notNull()
-      .default(sql`'{}'`),
     profileUpdatedAt: timestamp("profile_updated_at", { withTimezone: true }),
   },
   (t) => [
@@ -73,10 +63,7 @@ export const airportOperators = pgTable(
         and (${t.pprNoticeHours} is null or ${t.pprNoticeHours} between 0 and 720)
         and char_length(${t.phone}) <= 40 and char_length(${t.email}) <= 200
         and (${t.website} is null or (${t.website} ~ '^https?://' and char_length(${t.website}) <= 300))
-        and ${t.currency} ~ '^[A-Z]{3}$'
-        and ${t.services} <@ array['apron_parking', 'hangar', 'tie_downs', 'handling', 'customs',
-          'immigration', 'maintenance', 'catering', 'transport', 'restaurant', 'accommodation',
-          'briefing_room']::text[]`,
+        and ${t.currency} ~ '^[A-Z]{3}$'`,
     ),
   ],
 ).enableRLS();
