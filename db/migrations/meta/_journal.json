@@ -617,6 +617,13 @@
       "when": 1791952411208,
       "tag": "0087_airport_request_security",
       "breakpoints": true
+    },
+    {
+      "idx": 88,
+      "version": "7",
+      "when": 1792412974995,
+      "tag": "0088_drop_old_airport_fees",
+      "breakpoints": true
     }
   ]
 }

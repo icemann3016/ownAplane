@@ -348,8 +348,8 @@ Sizes: **S** ≈ a few hours · **M** ≈ 1–2 sessions · **L** ≈ 3+ session
   optional name (required for other), fuel type (fuel only), optional max MTOM (one row per weight
   band), price (3 decimals for fuel; null = on request), unit (landing, movement, night, day,
   hour, passenger, litre, one-off), note; at most 100 per airfield. It replaced `airport_fees` and
-  the `services`/`fuels` ticks (0085 copied them; the old table and columns are dropped in the next
-  release). Pilots pick from this list in their requests.
+  the `services`/`fuels` ticks (0085 copied them; 0088 dropped the old table and columns, one
+  release after the code stopped reading them). Pilots pick from this list in their requests.
 - **Airfield accounts aren't pilot accounts (APT-8):** triggers refuse the pilot role for anyone on
   a team or with an open claim, and refuse claims and team membership for pilots
   (`operator_not_pilot`); the owner role stays possible. The welcome step has "I run an airfield".
@@ -385,8 +385,8 @@ Sizes: **S** ≈ a few hours · **M** ≈ 1–2 sessions · **L** ≈ 3+ session
   `openapi-airport-requests.ts`). Teams, claims and profiles stay website-only.
 - **Build order:** (1) teams and claims, (2) profile + public page, (2b) services & prices +
   airfield accounts apart from pilots, (3) pilots' requests + movements board and answers +
-  booking link, (4) API for apps and partners (all done). Each step deploys on its own. Still to do:
-  drop `airport_fees` and `airport_operators.services/fuels` (replaced in 0085).
+  booking link, (4) API for apps and partners, then dropping the replaced fees table and
+  service/fuel columns (0088), all done. Each step deploys on its own.
 
 **After launch readiness (decided 2026-10-08):**
 
